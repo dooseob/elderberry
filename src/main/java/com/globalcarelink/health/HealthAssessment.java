@@ -123,6 +123,34 @@ public class HealthAssessment extends BaseEntity {
     @Builder.Default
     private Integer careTargetStatus = 4;
 
+    // ===== KB라이프생명 참조: 추가 평가 항목 =====
+
+    /**
+     * 식사 형태 (KB라이프생명 기준 추가)
+     * 1: 일반식 (정상 식사 가능)
+     * 2: 다진식/갈은식 (부드러운 식사 필요)
+     * 3: 경관식 (튜브 주입)
+     */
+    @Column(name = "meal_type")
+    @Min(value = 1, message = "식사형태는 1-3 사이여야 합니다")
+    @Max(value = 3, message = "식사형태는 1-3 사이여야 합니다")
+    @Builder.Default
+    private Integer mealType = 1;
+
+    /**
+     * 주요 질환 분류 (복수 선택 가능)
+     * DEMENTIA: 치매 (인지기능 저하)
+     * PARKINSON: 파킨슨 (운동장애)
+     * STROKE: 뇌혈관질환 (뇌졸중 등)
+     * DIABETES: 당뇨병
+     * HYPERTENSION: 고혈압
+     * OTHER: 기타
+     * UNKNOWN: 잘 모르겠음
+     */
+    @Column(name = "disease_types", length = 200)
+    @Size(max = 200, message = "질환 분류는 200자 이하여야 합니다")
+    private String diseaseTypes; // JSON 형태로 저장: ["DEMENTIA", "STROKE"]
+
     // ===== 계산된 결과 =====
 
     /**
@@ -224,5 +252,100 @@ public class HealthAssessment extends BaseEntity {
         
         // 자동으로 ADL 점수 재계산
         calculateAdlScore();
+    }
+
+    /**
+     * 특정 질환 여부 확인
+     */
+    public boolean hasDiseaseType(String diseaseType) {
+        return diseaseTypes != null && diseaseTypes.contains(diseaseType);
+    }
+
+    /**
+     * 중증 지표 여부 확인 (KB라이프생명 기준)
+     * - 경관식(튜브 주입) 또는
+     * - 배변활동 완전도움
+     */
+    public boolean hasSevereIndicators() {
+        return (mealType != null && mealType == 3) || (toiletLevel != null && toiletLevel == 3);
+    }
+
+    /**
+     * 치매 관련 질환 여부 확인
+     */
+    public boolean hasDementiaRelatedCondition() {
+        return ltciGrade != null && ltciGrade == 6 || 
+               communicationLevel != null && communicationLevel == 3 ||
+               hasDiseaseType("DEMENTIA");
+    }
+
+    /**
+     * 호스피스 케어 필요 여부 확인
+     */
+    public boolean needsHospiceCare() {
+        return careTargetStatus != null && careTargetStatus <= 2;
+    }
+
+    /**
+     * 질환별 전문 케어 타입 반환
+     */
+    public String getSpecializedCareType() {
+        if (needsHospiceCare()) {
+            return "HOSPICE";
+        }
+        if (hasDementiaRelatedCondition()) {
+            return "DEMENTIA";
+        }
+        if (hasDiseaseType("PARKINSON")) {
+            return "PARKINSON";
+        }
+        if (hasDiseaseType("STROKE")) {
+            return "STROKE_REHAB";
+        }
+        if (hasSevereIndicators()) {
+            return "SEVERE_MEDICAL";
+        }
+        return "GENERAL";
+    }
+
+    /**
+     * 예상 월 비용 범위 반환 (등급 기반)
+     */
+    public String getEstimatedMonthlyCostRange() {
+        int gradeLevel = getCareGradeLevel();
+        return switch (gradeLevel) {
+            case 1 -> "300-500만원";
+            case 2 -> "200-400만원";
+            case 3 -> "150-300만원";
+            case 4, 5 -> "50-150만원";
+            case 6 -> "200-350만원";
+            default -> "상담 후 결정";
+        };
+    }
+
+    /**
+     * 평가 결과 요약 텍스트 생성
+     */
+    public String generateAssessmentSummary() {
+        StringBuilder summary = new StringBuilder();
+        
+        summary.append("🏥 종합 케어 등급: ").append(overallCareGrade != null ? overallCareGrade : "미산출").append("\n");
+        summary.append("📊 ADL 점수: ").append(adlScore != null ? adlScore + "점" : "미계산").append("\n");
+        
+        if (ltciGrade != null && ltciGrade <= 6) {
+            summary.append("🎯 장기요양등급: ").append(ltciGrade).append("등급\n");
+        }
+        
+        if (hasSevereIndicators()) {
+            summary.append("⚠️ 중증 지표 존재\n");
+        }
+        
+        if (needsHospiceCare()) {
+            summary.append("🕊️ 호스피스 케어 권장\n");
+        }
+        
+        summary.append("💰 예상 비용: ").append(getEstimatedMonthlyCostRange());
+        
+        return summary.toString();
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CareGradeCalculator {
 
     /**
-     * 종합 케어 등급 계산
+     * 종합 케어 등급 계산 (KB라이프생명 우선순위 로직 적용)
      * ADL 점수 + 장기요양보험 등급 + 돌봄대상자 상태를 종합하여 산출
      */
     public CareGradeResult calculateComprehensiveGrade(HealthAssessment assessment) {
@@ -30,14 +30,14 @@ public class CareGradeCalculator {
         // 3. 돌봄대상자 상태 반영
         int careTargetStatus = assessment.getCareTargetStatus() != null ? assessment.getCareTargetStatus() : 4;
 
-        // 4. 종합 케어 등급 도출
-        CareGradeResult result = determineOverallCareGrade(adlScore, ltciGrade, careTargetStatus);
+        // 4. 종합 케어 등급 도출 (KB라이프생명 우선순위 방식)
+        CareGradeResult result = determineOverallCareGrade(assessment, adlScore, ltciGrade, careTargetStatus);
 
         // 5. 평가 결과 저장
         assessment.setOverallCareGrade(result.getGradeName());
 
-        log.info("케어 등급 계산 완료 - 회원: {}, ADL점수: {}, 종합등급: {}", 
-                assessment.getMemberId(), adlScore, result.getGradeName());
+        log.info("케어 등급 계산 완료 - 회원: {}, ADL점수: {}, 종합등급: {}, 특화케어: {}", 
+                assessment.getMemberId(), adlScore, result.getGradeName(), assessment.getSpecializedCareType());
 
         return result;
     }
@@ -72,47 +72,108 @@ public class CareGradeCalculator {
     }
 
     /**
-     * 종합 케어 등급 결정
+     * 종합 케어 등급 결정 (KB라이프생명 우선순위 로직 적용)
      */
-    private CareGradeResult determineOverallCareGrade(int adlScore, int ltciGrade, int careTargetStatus) {
+    private CareGradeResult determineOverallCareGrade(HealthAssessment assessment, int adlScore, int ltciGrade, int careTargetStatus) {
         
-        // 호스피스 케어 우선 판정 (생명예후 상태 1-2)
-        if (careTargetStatus <= 2) {
+        // === 1단계: 특수 상황 우선 적용 (KB라이프생명 방식) ===
+        if (careTargetStatus == 1) { // 6개월 이하 기대수명
+            return createHospiceGrade("생명위험 고도", "6개월 이하 기대수명 상태");
+        }
+        
+        if (careTargetStatus == 2) { // 회복 어려운 상황
+            return createHospiceGrade("생명위험 중등도", "질병 회복이 어려운 상황");
+        }
+        
+        if (careTargetStatus == 3) { // 완전 의존적 상태
             return CareGradeResult.builder()
                     .gradeLevel(1)
-                    .gradeName("호스피스 케어")
-                    .description("생애말기 전문 케어가 필요한 상태")
-                    .recommendedFacilityTypes("호스피스 전문시설, 요양병원")
+                    .gradeName("1등급 (최중증 - 완전의존)")
+                    .description("완전히 타인에게 의존적인 상태")
+                    .recommendedFacilityTypes("전문 요양병원, A등급 요양시설")
                     .urgencyLevel("매우 높음")
-                    .medicalSupport("의료진 24시간 상주 필수")
+                    .medicalSupport("의료진 24시간 상주")
                     .build();
         }
 
-        // 인지지원등급 (치매 전문 케어)
+        // === 2단계: 중증 지표 우선 체크 (KB라이프생명 방식) ===
+        if (assessment != null) {
+            // 경관식(튜브 주입) 또는 배변활동 완전도움 → 최중증 판정
+            if ((assessment.getMealType() != null && assessment.getMealType() == 3) || 
+                (assessment.getToiletLevel() != null && assessment.getToiletLevel() == 3)) {
+                
+                return CareGradeResult.builder()
+                        .gradeLevel(1)
+                        .gradeName("1등급 (최중증 - 중증지표)")
+                        .description("경관식 또는 배변활동 완전도움 필요")
+                        .recommendedFacilityTypes("요양병원, 전문 간병시설")
+                        .urgencyLevel("매우 높음")
+                        .medicalSupport("의료진 및 전문 간병인 상주")
+                        .build();
+            }
+        }
+
+        // === 3단계: 인지지원등급 (치매 전문 케어) ===
         if (ltciGrade == 6) {
-            return CareGradeResult.builder()
-                    .gradeLevel(6)
-                    .gradeName("인지지원등급 (치매 전문)")
-                    .description("치매 전문 케어가 필요한 상태")
-                    .recommendedFacilityTypes("치매 전문시설, 인지케어센터")
-                    .urgencyLevel("높음")
-                    .medicalSupport("치매 전문의 및 인지 프로그램")
-                    .build();
+            return createDementiaGrade(assessment);
         }
 
-        // 장기요양등급 기반 판정 (1-5등급)
+        // === 4단계: 장기요양등급 기반 판정 (1-5등급) ===
         if (ltciGrade >= 1 && ltciGrade <= 5) {
-            return createLtciBasedGrade(ltciGrade, adlScore);
+            return createLtciBasedGrade(ltciGrade, adlScore, assessment);
         }
 
-        // 장기요양등급이 없는 경우 ADL 점수 기반 추정
-        return createAdlBasedGrade(adlScore);
+        // === 5단계: 장기요양등급이 없는 경우 ADL 점수 기반 추정 ===
+        return createAdlBasedGrade(adlScore, assessment);
     }
 
     /**
-     * 장기요양보험 등급 기반 케어 등급 생성
+     * 호스피스 케어 등급 생성
      */
-    private CareGradeResult createLtciBasedGrade(int ltciGrade, int adlScore) {
+    private CareGradeResult createHospiceGrade(String severityLevel, String description) {
+        return CareGradeResult.builder()
+                .gradeLevel(0) // 특별 등급
+                .gradeName("호스피스 케어 (" + severityLevel + ")")
+                .description(description)
+                .recommendedFacilityTypes("호스피스 전문시설, 완화의료센터")
+                .urgencyLevel("최우선")
+                .medicalSupport("완화의료 전문의, 24시간 케어팀")
+                .build();
+    }
+
+    /**
+     * 치매 전문 케어 등급 생성 (질환 정보 반영)
+     */
+    private CareGradeResult createDementiaGrade(HealthAssessment assessment) {
+        String description = "치매 전문 케어가 필요한 상태";
+        String facilityTypes = "치매 전문시설, 인지케어센터";
+        
+        // 질환 정보가 있으면 더 세밀한 추천
+        if (assessment != null && assessment.getDiseaseTypes() != null) {
+            if (assessment.getDiseaseTypes().contains("PARKINSON")) {
+                description += " (파킨슨 복합)";
+                facilityTypes = "파킨슨-치매 복합 전문시설, 신경과 연계 시설";
+            } else if (assessment.getDiseaseTypes().contains("STROKE")) {
+                description += " (뇌혈관성 치매)";
+                facilityTypes = "재활-치매 복합 전문시설, 뇌혈관 전문 센터";
+            }
+        }
+        
+        return CareGradeResult.builder()
+                .gradeLevel(6)
+                .gradeName("인지지원등급 (치매 전문)")
+                .description(description)
+                .recommendedFacilityTypes(facilityTypes)
+                .urgencyLevel("높음")
+                .medicalSupport("치매 전문의, 인지재활 프로그램")
+                .build();
+    }
+
+
+    /**
+     * 장기요양보험 등급 기반 케어 등급 생성 (질환 정보 반영)
+     */
+    private CareGradeResult createLtciBasedGrade(int ltciGrade, int adlScore, HealthAssessment assessment) {
         switch (ltciGrade) {
             case 1:
                 return CareGradeResult.builder()
@@ -165,14 +226,14 @@ public class CareGradeCalculator {
                         .build();
 
             default:
-                return createAdlBasedGrade(adlScore);
+                return createAdlBasedGrade(adlScore, assessment);
         }
     }
 
     /**
-     * ADL 점수 기반 케어 등급 추정 (장기요양등급이 없는 경우)
+     * ADL 점수 기반 케어 등급 추정 (장기요양등급이 없는 경우, 질환 정보 반영)
      */
-    private CareGradeResult createAdlBasedGrade(int adlScore) {
+    private CareGradeResult createAdlBasedGrade(int adlScore, HealthAssessment assessment) {
         if (adlScore >= 250) {
             return CareGradeResult.builder()
                     .gradeLevel(1)
