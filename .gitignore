@@ -1,0 +1,263 @@
+# ===========================================
+# LightCare 프로젝트 .gitignore
+# ===========================================
+
+# ===========================================
+# 환경변수 및 보안 파일 (절대 커밋 금지!)
+# ===========================================
+.env
+.env.local
+.env.dev
+.env.prod
+.env.staging
+*.env
+secrets/
+config/secrets.yml
+application-secret.yml
+
+# API 키 파일
+api-keys.txt
+keys/
+credentials/
+
+# ===========================================
+# Java/Spring Boot
+# ===========================================
+# 컴파일된 클래스 파일
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven (혹시 사용할 경우)
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Spring Boot
+*.jar
+*.war
+*.orig
+spring-boot-*.txt
+.factorypath
+
+# ===========================================
+# 데이터베이스 (SQLite)
+# ===========================================
+*.db
+*.sqlite
+*.sqlite3
+data/
+database/
+db/
+# 테스트 DB 제외
+!**/src/test/resources/**/*.db
+
+# ===========================================
+# 로그 파일
+# ===========================================
+*.log
+logs/
+log/
+*.log.*
+application.log
+error.log
+debug.log
+
+# ===========================================
+# IDE 설정 파일
+# ===========================================
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# ===========================================
+# Node.js/React/Vite (프론트엔드)
+# ===========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 빌드 결과물
+dist/
+dist-ssr/
+build/
+
+# 환경변수 (프론트엔드)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===========================================
+# 운영체제
+# ===========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================================
+# 임시 파일 및 백업
+# ===========================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.#*
+\#*#
+.#*
+*.orig
+*.rej
+
+# ===========================================
+# 테스트 관련
+# ===========================================
+# 테스트 결과
+/test-results/
+/coverage/
+*.lcov
+.nyc_output
+
+# ===========================================
+# 배포 관련
+# ===========================================
+# Docker
+.dockerignore
+Dockerfile.prod
+docker-compose.override.yml
+
+# 배포 아티팩트
+deploy/
+deployment/
+.deploy/
+
+# ===========================================
+# 개발 도구
+# ===========================================
+# JProfiler
+*.jpb
+
+# YourKit
+*.hprof
+
+# JMeter
+*.jmx
+jmeter.log
+
+# ===========================================
+# 커스텀 제외 (프로젝트별)
+# ===========================================
+# 업로드된 파일들
+uploads/
+files/
+media/
+static/uploads/
+
+# 캐시 파일
+.cache/
+*.cache
+
+# 시크릿 백업
+*.secret
+*.private
+*.key
+*.pem
+*.p12
+*.pfx
+
+# 개발 중 메모 파일
+TODO.txt
+NOTES.txt
+scratch.txt
+temp.md
+
+# ===========================================
+# 중요: 실수로 커밋하기 쉬운 파일들
+# ===========================================
+# 설정 백업
+application-local.yml
+application-dev.yml.backup
+config-backup/
+
+# 개발 테스트 파일
+test-data.sql
+sample-data.json
+mock-data/
+
+# 성능 테스트 결과
+benchmark/
+performance-test/
