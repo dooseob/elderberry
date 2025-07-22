@@ -33,9 +33,9 @@
 
 ---
 
-## 🚀 현재 진행 단계: Phase 2-A
+## 🚀 현재 진행 단계: Phase 2-B
 
-**목표**: 기본 회원 기능 (예상 토큰: 10,000)
+**목표**: 국내/해외 사용자 구분 기능 (예상 토큰: 8,000)
 
 ### Phase 1 완료 ✅
 - [x] Spring Boot 3.3.5 + JDK 21 프로젝트 구조
@@ -44,15 +44,23 @@
 - [x] 8개 도메인 패키지 구조 + 공통 인프라
 - [x] CORS 설정 + 포괄적 예외 처리
 
-### Phase 2-A 구현 대상 ✅
+### Phase 2-A 완료 ✅
 - [x] Member 엔티티 (5가지 역할 지원)
 - [x] MemberRole enum 정의
 - [x] Repository 계층 (JPA 쿼리 메서드)
-- [x] Service 계층 (비즈니스 로직)
+- [x] Service 계층 (보안 강화된 비즈니스 로직)
 - [x] Controller 계층 (Auth/Member 분리)
 - [x] DTO 클래스들 (Request/Response)
+- [x] Production-level 유틸리티 (Security/Validation/Date)
+- [x] AOP 기반 로깅 및 성능 모니터링 시스템
 - [x] OpenAPI 문서화
-- [ ] 완성도 높은 테스트 코드
+
+### Phase 2-B 구현 대상 🚧
+- [ ] DomesticProfile 엔티티 (국내 사용자 추가 정보)
+- [ ] OverseasProfile 엔티티 (해외 사용자 추가 정보)
+- [ ] ProfileService 계층 (프로필 관리 비즈니스 로직)
+- [ ] ProfileController 계층 (프로필 CRUD API)
+- [ ] 다국어 지원 시스템 (i18n)
 
 ### 핵심 명령어
 ```bash
@@ -102,8 +110,8 @@ java -version
 
 ## 🎯 다음 단계
 
-1. **현재**: Phase 1-A 프로젝트 초기 설정
-2. **완료 후**: GitHub 연결 및 자동 커밋 설정
-3. **다음**: Phase 1-B 보안 설정
+1. **현재**: Phase 2-B 국내/해외 사용자 구분 기능
+2. **완료 후**: Phase 3-A 시설 관리 시스템
+3. **다음**: Phase 3-B 구인구직 매칭 시스템
 
 **상세 계획**: `docs/DEVELOPMENT_PLAN.md` 참조
