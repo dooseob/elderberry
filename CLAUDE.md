@@ -33,22 +33,26 @@
 
 ---
 
-## 🚀 현재 진행 단계: Phase 1-B
+## 🚀 현재 진행 단계: Phase 2-A
 
-**목표**: 보안 설정 (예상 토큰: 6,000)
+**목표**: 기본 회원 기능 (예상 토큰: 10,000)
 
-### Phase 1-A 완료 ✅
-- [x] Spring Boot 3.3.5 프로젝트 구조 생성
-- [x] SQLite 데이터베이스 설정
-- [x] 8개 도메인 패키지 구조
-- [x] Gradle 빌드 설정 (JDK 21)
-- [x] 공통 인프라 (BaseEntity, JpaConfig, GlobalExceptionHandler)
+### Phase 1 완료 ✅
+- [x] Spring Boot 3.3.5 + JDK 21 프로젝트 구조
+- [x] SQLite 데이터베이스 + Hibernate 6.x 설정
+- [x] JWT 기반 Spring Security 6.x 보안 시스템
+- [x] 8개 도메인 패키지 구조 + 공통 인프라
+- [x] CORS 설정 + 포괄적 예외 처리
 
-### Phase 1-B 구현 대상
-- [ ] Spring Security 6.x 설정
-- [ ] JWT 토큰 기반 인증
-- [ ] CORS 설정
-- [ ] 기본 예외 처리 확장
+### Phase 2-A 구현 대상 ✅
+- [x] Member 엔티티 (5가지 역할 지원)
+- [x] MemberRole enum 정의
+- [x] Repository 계층 (JPA 쿼리 메서드)
+- [x] Service 계층 (비즈니스 로직)
+- [x] Controller 계층 (Auth/Member 분리)
+- [x] DTO 클래스들 (Request/Response)
+- [x] OpenAPI 문서화
+- [ ] 완성도 높은 테스트 코드
 
 ### 핵심 명령어
 ```bash
@@ -71,6 +75,13 @@ java -version
 - Spring Boot 3.x 최신 패턴 사용
 - 보안 모범 사례 준수
 - 기존 컨벤션 따르기
+
+### 개발 방법론
+- **단계적 사고**: 복잡한 작업을 작은 단위로 분해
+- **MCP 도구 활용**: Task, Bash, Read, Edit, Write 등 적절히 조합
+- **Context 활용**: 기존 코드 패턴과 구조 참고
+- **점진적 구현**: 엔티티 → Repository → Service → Controller 순서
+- **고품질 테스트**: 단순 테스트 지양, 완성도 높은 정밀한 테스트 코드 작성
 
 ### Git 워크플로우
 - 작업 완료시마다 자동 커밋

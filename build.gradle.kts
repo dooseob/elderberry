@@ -49,6 +49,12 @@ dependencies {
     // API Documentation
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     
+    // Structured Logging
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+    
+    // AOP
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    
     // Caching
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("org.springframework.boot:spring-boot-starter-cache")
