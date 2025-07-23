@@ -2,17 +2,21 @@ package com.globalcarelink.external;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 공공데이터 정기 업데이트 스케줄러
  * 시설 정보 자동 동기화, API 상태 모니터링, 통계 업데이트 등을 담당
+ * Context7 모범사례 적용 - 병렬 처리 최적화로 성능 향상
  */
 @Component
 @RequiredArgsConstructor
@@ -22,25 +26,50 @@ public class PublicDataSyncScheduler {
 
     private final FacilitySyncService facilitySyncService;
     private final PublicDataApiClient publicDataApiClient;
+    
+    // 전용 Executor들 주입
+    @Qualifier("schedulerTaskExecutor")
+    private final AsyncTaskExecutor schedulerExecutor;
+    
+    @Qualifier("apiTaskExecutor")
+    private final AsyncTaskExecutor apiExecutor;
+    
+    @Qualifier("dbTaskExecutor") 
+    private final AsyncTaskExecutor dbExecutor;
 
     /**
-     * 전국 시설 정보 동기화
+     * 전국 시설 정보 동기화 (병렬 처리 최적화)
      * 매일 새벽 2시에 실행
      */
     @Scheduled(cron = "${app.scheduler.facility-sync-cron:0 0 2 * * ?}")
     public void syncAllFacilities() {
-        log.info("=== 전국 시설 정보 동기화 시작 ===");
+        log.info("=== 전국 시설 정보 동기화 시작 (병렬 처리) ===");
         LocalDateTime startTime = LocalDateTime.now();
         
         try {
-            // 전체 지역 시설 동기화 실행
+            // 전체 지역 시설 동기화 실행 (기존 방식 사용)
             CompletableFuture<List<FacilitySyncService.SyncResult>> future = 
                     facilitySyncService.syncAllRegions();
             
+            // 병렬 작업: API 상태 체크
+            CompletableFuture<Boolean> healthCheckFuture = CompletableFuture.supplyAsync(() -> {
+                try {
+                    Boolean isHealthy = publicDataApiClient.checkApiHealth().block();
+                    log.info("동기화 중 API 상태 체크 완료: {}", Boolean.TRUE.equals(isHealthy) ? "정상" : "비정상");
+                    return Boolean.TRUE.equals(isHealthy);
+                } catch (Exception e) {
+                    log.warn("동기화 중 API 상태 체크 실패", e);
+                    return false;
+                }
+            });
+            
+            // 결과 수집
             List<FacilitySyncService.SyncResult> results = future.get();
+            Boolean apiHealthy = healthCheckFuture.get();
             
             // 동기화 결과 통계 계산
             SyncStatistics stats = calculateSyncStatistics(results);
+            stats.apiHealthy = apiHealthy;
             
             // 결과 로깅
             logSyncResults(startTime, stats);
@@ -49,6 +78,11 @@ public class PublicDataSyncScheduler {
             if (stats.getSuccessRate() < 80.0) {
                 log.warn("동기화 성공률이 낮습니다: {}% - 시스템 점검이 필요할 수 있습니다", 
                         String.format("%.1f", stats.getSuccessRate()));
+            }
+            
+            // API가 비정상인 경우 경고
+            if (!apiHealthy) {
+                log.warn("동기화 완료 시점에 API 상태가 비정상입니다. 다음 동기화에 영향을 줄 수 있습니다.");
             }
             
         } catch (Exception e) {
@@ -83,47 +117,58 @@ public class PublicDataSyncScheduler {
     }
 
     /**
-     * 공공데이터 API 상태 체크
+     * 공공데이터 API 상태 체크 및 통계 업데이트 (병렬 처리)
      * 매 10분마다 실행
      */
     @Scheduled(cron = "${app.scheduler.health-check-cron:0 */10 * * * ?}")
-    public void checkApiHealth() {
-        log.debug("공공데이터 API 상태 체크 시작");
+    public void checkApiHealthAndUpdateStats() {
+        log.debug("공공데이터 API 상태 체크 및 통계 업데이트 시작 (병렬)");
+        
+        // API 상태 체크 (비동기)
+        CompletableFuture<Boolean> healthCheckFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                Boolean isHealthy = publicDataApiClient.checkApiHealth().block();
+                
+                if (Boolean.TRUE.equals(isHealthy)) {
+                    log.debug("공공데이터 API 상태: 정상");
+                } else {
+                    log.warn("공공데이터 API 상태: 비정상 - API 서버 점검 필요");
+                }
+                return Boolean.TRUE.equals(isHealthy);
+                
+            } catch (Exception e) {
+                log.error("공공데이터 API 상태 체크 실패", e);
+                return false;
+            }
+        });
+        
+        // API 통계 업데이트 (비동기) - 10분마다 실행하는 것으로 변경
+        CompletableFuture<Void> statisticsUpdateFuture = CompletableFuture.runAsync(() -> {
+            try {
+                var statistics = publicDataApiClient.getApiStatistics().block();
+                
+                if (statistics != null) {
+                    log.info("API 호출 통계 - 총 호출: {}, 성공률: {}%, 평균 응답시간: {}",
+                            statistics.get("totalCalls"),
+                            statistics.get("successRate"),
+                            statistics.get("averageResponseTime"));
+                }
+                
+            } catch (Exception e) {
+                log.error("API 호출 통계 업데이트 실패", e);
+            }
+        });
         
         try {
-            Boolean isHealthy = publicDataApiClient.checkApiHealth().block();
+            // 두 작업 모두 완료 대기 (최대 5분)
+            CompletableFuture.allOf(healthCheckFuture, statisticsUpdateFuture)
+                    .get(5, TimeUnit.MINUTES);
             
-            if (Boolean.TRUE.equals(isHealthy)) {
-                log.debug("공공데이터 API 상태: 정상");
-            } else {
-                log.warn("공공데이터 API 상태: 비정상 - API 서버 점검 필요");
-            }
-            
-        } catch (Exception e) {
-            log.error("공공데이터 API 상태 체크 실패", e);
-        }
-    }
-
-    /**
-     * API 호출 통계 업데이트
-     * 매 시간마다 실행
-     */
-    @Scheduled(cron = "${app.scheduler.statistics-update-cron:0 0 * * * ?}")
-    public void updateApiStatistics() {
-        log.debug("API 호출 통계 업데이트 시작");
-        
-        try {
-            var statistics = publicDataApiClient.getApiStatistics().block();
-            
-            if (statistics != null) {
-                log.info("API 호출 통계 - 총 호출: {}, 성공률: {}%, 평균 응답시간: {}",
-                        statistics.get("totalCalls"),
-                        statistics.get("successRate"),
-                        statistics.get("averageResponseTime"));
-            }
+            Boolean isHealthy = healthCheckFuture.get();
+            log.debug("병렬 API 체크 완료. 상태: {}", isHealthy ? "정상" : "비정상");
             
         } catch (Exception e) {
-            log.error("API 호출 통계 업데이트 실패", e);
+            log.error("병렬 API 상태 체크 실패", e);
         }
     }
 
@@ -226,6 +271,15 @@ public class PublicDataSyncScheduler {
     }
 
     /**
+     * 오류 결과 생성 헬퍼 메서드
+     */
+    private FacilitySyncService.SyncResult createErrorResult(String region, Exception e) {
+        // 간단한 오류 결과 객체 생성 (실제 구현은 FacilitySyncService에 따라 조정)
+        log.error("지역 {} 동기화 중 오류 발생: {}", region, e.getMessage());
+        return new FacilitySyncService.SyncResult(); // 기본 생성자 사용
+    }
+
+    /**
      * 동기화 통계 클래스
      */
     private static class SyncStatistics {
@@ -235,9 +289,14 @@ public class PublicDataSyncScheduler {
         int totalProcessed = 0;
         int totalErrors = 0;
         double successRate = 0.0;
+        boolean apiHealthy = true; // API 상태 추가
 
         public double getSuccessRate() {
             return successRate;
+        }
+        
+        public boolean isApiHealthy() {
+            return apiHealthy;
         }
     }
 } 

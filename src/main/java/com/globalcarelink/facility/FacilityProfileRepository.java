@@ -60,6 +60,45 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
     List<FacilityProfile> findByRegionAndDistrict(String region, String district);
 
     /**
+     * 지역별 조회 (페이징)
+     */
+    Page<FacilityProfile> findByRegion(String region, Pageable pageable);
+
+    /**
+     * 구/군별 조회 (페이징)
+     */
+    Page<FacilityProfile> findByRegionAndDistrict(String region, String district, Pageable pageable);
+
+    /**
+     * 복합 조건 조회 (지역 + 타입 + 등급, 페이징)
+     */
+    @Query("""
+        SELECT f FROM FacilityProfile f 
+        WHERE (:region IS NULL OR f.region = :region)
+        AND (:facilityType IS NULL OR f.facilityType = :facilityType)
+        AND (:grade IS NULL OR f.facilityGrade = :grade)
+        ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
+        """)
+    Page<FacilityProfile> findByRegionAndFacilityTypeAndGrade(@Param("region") String region,
+                                                             @Param("facilityType") String facilityType,
+                                                             @Param("grade") String grade,
+                                                             Pageable pageable);
+
+    /**
+     * 케어 등급 + 지역 조회 (페이징)
+     */
+    @Query("""
+        SELECT f FROM FacilityProfile f 
+        JOIN f.acceptableCareGrades g 
+        WHERE g = :careGrade 
+        AND (:region IS NULL OR f.region = :region)
+        ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
+        """)
+    Page<FacilityProfile> findByAcceptableCareGradesContainingAndRegion(@Param("careGrade") Integer careGrade,
+                                                                       @Param("region") String region,
+                                                                       Pageable pageable);
+
+    /**
      * 주소 기반 검색
      */
     List<FacilityProfile> findByAddressContainingIgnoreCase(String addressKeyword);

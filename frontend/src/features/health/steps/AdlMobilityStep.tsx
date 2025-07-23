@@ -1,33 +1,18 @@
 /**
  * ADL 평가 - 걷기 활동 능력
  * KB라이프생명 기반 이동성 평가
+ * AdlStepBase를 사용하여 리팩토링됨
  */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Activity, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { ADL_OPTIONS } from '@/types/health';
+import AdlStepBase from '@/components/health/AdlStepBase';
 import type { AdlLevel } from '@/types/health';
-import RadioGroup, { type RadioOption } from '@/components/ui/RadioGroup';
 
 const AdlMobilityStep: React.FC = () => {
-  const {
-    formData,
-    errors,
-    updateAdlScore,
-    clearError
-  } = useHealthAssessmentStore();
-
-  // 이동성 평가 옵션 변환
-  const mobilityOptions: RadioOption[] = Object.entries(ADL_OPTIONS.mobility).map(([value, label]) => ({
-    value: parseInt(value) as AdlLevel,
-    label,
-    description: getMobilityDescription(parseInt(value) as AdlLevel),
-  }));
-
   // 평가 레벨별 상세 설명
-  function getMobilityDescription(level: AdlLevel): string {
+  const getMobilityDescription = (level: AdlLevel): string => {
     switch (level) {
       case 1:
         return '보조기구 없이 자유롭게 걸을 수 있음';
@@ -38,12 +23,10 @@ const AdlMobilityStep: React.FC = () => {
       default:
         return '';
     }
-  }
+  };
 
   // 현재 선택된 레벨에 따른 추가 정보
-  const getAdditionalInfo = (level?: AdlLevel) => {
-    if (!level) return null;
-
+  const renderAdditionalInfo = (level: AdlLevel): React.ReactNode => {
     const infoConfig = {
       1: {
         icon: <CheckCircle2 className="w-5 h-5 text-green-500" />,
@@ -95,108 +78,62 @@ const AdlMobilityStep: React.FC = () => {
     );
   };
 
-  return (
-    <div className="space-y-6">
-      {/* 섹션 헤더 */}
-      <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Activity className="w-6 h-6 text-elderberry-600" />
-          <h2 className="text-xl font-semibold text-elderberry-800">
-            걷기 활동 능력 평가
-          </h2>
-        </div>
-        <p className="text-elderberry-600">
-          평소 일상생활에서의 이동 능력을 가장 잘 나타내는 항목을 선택해주세요
-        </p>
-      </div>
-
-      {/* 평가 질문 */}
-      <div className="bg-elderberry-50 p-6 rounded-lg border border-elderberry-200">
-        <h3 className="font-medium text-elderberry-800 mb-4 text-center">
-          "평상시 걷기나 이동을 할 때 어떤 상태인가요?"
-        </h3>
-        
-        <RadioGroup
-          name="mobilityLevel"
-          value={formData.mobilityLevel}
-          options={mobilityOptions}
-          onChange={(value) => {
-            updateAdlScore('mobilityLevel', value as AdlLevel);
-            clearError('mobilityLevel');
-          }}
-          error={errors.mobilityLevel}
-          required={true}
-          direction="vertical"
-        />
-      </div>
-
-      {/* 선택된 레벨에 따른 추가 정보 */}
-      {formData.mobilityLevel && getAdditionalInfo(formData.mobilityLevel)}
-
-      {/* 평가 가이드라인 */}
-      <motion.div
-        className="p-4 bg-blue-50 border border-blue-200 rounded-lg"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h4 className="font-medium text-blue-800 mb-2">📋 평가 가이드라인</h4>
-        <ul className="text-sm text-blue-600 space-y-1">
-          <li>• <strong>평상시 상태</strong>를 기준으로 평가해주세요</li>
-          <li>• <strong>몸이 아픈 날</strong>이 아닌 일반적인 상태를 고려하세요</li>
-          <li>• 보조기구를 사용하는 경우, 해당 기구를 사용한 상태로 평가하세요</li>
-          <li>• 안전상 이유로 제한하는 경우도 실제 능력을 기준으로 평가하세요</li>
-        </ul>
-      </motion.div>
-
-      {/* 점수 정보 */}
-      {formData.mobilityLevel && (
-        <motion.div
-          className="text-center text-sm text-elderberry-600"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-elderberry-100 rounded-full">
-            <span>현재 점수:</span>
-            <span className="font-semibold text-elderberry-800">
-              {formData.mobilityLevel} / 3점
-            </span>
-          </div>
-          <p className="mt-2 text-xs">
-            점수가 높을수록 더 많은 도움이 필요한 상태입니다
-          </p>
-        </motion.div>
-      )}
-
-      {/* 예시 상황 */}
-      <details className="group">
-        <summary className="cursor-pointer font-medium text-elderberry-700 hover:text-elderberry-800 transition-colors">
-          💡 구체적인 예시 상황 보기
-        </summary>
-        <motion.div
-          className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="space-y-3 text-sm text-gray-700">
-            <div>
-              <strong className="text-green-700">1점 (독립):</strong>
-              <p>마트에서 쇼핑을 하거나 산책을 혼자서 할 수 있음</p>
-            </div>
-            <div>
-              <strong className="text-orange-700">2점 (부분도움):</strong>
-              <p>지팡이를 짚고 걷거나, 가족이 팔을 잡아주면 걸을 수 있음</p>
-            </div>
-            <div>
-              <strong className="text-red-700">3점 (완전도움):</strong>
-              <p>휠체어를 사용하거나 침대에서 대부분 생활함</p>
-            </div>
-          </div>
-        </motion.div>
-      </details>
+  // 가이드라인
+  const guidelines = (
+    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h4 className="font-medium text-blue-800 mb-2">📋 평가 가이드라인</h4>
+      <ul className="text-sm text-blue-600 space-y-1">
+        <li>• <strong>평상시 상태</strong>를 기준으로 평가해주세요</li>
+        <li>• <strong>몸이 아픈 날</strong>이 아닌 일반적인 상태를 고려하세요</li>
+        <li>• 보조기구를 사용하는 경우, 해당 기구를 사용한 상태로 평가하세요</li>
+        <li>• 안전상 이유로 제한하는 경우도 실제 능력을 기준으로 평가하세요</li>
+      </ul>
     </div>
+  );
+
+  // 예시 상황
+  const exampleSituations = (
+    <details className="group">
+      <summary className="cursor-pointer font-medium text-elderberry-700 hover:text-elderberry-800 transition-colors">
+        💡 구체적인 예시 상황 보기
+      </summary>
+      <motion.div
+        className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg"
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 'auto' }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="space-y-3 text-sm text-gray-700">
+          <div>
+            <strong className="text-green-700">1점 (독립):</strong>
+            <p>마트에서 쇼핑을 하거나 산책을 혼자서 할 수 있음</p>
+          </div>
+          <div>
+            <strong className="text-orange-700">2점 (부분도움):</strong>
+            <p>지팡이를 짚고 걷거나, 가족이 팔을 잡아주면 걸을 수 있음</p>
+          </div>
+          <div>
+            <strong className="text-red-700">3점 (완전도움):</strong>
+            <p>휠체어를 사용하거나 침대에서 대부분 생활함</p>
+          </div>
+        </div>
+      </motion.div>
+    </details>
+  );
+
+  return (
+    <AdlStepBase
+      icon={Activity}
+      title="걷기 활동 능력 평가"
+      description="평소 일상생활에서의 이동 능력을 가장 잘 나타내는 항목을 선택해주세요"
+      questionText="평상시 걷기나 이동을 할 때 어떤 상태인가요?"
+      adlCategory="mobility"
+      fieldName="mobilityLevel"
+      getDescription={getMobilityDescription}
+      renderAdditionalInfo={renderAdditionalInfo}
+      guidelines={guidelines}
+      exampleSituations={exampleSituations}
+    />
   );
 };
 
