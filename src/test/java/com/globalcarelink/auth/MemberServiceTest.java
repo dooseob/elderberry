@@ -54,7 +54,7 @@ class MemberServiceTest {
                 .password("encoded_password")
                 .name("테스트사용자")
                 .phoneNumber("010-1234-5678")
-                .role(MemberRole.DOMESTIC_USER)
+                .role(MemberRole.USER_DOMESTIC)
                 .isJobSeeker(true)
                 .language("ko")
                 .region("서울")
@@ -65,7 +65,7 @@ class MemberServiceTest {
                 .password("plainPassword123")
                 .name("신규사용자")
                 .phoneNumber("010-9876-5432")
-                .role(MemberRole.OVERSEAS_USER)
+                .role(MemberRole.USER_OVERSEAS)
                 .isJobSeeker(false)
                 .language("en")
                 .region("New York")
@@ -161,7 +161,7 @@ class MemberServiceTest {
                 .email("test@example.com")
                 .password("encoded_password")
                 .name("테스트사용자")
-                .role(MemberRole.DOMESTIC_USER)
+                .role(MemberRole.USER_DOMESTIC)
                 .isActive(false)
                 .build();
                 
@@ -258,14 +258,14 @@ class MemberServiceTest {
     @DisplayName("역할별 회원 조회")
     void findByRole_Success() {
         List<Member> members = List.of(testMember);
-        given(memberRepository.findByRole(MemberRole.DOMESTIC_USER)).willReturn(members);
+        given(memberRepository.findByRole(MemberRole.USER_DOMESTIC)).willReturn(members);
 
-        List<MemberResponse> result = memberService.findByRole(MemberRole.DOMESTIC_USER);
+        List<MemberResponse> result = memberService.findByRole(MemberRole.USER_DOMESTIC);
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getRole()).isEqualTo(MemberRole.DOMESTIC_USER);
+        assertThat(result.get(0).getRole()).isEqualTo(MemberRole.USER_DOMESTIC);
         
-        then(memberRepository).should().findByRole(MemberRole.DOMESTIC_USER);
+        then(memberRepository).should().findByRole(MemberRole.USER_DOMESTIC);
     }
 
     @Test

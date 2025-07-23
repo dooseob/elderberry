@@ -1,12 +1,12 @@
 spring:
   application:
-    name: global-care-link
+    name: elderberry
   
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   
   datasource:
-    url: ${DATABASE_URL:jdbc:sqlite:./data/lightcare.db}
+    url: ${DATABASE_URL:jdbc:sqlite:./data/elderberry.db}
     driver-class-name: org.sqlite.JDBC
     username: ""
     password: ""

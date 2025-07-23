@@ -1,6 +1,6 @@
 /**
  * 메인 앱 컴포넌트
- * LightCare 글로벌 요양원 구인구직 서비스
+ * Elderberry 글로벌 요양원 구인구직 서비스
  */
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -51,7 +51,7 @@ function App() {
                 <div className="min-h-screen bg-elderberry-25 flex items-center justify-center">
                   <div className="text-center">
                     <h1 className="text-4xl font-bold text-elderberry-800 mb-4">
-                      LightCare
+                      Elderberry
                     </h1>
                     <p className="text-elderberry-600 mb-8">
                       글로벌 요양원 구인구직 서비스

@@ -31,8 +31,8 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        domesticUser = createMember("domestic@test.com", "국내사용자", MemberRole.DOMESTIC_USER, true, "ko", "서울");
-        overseasUser = createMember("overseas@test.com", "해외사용자", MemberRole.OVERSEAS_USER, true, "en", "New York");
+        domesticUser = createMember("domestic@test.com", "국내사용자", MemberRole.USER_DOMESTIC, true, "ko", "서울");
+        overseasUser = createMember("overseas@test.com", "해외사용자", MemberRole.USER_OVERSEAS, true, "en", "New York");
         coordinator = createMember("coordinator@test.com", "코디네이터", MemberRole.COORDINATOR, false, "ko", "서울");
         facilityAdmin = createMember("facility@test.com", "시설관리자", MemberRole.FACILITY, false, "ko", "부산");
         
@@ -49,7 +49,7 @@ class MemberRepositoryTest {
         
         assertThat(found).isPresent();
         assertThat(found.get().getName()).isEqualTo("국내사용자");
-        assertThat(found.get().getRole()).isEqualTo(MemberRole.DOMESTIC_USER);
+        assertThat(found.get().getRole()).isEqualTo(MemberRole.USER_DOMESTIC);
     }
 
     @Test
@@ -79,7 +79,7 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("역할별 회원 조회")
     void findByRole_Success() {
-        List<Member> users = memberRepository.findByRole(MemberRole.DOMESTIC_USER);
+        List<Member> users = memberRepository.findByRole(MemberRole.USER_DOMESTIC);
         
         assertThat(users).hasSize(1);
         assertThat(users.get(0).getEmail()).isEqualTo("domestic@test.com");
@@ -125,7 +125,7 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("역할별 회원 수 카운트")
     void countByRole_Success() {
-        long userCount = memberRepository.countByRole(MemberRole.DOMESTIC_USER);
+        long userCount = memberRepository.countByRole(MemberRole.USER_DOMESTIC);
         long coordinatorCount = memberRepository.countByRole(MemberRole.COORDINATOR);
         
         assertThat(userCount).isEqualTo(1);
@@ -135,7 +135,7 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("활성 회원 수 카운트")
     void countByRoleAndIsActive_Success() {
-        long activeUsers = memberRepository.countByRoleAndIsActive(MemberRole.DOMESTIC_USER, true);
+        long activeUsers = memberRepository.countByRoleAndIsActive(MemberRole.USER_DOMESTIC, true);
         
         assertThat(activeUsers).isEqualTo(1);
     }
@@ -143,12 +143,12 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("복수 역할로 회원 조회")
     void findByRolesAndIsActive_Success() {
-        List<MemberRole> userRoles = List.of(MemberRole.DOMESTIC_USER, MemberRole.OVERSEAS_USER);
+        List<MemberRole> userRoles = List.of(MemberRole.USER_DOMESTIC, MemberRole.USER_OVERSEAS);
         List<Member> users = memberRepository.findByRolesAndIsActive(userRoles, true);
         
         assertThat(users).hasSize(2);
         assertThat(users).extracting(Member::getRole)
-                .containsExactlyInAnyOrder(MemberRole.DOMESTIC_USER, MemberRole.OVERSEAS_USER);
+                .containsExactlyInAnyOrder(MemberRole.USER_DOMESTIC, MemberRole.USER_OVERSEAS);
     }
 
     private Member createMember(String email, String name, MemberRole role, boolean isJobSeeker, String language, String region) {

@@ -50,7 +50,7 @@ class AuthControllerTest {
                 .password("password123")
                 .name("테스트사용자")
                 .phoneNumber("010-1234-5678")
-                .role(MemberRole.DOMESTIC_USER)
+                .role(MemberRole.USER_DOMESTIC)
                 .isJobSeeker(true)
                 .language("ko")
                 .region("서울")
@@ -71,7 +71,7 @@ class AuthControllerTest {
                 .email("test@example.com")
                 .name("테스트사용자")
                 .phoneNumber("010-1234-5678")
-                .role(MemberRole.DOMESTIC_USER)
+                .role(MemberRole.USER_DOMESTIC)
                 .isJobSeeker(true)
                 .isActive(true)
                 .language("ko")
@@ -101,7 +101,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.email").value("test@example.com"))
                 .andExpect(jsonPath("$.name").value("테스트사용자"))
-                .andExpect(jsonPath("$.role").value("DOMESTIC_USER"))
+                .andExpect(jsonPath("$.role").value("USER_DOMESTIC"))
                 .andExpect(jsonPath("$.isJobSeeker").value(true))
                 .andExpect(jsonPath("$.isActive").value(true))
                 .andExpect(jsonPath("$.language").value("ko"))
@@ -167,8 +167,8 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.accessToken").value("jwt_access_token"))
                 .andExpect(jsonPath("$.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.expiresIn").value(86400000L))
-                .andExpected(jsonPath("$.member.email").value("test@example.com"))
-                .andExpected(jsonPath("$.member.role").value("DOMESTIC_USER"));
+                .andExpect(jsonPath("$.member.email").value("test@example.com"))
+                .andExpect(jsonPath("$.member.role").value("USER_DOMESTIC"));
     }
 
     @Test
@@ -179,10 +179,10 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidLoginRequest)))
                 .andDo(print())
-                .andExpected(status().isBadRequest())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.status").value(400))
-                .andExpected(jsonPath("$.message").value("입력 값이 올바르지 않습니다"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("입력 값이 올바르지 않습니다"));
     }
 
     @Test
@@ -196,11 +196,11 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validLoginRequest)))
                 .andDo(print())
-                .andExpected(status().isUnauthorized())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.status").value(401))
-                .andExpected(jsonPath("$.error").value("Unauthorized"))
-                .andExpected(jsonPath("$.message").value("이메일 또는 비밀번호가 올바르지 않습니다"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.error").value("Unauthorized"))
+                .andExpect(jsonPath("$.message").value("이메일 또는 비밀번호가 올바르지 않습니다"));
     }
 
     @Test
@@ -214,26 +214,26 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validLoginRequest)))
                 .andDo(print())
-                .andExpected(status().isForbidden())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.status").value(403))
-                .andExpected(jsonPath("$.message").value("비활성화된 계정입니다"));
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.message").value("비활성화된 계정입니다"));
     }
 
     @Test
     @DisplayName("내 정보 조회 성공")
-    @WithMockUser(username = "test@example.com", roles = "DOMESTIC_USER")
+    @WithMockUser(username = "test@example.com", roles = "USER_DOMESTIC")
     void getCurrentMember_Success() throws Exception {
         given(memberService.findByEmail("test@example.com")).willReturn(memberResponse);
 
         mockMvc.perform(get("/api/auth/me")
                         .param("email", "test@example.com"))
                 .andDo(print())
-                .andExpected(status().isOk())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.email").value("test@example.com"))
-                .andExpected(jsonPath("$.name").value("테스트사용자"))
-                .andExpected(jsonPath("$.role").value("DOMESTIC_USER"));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.name").value("테스트사용자"))
+                .andExpect(jsonPath("$.role").value("USER_DOMESTIC"));
     }
 
     @Test
@@ -246,10 +246,10 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/auth/me")
                         .param("email", "notexist@example.com"))
                 .andDo(print())
-                .andExpected(status().isNotFound())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpected(jsonPath("$.status").value(404))
-                .andExpected(jsonPath("$.message").value("존재하지 않는 회원입니다"));
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 회원입니다"));
     }
 
     @Test
@@ -258,7 +258,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/auth/me")
                         .param("email", "test@example.com"))
                 .andDo(print())
-                .andExpected(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -268,7 +268,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validRegisterRequest)))
                 .andDo(print())
-                .andExpected(status().isForbidden());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -278,7 +278,7 @@ class AuthControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpected(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -288,6 +288,6 @@ class AuthControllerTest {
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(validRegisterRequest)))
                 .andDo(print())
-                .andExpected(status().isUnsupportedMediaType());
+                .andExpect(status().isUnsupportedMediaType());
     }
 }

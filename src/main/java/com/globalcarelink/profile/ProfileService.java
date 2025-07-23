@@ -228,13 +228,13 @@ public class ProfileService {
     }
     
     private void validateMemberForDomesticProfile(Member member) {
-        if (member.getRole() == MemberRole.OVERSEAS_USER) {
+        if (member.getRole() == MemberRole.USER_OVERSEAS) {
             throw new CustomException.BadRequest("해외 사용자는 국내 프로필을 생성할 수 없습니다");
         }
     }
     
     private void validateMemberForOverseasProfile(Member member) {
-        if (member.getRole() == MemberRole.DOMESTIC_USER) {
+        if (member.getRole() == MemberRole.USER_DOMESTIC) {
             throw new CustomException.BadRequest("국내 사용자는 해외 프로필을 생성할 수 없습니다");
         }
     }

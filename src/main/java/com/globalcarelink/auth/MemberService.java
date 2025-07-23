@@ -204,7 +204,7 @@ public class MemberService {
 
     private void validateRoleSpecificRules(MemberRegisterRequest request) {
         switch (request.getRole()) {
-            case OVERSEAS_USER:
+            case USER_OVERSEAS:
                 if (!StringUtils.hasText(request.getRegion())) {
                     throw new CustomException.BadRequest("해외 사용자는 지역 정보가 필수입니다");
                 }
