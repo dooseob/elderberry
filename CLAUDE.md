@@ -6,7 +6,7 @@
 
 ## 📌 프로젝트 개요
 
-**글로벌 요양원 구인구직 웹사이트 "라이트케어(LightCare)"**
+**글로벌 요양원 구인구직 웹사이트 "엘더베리(Elderberry)"**
 - 재외동포 대상 글로벌 요양 서비스
 - JDK 21 + Spring Boot 3.3.5 기반 신규 프로젝트
 - 자본금 0원 개발 전략 (무료 서비스 활용)
@@ -108,7 +108,7 @@ cd frontend && npm install && npm run dev
 
 ### 개발 방법론
 - **단계적 사고**: 복잡한 작업을 작은 단위로 분해
-- **MCP 도구 활용**: Task, Bash, Read, Edit, Write 등 적절히 조합
+- **MCP 도구 활용**: context7, Sequential Thinking, githud, memorybank, filesystem
 - **Context 활용**: 기존 코드 패턴과 구조 참고
 - **점진적 구현**: 엔티티 → Repository → Service → Controller 순서
 - **고품질 테스트**: 단순 테스트 지양, 완성도 높은 정밀한 테스트 코드 작성

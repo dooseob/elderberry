@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(java:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(gradle:*)",
+      "Bash(chmod:*)",
+      "Bash(wc:*)",
+      "Bash(./gradlew:*)",
+      "Bash(export:*)",
+      "Bash(ls:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": []
+  }
+}

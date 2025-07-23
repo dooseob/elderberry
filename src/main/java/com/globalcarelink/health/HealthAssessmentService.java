@@ -2,6 +2,9 @@ package com.globalcarelink.health;
 
 import com.globalcarelink.common.exception.CustomException;
 import com.globalcarelink.common.util.ValidationUtil;
+import com.globalcarelink.health.dto.HealthAssessmentCreateRequest;
+import com.globalcarelink.health.dto.HealthAssessmentUpdateRequest;
+import com.globalcarelink.health.dto.HealthAssessmentStatistics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -69,10 +72,19 @@ public class HealthAssessmentService {
     }
 
     /**
+     * ID로 건강 평가 조회
+     */
+    public Optional<HealthAssessment> getAssessmentById(Long assessmentId) {
+        return healthAssessmentRepository.findById(assessmentId);
+    }
+
+    /**
      * 회원별 최신 건강 평가 조회
      */
     public Optional<HealthAssessment> getLatestAssessmentByMemberId(String memberId) {
-        ValidationUtil.validateStringField(memberId, "회원 ID");
+        if (memberId == null || memberId.trim().isEmpty()) {
+            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        }
         
         return healthAssessmentRepository.findTopByMemberIdOrderByAssessmentDateDesc(memberId);
     }
@@ -81,7 +93,9 @@ public class HealthAssessmentService {
      * 회원별 건강 평가 이력 조회
      */
     public List<HealthAssessment> getAssessmentHistoryByMemberId(String memberId) {
-        ValidationUtil.validateStringField(memberId, "회원 ID");
+        if (memberId == null || memberId.trim().isEmpty()) {
+            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        }
         
         return healthAssessmentRepository.findByMemberIdOrderByAssessmentDateDesc(memberId);
     }
@@ -90,7 +104,9 @@ public class HealthAssessmentService {
      * 건강 평가 페이징 조회
      */
     public Page<HealthAssessment> getAssessmentsByMemberId(String memberId, Pageable pageable) {
-        ValidationUtil.validateStringField(memberId, "회원 ID");
+        if (memberId == null || memberId.trim().isEmpty()) {
+            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        }
         
         return healthAssessmentRepository.findByMemberIdOrderByAssessmentDateDesc(memberId, pageable);
     }
@@ -233,7 +249,9 @@ public class HealthAssessmentService {
      * 회원의 평가 개선 추이 분석
      */
     public List<Map<String, Object>> getMemberAssessmentTrend(String memberId) {
-        ValidationUtil.validateStringField(memberId, "회원 ID");
+        if (memberId == null || memberId.trim().isEmpty()) {
+            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        }
         
         return healthAssessmentRepository.findMemberAssessmentTrend(memberId);
     }
@@ -255,7 +273,9 @@ public class HealthAssessmentService {
 
     private void validateAssessmentRequest(HealthAssessmentCreateRequest request) {
         // 필수 필드 검증
-        ValidationUtil.validateStringField(request.getMemberId(), "회원 ID");
+        if (request.getMemberId() == null || request.getMemberId().trim().isEmpty()) {
+            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        }
         
         if (request.getMobilityLevel() == null || request.getEatingLevel() == null ||
             request.getToiletLevel() == null || request.getCommunicationLevel() == null) {
