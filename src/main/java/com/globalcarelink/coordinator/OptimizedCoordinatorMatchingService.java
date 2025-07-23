@@ -3,6 +3,8 @@ package com.globalcarelink.coordinator;
 import com.globalcarelink.health.HealthAssessment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -19,6 +21,9 @@ public class OptimizedCoordinatorMatchingService {
     private final CoordinatorWorkloadOptimizer workloadOptimizer;
     private final MatchingExplanationGenerator explanationGenerator;
 
+    @Cacheable(value = "coordinator-matches", 
+               key = "#assessment.id + '_' + #preference.preferredLanguage + '_' + #preference.preferredRegion + '_' + #preference.maxResults",
+               condition = "#preference.maxResults <= 50")
     public List<CoordinatorMatch> findOptimalMatches(HealthAssessment assessment, MatchingPreference preference) {
         log.info("코디네이터 매칭 시작 - 케어등급: {}, 언어: {}", 
                 assessment.getOverallCareGrade(), preference.getPreferredLanguage());
@@ -40,6 +45,12 @@ public class OptimizedCoordinatorMatchingService {
                 .collect(Collectors.toList());
     }
 
+    @CacheEvict(value = "coordinator-matches", allEntries = true)
+    public void evictMatchingCache() {
+        log.info("코디네이터 매칭 캐시 삭제");
+    }
+
+    @Cacheable(value = "coordinator-settings", key = "#careGrade")
     private List<CoordinatorCareSettings> filterByBasicQualifications(HealthAssessment assessment) {
         Integer careGrade = assessment.getCareGradeLevel();
         return careSettingsRepository.findEligibleForCareGrade(careGrade);
@@ -65,6 +76,11 @@ public class OptimizedCoordinatorMatchingService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "language-skills", key = "#coordinatorId")
+    private List<CoordinatorLanguageSkill> getCoordinatorLanguageSkills(String coordinatorId) {
+        return languageSkillRepository.findByCoordinatorIdAndIsActiveTrueOrderByPriorityOrder(coordinatorId);
+    }
+
     private CoordinatorMatch createCoordinatorMatch(
             CoordinatorCareSettings coordinator, 
             HealthAssessment assessment, 
@@ -73,8 +89,7 @@ public class OptimizedCoordinatorMatchingService {
         double matchScore = calculateComprehensiveMatchScore(coordinator, assessment, preference);
         String matchReason = explanationGenerator.generateMatchReason(coordinator, assessment, matchScore);
         
-        List<CoordinatorLanguageSkill> languageSkills = languageSkillRepository
-                .findByCoordinatorIdAndIsActiveTrueOrderByPriorityOrder(coordinator.getCoordinatorId());
+        List<CoordinatorLanguageSkill> languageSkills = getCoordinatorLanguageSkills(coordinator.getCoordinatorId());
 
         return CoordinatorMatch.builder()
                 .coordinatorId(coordinator.getCoordinatorId())

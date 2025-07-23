@@ -19,7 +19,9 @@
       "Bash(ls:*)",
       "Bash(claude mcp add:*)",
       "Bash(claude mcp:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(/mnt/c/Program Files/Java/jdk-21/bin/java -version)",
+      "Bash(cmd.exe:*)"
     ],
     "deny": []
   }

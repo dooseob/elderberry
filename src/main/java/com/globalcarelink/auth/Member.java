@@ -70,7 +70,7 @@ public class Member extends BaseEntity {
     }
     
     public boolean isOverseasUser() {
-        return this.role == MemberRole.OVERSEAS_USER;
+        return this.role == MemberRole.USER_OVERSEAS;
     }
     
     public boolean isStaff() {

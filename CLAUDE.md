@@ -127,15 +127,72 @@ cd frontend && npm install && npm run dev
 
 ### 개발 방법론
 - **단계적 사고**: 복잡한 작업을 작은 단위로 분해
-- **MCP 도구 활용**: context7, Sequential Thinking, githud, memorybank, filesystem
+- **MCP 도구 활용**: context7, Sequential Thinking, memory-bank, filesystem
 - **Context 활용**: 기존 코드 패턴과 구조 참고
 - **점진적 구현**: 엔티티 → Repository → Service → Controller 순서
 - **고품질 테스트**: 단순 테스트 지양, 완성도 높은 정밀한 테스트 코드 작성
 
 ### Git 워크플로우
-- 작업 완료시마다 자동 커밋
+- 작업 완료시마다 일반 git 명령어로 커밋
 - **커밋 메시지: 한국어로 작성** (예: `✨ 회원 인증 시스템 구현`)
 - PR 기반 코드 리뷰
+
+### 로깅 & 디버깅 시스템 🔧
+**구현된 로깅 아키텍처:**
+- **AOP 기반 자동 로깅**: 모든 Controller/Service/Repository 메서드 추적
+- **성능 모니터링**: 1초 이상 느린 메서드, 500ms 이상 느린 쿼리 자동 감지
+- **요청 추적**: TraceId 기반 전체 요청 추적 (8자리 UUID)
+- **구조화된 JSON 로그**: 검색 및 분석 최적화
+
+**로그 파일 위치:**
+```bash
+./logs/
+├── elderberry.log              # 일반 정보 (INFO+)
+├── elderberry-error.log        # 에러만 (ERROR)
+└── elderberry-performance.log  # 성능 관련
+```
+
+**실시간 로그 확인:**
+```bash
+# 전체 로그 실시간 모니터링
+tail -f ./logs/elderberry.log
+
+# 에러만 실시간 확인
+tail -f ./logs/elderberry-error.log
+
+# 성능 이슈 모니터링
+tail -f ./logs/elderberry-performance.log
+
+# 특정 TraceId 추적
+grep "a1b2c3d4" ./logs/elderberry.log
+```
+
+**로그 레벨 설정 (application.yml):**
+```yaml
+logging:
+  level:
+    com.globalcarelink: DEBUG      # 프로젝트 전체 디버그
+    org.hibernate.SQL: DEBUG       # SQL 쿼리 확인
+    org.springframework.security: DEBUG  # 보안 관련
+    performance: INFO              # 성능 로그
+```
+
+**MDC 컨텍스트 정보:**
+- `traceId`: 요청별 고유 추적 ID
+- `userId`/`userEmail`: 로그인 사용자 정보
+- `requestUri`/`method`: HTTP 요청 정보
+- `clientIp`: 클라이언트 IP
+
+**자동 성능 경고:**
+- 3초 이상 요청: WARN 레벨 경고
+- 1초 이상 서비스 메서드: performance 로그 기록  
+- 500ms 이상 DB 쿼리: performance 로그 기록
+
+**로그 보관 정책:**
+- 일반 로그: 30일, 최대 1GB
+- 에러 로그: 60일 보관
+- 성능 로그: 7일 보관
+- 파일 크기: 10MB 단위 롤링
 
 ### 파일 구조
 ```

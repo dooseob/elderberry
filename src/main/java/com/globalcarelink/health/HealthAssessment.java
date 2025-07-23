@@ -193,7 +193,7 @@ public class HealthAssessment extends BaseEntity {
      * 회원 정보를 통해 확인 (추후 Member 엔티티와 연동)
      */
     public boolean isOverseasKorean() {
-        // TODO: Member 엔티티의 role이 OVERSEAS_USER인지 확인
+        // TODO: Member 엔티티의 role이 USER_OVERSEAS인지 확인
         return false; // 임시 구현
     }
 

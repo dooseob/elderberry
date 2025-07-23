@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * 건강 상태 평가 서비스
@@ -33,7 +36,8 @@ public class HealthAssessmentService {
     /**
      * 건강 평가 생성
      */
-    @Transactional
+    @CachePut(value = "health-assessments", key = "#result.id")
+    @CacheEvict(value = "health-assessments", key = "'member_' + #request.memberId + '_latest'")
     public HealthAssessment createAssessment(HealthAssessmentCreateRequest request) {
         log.info("건강 평가 생성 시작 - 회원: {}", request.getMemberId());
 
@@ -74,14 +78,18 @@ public class HealthAssessmentService {
     /**
      * ID로 건강 평가 조회
      */
+    @Cacheable(value = "health-assessments", key = "#assessmentId")
     public Optional<HealthAssessment> getAssessmentById(Long assessmentId) {
+        log.debug("건강 평가 조회 - ID: {}", assessmentId);
         return healthAssessmentRepository.findById(assessmentId);
     }
 
     /**
      * 회원별 최신 건강 평가 조회
      */
+    @Cacheable(value = "health-assessments", key = "'member_' + #memberId + '_latest'")
     public Optional<HealthAssessment> getLatestAssessmentByMemberId(String memberId) {
+        log.debug("회원 최신 건강 평가 조회 - 회원: {}", memberId);
         if (memberId == null || memberId.trim().isEmpty()) {
             throw new CustomException.BadRequest("회원 ID는 필수입니다");
         }
@@ -114,7 +122,8 @@ public class HealthAssessmentService {
     /**
      * 건강 평가 수정
      */
-    @Transactional
+    @CachePut(value = "health-assessments", key = "#assessmentId")
+    @CacheEvict(value = "health-assessments", key = "'member_' + #result.memberId + '_latest'")
     public HealthAssessment updateAssessment(Long assessmentId, HealthAssessmentUpdateRequest request) {
         log.info("건강 평가 수정 시작 - ID: {}", assessmentId);
 
@@ -212,7 +221,9 @@ public class HealthAssessmentService {
     /**
      * 건강 평가 통계 조회
      */
+    @Cacheable(value = "matching-statistics", key = "'health_statistics'")
     public HealthAssessmentStatistics getStatistics() {
+        log.info("건강 평가 통계 조회");
         // 케어 등급별 통계
         List<Map<String, Object>> gradeStats = healthAssessmentRepository.findCareGradeStatistics();
         
@@ -242,6 +253,10 @@ public class HealthAssessmentService {
                 .adlScoreDistribution(adlStats)
                 .ageGroupDistribution(ageStats)
                 .genderPatternAnalysis(genderStats)
+                .hospiceCareTargets((long) healthAssessmentRepository.findHospiceCareTargets().size())
+                .dementiaCareTargets((long) healthAssessmentRepository.findDementiaCareTargets().size())
+                .severeCareTargets((long) healthAssessmentRepository.findSevereCareTargets().size())
+                .overseasKoreanAssessments((long) healthAssessmentRepository.findOverseasKoreanAssessments().size())
                 .build();
     }
 
@@ -267,6 +282,11 @@ public class HealthAssessmentService {
         healthAssessmentRepository.delete(assessment);
         
         log.info("건강 평가 삭제 완료 - ID: {}, 회원: {}", assessmentId, assessment.getMemberId());
+    }
+
+    @CacheEvict(value = {"health-assessments", "matching-statistics"}, allEntries = true)
+    public void evictAllCaches() {
+        log.info("건강 평가 관련 모든 캐시 삭제");
     }
 
     // ===== 내부 검증 메서드 =====

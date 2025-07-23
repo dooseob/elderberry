@@ -57,7 +57,7 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     @Query(value = """
         SELECT h.* FROM health_assessments h 
         JOIN members m ON h.member_id = m.id 
-        WHERE m.role = 'OVERSEAS_USER' 
+        WHERE m.role = 'USER_OVERSEAS' 
         ORDER BY h.assessment_date DESC
         """, nativeQuery = true)
     List<HealthAssessment> findOverseasKoreanAssessments();
