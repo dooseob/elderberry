@@ -16,13 +16,13 @@ public class LoggingAspect {
 
     private static final org.slf4j.Logger performanceLogger = LoggerFactory.getLogger("performance");
 
-    @Pointcut("execution(* com.globalcarelink.auth.*Service.*(..))")
+    @Pointcut("execution(* com.globalcarelink..*Service.*(..))")
     public void serviceLayer() {}
 
-    @Pointcut("execution(* com.globalcarelink.auth.*Controller.*(..))")
+    @Pointcut("execution(* com.globalcarelink..*Controller.*(..))")
     public void controllerLayer() {}
 
-    @Pointcut("execution(* com.globalcarelink.auth.*Repository.*(..))")
+    @Pointcut("execution(* com.globalcarelink..*Repository.*(..))")
     public void repositoryLayer() {}
 
     @Around("serviceLayer()")

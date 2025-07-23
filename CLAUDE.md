@@ -46,9 +46,10 @@
 ## 🚨 중대한 이슈들 (반드시 준수)
 
 ### 데이터베이스 관련
-- **H2 메모리 DB**: 개발 환경에서 사용 중, 재시작 시 데이터 초기화
-- **create-drop 설정**: 애플리케이션 재시작 시 스키마 자동 재생성
-- **하드코딩 ID 금지**: 매번 새로 생성되므로 고정 ID 값 사용 불가
+- **H2 파일 DB**: 개발 환경에서 파일 기반 사용, 데이터 영속성 보장
+- **update 설정**: 스키마 변경 시에만 테이블 구조 업데이트
+- **data/ 디렉토리**: H2 DB 파일 저장 위치 (.gitignore 제외됨)
+- **테스트 환경**: 메모리 모드로 빠른 테스트 (create-drop)
 
 ### 역할 시스템 (중요!)
 - **새 역할명**: `USER_DOMESTIC`, `USER_OVERSEAS`, `JOB_SEEKER_DOMESTIC`, `JOB_SEEKER_OVERSEAS`
@@ -75,15 +76,20 @@
 - **현재 진행상황**: `docs/phases/phase-overview.md`
 
 ### 현재 진행 Phase
-**Phase 3: 건강 상태 평가 시스템** (진행 예정)
-- HealthAssessment 엔티티 (4개 ADL 영역)
-- KB라이프생명 기반 돌봄지수 계산
-- React 건강 체크리스트 UI
-- 종합 케어 등급 산출 시스템
+**Phase 5-C: React 시설 검색 UI** (진행 중)
+- 시설 검색 및 필터링 UI 컴포넌트
+- 시설 상세 정보 표시 컴포넌트
+- 맞춤형 추천 결과 UI
+- 사용자 행동 추적 (조회, 연락, 방문) UI
+- 매칭 완료 및 피드백 UI
 
 ### 완료된 Phase
-- ✅ **Phase 1**: Spring Boot 3.3.5 + Security + H2 DB
+- ✅ **Phase 1**: Spring Boot 3.3.5 + Security + H2 파일 DB
 - ✅ **Phase 2**: 5역할 회원시스템 + 국내/해외 구분
+- ✅ **Phase 3**: 건강 상태 평가 (HealthAssessment + React UI)
+- ✅ **Phase 4**: 코디네이터 매칭 시스템 (AI 매칭 + 프론트엔드)
+- ✅ **Phase 5-A**: 시설 프로필 관리 시스템 (등급, 타입, 매칭 로직)
+- ✅ **Phase 5-B**: 시설 매칭 및 추천 시스템 고도화 (AI 기반 분석, 이력 추적)
 
 ---
 
@@ -112,9 +118,10 @@ cd frontend && npm run dev
 
 ### 환경설정
 - **프로필**: `spring.profiles.active=dev`
-- **DB URL**: `jdbc:h2:mem:elderberry` 
+- **DB URL**: `jdbc:h2:file:./data/elderberry` (파일 기반)
 - **JWT**: 개발용 시크릿 키 사용
 - **로그레벨**: DEBUG (개발환경)
+- **데이터 영속성**: 재시작해도 데이터 유지됨
 
 ---
 
@@ -149,22 +156,26 @@ cd frontend && npm run dev
 ## 🎯 현재 할 일
 
 ### 즉시 진행할 작업
-**Phase 3-A: HealthAssessment 엔티티 구현**
-- 4개 ADL 영역 필드 설계 (걷기/식사/배변/의사소통)
-- 장기요양보험 등급 연동
-- KB라이프생명 기준 점수 계산 로직
-- Repository, Service, Controller 생성
+**Phase 5-C: React 시설 검색 UI 구현**
+- 시설 검색 및 필터링 UI 컴포넌트 (`FacilitySearchPage.tsx`)
+- 시설 목록 표시 컴포넌트 (`FacilityList.tsx`, `FacilityCard.tsx`)
+- 시설 상세 정보 모달 (`FacilityDetailModal.tsx`)
+- 맞춤형 추천 결과 UI (`RecommendationResults.tsx`)
+- 사용자 행동 추적 버튼들 (연락, 방문 등)
+- 매칭 완료 및 피드백 폼 (`MatchingCompletionForm.tsx`)
+- Zustand 상태 관리 (`facilityStore.ts`)
 
 ### 참고할 세부계획
-- `docs/phases/phase-3.md`: Phase 3 전체 계획
-- `docs/phases/돌봄지수-체크리스트-매칭서비스.md`: KB라이프생명 기준 상세 로직
+- `docs/phases/phase-5.md`: Phase 5 전체 계획
+- `frontend/src/features/health/`: 건강 평가 UI 구조 참고
+- `frontend/src/stores/`: 기존 상태 관리 패턴 참고
 
 ### 성공 조건
-- HealthAssessment 엔티티 완성
-- ADL 점수 자동 계산 기능
-- 종합 케어 등급 산출 로직
-- 기본 CRUD API 엔드포인트
-- 단위 테스트 작성
+- 시설 검색 및 필터링 기능 완성
+- 시설 상세 정보 표시 및 사용자 행동 추적
+- 맞춤형 추천 시스템 UI 완성
+- 반응형 디자인 및 접근성 고려
+- 통합 테스트 통과
 
 ---
 

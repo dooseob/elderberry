@@ -299,12 +299,12 @@ export const persistFormData = () => {
 export const loadPersistedFormData = () => {
   try {
     const saved = localStorage.getItem('health-assessment-draft');
-    if (saved) {
+          if (saved) {
       const formData = JSON.parse(saved);
       useHealthAssessmentStore.getState().updateFormData(formData);
       return true;
-    }
-  } catch (error) {
+          }
+        } catch (error) {
     console.warn('저장된 폼 데이터 로드 실패:', error);
   }
   return false;

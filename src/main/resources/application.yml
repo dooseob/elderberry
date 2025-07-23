@@ -20,7 +20,7 @@ spring:
   
   # 데이터베이스 설정
   datasource:
-    url: jdbc:h2:mem:elderberry
+    url: jdbc:h2:file:./data/elderberry
     driver-class-name: org.h2.Driver
     username: sa
     password: 
@@ -36,7 +36,7 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -272,7 +272,7 @@ spring:
     activate:
       on-profile: test
 
-  # 테스트 데이터베이스 설정
+  # 테스트 데이터베이스 설정 (메모리 모드 - 빠른 테스트용)
   datasource:
     url: jdbc:h2:mem:test_elderberry
     driver-class-name: org.h2.Driver
@@ -282,7 +282,7 @@ spring:
   # JPA 테스트 설정
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create-drop  # 테스트는 매번 초기화
     show-sql: false
 
 # 테스트 로깅 설정
