@@ -140,6 +140,13 @@ public class FacilityProfile extends BaseEntity {
     @Min(value = 1, message = "건물 층수는 1층 이상이어야 합니다")
     private Integer buildingFloors; // 건물 층수
 
+    // ===== 인력 현황 =====
+
+    @Column(name = "caregiver_count")
+    @Min(value = 0, message = "간병인 수는 0 이상이어야 합니다")
+    @Builder.Default
+    private Integer caregiverCount = 0; // 간병인 수
+
     // ===== 케어 가능 등급 및 전문성 =====
 
     @ElementCollection

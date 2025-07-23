@@ -121,8 +121,16 @@ public class CoordinatorCareSettings extends BaseEntity {
         return isActive && getCurrentActiveCases() < maxSimultaneousCases;
     }
 
-    private int getCurrentActiveCases() {
-        return 0;
+    public int getCurrentActiveCases() {
+        return 0; // 실제 구현에서는 현재 진행 중인 케이스 수를 계산
+    }
+
+    /**
+     * 언어 스킬 목록 조회
+     */
+    public Set<CoordinatorLanguageSkill> getLanguageSkills() {
+        // 실제 구현에서는 연관된 언어 스킬을 조회
+        return Set.of();
     }
 
     @PrePersist

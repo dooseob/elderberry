@@ -1,5 +1,6 @@
 package com.globalcarelink.external;
 
+import com.globalcarelink.external.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,8 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * 공공데이터 포털 API 통합 클라이언트
@@ -40,6 +43,7 @@ public class PublicDataApiClient {
     private static final String HOSPITAL_INFO_ENDPOINT = "/B551182/hospInfoServicev2/getHospBasisList2";
     private static final String PHARMACY_INFO_ENDPOINT = "/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire";
     private static final String FACILITY_STATUS_ENDPOINT = "/B551182/yadmOpCloInfoService2/getYadmOpCloInfo2";
+    private static final String ENTRANCE_VISA_ENDPOINT = "/1262000/EntranceVisaService2/getEntranceVisaList2";
 
     // ===== 장기요양기관 검색 API =====
 
@@ -70,7 +74,7 @@ public class PublicDataApiClient {
                         .queryParamIfPresent("ltcInsttType", java.util.Optional.ofNullable(facilityType))
                         .build())
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> {
+                .onStatus(status -> status.isError(), response -> {
                     log.error("장기요양기관 검색 API 오류 - 상태 코드: {}", response.statusCode());
                     return response.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new PublicDataApiException(
@@ -106,7 +110,7 @@ public class PublicDataApiClient {
                         .queryParam("_type", "json")
                         .build())
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> {
+                .onStatus(status -> status.isError(), response -> {
                     log.error("장기요양기관 상세 조회 API 오류 - 상태 코드: {}", response.statusCode());
                     return response.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new PublicDataApiException(
@@ -149,7 +153,7 @@ public class PublicDataApiClient {
                         .queryParamIfPresent("clCd", java.util.Optional.ofNullable(hospitalType))
                         .build())
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> {
+                .onStatus(status -> status.isError(), response -> {
                     log.error("병원 정보 검색 API 오류 - 상태 코드: {}", response.statusCode());
                     return response.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new PublicDataApiException(
@@ -191,7 +195,7 @@ public class PublicDataApiClient {
                         .queryParam("_type", "json")
                         .build())
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> {
+                .onStatus(status -> status.isError(), response -> {
                     log.error("약국 정보 검색 API 오류 - 상태 코드: {}", response.statusCode());
                     return response.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new PublicDataApiException(
@@ -229,7 +233,7 @@ public class PublicDataApiClient {
                         .queryParam("_type", "json")
                         .build())
                 .retrieve()
-                .onStatus(HttpStatus::isError, response -> {
+                .onStatus(status -> status.isError(), response -> {
                     log.error("요양기관 운영 상태 조회 API 오류 - 상태 코드: {}", response.statusCode());
                     return response.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new PublicDataApiException(
@@ -241,6 +245,121 @@ public class PublicDataApiClient {
                                 ((WebClientResponseException) throwable).getStatusCode().is5xxServerError()))
                 .doOnSuccess(response -> log.info("요양기관 운영 상태 조회 성공 - ID: {}", institutionId))
                 .doOnError(error -> log.error("요양기관 운영 상태 조회 실패 - ID: {}", institutionId, error));
+    }
+
+    // ===== 입국허가요건 API =====
+
+    /**
+     * 국가별 입국허가요건 조회
+     * 
+     * @param countryName 국가명 (예: "미국", "일본", "중국")
+     * @param pageNo 페이지 번호 (기본값: 1)
+     * @param numOfRows 한 페이지당 결과 수 (기본값: 100)
+     * @return 국가별 입국허가요건 정보
+     */
+    @Cacheable(value = "entranceVisaInfo", key = "#countryName + '_' + #pageNo")
+    @Retryable(value = {Exception.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000, multiplier = 2))
+    public Mono<EntranceVisaInfoResponse> getEntranceVisaRequirements(
+            String countryName, Integer pageNo, Integer numOfRows) {
+        
+        log.info("입국허가요건 조회 요청 - 국가: {}, 페이지: {}", countryName, pageNo);
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(ENTRANCE_VISA_ENDPOINT)
+                        .queryParam("serviceKey", apiKey)
+                        .queryParam("countryNm", countryName)
+                        .queryParam("pageNo", pageNo != null ? pageNo : 1)
+                        .queryParam("numOfRows", numOfRows != null ? numOfRows : 100)
+                        .queryParam("_type", "json")
+                        .build())
+                .retrieve()
+                .onStatus(status -> status.isError(), response -> {
+                    log.error("입국허가요건 조회 API 오류 - 상태 코드: {}", response.statusCode());
+                    return response.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new PublicDataApiException(
+                                    "입국허가요건 조회 실패: " + errorBody, response.statusCode())));
+                })
+                .bodyToMono(EntranceVisaInfoResponse.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+                        .filter(throwable -> !(throwable instanceof WebClientResponseException) ||
+                                ((WebClientResponseException) throwable).getStatusCode().is5xxServerError()))
+                .doOnSuccess(response -> log.info("입국허가요건 조회 성공 - 국가: {}, 결과 수: {}", 
+                        countryName, response != null ? response.getVisaRequirements().size() : 0))
+                .doOnError(error -> log.error("입국허가요건 조회 실패 - 국가: {}", countryName, error));
+    }
+
+    /**
+     * 여러 국가의 입국허가요건 일괄 조회
+     * 
+     * @param countryNames 국가명 목록
+     * @return 각 국가별 입국허가요건 정보 맵
+     */
+    public Mono<Map<String, List<EntranceVisaRequirement>>> getMultipleCountriesVisaRequirements(List<String> countryNames) {
+        
+        log.info("다중 국가 입국허가요건 조회 시작 - 국가 수: {}", countryNames.size());
+        
+        if (countryNames == null || countryNames.isEmpty()) {
+            return Mono.just(new HashMap<>());
+        }
+
+        // 각 국가별로 비동기 조회 수행
+        List<Mono<Map.Entry<String, List<EntranceVisaRequirement>>>> countryMonos = countryNames.stream()
+                .distinct() // 중복 제거
+                .map(countryName -> 
+                    getEntranceVisaRequirements(countryName, 1, 100)
+                            .map(response -> Map.entry(countryName, response.getVisaRequirements()))
+                            .onErrorReturn(Map.entry(countryName, List.<EntranceVisaRequirement>of()))
+                )
+                .collect(Collectors.toList());
+
+        // 모든 결과를 병합
+        return Mono.zip(countryMonos, results -> {
+            Map<String, List<EntranceVisaRequirement>> resultMap = new HashMap<>();
+            for (Object result : results) {
+                @SuppressWarnings("unchecked")
+                Map.Entry<String, List<EntranceVisaRequirement>> entry = 
+                    (Map.Entry<String, List<EntranceVisaRequirement>>) result;
+                resultMap.put(entry.getKey(), entry.getValue());
+            }
+            return resultMap;
+        })
+        .doOnSuccess(resultMap -> log.info("다중 국가 입국허가요건 조회 완료 - 처리된 국가 수: {}", resultMap.size()))
+        .doOnError(error -> log.error("다중 국가 입국허가요건 조회 실패", error));
+    }
+
+    /**
+     * 해외 거주자를 위한 입국허가요건 조회
+     * 거주 국가와 목적별로 최적화된 정보 제공
+     * 
+     * @param residenceCountry 거주 국가
+     * @param entryPurpose 입국 목적 (예: "관광", "의료", "가족방문")
+     * @return 맞춤형 입국허가요건 정보
+     */
+    @Cacheable(value = "customVisaInfo", key = "#residenceCountry + '_' + #entryPurpose")
+    public Mono<List<EntranceVisaRequirement>> getCustomizedVisaRequirements(
+            String residenceCountry, String entryPurpose) {
+        
+        log.info("맞춤형 입국허가요건 조회 - 거주국: {}, 목적: {}", residenceCountry, entryPurpose);
+
+        return getEntranceVisaRequirements(residenceCountry, 1, 100)
+                .map(response -> response.getVisaRequirements().stream()
+                        .filter(requirement -> {
+                            // 입국 목적에 따른 필터링
+                            if (entryPurpose != null && requirement.getEntryPurpose() != null) {
+                                return requirement.getEntryPurpose().contains(entryPurpose);
+                            }
+                            return true;
+                        })
+                        .sorted((r1, r2) -> {
+                            // 비자 불필요 -> 비자 필요 순으로 정렬
+                            if (r1.isVisaFreeEntry() && r2.isVisaRequired()) return -1;
+                            if (r1.isVisaRequired() && r2.isVisaFreeEntry()) return 1;
+                            return 0;
+                        })
+                        .collect(Collectors.toList()))
+                .doOnSuccess(requirements -> log.info("맞춤형 입국허가요건 조회 완료 - 결과 수: {}", requirements.size()))
+                .doOnError(error -> log.error("맞춤형 입국허가요건 조회 실패 - 거주국: {}", residenceCountry, error));
     }
 
     // ===== 유틸리티 메서드 =====
@@ -287,25 +406,24 @@ public class PublicDataApiClient {
      */
     public String convertRegionNameToCode(String regionName) {
         // 실제 구현에서는 지역명을 API에서 요구하는 코드로 변환
-        Map<String, String> regionCodeMap = Map.of(
-                "서울특별시", "11",
-                "부산광역시", "26",
-                "대구광역시", "27",
-                "인천광역시", "28",
-                "광주광역시", "29",
-                "대전광역시", "30",
-                "울산광역시", "31",
-                "세종특별자치시", "36",
-                "경기도", "41",
-                "강원도", "42",
-                "충청북도", "43",
-                "충청남도", "44",
-                "전라북도", "45",
-                "전라남도", "46",
-                "경상북도", "47",
-                "경상남도", "48",
-                "제주특별자치도", "50"
-        );
+        Map<String, String> regionCodeMap = new HashMap<>();
+        regionCodeMap.put("서울특별시", "11");
+        regionCodeMap.put("부산광역시", "26");
+        regionCodeMap.put("대구광역시", "27");
+        regionCodeMap.put("인천광역시", "28");
+        regionCodeMap.put("광주광역시", "29");
+        regionCodeMap.put("대전광역시", "30");
+        regionCodeMap.put("울산광역시", "31");
+        regionCodeMap.put("세종특별자치시", "36");
+        regionCodeMap.put("경기도", "41");
+        regionCodeMap.put("강원도", "42");
+        regionCodeMap.put("충청북도", "43");
+        regionCodeMap.put("충청남도", "44");
+        regionCodeMap.put("전라북도", "45");
+        regionCodeMap.put("전라남도", "46");
+        regionCodeMap.put("경상북도", "47");
+        regionCodeMap.put("경상남도", "48");
+        regionCodeMap.put("제주특별자치도", "50");
         
         return regionCodeMap.getOrDefault(regionName, regionName);
     }

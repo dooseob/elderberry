@@ -3,6 +3,7 @@ package com.globalcarelink.common.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -27,6 +28,56 @@ public final class SecurityUtil {
             "(\\w+\\s*(=|LIKE|like)\\s*'.*(or|OR|and|AND).*')|" +
             "(union|UNION|select|SELECT|insert|INSERT|delete|DELETE|update|UPDATE|drop|DROP)"
     );
+
+    /**
+     * 클라이언트 IP 주소 추출
+     */
+    public static String getClientIpAddress(HttpServletRequest request) {
+        String clientIp = null;
+        
+        // X-Forwarded-For 헤더 확인 (프록시 환경)
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+            clientIp = xForwardedFor.split(",")[0].trim();
+        }
+        
+        // X-Real-IP 헤더 확인 (Nginx 등)
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader("X-Real-IP");
+        }
+        
+        // Proxy-Client-IP 헤더 확인
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader("Proxy-Client-IP");
+        }
+        
+        // WL-Proxy-Client-IP 헤더 확인 (WebLogic)
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader("WL-Proxy-Client-IP");
+        }
+        
+        // HTTP_CLIENT_IP 헤더 확인
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader("HTTP_CLIENT_IP");
+        }
+        
+        // HTTP_X_FORWARDED_FOR 헤더 확인
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        
+        // 기본 RemoteAddr 사용
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = request.getRemoteAddr();
+        }
+        
+        // IPv6 로컬호스트를 IPv4로 변환
+        if ("0:0:0:0:0:0:0:1".equals(clientIp)) {
+            clientIp = "127.0.0.1";
+        }
+        
+        return clientIp != null ? clientIp : "unknown";
+    }
 
     public static String encryptSensitiveData(String plainText) {
         try {

@@ -21,7 +21,8 @@
       "Bash(claude mcp:*)",
       "Bash(npm install:*)",
       "Bash(/mnt/c/Program Files/Java/jdk-21/bin/java -version)",
-      "Bash(cmd.exe:*)"
+      "Bash(cmd.exe:*)",
+      "Bash(repomix:*)"
     ],
     "deny": []
   }

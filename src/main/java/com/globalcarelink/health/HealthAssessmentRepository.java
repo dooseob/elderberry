@@ -19,6 +19,11 @@ import java.util.Optional;
 public interface HealthAssessmentRepository extends JpaRepository<HealthAssessment, Long> {
 
     /**
+     * 회원 ID로 건강 평가 조회
+     */
+    Optional<HealthAssessment> findByMemberId(Long memberId);
+
+    /**
      * 회원별 최신 건강 평가 조회
      */
     Optional<HealthAssessment> findTopByMemberIdOrderByAssessmentDateDesc(String memberId);

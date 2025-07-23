@@ -1,17 +1,22 @@
 package com.globalcarelink.auth;
 
 import com.globalcarelink.auth.dto.*;
+import com.globalcarelink.auth.JwtTokenProvider.TokenPair;
 import com.globalcarelink.common.exception.CustomException;
 import com.globalcarelink.common.util.SecurityUtil;
 import com.globalcarelink.common.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -76,10 +81,15 @@ public class MemberService {
             throw new CustomException.Unauthorized("이메일 또는 비밀번호가 올바르지 않습니다");
         }
         
-        String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole().name());
+        // Spring Boot 3.x 방식으로 토큰 생성
+        Collection<GrantedAuthority> authorities = Collections.singletonList(
+            new SimpleGrantedAuthority("ROLE_" + member.getRole().name())
+        );
+        
+        TokenPair tokenPair = jwtTokenProvider.createTokenPair(member.getEmail(), authorities);
         log.info("로그인 성공: email={}, role={}", member.getEmail(), member.getRole());
         
-        return TokenResponse.of(token, jwtExpiration, MemberResponse.from(member));
+        return TokenResponse.of(tokenPair.getAccessToken(), jwtExpiration, MemberResponse.from(member));
     }
     
     public MemberResponse findById(Long id) {

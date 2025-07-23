@@ -14,6 +14,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 시설 매칭 분석 서비스
@@ -29,6 +30,95 @@ public class FacilityMatchingAnalyticsService {
     private final FacilityProfileRepository facilityProfileRepository;
 
     // ===== 매칭 성과 분석 =====
+
+    /**
+     * 매칭 트렌드 분석
+     */
+    @Cacheable(value = "matching-trends", key = "#days")
+    public MatchingTrendReport analyzeMatchingTrends(int days) {
+        log.info("매칭 트렌드 분석 시작 - 기간: {}일", days);
+        
+        LocalDateTime startDate = LocalDateTime.now().minusDays(days);
+        List<FacilityMatchingHistory> histories = matchingHistoryRepository.findByCreatedAtAfter(startDate);
+        
+        Map<String, Long> dailyMatches = histories.stream()
+                .collect(Collectors.groupingBy(
+                        h -> h.getCreatedAt().toLocalDate().toString(),
+                        Collectors.counting()
+                ));
+        
+        double averageMatchesPerDay = histories.size() / (double) days;
+        long successfulMatches = histories.stream()
+                .mapToLong(h -> h.isSuccessfulMatch() ? 1 : 0)
+                .sum();
+        
+        double successRate = histories.isEmpty() ? 0.0 : 
+                (double) successfulMatches / histories.size() * 100;
+        
+        return MatchingTrendReport.builder()
+                .totalMatches((long) histories.size())
+                .successfulMatches(successfulMatches)
+                .successRate(successRate)
+                .averageMatchesPerDay(averageMatchesPerDay)
+                .dailyMatchCounts(dailyMatches)
+                .analysisDate(LocalDateTime.now())
+                .build();
+    }
+
+    /**
+     * 사용자 매칭 이력 조회
+     */
+    @Cacheable(value = "user-matching-history")
+    public Page<UserMatchingHistory> getUserMatchingHistory(String userId, Pageable pageable) {
+        log.info("사용자 매칭 이력 조회 - 사용자: {}", userId);
+        
+        Page<FacilityMatchingHistory> histories = matchingHistoryRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+        
+        return histories.map(history -> UserMatchingHistory.builder()
+                .matchingId(history.getId())
+                .facilityId(history.getFacilityId())
+                .matchingDate(history.getCreatedAt())
+                .matchingScore(history.getInitialMatchScore())
+                .status(history.getStatus().name())
+                .outcome(history.getOutcome() != null ? history.getOutcome().name() : null)
+                .satisfactionScore(history.getSatisfactionScore())
+                .feedback(history.getFeedback())
+                .build());
+    }
+
+    /**
+     * 추천 정확도 분석
+     */
+    @Cacheable(value = "recommendation-accuracy", key = "#days")
+    public RecommendationAccuracyReport analyzeRecommendationAccuracy(int days) {
+        log.info("추천 정확도 분석 시작 - 기간: {}일", days);
+        
+        LocalDateTime startDate = LocalDateTime.now().minusDays(days);
+        List<FacilityMatchingHistory> histories = matchingHistoryRepository.findByCreatedAtAfter(startDate);
+        
+        Map<Integer, Long> accuracyByRank = histories.stream()
+                .filter(h -> h.isSuccessfulMatch())
+                .collect(Collectors.groupingBy(
+                        FacilityMatchingHistory::getRecommendationRank,
+                        Collectors.counting()
+                ));
+        
+        long totalRecommendations = histories.size();
+        long accurateRecommendations = histories.stream()
+                .mapToLong(h -> h.isSuccessfulMatch() && h.getRecommendationRank() <= 3 ? 1 : 0)
+                .sum();
+        
+        double overallAccuracy = totalRecommendations == 0 ? 0.0 :
+                (double) accurateRecommendations / totalRecommendations * 100;
+        
+        return RecommendationAccuracyReport.builder()
+                .totalRecommendations(totalRecommendations)
+                .accurateRecommendations(accurateRecommendations)
+                .overallAccuracy(overallAccuracy)
+                .accuracyByRank(accuracyByRank)
+                .analysisDate(LocalDateTime.now())
+                .build();
+    }
 
     /**
      * 시설별 종합 성과 분석
@@ -497,6 +587,55 @@ public class FacilityMatchingAnalyticsService {
         private Double averageMatchScore;
         private Double averageSatisfaction;
         private String recommendation;
+    }
+
+    /**
+     * 매칭 트렌드 리포트 DTO
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MatchingTrendReport {
+        private Long totalMatches;
+        private Long successfulMatches;
+        private Double successRate;
+        private Double averageMatchesPerDay;
+        private Map<String, Long> dailyMatchCounts;
+        private LocalDateTime analysisDate;
+    }
+
+    /**
+     * 사용자 매칭 이력 DTO
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserMatchingHistory {
+        private Long matchingId;
+        private Long facilityId;
+        private LocalDateTime matchingDate;
+        private BigDecimal matchingScore;
+        private String status;
+        private String outcome;
+        private Integer satisfactionScore;
+        private String feedback;
+    }
+
+    /**
+     * 추천 정확도 리포트 DTO
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendationAccuracyReport {
+        private Long totalRecommendations;
+        private Long accurateRecommendations;
+        private Double overallAccuracy;
+        private Map<Integer, Long> accuracyByRank;
+        private LocalDateTime analysisDate;
     }
 
     @Data

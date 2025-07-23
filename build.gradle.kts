@@ -35,6 +35,13 @@ dependencies {
     // WebClient for reactive HTTP client
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     
+    // Spring Retry
+    implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework:spring-aspects")
+    
+    // OpenAPI/Swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    
     // Database
     runtimeOnly("com.h2database:h2")
     
@@ -45,6 +52,9 @@ dependencies {
     
     // Caffeine Cache
     implementation("com.github.ben-manes.caffeine:caffeine")
+    
+    // JSON Logging
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     
     // Lombok
     compileOnly("org.projectlombok:lombok")

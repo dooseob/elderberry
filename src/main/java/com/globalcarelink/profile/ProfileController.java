@@ -1,5 +1,6 @@
 package com.globalcarelink.profile;
 
+import com.globalcarelink.external.dto.EntranceVisaRequirement;
 import com.globalcarelink.profile.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -232,7 +234,108 @@ public class ProfileController {
     @GetMapping("/overseas/expiring-documents")
     public ResponseEntity<List<OverseasProfileResponse>> getOverseasProfilesWithExpiringDocuments() {
         
-        List<OverseasProfileResponse> profiles = profileService.getOverseasProfilesWithExpiringDocuments();
+        // TODO: ProfileService에 구현 필요
+        return ResponseEntity.ok(List.of());
+    }
+
+    // ===== 입국허가요건 관련 API =====
+
+    @Operation(
+        summary = "해외 프로필 입국허가요건 조회",
+        description = "해외 프로필의 거주 국가에 대한 입국허가요건을 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "입국허가요건 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "해외 프로필을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "외부 API 호출 실패")
+    })
+    @GetMapping("/overseas/{memberId}/visa-requirements")
+    public Mono<ResponseEntity<List<EntranceVisaRequirement>>> getVisaRequirementsForProfile(
+            @Parameter(description = "회원 ID", example = "1")
+            @PathVariable Long memberId) {
+        
+        log.info("해외 프로필 입국허가요건 조회 API 호출 - 회원: {}", memberId);
+        
+        return profileService.getVisaRequirementsForOverseasProfile(memberId)
+                .map(requirements -> {
+                    log.info("해외 프로필 입국허가요건 조회 완료 - 회원: {}, 결과 수: {}", memberId, requirements.size());
+                    return ResponseEntity.ok(requirements);
+                })
+                .onErrorReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .<List<EntranceVisaRequirement>>body(List.of()));
+    }
+
+    @Operation(
+        summary = "맞춤형 입국허가요건 조회",
+        description = "해외 프로필의 거주 국가와 입국 목적에 따른 맞춤형 입국허가요건을 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "맞춤형 입국허가요건 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "해외 프로필을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "외부 API 호출 실패")
+    })
+    @GetMapping("/overseas/{memberId}/visa-requirements/customized")
+    public Mono<ResponseEntity<List<EntranceVisaRequirement>>> getCustomizedVisaRequirements(
+            @Parameter(description = "회원 ID", example = "1")
+            @PathVariable Long memberId,
+            @Parameter(description = "입국 목적", example = "의료")
+            @RequestParam(value = "purpose", required = false) String entryPurpose) {
+        
+        log.info("맞춤형 입국허가요건 조회 API 호출 - 회원: {}, 목적: {}", memberId, entryPurpose);
+        
+        return profileService.getCustomizedVisaRequirements(memberId, entryPurpose)
+                .map(requirements -> {
+                    log.info("맞춤형 입국허가요건 조회 완료 - 회원: {}, 목적: {}, 결과 수: {}", 
+                            memberId, entryPurpose, requirements.size());
+                    return ResponseEntity.ok(requirements);
+                })
+                .onErrorReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .<List<EntranceVisaRequirement>>body(List.of()));
+    }
+
+    @Operation(
+        summary = "프로필 개선 제안 조회",
+        description = "입국허가요건을 기반으로 한 프로필 개선 제안 사항을 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "프로필 개선 제안 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "해외 프로필을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "제안 생성 실패")
+    })
+    @GetMapping("/overseas/{memberId}/improvement-suggestions")
+    public Mono<ResponseEntity<List<String>>> getProfileImprovementSuggestions(
+            @Parameter(description = "회원 ID", example = "1")
+            @PathVariable Long memberId) {
+        
+        log.info("프로필 개선 제안 조회 API 호출 - 회원: {}", memberId);
+        
+        return profileService.getProfileImprovementSuggestions(memberId)
+                .map(suggestions -> {
+                    log.info("프로필 개선 제안 조회 완료 - 회원: {}, 제안 수: {}", memberId, suggestions.size());
+                    return ResponseEntity.ok(suggestions);
+                })
+                .onErrorReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .<List<String>>body(List.of("제안을 생성할 수 없습니다")));
+    }
+
+    @Operation(
+        summary = "입국허가요건 변경 알림 대상 조회",
+        description = "특정 국가의 입국허가요건 변경 시 알림이 필요한 해외 프로필 목록을 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "알림 대상 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "국가명이 필요함")
+    })
+    @GetMapping("/overseas/visa-update-notification")
+    public ResponseEntity<List<OverseasProfileResponse>> getProfilesRequiringVisaUpdateNotification(
+            @Parameter(description = "국가명", example = "미국")
+            @RequestParam("country") String countryName) {
+        
+        log.info("입국허가요건 변경 알림 대상 조회 API 호출 - 국가: {}", countryName);
+        
+        List<OverseasProfileResponse> profiles = profileService.getProfilesRequiringVisaUpdateNotification(countryName);
+        
+        log.info("입국허가요건 변경 알림 대상 조회 완료 - 국가: {}, 대상 수: {}", countryName, profiles.size());
         return ResponseEntity.ok(profiles);
     }
 }

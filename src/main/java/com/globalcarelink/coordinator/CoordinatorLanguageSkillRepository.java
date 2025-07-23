@@ -16,6 +16,16 @@ import java.util.Map;
 public interface CoordinatorLanguageSkillRepository extends JpaRepository<CoordinatorLanguageSkill, Long> {
 
     /**
+     * 우선순위 순으로 활성 언어 스킬 조회
+     */
+    List<CoordinatorLanguageSkill> findByIsActiveTrueOrderByPriorityOrder();
+
+    /**
+     * 코디네이터 ID와 언어 코드, 활성 상태로 조회
+     */
+    List<CoordinatorLanguageSkill> findByCoordinatorIdAndLanguageCodeAndIsActiveTrue(String coordinatorId, String languageCode);
+
+    /**
      * 코디네이터별 활성 언어 스킬 조회 (우선순위 정렬)
      * 인덱스 활용: coordinator_id, is_active, priority_order
      */

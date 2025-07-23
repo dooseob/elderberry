@@ -45,22 +45,27 @@ public class FacilityMatchingHistory extends BaseEntity {
     @Min(value = 1, message = "추천 순위는 1 이상이어야 합니다")
     private Integer recommendationRank;
 
-    // 사용자 행동 데이터
-    @Column(nullable = false)
+    // 매칭 진행 상태
+    @Column(name = "was_viewed")
+    @Builder.Default
     private Boolean wasViewed = false;
 
-    @Column(nullable = false)
+    @Column(name = "was_contacted")
+    @Builder.Default
     private Boolean wasContacted = false;
 
-    @Column(nullable = false)
+    @Column(name = "was_visited")
+    @Builder.Default
     private Boolean wasVisited = false;
 
-    @Column(nullable = false)
+    @Column(name = "was_selected")
+    @Builder.Default
     private Boolean wasSelected = false;
 
-    // 매칭 결과 추적
+    // 매칭 상태
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
     private MatchingStatus status = MatchingStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
@@ -183,6 +188,16 @@ public class FacilityMatchingHistory extends BaseEntity {
     }
 
     /**
+     * 계약 완료로 표시
+     */
+    public void markAsContracted() {
+        this.status = MatchingStatus.COMPLETED;
+        this.outcome = MatchingOutcome.CONTRACT_SIGNED;
+        this.completedAt = LocalDateTime.now();
+        this.wasSelected = true;
+    }
+
+    /**
      * 사용자 피드백 및 만족도 업데이트
      */
     public void updateFeedback(BigDecimal satisfactionScore, String feedback) {
@@ -191,7 +206,7 @@ public class FacilityMatchingHistory extends BaseEntity {
     }
 
     /**
-     * 매칭 성공 여부 판단
+     * 매칭 성공 여부 확인
      */
     public boolean isSuccessfulMatch() {
         return this.status == MatchingStatus.COMPLETED && 

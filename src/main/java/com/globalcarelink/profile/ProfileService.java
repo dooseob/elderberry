@@ -6,12 +6,15 @@ import com.globalcarelink.auth.MemberRole;
 import com.globalcarelink.common.exception.CustomException;
 import com.globalcarelink.common.util.SecurityUtil;
 import com.globalcarelink.common.util.ValidationUtil;
+import com.globalcarelink.external.PublicDataApiClient;
+import com.globalcarelink.external.dto.EntranceVisaRequirement;
 import com.globalcarelink.profile.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +33,7 @@ public class ProfileService {
     private final MemberRepository memberRepository;
     private final DomesticProfileRepository domesticProfileRepository;
     private final OverseasProfileRepository overseasProfileRepository;
+    private final PublicDataApiClient publicDataApiClient;
     
     // ===== 국내 프로필 관리 =====
     

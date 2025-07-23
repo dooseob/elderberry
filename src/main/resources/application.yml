@@ -100,6 +100,8 @@ app:
       hospital-search-ttl: 3600
       pharmacy-search-ttl: 3600
       facility-status-ttl: 1800  # 30분
+      entrance-visa-ttl: 7200    # 2시간 (입국허가요건은 자주 변경되지 않음)
+      custom-visa-ttl: 3600      # 1시간 (맞춤형 정보는 좀 더 짧게)
   
   # 스케줄러 설정
   scheduler:

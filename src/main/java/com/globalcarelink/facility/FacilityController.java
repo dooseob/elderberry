@@ -1,5 +1,6 @@
 package com.globalcarelink.facility;
 
+import com.globalcarelink.facility.dto.*;
 import com.globalcarelink.health.HealthAssessment;
 import com.globalcarelink.health.HealthAssessmentRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 
 /**
  * 시설 관리 컨트롤러 (매칭 및 분석 기능 포함)
@@ -242,7 +244,7 @@ public class FacilityController {
             @RequestParam(defaultValue = "10") int size) {
         
         if (authentication == null) {
-            return ResponseEntity.unauthorized().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         
         String userId = authentication.getName();

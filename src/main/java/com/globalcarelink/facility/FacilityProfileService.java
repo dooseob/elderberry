@@ -1,6 +1,7 @@
 package com.globalcarelink.facility;
 
 import com.globalcarelink.common.exception.CustomException;
+import com.globalcarelink.facility.dto.FacilityProfileResponse;
 import com.globalcarelink.health.HealthAssessment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * 시설 프로필 서비스
@@ -33,6 +38,93 @@ public class FacilityProfileService {
     private final FacilityMatchingHistoryRepository matchingHistoryRepository;
 
     // ===== 기본 CRUD 작업 =====
+
+    /**
+     * 모든 시설 조회 (페이징)
+     */
+    @Cacheable(value = "facility-profiles-page")
+    public Page<FacilityProfileResponse> findAllFacilities(Pageable pageable, String region, String facilityType, String grade) {
+        log.info("시설 목록 조회 - 페이지: {}, 지역: {}, 타입: {}, 등급: {}", pageable.getPageNumber(), region, facilityType, grade);
+        
+        Page<FacilityProfile> facilities;
+        
+        if (region != null && facilityType != null && grade != null) {
+            facilities = facilityProfileRepository.findByRegionAndFacilityTypeAndGrade(region, facilityType, grade, pageable);
+        } else if (region != null) {
+            facilities = facilityProfileRepository.findByRegion(region, pageable);
+        } else {
+            facilities = facilityProfileRepository.findAll(pageable);
+        }
+        
+        return facilities.map(FacilityProfileResponse::from);
+    }
+
+    /**
+     * 시설 ID로 조회
+     */
+    @Cacheable(value = "facility-profiles", key = "#facilityId")
+    public FacilityProfileResponse findById(Long facilityId) {
+        log.info("시설 조회 - ID: {}", facilityId);
+        
+        FacilityProfile facility = facilityProfileRepository.findById(facilityId)
+                .orElseThrow(() -> new CustomException.NotFound("시설을 찾을 수 없습니다: " + facilityId));
+        
+        return FacilityProfileResponse.from(facility);
+    }
+
+    /**
+     * 지역별 시설 조회
+     */
+    @Cacheable(value = "facility-profiles-by-region")
+    public List<FacilityProfileResponse> findFacilitiesByRegion(String region, String district, Integer limit, int offset) {
+        log.info("지역별 시설 조회 - 지역: {}, 구/군: {}", region, district);
+        
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        Page<FacilityProfile> facilities;
+        
+        if (district != null) {
+            facilities = facilityProfileRepository.findByRegionAndDistrict(region, district, pageable);
+        } else {
+            facilities = facilityProfileRepository.findByRegion(region, pageable);
+        }
+        
+        return facilities.getContent().stream()
+                .map(FacilityProfileResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 케어 등급별 시설 조회
+     */
+    @Cacheable(value = "facility-profiles-by-care-grade")
+    public List<FacilityProfileResponse> findFacilitiesByCareGrade(Integer careGrade, String region, int limit) {
+        log.info("케어 등급별 시설 조회 - 등급: {}, 지역: {}", careGrade, region);
+        
+        Pageable pageable = PageRequest.of(0, limit);
+        Page<FacilityProfile> facilities = facilityProfileRepository.findByAcceptableCareGradesContainingAndRegion(careGrade, region, pageable);
+        
+        return facilities.getContent().stream()
+                .map(FacilityProfileResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 시설 등급 업데이트
+     */
+    @Transactional
+    @CacheEvict(value = "facility-profiles", key = "#facilityId")
+    public void updateFacilityGrade(Long facilityId, String newGrade, String reason, String updatedBy) {
+        log.info("시설 등급 업데이트 - ID: {}, 새 등급: {}", facilityId, newGrade);
+        
+        FacilityProfile facility = facilityProfileRepository.findById(facilityId)
+                .orElseThrow(() -> new CustomException.NotFound("시설을 찾을 수 없습니다: " + facilityId));
+        
+        facility.setGrade(newGrade);
+        facility.setLastUpdated(LocalDateTime.now());
+        
+        facilityProfileRepository.save(facility);
+        log.info("시설 등급 업데이트 완료 - ID: {}, 등급: {}", facilityId, newGrade);
+    }
 
     /**
      * 시설 프로필 생성
@@ -871,6 +963,22 @@ public class FacilityProfileService {
         private final Map<String, Long> typeStatistics;
         private final Map<String, Long> gradeStatistics;
         private final LocalDateTime lastUpdated;
+    }
+
+    @lombok.Builder
+    @lombok.Getter
+    @lombok.AllArgsConstructor
+    public static class FacilityStatistics {
+        private final long totalFacilities;
+        private final long activeFacilities;
+        private final long availableBeds;
+        private final double averageOccupancyRate;
+        private final int averageMonthlyFee;
+        private final Map<String, Long> facilitiesByRegion;
+        private final Map<String, Long> facilitiesByType;
+        private final Map<String, Long> facilitiesByGrade;
+        private final Map<String, Double> averageFeesByRegion;
+        private final LocalDateTime generatedAt;
     }
 
     // ===== 매칭 이력 추적 =====

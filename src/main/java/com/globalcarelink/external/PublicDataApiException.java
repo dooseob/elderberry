@@ -1,6 +1,7 @@
 package com.globalcarelink.external;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 /**
  * 공공데이터 API 호출 시 발생하는 예외를 처리하기 위한 커스텀 예외 클래스
@@ -32,6 +33,19 @@ public class PublicDataApiException extends RuntimeException {
     public PublicDataApiException(String message, HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
+        this.apiEndpoint = null;
+        this.errorCode = null;
+    }
+    
+    /**
+     * HttpStatusCode를 포함한 생성자 (Spring Boot 3.x 호환)
+     * 
+     * @param message 에러 메시지
+     * @param httpStatusCode HTTP 상태 코드
+     */
+    public PublicDataApiException(String message, HttpStatusCode httpStatusCode) {
+        super(message);
+        this.httpStatus = HttpStatus.valueOf(httpStatusCode.value());
         this.apiEndpoint = null;
         this.errorCode = null;
     }

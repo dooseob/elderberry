@@ -24,10 +24,46 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     Optional<CoordinatorCareSettings> findByCoordinatorId(String coordinatorId);
 
     /**
+     * 코디네이터 ID와 활성 상태로 조회
+     */
+    @EntityGraph(attributePaths = {"languageSkills"})
+    Optional<CoordinatorCareSettings> findByCoordinatorIdAndIsActiveTrue(String coordinatorId);
+
+    /**
+     * 전문 분야로 조회
+     */
+    @EntityGraph(attributePaths = {"languageSkills"})
+    List<CoordinatorCareSettings> findBySpecialty(String specialty);
+
+    /**
+     * 최소 만족도 이상으로 조회
+     */
+    @EntityGraph(attributePaths = {"languageSkills"})
+    List<CoordinatorCareSettings> findByMinSatisfaction(Double minSatisfaction);
+
+    /**
+     * 활성 코디네이터 수 조회
+     */
+    @Query("SELECT COUNT(c) FROM CoordinatorCareSettings c WHERE c.isActive = true")
+    Long getActiveCoordinatorCount();
+
+    /**
+     * 평균 고객 만족도 조회
+     */
+    @Query("SELECT AVG(c.customerSatisfaction) FROM CoordinatorCareSettings c WHERE c.isActive = true")
+    Double getAverageCustomerSatisfaction();
+
+    /**
      * 활성 코디네이터 조회 (언어 스킬 정보 함께 조회)
      */
     @EntityGraph(attributePaths = {"languageSkills"})
     List<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDesc();
+
+    /**
+     * 성과 점수 순으로 활성 코디네이터 조회
+     */
+    @EntityGraph(attributePaths = {"languageSkills"})
+    List<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDesc();
 
     /**
      * 케어 등급 범위에 적합한 코디네이터 조회 (언어 스킬 포함)
