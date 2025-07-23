@@ -1,6 +1,50 @@
-# Elderberry - 글로벌 케어링크 애플리케이션 설정
-# 개발 환경 설정
+# 공통 설정
+spring:
+  application:
+    name: elderberry
+  profiles:
+    active: dev
+  
+  # 데이터베이스 설정
+  datasource:
+    url: jdbc:h2:file:./data/elderberry;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  
+  # H2 콘솔 설정
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  
+  # 캐시 설정
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1h
+  
+  # JSON 설정
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: NON_NULL
 
+# 서버 설정
 server:
   port: 8080
   servlet:
@@ -10,203 +54,117 @@ server:
       enabled: true
       force: true
 
-spring:
-  application:
-    name: elderberry-global-care-link
-  
-  # 프로필 설정
-  profiles:
-    active: dev
-  
-  # 데이터베이스 설정
-  datasource:
-    url: jdbc:h2:file:./data/elderberry
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: 
-  
-  # H2 콘솔 설정 (개발용)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  
-  # JPA 설정
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-        use_sql_comments: true
-        # 배치 처리 최적화
-        jdbc:
-          batch_size: 20
-          order_inserts: true
-          order_updates: true
-        # 2차 캐시 설정
-        cache:
-          use_second_level_cache: false
-          use_query_cache: false
-  
-  # 캐시 설정
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=30m,recordStats
-  
-  # JSON 설정
-  jackson:
-    serialization:
-      write-dates-as-timestamps: false
-      indent-output: true
-    deserialization:
-      fail-on-unknown-properties: false
-    time-zone: Asia/Seoul
-    date-format: yyyy-MM-dd HH:mm:ss
-
-# JWT 토큰 설정
-jwt:
-  secret: elderberry-jwt-secret-key-for-global-care-link-application-2024
-  access-token-validity-in-seconds: 1800  # 30분
-  refresh-token-validity-in-seconds: 604800  # 7일
-
-# 보안 설정
-security:
-  password:
-    bcrypt:
-      strength: 12  # BCrypt 강도 (기본값보다 높음)
-    default:
-      encoder: bcrypt
-
-# 캐시 상세 설정
-cache:
-  health-assessment:
-    max-size: 1000
-    ttl-minutes: 30
-  coordinator-matching:
-    max-size: 500
-    ttl-minutes: 60
-  member:
-    max-size: 2000
-    ttl-minutes: 15
-  statistics:
-    max-size: 100
-    ttl-minutes: 120
-
-# 비동기 처리 설정
-async:
-  core-pool-size: 5
-  max-pool-size: 20
-  queue-capacity: 100
-  keep-alive-seconds: 60
-  thread-name-prefix: elderberry-async-
-
 # 로깅 설정
 logging:
   level:
     com.globalcarelink: DEBUG
     org.springframework.security: DEBUG
-    org.springframework.cache: DEBUG
-    org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web.reactive.function.client: DEBUG
+    reactor.netty.http.client: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/elderberry.log
-    max-size: 10MB
-    max-history: 10
+
+# JWT 설정
+jwt:
+  secret: elderberry-jwt-secret-key-for-development-only-change-in-production
+  access-token-expiration: 3600000  # 1시간
+  refresh-token-expiration: 86400000 # 24시간
+
+# 애플리케이션 설정
+app:
+  # 공공데이터 API 설정
+  public-data:
+    api-key: CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==
+    base-url: https://apis.data.go.kr
+    connect-timeout: 10000    # 10초
+    read-timeout: 30000       # 30초
+    write-timeout: 10000      # 10초
+    max-memory-size: 1048576  # 1MB
+    
+    # API 호출 제한 설정
+    rate-limit:
+      requests-per-minute: 1000
+      requests-per-hour: 10000
+      requests-per-day: 100000
+    
+    # 재시도 설정
+    retry:
+      max-attempts: 3
+      backoff-delay: 1000     # 1초
+      backoff-multiplier: 2
+    
+    # 캐시 설정
+    cache:
+      ltci-search-ttl: 3600   # 1시간
+      ltci-detail-ttl: 7200   # 2시간
+      hospital-search-ttl: 3600
+      pharmacy-search-ttl: 3600
+      facility-status-ttl: 1800  # 30분
+  
+  # 스케줄러 설정
+  scheduler:
+    # 시설 정보 동기화 스케줄 (매일 새벽 2시)
+    facility-sync-cron: "0 0 2 * * ?"
+    
+    # API 상태 체크 스케줄 (매 10분)
+    health-check-cron: "0 */10 * * * ?"
+    
+    # 통계 업데이트 스케줄 (매 시간)
+    statistics-update-cron: "0 0 * * * ?"
+  
+  # 비동기 처리 설정
+  async:
+    core-pool-size: 5
+    max-pool-size: 20
+    queue-capacity: 100
+    thread-name-prefix: "elderberry-async-"
+    
+    # 공공데이터 전용 스레드 풀
+    public-data:
+      core-pool-size: 3
+      max-pool-size: 10
+      queue-capacity: 50
+      thread-name-prefix: "public-data-"
 
 # 관리 및 모니터링 설정
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,caches,threaddump,heapdump
-      base-path: /actuator
+        include: health,info,metrics,env,caches,scheduledtasks
   endpoint:
     health:
       show-details: always
-      show-components: always
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
   metrics:
     export:
-      prometheus:
+      simple:
         enabled: true
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-      percentiles:
-        http.server.requests: 0.5, 0.9, 0.95, 0.99
-    tags:
-      application: elderberry
 
-# Swagger/OpenAPI 설정
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-    display-request-duration: true
-    groups-order: DESC
-    operations-sorter: method
-    disable-swagger-default-url: true
-  packages-to-scan: com.globalcarelink
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
+---
+# 개발 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  # 개발 환경 로깅
+  logging:
+    level:
+      com.globalcarelink: DEBUG
+      org.springframework.web.reactive.function.client: DEBUG
 
-# 애플리케이션 특화 설정
+# 개발 환경 공공데이터 API 설정
 app:
-  # 건강 평가 설정
-  health-assessment:
-    cache-enabled: true
-    async-stats-generation: true
-    max-assessments-per-user: 10
-  
-  # 코디네이터 매칭 설정
-  coordinator-matching:
-    cache-enabled: true
-    max-matches-returned: 10
-    match-score-threshold: 0.6
-    async-processing: true
-  
-  # 프로필 설정
-  profile:
-    validation-enabled: true
-    auto-save-enabled: true
-    max-profile-updates-per-day: 5
-  
-  # 보안 설정
-  security:
-    cors:
-      allowed-origins: "http://localhost:3000,http://localhost:5173"
-      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
-      allowed-headers: "*"
-      allow-credentials: true
-      max-age: 3600
+  public-data:
+    # 개발 환경에서는 더 관대한 설정
+    connect-timeout: 15000
+    read-timeout: 45000
     
-    rate-limiting:
-      enabled: true
-      requests-per-minute: 60
-      burst-capacity: 10
-  
-  # 알림 설정
-  notification:
-    enabled: true
-    async-processing: true
-    retry-attempts: 3
-    retry-delay-seconds: 5
+    # 개발 환경 API 호출 제한
+    rate-limit:
+      requests-per-minute: 100
+      requests-per-hour: 1000
+      requests-per-day: 10000
 
 ---
 # 운영 환경 설정
@@ -214,56 +172,30 @@ spring:
   config:
     activate:
       on-profile: prod
-
-  # 운영 데이터베이스 설정 (예시)
+  
+  # 운영 환경 데이터베이스 (SQLite)
   datasource:
-    url: jdbc:postgresql://localhost:5432/elderberry_prod
-    driver-class-name: org.postgresql.Driver
-    username: ${DB_USERNAME:elderberry}
-    password: ${DB_PASSWORD:password}
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+    url: jdbc:sqlite:./data/elderberry.db
+    driver-class-name: org.sqlite.JDBC
+  
+  # 운영 환경 로깅
+  logging:
+    level:
+      com.globalcarelink: INFO
+      org.springframework.web.reactive.function.client: WARN
 
-  # JPA 운영 설정
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
-        jdbc:
-          batch_size: 50
-
-# JWT 운영 설정
-jwt:
-  secret: ${JWT_SECRET:your-production-secret-key}
-  access-token-validity-in-seconds: 900   # 15분 (더 짧게)
-  refresh-token-validity-in-seconds: 86400  # 1일 (더 짧게)
-
-# 로깅 운영 설정
-logging:
-  level:
-    com.globalcarelink: INFO
-    org.springframework.security: WARN
-    org.hibernate.SQL: WARN
-  file:
-    name: /var/log/elderberry/application.log
-
-# 관리 엔드포인트 운영 설정
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: when-authorized
+# 운영 환경 공공데이터 API 설정
+app:
+  public-data:
+    # 운영 환경에서는 더 엄격한 설정
+    connect-timeout: 8000
+    read-timeout: 20000
+    
+    # 운영 환경 API 호출 제한
+    rate-limit:
+      requests-per-minute: 500
+      requests-per-hour: 5000
+      requests-per-day: 50000
 
 ---
 # 테스트 환경 설정
@@ -271,44 +203,19 @@ spring:
   config:
     activate:
       on-profile: test
-
-  # 테스트 데이터베이스 설정 (메모리 모드 - 빠른 테스트용)
+  
+  # 테스트 환경 데이터베이스 (메모리)
   datasource:
-    url: jdbc:h2:mem:test_elderberry
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: 
-
-  # JPA 테스트 설정
+    url: jdbc:h2:mem:testdb
+  
   jpa:
     hibernate:
-      ddl-auto: create-drop  # 테스트는 매번 초기화
-    show-sql: false
+      ddl-auto: create-drop
 
-# 테스트 로깅 설정
-logging:
-  level:
-    com.globalcarelink: WARN
-    org.springframework: WARN
-    org.hibernate: WARN
-
-# 테스트 캐시 설정 (더 작은 크기)
-cache:
-  health-assessment:
-    max-size: 100
-    ttl-minutes: 5
-  coordinator-matching:
-    max-size: 50
-    ttl-minutes: 5
-  member:
-    max-size: 200
-    ttl-minutes: 5
-  statistics:
-    max-size: 10
-    ttl-minutes: 5
-
-# 테스트 비동기 설정 (더 작은 풀)
-async:
-  core-pool-size: 2
-  max-pool-size: 5
-  queue-capacity: 10
+# 테스트 환경 공공데이터 API 설정
+app:
+  public-data:
+    # 테스트 환경에서는 Mock 서버 사용
+    base-url: http://localhost:8081
+    connect-timeout: 5000
+    read-timeout: 10000

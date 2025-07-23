@@ -76,12 +76,11 @@
 - **현재 진행상황**: `docs/phases/phase-overview.md`
 
 ### 현재 진행 Phase
-**Phase 5-C: React 시설 검색 UI** (진행 중)
-- 시설 검색 및 필터링 UI 컴포넌트
-- 시설 상세 정보 표시 컴포넌트
-- 맞춤형 추천 결과 UI
-- 사용자 행동 추적 (조회, 연락, 방문) UI
-- 매칭 완료 및 피드백 UI
+**Phase 6-A: 공공데이터 API 연동** (진행 예정)
+- 장기요양기관 평가 API 연동
+- 시설 정보 자동 업데이트 시스템
+- 공공데이터 동기화 스케줄러
+- API 응답 캐싱 및 오류 처리
 
 ### 완료된 Phase
 - ✅ **Phase 1**: Spring Boot 3.3.5 + Security + H2 파일 DB
@@ -90,6 +89,7 @@
 - ✅ **Phase 4**: 코디네이터 매칭 시스템 (AI 매칭 + 프론트엔드)
 - ✅ **Phase 5-A**: 시설 프로필 관리 시스템 (등급, 타입, 매칭 로직)
 - ✅ **Phase 5-B**: 시설 매칭 및 추천 시스템 고도화 (AI 기반 분석, 이력 추적)
+- ✅ **Phase 5-C**: React 시설 검색 UI (검색, 필터, 추천, 상세보기, 매칭 완료)
 
 ---
 
@@ -156,26 +156,25 @@ cd frontend && npm run dev
 ## 🎯 현재 할 일
 
 ### 즉시 진행할 작업
-**Phase 5-C: React 시설 검색 UI 구현**
-- 시설 검색 및 필터링 UI 컴포넌트 (`FacilitySearchPage.tsx`)
-- 시설 목록 표시 컴포넌트 (`FacilityList.tsx`, `FacilityCard.tsx`)
-- 시설 상세 정보 모달 (`FacilityDetailModal.tsx`)
-- 맞춤형 추천 결과 UI (`RecommendationResults.tsx`)
-- 사용자 행동 추적 버튼들 (연락, 방문 등)
-- 매칭 완료 및 피드백 폼 (`MatchingCompletionForm.tsx`)
-- Zustand 상태 관리 (`facilityStore.ts`)
+**Phase 6-A: 공공데이터 API 연동 기본 구현**
+- 장기요양기관 평가 API 클라이언트 구현
+- 공공데이터 포털 API 인증 및 호출 로직
+- 시설 정보 자동 동기화 서비스
+- API 응답 데이터 매핑 및 변환 로직
+- 오류 처리 및 재시도 메커니즘
+- 스케줄링 기반 정기 업데이트
 
 ### 참고할 세부계획
-- `docs/phases/phase-5.md`: Phase 5 전체 계획
-- `frontend/src/features/health/`: 건강 평가 UI 구조 참고
-- `frontend/src/stores/`: 기존 상태 관리 패턴 참고
+- `docs/phases/phase-6.md`: Phase 6 전체 계획
+- 공공데이터 포털 장기요양기관 평가 API 문서
+- Spring Boot WebClient 및 스케줄링 가이드
 
 ### 성공 조건
-- 시설 검색 및 필터링 기능 완성
-- 시설 상세 정보 표시 및 사용자 행동 추적
-- 맞춤형 추천 시스템 UI 완성
-- 반응형 디자인 및 접근성 고려
-- 통합 테스트 통과
+- 공공데이터 API 정상 연동 및 데이터 수집
+- 시설 정보 자동 업데이트 기능 완성
+- API 호출 최적화 및 캐싱 적용
+- 오류 상황 대응 및 로깅 시스템
+- 정기 동기화 스케줄러 동작 확인
 
 ---
 
