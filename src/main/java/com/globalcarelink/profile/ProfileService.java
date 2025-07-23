@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 프로필 서비스
+ * BaseProfile 추상화를 활용한 DRY 원칙 적용
+ * 공통 로직 통합으로 중복 코드 제거
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,42 +31,25 @@ public class ProfileService {
     private final DomesticProfileRepository domesticProfileRepository;
     private final OverseasProfileRepository overseasProfileRepository;
     
+    // ===== 국내 프로필 관리 =====
+    
     @Transactional
     public DomesticProfileResponse createDomesticProfile(Long memberId, DomesticProfileRequest request) {
+        log.info("국내 프로필 생성 시작 - 회원: {}", memberId);
+        
         validateDomesticProfileRequest(request);
         
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException.NotFound("존재하지 않는 회원입니다"));
-        
+        Member member = findMemberById(memberId);
         validateMemberForDomesticProfile(member);
         
         if (domesticProfileRepository.existsByMemberId(memberId)) {
             throw new CustomException.Conflict("이미 국내 프로필이 존재합니다");
         }
         
-        DomesticProfile profile = DomesticProfile.builder()
-                .member(member)
-                .birthDate(request.getBirthDate())
-                .gender(sanitizeInput(request.getGender()))
-                .address(sanitizeInput(request.getAddress()))
-                .detailedAddress(sanitizeInput(request.getDetailedAddress()))
-                .postalCode(sanitizeInput(request.getPostalCode()))
-                .emergencyContactName(sanitizeInput(request.getEmergencyContactName()))
-                .emergencyContactPhone(sanitizeInput(request.getEmergencyContactPhone()))
-                .emergencyContactRelation(sanitizeInput(request.getEmergencyContactRelation()))
-                .healthInsuranceNumber(sanitizeInput(request.getHealthInsuranceNumber()))
-                .ltciGrade(request.getLtciGrade())
-                .ltciCertificateNumber(sanitizeInput(request.getLtciCertificateNumber()))
-                .preferredRegion(sanitizeInput(request.getPreferredRegion()))
-                .careLevel(sanitizeInput(request.getCareLevel()))
-                .specialNeeds(sanitizeInput(request.getSpecialNeeds()))
-                .familyVisitFrequency(sanitizeInput(request.getFamilyVisitFrequency()))
-                .budgetRange(sanitizeInput(request.getBudgetRange()))
-                .build();
-        
+        DomesticProfile profile = buildDomesticProfile(member, request);
         DomesticProfile savedProfile = domesticProfileRepository.save(profile);
         
-        log.info("국내 프로필 생성: memberId={}, completionRate={}%", 
+        log.info("국내 프로필 생성 완료 - 회원: {}, 완성도: {}%", 
                 memberId, savedProfile.getProfileCompletionPercentage());
         
         return DomesticProfileResponse.from(savedProfile);
@@ -70,54 +57,21 @@ public class ProfileService {
     
     @Transactional
     public OverseasProfileResponse createOverseasProfile(Long memberId, OverseasProfileRequest request) {
+        log.info("해외 프로필 생성 시작 - 회원: {}", memberId);
+        
         validateOverseasProfileRequest(request);
         
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException.NotFound("존재하지 않는 회원입니다"));
-        
+        Member member = findMemberById(memberId);
         validateMemberForOverseasProfile(member);
         
         if (overseasProfileRepository.existsByMemberId(memberId)) {
             throw new CustomException.Conflict("이미 해외 프로필이 존재합니다");
         }
         
-        OverseasProfile profile = OverseasProfile.builder()
-                .member(member)
-                .birthDate(request.getBirthDate())
-                .gender(sanitizeInput(request.getGender()))
-                .overseasAddress(sanitizeInput(request.getOverseasAddress()))
-                .residenceCountry(sanitizeInput(request.getResidenceCountry()))
-                .residenceCity(sanitizeInput(request.getResidenceCity()))
-                .koreanAddress(sanitizeInput(request.getKoreanAddress()))
-                .koreanPostalCode(sanitizeInput(request.getKoreanPostalCode()))
-                .passportNumber(sanitizeInput(request.getPassportNumber()))
-                .passportExpiryDate(request.getPassportExpiryDate())
-                .visaStatus(sanitizeInput(request.getVisaStatus()))
-                .visaExpiryDate(request.getVisaExpiryDate())
-                .overseasContactName(sanitizeInput(request.getOverseasContactName()))
-                .overseasContactPhone(sanitizeInput(request.getOverseasContactPhone()))
-                .overseasContactRelation(sanitizeInput(request.getOverseasContactRelation()))
-                .koreaContactName(sanitizeInput(request.getKoreaContactName()))
-                .koreaContactPhone(sanitizeInput(request.getKoreaContactPhone()))
-                .koreaContactRelation(sanitizeInput(request.getKoreaContactRelation()))
-                .overseasInsuranceNumber(sanitizeInput(request.getOverseasInsuranceNumber()))
-                .overseasInsuranceProvider(sanitizeInput(request.getOverseasInsuranceProvider()))
-                .travelInsurance(sanitizeInput(request.getTravelInsurance()))
-                .entryPurpose(sanitizeInput(request.getEntryPurpose()))
-                .expectedStayDuration(sanitizeInput(request.getExpectedStayDuration()))
-                .preferredCommunicationMethod(sanitizeInput(request.getPreferredCommunicationMethod()))
-                .timeZonePreference(sanitizeInput(request.getTimeZonePreference()))
-                .preferredRegionInKorea(sanitizeInput(request.getPreferredRegionInKorea()))
-                .budgetRange(sanitizeInput(request.getBudgetRange()))
-                .careLevel(sanitizeInput(request.getCareLevel()))
-                .specialNeeds(sanitizeInput(request.getSpecialNeeds()))
-                .culturalDietaryRequirements(sanitizeInput(request.getCulturalDietaryRequirements()))
-                .coordinatorRequired(request.getCoordinatorRequired())
-                .build();
-        
+        OverseasProfile profile = buildOverseasProfile(member, request);
         OverseasProfile savedProfile = overseasProfileRepository.save(profile);
         
-        log.info("해외 프로필 생성: memberId={}, country={}, completionRate={}%", 
+        log.info("해외 프로필 생성 완료 - 회원: {}, 거주국: {}, 완성도: {}%", 
                 memberId, savedProfile.getResidenceCountry(), savedProfile.getProfileCompletionPercentage());
         
         return OverseasProfileResponse.from(savedProfile);
@@ -139,6 +93,8 @@ public class ProfileService {
     
     @Transactional
     public DomesticProfileResponse updateDomesticProfile(Long memberId, DomesticProfileRequest request) {
+        log.info("국내 프로필 수정 시작 - 회원: {}", memberId);
+        
         validateDomesticProfileRequest(request);
         
         DomesticProfile profile = domesticProfileRepository.findByMemberId(memberId)
@@ -146,7 +102,7 @@ public class ProfileService {
         
         updateDomesticProfileFields(profile, request);
         
-        log.info("국내 프로필 수정: memberId={}, completionRate={}%", 
+        log.info("국내 프로필 수정 완료 - 회원: {}, 완성도: {}%", 
                 memberId, profile.getProfileCompletionPercentage());
         
         return DomesticProfileResponse.from(profile);
@@ -154,6 +110,8 @@ public class ProfileService {
     
     @Transactional
     public OverseasProfileResponse updateOverseasProfile(Long memberId, OverseasProfileRequest request) {
+        log.info("해외 프로필 수정 시작 - 회원: {}", memberId);
+        
         validateOverseasProfileRequest(request);
         
         OverseasProfile profile = overseasProfileRepository.findByMemberId(memberId)
@@ -161,7 +119,7 @@ public class ProfileService {
         
         updateOverseasProfileFields(profile, request);
         
-        log.info("해외 프로필 수정: memberId={}, completionRate={}%", 
+        log.info("해외 프로필 수정 완료 - 회원: {}, 완성도: {}%", 
                 memberId, profile.getProfileCompletionPercentage());
         
         return OverseasProfileResponse.from(profile);
@@ -173,7 +131,7 @@ public class ProfileService {
                 .orElseThrow(() -> new CustomException.NotFound("국내 프로필이 존재하지 않습니다"));
         
         domesticProfileRepository.delete(profile);
-        log.info("국내 프로필 삭제: memberId={}", memberId);
+        log.info("국내 프로필 삭제 완료 - 회원: {}", memberId);
     }
     
     @Transactional
@@ -182,8 +140,10 @@ public class ProfileService {
                 .orElseThrow(() -> new CustomException.NotFound("해외 프로필이 존재하지 않습니다"));
         
         overseasProfileRepository.delete(profile);
-        log.info("해외 프로필 삭제: memberId={}", memberId);
+        log.info("해외 프로필 삭제 완료 - 회원: {}", memberId);
     }
+    
+    // ===== 조회 메서드들 =====
     
     public List<DomesticProfileResponse> getDomesticProfilesByCompletion(int minCompletionRate) {
         validateCompletionRate(minCompletionRate);
@@ -211,69 +171,230 @@ public class ProfileService {
                 .map(OverseasProfileResponse::from)
                 .collect(Collectors.toList());
     }
-    
-    public List<OverseasProfileResponse> getOverseasProfilesWithExpiringDocuments() {
-        LocalDate threeMonthsLater = LocalDate.now().plusMonths(3);
-        LocalDate oneMonthLater = LocalDate.now().plusMonths(1);
+
+    public List<DomesticProfileResponse> getDomesticProfilesByCareLevel(String careLevel) {
+        if (!StringUtils.hasText(careLevel)) {
+            throw new CustomException.BadRequest("케어 수준이 필요합니다");
+        }
         
-        List<OverseasProfile> expiringPassports = overseasProfileRepository.findByPassportExpiryDateBefore(threeMonthsLater);
-        List<OverseasProfile> expiringVisas = overseasProfileRepository.findByVisaExpiryDateBefore(oneMonthLater);
+        return domesticProfileRepository.findByCareLevel(careLevel)
+                .stream()
+                .map(DomesticProfileResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public List<OverseasProfileResponse> getOverseasProfilesByLanguage(String language) {
+        if (!StringUtils.hasText(language)) {
+            throw new CustomException.BadRequest("언어 정보가 필요합니다");
+        }
         
-        return expiringPassports.stream()
-                .filter(profile -> expiringVisas.contains(profile) || 
-                        profile.getPassportExpiryDate() != null && 
-                        profile.getPassportExpiryDate().isBefore(threeMonthsLater))
+        return overseasProfileRepository.findByLanguagePreferenceContaining(language)
+                .stream()
                 .map(OverseasProfileResponse::from)
                 .collect(Collectors.toList());
     }
     
-    private void validateMemberForDomesticProfile(Member member) {
-        if (member.getRole() == MemberRole.USER_OVERSEAS) {
-            throw new CustomException.BadRequest("해외 사용자는 국내 프로필을 생성할 수 없습니다");
-        }
+    // ===== 내부 메서드들 (DRY 원칙 적용) =====
+    
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException.NotFound("존재하지 않는 회원입니다"));
     }
     
-    private void validateMemberForOverseasProfile(Member member) {
-        if (member.getRole() == MemberRole.USER_DOMESTIC) {
-            throw new CustomException.BadRequest("국내 사용자는 해외 프로필을 생성할 수 없습니다");
-        }
+    private DomesticProfile buildDomesticProfile(Member member, DomesticProfileRequest request) {
+        DomesticProfile profile = DomesticProfile.builder()
+                .member(member)
+                .healthInsuranceNumber(sanitizeInput(request.getHealthInsuranceNumber()))
+                .ltciGrade(request.getLtciGrade())
+                .ltciCertificateNumber(sanitizeInput(request.getLtciCertificateNumber()))
+                .preferredRegion(sanitizeInput(request.getPreferredRegion()))
+                .familyVisitFrequency(sanitizeInput(request.getFamilyVisitFrequency()))
+                .build();
+        
+        // BaseProfile의 공통 필드 설정
+        updateBaseProfileFields(profile, request);
+        
+        return profile;
     }
+    
+    private OverseasProfile buildOverseasProfile(Member member, OverseasProfileRequest request) {
+        OverseasProfile profile = OverseasProfile.builder()
+                .member(member)
+                .residenceCountry(sanitizeInput(request.getResidenceCountry()))
+                .residenceCity(sanitizeInput(request.getResidenceCity()))
+                .koreanAddress(sanitizeInput(request.getKoreanAddress()))
+                .koreanPostalCode(sanitizeInput(request.getKoreanPostalCode()))
+                .passportNumber(sanitizeInput(request.getPassportNumber()))
+                .passportExpiryDate(request.getPassportExpiryDate())
+                .visaStatus(sanitizeInput(request.getVisaStatus()))
+                .visaExpiryDate(request.getVisaExpiryDate())
+                .overseasContactName(sanitizeInput(request.getOverseasContactName()))
+                .overseasContactPhone(sanitizeInput(request.getOverseasContactPhone()))
+                .overseasContactRelation(sanitizeInput(request.getOverseasContactRelation()))
+                .languagePreference(sanitizeInput(request.getLanguagePreference()))
+                .timeZonePreference(sanitizeInput(request.getTimeZonePreference()))
+                .preferredRegionInKorea(sanitizeInput(request.getPreferredRegionInKorea()))
+                .culturalDietaryRequirements(sanitizeInput(request.getCulturalDietaryRequirements()))
+                .coordinatorRequired(request.getCoordinatorRequired())
+                .build();
+        
+        // BaseProfile의 공통 필드 설정
+        updateBaseProfileFields(profile, request);
+        
+        return profile;
+    }
+    
+    /**
+     * BaseProfile 공통 필드 업데이트 (제네릭 메서드)
+     * DRY 원칙 적용으로 중복 코드 제거
+     */
+    private <T extends BaseProfile, R extends BaseProfileRequest> void updateBaseProfileFields(T profile, R request) {
+        // 기본 정보 업데이트
+        profile.updateBasicInfo(
+            request.getBirthDate(),
+            sanitizeInput(request.getGender()),
+            sanitizeInput(request.getAddress()),
+            sanitizeInput(request.getDetailedAddress()),
+            sanitizeInput(request.getPostalCode())
+        );
+        
+        // 비상연락처 정보 업데이트
+        profile.updateEmergencyContact(
+            sanitizeInput(request.getEmergencyContactName()),
+            sanitizeInput(request.getEmergencyContactPhone()),
+            sanitizeInput(request.getEmergencyContactRelation())
+        );
+        
+        // 케어 관련 정보 업데이트
+        profile.updateCareInfo(
+            sanitizeInput(request.getCareLevel()),
+            sanitizeInput(request.getSpecialNeeds()),
+            sanitizeInput(request.getBudgetRange())
+        );
+    }
+    
+    private void updateDomesticProfileFields(DomesticProfile profile, DomesticProfileRequest request) {
+        // 공통 필드 업데이트
+        updateBaseProfileFields(profile, request);
+        
+        // 국내 프로필 고유 필드 업데이트
+        profile.updateHealthInfo(
+            sanitizeInput(request.getHealthInsuranceNumber()),
+            request.getLtciGrade(),
+            sanitizeInput(request.getLtciCertificateNumber())
+        );
+        
+        profile.updatePreferences(
+            sanitizeInput(request.getPreferredRegion()),
+            sanitizeInput(request.getFamilyVisitFrequency())
+        );
+    }
+    
+    private void updateOverseasProfileFields(OverseasProfile profile, OverseasProfileRequest request) {
+        // 공통 필드 업데이트
+        updateBaseProfileFields(profile, request);
+        
+        // 해외 프로필 고유 필드 업데이트
+        profile.updateResidenceInfo(
+            sanitizeInput(request.getResidenceCountry()),
+            sanitizeInput(request.getResidenceCity()),
+            sanitizeInput(request.getKoreanAddress()),
+            sanitizeInput(request.getKoreanPostalCode())
+        );
+        
+        profile.updateDocumentInfo(
+            sanitizeInput(request.getPassportNumber()),
+            request.getPassportExpiryDate(),
+            sanitizeInput(request.getVisaStatus()),
+            request.getVisaExpiryDate()
+        );
+        
+        profile.updateOverseasContact(
+            sanitizeInput(request.getOverseasContactName()),
+            sanitizeInput(request.getOverseasContactPhone()),
+            sanitizeInput(request.getOverseasContactRelation())
+        );
+        
+        profile.updatePreferences(
+            sanitizeInput(request.getLanguagePreference()),
+            sanitizeInput(request.getTimeZonePreference()),
+            sanitizeInput(request.getPreferredRegionInKorea()),
+            sanitizeInput(request.getCulturalDietaryRequirements()),
+            request.getCoordinatorRequired()
+        );
+    }
+    
+    // ===== 검증 메서드들 =====
     
     private void validateDomesticProfileRequest(DomesticProfileRequest request) {
         if (request == null) {
-            throw new CustomException.BadRequest("프로필 정보가 필요합니다");
+            throw new CustomException.BadRequest("프로필 요청 정보가 필요합니다");
         }
         
-        validateSecurityPatterns(request.getGender(), request.getAddress(), 
-                                request.getDetailedAddress(), request.getEmergencyContactName());
+        // 공통 필드 검증
+        validateBaseProfileRequest(request);
         
-        if (request.getBirthDate() != null && request.getBirthDate().isAfter(LocalDate.now())) {
-            throw new CustomException.BadRequest("생년월일은 현재보다 과거여야 합니다");
-        }
-        
-        if (request.getLtciGrade() != null && (request.getLtciGrade() < 1 || request.getLtciGrade() > 6)) {
+        // 장기요양등급 검증
+        if (request.getLtciGrade() != null && 
+            (request.getLtciGrade() < 1 || request.getLtciGrade() > 6)) {
             throw new CustomException.BadRequest("장기요양등급은 1-6 사이여야 합니다");
         }
     }
     
     private void validateOverseasProfileRequest(OverseasProfileRequest request) {
         if (request == null) {
-            throw new CustomException.BadRequest("프로필 정보가 필요합니다");
+            throw new CustomException.BadRequest("프로필 요청 정보가 필요합니다");
         }
         
+        // 공통 필드 검증
+        validateBaseProfileRequest(request);
+        
+        // 거주 국가 필수 검증
         if (!StringUtils.hasText(request.getResidenceCountry())) {
             throw new CustomException.BadRequest("거주 국가는 필수입니다");
         }
         
-        validateSecurityPatterns(request.getGender(), request.getOverseasAddress(), 
-                                request.getResidenceCountry(), request.getOverseasContactName());
-        
-        if (request.getBirthDate() != null && request.getBirthDate().isAfter(LocalDate.now())) {
-            throw new CustomException.BadRequest("생년월일은 현재보다 과거여야 합니다");
+        // 여권 만료일 검증
+        if (request.getPassportExpiryDate() != null && 
+            request.getPassportExpiryDate().isBefore(java.time.LocalDate.now())) {
+            throw new CustomException.BadRequest("여권 만료일은 현재 날짜 이후여야 합니다");
         }
+    }
+    
+    /**
+     * BaseProfile 공통 필드 검증 (제네릭 메서드)
+     */
+    private <T extends BaseProfileRequest> void validateBaseProfileRequest(T request) {
+        // 보안 패턴 검증
+        validateSecurityPatterns(
+            request.getGender(),
+            request.getAddress(),
+            request.getDetailedAddress(),
+            request.getPostalCode(),
+            request.getEmergencyContactName(),
+            request.getEmergencyContactPhone(),
+            request.getEmergencyContactRelation(),
+            request.getCareLevel(),
+            request.getSpecialNeeds(),
+            request.getBudgetRange()
+        );
         
-        if (request.getPassportExpiryDate() != null && request.getPassportExpiryDate().isBefore(LocalDate.now())) {
-            throw new CustomException.BadRequest("여권 만료일은 현재보다 미래여야 합니다");
+        // 전화번호 형식 검증
+        if (StringUtils.hasText(request.getEmergencyContactPhone()) && 
+            !ValidationUtil.isValidPhoneNumber(request.getEmergencyContactPhone())) {
+            throw new CustomException.BadRequest("유효하지 않은 비상연락처 전화번호 형식입니다");
+        }
+    }
+    
+    private void validateMemberForDomesticProfile(Member member) {
+        if (!member.getRole().isDomestic()) {
+            throw new CustomException.BadRequest("국내 회원만 국내 프로필을 생성할 수 있습니다");
+        }
+    }
+    
+    private void validateMemberForOverseasProfile(Member member) {
+        if (!member.getRole().isOverseas()) {
+            throw new CustomException.BadRequest("해외 회원만 해외 프로필을 생성할 수 있습니다");
         }
     }
     
@@ -299,147 +420,5 @@ public class ProfileService {
     
     private String sanitizeInput(String input) {
         return ValidationUtil.sanitizeInput(input);
-    }
-    
-    private void updateDomesticProfileFields(DomesticProfile profile, DomesticProfileRequest request) {
-        if (request.getBirthDate() != null || StringUtils.hasText(request.getGender()) || 
-            StringUtils.hasText(request.getAddress()) || StringUtils.hasText(request.getDetailedAddress()) ||
-            StringUtils.hasText(request.getPostalCode())) {
-            profile.updateBasicInfo(
-                    request.getBirthDate(),
-                    sanitizeInput(request.getGender()),
-                    sanitizeInput(request.getAddress()),
-                    sanitizeInput(request.getDetailedAddress()),
-                    sanitizeInput(request.getPostalCode())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getEmergencyContactName()) || 
-            StringUtils.hasText(request.getEmergencyContactPhone()) ||
-            StringUtils.hasText(request.getEmergencyContactRelation())) {
-            profile.updateEmergencyContact(
-                    sanitizeInput(request.getEmergencyContactName()),
-                    sanitizeInput(request.getEmergencyContactPhone()),
-                    sanitizeInput(request.getEmergencyContactRelation())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getHealthInsuranceNumber()) || 
-            request.getLtciGrade() != null ||
-            StringUtils.hasText(request.getLtciCertificateNumber())) {
-            profile.updateHealthInfo(
-                    sanitizeInput(request.getHealthInsuranceNumber()),
-                    request.getLtciGrade(),
-                    sanitizeInput(request.getLtciCertificateNumber())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getPreferredRegion()) || 
-            StringUtils.hasText(request.getCareLevel()) ||
-            StringUtils.hasText(request.getSpecialNeeds()) ||
-            StringUtils.hasText(request.getFamilyVisitFrequency()) ||
-            StringUtils.hasText(request.getBudgetRange())) {
-            profile.updateCareInfo(
-                    sanitizeInput(request.getPreferredRegion()),
-                    sanitizeInput(request.getCareLevel()),
-                    sanitizeInput(request.getSpecialNeeds()),
-                    sanitizeInput(request.getFamilyVisitFrequency()),
-                    sanitizeInput(request.getBudgetRange())
-            );
-        }
-    }
-    
-    private void updateOverseasProfileFields(OverseasProfile profile, OverseasProfileRequest request) {
-        if (request.getBirthDate() != null || StringUtils.hasText(request.getGender()) || 
-            StringUtils.hasText(request.getOverseasAddress()) || StringUtils.hasText(request.getResidenceCountry()) ||
-            StringUtils.hasText(request.getResidenceCity())) {
-            profile.updateBasicInfo(
-                    request.getBirthDate(),
-                    sanitizeInput(request.getGender()),
-                    sanitizeInput(request.getOverseasAddress()),
-                    sanitizeInput(request.getResidenceCountry()),
-                    sanitizeInput(request.getResidenceCity())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getKoreanAddress()) || 
-            StringUtils.hasText(request.getKoreanPostalCode())) {
-            profile.updateKoreanAddress(
-                    sanitizeInput(request.getKoreanAddress()),
-                    sanitizeInput(request.getKoreanPostalCode())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getPassportNumber()) || 
-            request.getPassportExpiryDate() != null ||
-            StringUtils.hasText(request.getVisaStatus()) ||
-            request.getVisaExpiryDate() != null) {
-            profile.updatePassportInfo(
-                    sanitizeInput(request.getPassportNumber()),
-                    request.getPassportExpiryDate(),
-                    sanitizeInput(request.getVisaStatus()),
-                    request.getVisaExpiryDate()
-            );
-        }
-        
-        if (StringUtils.hasText(request.getOverseasContactName()) || 
-            StringUtils.hasText(request.getOverseasContactPhone()) ||
-            StringUtils.hasText(request.getOverseasContactRelation())) {
-            profile.updateOverseasContact(
-                    sanitizeInput(request.getOverseasContactName()),
-                    sanitizeInput(request.getOverseasContactPhone()),
-                    sanitizeInput(request.getOverseasContactRelation())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getKoreaContactName()) || 
-            StringUtils.hasText(request.getKoreaContactPhone()) ||
-            StringUtils.hasText(request.getKoreaContactRelation())) {
-            profile.updateKoreaContact(
-                    sanitizeInput(request.getKoreaContactName()),
-                    sanitizeInput(request.getKoreaContactPhone()),
-                    sanitizeInput(request.getKoreaContactRelation())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getOverseasInsuranceNumber()) || 
-            StringUtils.hasText(request.getOverseasInsuranceProvider()) ||
-            StringUtils.hasText(request.getTravelInsurance())) {
-            profile.updateInsuranceInfo(
-                    sanitizeInput(request.getOverseasInsuranceNumber()),
-                    sanitizeInput(request.getOverseasInsuranceProvider()),
-                    sanitizeInput(request.getTravelInsurance())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getEntryPurpose()) || 
-            StringUtils.hasText(request.getExpectedStayDuration()) ||
-            StringUtils.hasText(request.getPreferredCommunicationMethod()) ||
-            StringUtils.hasText(request.getTimeZonePreference())) {
-            profile.updateTripInfo(
-                    sanitizeInput(request.getEntryPurpose()),
-                    sanitizeInput(request.getExpectedStayDuration()),
-                    sanitizeInput(request.getPreferredCommunicationMethod()),
-                    sanitizeInput(request.getTimeZonePreference())
-            );
-        }
-        
-        if (StringUtils.hasText(request.getPreferredRegionInKorea()) || 
-            StringUtils.hasText(request.getBudgetRange()) ||
-            StringUtils.hasText(request.getCareLevel()) ||
-            StringUtils.hasText(request.getSpecialNeeds()) ||
-            StringUtils.hasText(request.getCulturalDietaryRequirements())) {
-            profile.updateCareInfo(
-                    sanitizeInput(request.getPreferredRegionInKorea()),
-                    sanitizeInput(request.getBudgetRange()),
-                    sanitizeInput(request.getCareLevel()),
-                    sanitizeInput(request.getSpecialNeeds()),
-                    sanitizeInput(request.getCulturalDietaryRequirements())
-            );
-        }
-        
-        if (request.getCoordinatorRequired() != null) {
-            profile.setCoordinatorRequired(request.getCoordinatorRequired());
-        }
     }
 }

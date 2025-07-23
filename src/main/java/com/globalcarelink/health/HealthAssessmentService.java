@@ -4,24 +4,20 @@ import com.globalcarelink.common.exception.CustomException;
 import com.globalcarelink.common.util.ValidationUtil;
 import com.globalcarelink.health.dto.HealthAssessmentCreateRequest;
 import com.globalcarelink.health.dto.HealthAssessmentUpdateRequest;
-import com.globalcarelink.health.dto.HealthAssessmentStatistics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 
 /**
- * 건강 상태 평가 서비스
+ * 건강 상태 평가 핵심 서비스
+ * CRUD 기능에 집중 (SRP 원칙 적용)
  * KB라이프생명 기반 돌봄지수 체크 비즈니스 로직
  */
 @Service
@@ -35,7 +31,9 @@ public class HealthAssessmentService {
 
     /**
      * 건강 평가 생성
+     * 캐시 업데이트 및 무효화 적용
      */
+    @Transactional
     @CachePut(value = "health-assessments", key = "#result.id")
     @CacheEvict(value = "health-assessments", key = "'member_' + #request.memberId + '_latest'")
     public HealthAssessment createAssessment(HealthAssessmentCreateRequest request) {
@@ -63,8 +61,9 @@ public class HealthAssessmentService {
         // ADL 점수 자동 계산
         assessment.calculateAdlScore();
 
-        // 케어 등급 계산
+        // 케어 등급 계산 및 설정
         CareGradeCalculator.CareGradeResult gradeResult = careGradeCalculator.calculateComprehensiveGrade(assessment);
+        assessment.setOverallCareGrade(gradeResult.getGradeName());
 
         // 저장
         HealthAssessment saved = healthAssessmentRepository.save(assessment);
@@ -81,6 +80,11 @@ public class HealthAssessmentService {
     @Cacheable(value = "health-assessments", key = "#assessmentId")
     public Optional<HealthAssessment> getAssessmentById(Long assessmentId) {
         log.debug("건강 평가 조회 - ID: {}", assessmentId);
+        
+        if (assessmentId == null || assessmentId <= 0) {
+            throw new CustomException.BadRequest("유효하지 않은 평가 ID입니다");
+        }
+        
         return healthAssessmentRepository.findById(assessmentId);
     }
 
@@ -88,8 +92,9 @@ public class HealthAssessmentService {
      * 회원별 최신 건강 평가 조회
      */
     @Cacheable(value = "health-assessments", key = "'member_' + #memberId + '_latest'")
-    public Optional<HealthAssessment> getLatestAssessmentByMemberId(String memberId) {
+    public Optional<HealthAssessment> getLatestAssessmentByMember(String memberId) {
         log.debug("회원 최신 건강 평가 조회 - 회원: {}", memberId);
+        
         if (memberId == null || memberId.trim().isEmpty()) {
             throw new CustomException.BadRequest("회원 ID는 필수입니다");
         }
@@ -98,30 +103,10 @@ public class HealthAssessmentService {
     }
 
     /**
-     * 회원별 건강 평가 이력 조회
-     */
-    public List<HealthAssessment> getAssessmentHistoryByMemberId(String memberId) {
-        if (memberId == null || memberId.trim().isEmpty()) {
-            throw new CustomException.BadRequest("회원 ID는 필수입니다");
-        }
-        
-        return healthAssessmentRepository.findByMemberIdOrderByAssessmentDateDesc(memberId);
-    }
-
-    /**
-     * 건강 평가 페이징 조회
-     */
-    public Page<HealthAssessment> getAssessmentsByMemberId(String memberId, Pageable pageable) {
-        if (memberId == null || memberId.trim().isEmpty()) {
-            throw new CustomException.BadRequest("회원 ID는 필수입니다");
-        }
-        
-        return healthAssessmentRepository.findByMemberIdOrderByAssessmentDateDesc(memberId, pageable);
-    }
-
-    /**
      * 건강 평가 수정
+     * 캐시 업데이트 및 무효화 적용
      */
+    @Transactional
     @CachePut(value = "health-assessments", key = "#assessmentId")
     @CacheEvict(value = "health-assessments", key = "'member_' + #result.memberId + '_latest'")
     public HealthAssessment updateAssessment(Long assessmentId, HealthAssessmentUpdateRequest request) {
@@ -135,30 +120,7 @@ public class HealthAssessmentService {
         validateUpdateRequest(request);
 
         // 평가 정보 업데이트
-        if (request.getMobilityLevel() != null) {
-            assessment.setMobilityLevel(request.getMobilityLevel());
-        }
-        if (request.getEatingLevel() != null) {
-            assessment.setEatingLevel(request.getEatingLevel());
-        }
-        if (request.getToiletLevel() != null) {
-            assessment.setToiletLevel(request.getToiletLevel());
-        }
-        if (request.getCommunicationLevel() != null) {
-            assessment.setCommunicationLevel(request.getCommunicationLevel());
-        }
-        if (request.getLtciGrade() != null) {
-            assessment.setLtciGrade(request.getLtciGrade());
-        }
-        if (request.getCareTargetStatus() != null) {
-            assessment.setCareTargetStatus(request.getCareTargetStatus());
-        }
-        if (request.getMealType() != null) {
-            assessment.setMealType(request.getMealType());
-        }
-        if (request.getDiseaseTypes() != null) {
-            assessment.setDiseaseTypes(request.getDiseaseTypes());
-        }
+        updateAssessmentFields(assessment, request);
 
         // 평가 날짜 갱신
         assessment.setAssessmentDate(LocalDateTime.now());
@@ -168,6 +130,7 @@ public class HealthAssessmentService {
 
         // 케어 등급 재계산
         CareGradeCalculator.CareGradeResult gradeResult = careGradeCalculator.calculateComprehensiveGrade(assessment);
+        assessment.setOverallCareGrade(gradeResult.getGradeName());
 
         HealthAssessment updated = healthAssessmentRepository.save(assessment);
 
@@ -180,102 +143,21 @@ public class HealthAssessmentService {
      * 케어 등급 계산 (별도 호출)
      */
     public CareGradeCalculator.CareGradeResult calculateCareGrade(HealthAssessment assessment) {
-        return careGradeCalculator.calculateComprehensiveGrade(assessment);
-    }
-
-    /**
-     * 특정 케어 등급 범위의 평가 조회
-     */
-    public List<HealthAssessment> getAssessmentsByCareGradeRange(Integer minGrade, Integer maxGrade) {
-        return healthAssessmentRepository.findByCareGradeRange(minGrade, maxGrade);
-    }
-
-    /**
-     * 호스피스 케어 대상자 조회
-     */
-    public List<HealthAssessment> getHospiceCareTargets() {
-        return healthAssessmentRepository.findHospiceCareTargets();
-    }
-
-    /**
-     * 치매 전문 케어 대상자 조회
-     */
-    public List<HealthAssessment> getDementiaCareTargets() {
-        return healthAssessmentRepository.findDementiaCareTargets();
-    }
-
-    /**
-     * 중증 환자 조회
-     */
-    public List<HealthAssessment> getSevereCareTargets() {
-        return healthAssessmentRepository.findSevereCareTargets();
-    }
-
-    /**
-     * 재외동포 대상 평가 조회
-     */
-    public List<HealthAssessment> getOverseasKoreanAssessments() {
-        return healthAssessmentRepository.findOverseasKoreanAssessments();
-    }
-
-    /**
-     * 건강 평가 통계 조회
-     */
-    @Cacheable(value = "matching-statistics", key = "'health_statistics'")
-    public HealthAssessmentStatistics getStatistics() {
-        log.info("건강 평가 통계 조회");
-        // 케어 등급별 통계
-        List<Map<String, Object>> gradeStats = healthAssessmentRepository.findCareGradeStatistics();
-        
-        // ADL 점수 구간별 통계
-        List<Map<String, Object>> adlStats = healthAssessmentRepository.findAdlScoreDistribution();
-        
-        // 연령대별 케어 등급 분포
-        List<Map<String, Object>> ageStats = healthAssessmentRepository.findAgeGroupCareGradeDistribution();
-        
-        // 성별 케어 패턴
-        List<Map<String, Object>> genderStats = healthAssessmentRepository.findGenderCarePatternAnalysis();
-        
-        // 최근 30일 평가 현황
-        Long recentCount = healthAssessmentRepository.countRecentAssessments(LocalDateTime.now().minusDays(30));
-        
-        // 전체 평가 수
-        long totalCount = healthAssessmentRepository.count();
-        
-        // 완성된 평가 수
-        long completeCount = healthAssessmentRepository.findCompleteAssessments().size();
-
-        return HealthAssessmentStatistics.builder()
-                .totalAssessments(totalCount)
-                .completeAssessments(completeCount)
-                .recentAssessments(recentCount)
-                .careGradeDistribution(gradeStats)
-                .adlScoreDistribution(adlStats)
-                .ageGroupDistribution(ageStats)
-                .genderPatternAnalysis(genderStats)
-                .hospiceCareTargets((long) healthAssessmentRepository.findHospiceCareTargets().size())
-                .dementiaCareTargets((long) healthAssessmentRepository.findDementiaCareTargets().size())
-                .severeCareTargets((long) healthAssessmentRepository.findSevereCareTargets().size())
-                .overseasKoreanAssessments((long) healthAssessmentRepository.findOverseasKoreanAssessments().size())
-                .build();
-    }
-
-    /**
-     * 회원의 평가 개선 추이 분석
-     */
-    public List<Map<String, Object>> getMemberAssessmentTrend(String memberId) {
-        if (memberId == null || memberId.trim().isEmpty()) {
-            throw new CustomException.BadRequest("회원 ID는 필수입니다");
+        if (assessment == null) {
+            throw new CustomException.BadRequest("평가 정보가 필요합니다");
         }
         
-        return healthAssessmentRepository.findMemberAssessmentTrend(memberId);
+        return careGradeCalculator.calculateComprehensiveGrade(assessment);
     }
 
     /**
      * 건강 평가 삭제
      */
     @Transactional
+    @CacheEvict(value = {"health-assessments", "matching-statistics"}, allEntries = true)
     public void deleteAssessment(Long assessmentId) {
+        log.info("건강 평가 삭제 시작 - ID: {}", assessmentId);
+        
         HealthAssessment assessment = healthAssessmentRepository.findById(assessmentId)
                 .orElseThrow(() -> new CustomException.NotFound("건강 평가를 찾을 수 없습니다: " + assessmentId));
 
@@ -284,12 +166,44 @@ public class HealthAssessmentService {
         log.info("건강 평가 삭제 완료 - ID: {}, 회원: {}", assessmentId, assessment.getMemberId());
     }
 
+    /**
+     * 평가 존재 여부 확인
+     */
+    public boolean existsById(Long assessmentId) {
+        if (assessmentId == null || assessmentId <= 0) {
+            return false;
+        }
+        return healthAssessmentRepository.existsById(assessmentId);
+    }
+
+    /**
+     * 회원의 평가 존재 여부 확인
+     */
+    public boolean existsByMemberId(String memberId) {
+        if (memberId == null || memberId.trim().isEmpty()) {
+            return false;
+        }
+        return healthAssessmentRepository.findTopByMemberIdOrderByAssessmentDateDesc(memberId).isPresent();
+    }
+
+    /**
+     * 평가 완성도 확인
+     */
+    public boolean isAssessmentComplete(Long assessmentId) {
+        return getAssessmentById(assessmentId)
+                .map(HealthAssessment::isComplete)
+                .orElse(false);
+    }
+
+    /**
+     * 모든 캐시 무효화
+     */
     @CacheEvict(value = {"health-assessments", "matching-statistics"}, allEntries = true)
     public void evictAllCaches() {
         log.info("건강 평가 관련 모든 캐시 삭제");
     }
 
-    // ===== 내부 검증 메서드 =====
+    // ===== 내부 검증 및 업데이트 메서드 =====
 
     private void validateAssessmentRequest(HealthAssessmentCreateRequest request) {
         // 필수 필드 검증
@@ -326,20 +240,48 @@ public class HealthAssessmentService {
             validateAdlLevels(request.getMobilityLevel(), request.getEatingLevel(), 
                              request.getToiletLevel(), request.getCommunicationLevel());
         }
+
+        // 질환 정보 검증
+        if (request.getDiseaseTypes() != null && request.getDiseaseTypes().length() > 200) {
+            throw new CustomException.BadRequest("질환 정보는 200자를 초과할 수 없습니다");
+        }
     }
 
-    private void validateAdlLevels(Integer mobility, Integer eating, Integer toilet, Integer communication) {
-        if (mobility != null && (mobility < 1 || mobility > 3)) {
-            throw new CustomException.BadRequest("걷기 활동 능력은 1-3 사이여야 합니다");
+    private void validateAdlLevels(Integer... levels) {
+        for (Integer level : levels) {
+            if (level != null && (level < 1 || level > 3)) {
+                throw new CustomException.BadRequest("ADL 평가 수준은 1-3 사이여야 합니다");
+            }
         }
-        if (eating != null && (eating < 1 || eating > 3)) {
-            throw new CustomException.BadRequest("식사 활동 능력은 1-3 사이여야 합니다");
+    }
+
+    private void updateAssessmentFields(HealthAssessment assessment, HealthAssessmentUpdateRequest request) {
+        // ADL 평가 항목 업데이트
+        if (request.getMobilityLevel() != null) {
+            assessment.setMobilityLevel(request.getMobilityLevel());
         }
-        if (toilet != null && (toilet < 1 || toilet > 3)) {
-            throw new CustomException.BadRequest("배변 활동 능력은 1-3 사이여야 합니다");
+        if (request.getEatingLevel() != null) {
+            assessment.setEatingLevel(request.getEatingLevel());
         }
-        if (communication != null && (communication < 1 || communication > 3)) {
-            throw new CustomException.BadRequest("의사소통 능력은 1-3 사이여야 합니다");
+        if (request.getToiletLevel() != null) {
+            assessment.setToiletLevel(request.getToiletLevel());
+        }
+        if (request.getCommunicationLevel() != null) {
+            assessment.setCommunicationLevel(request.getCommunicationLevel());
+        }
+
+        // 추가 정보 업데이트
+        if (request.getLtciGrade() != null) {
+            assessment.setLtciGrade(request.getLtciGrade());
+        }
+        if (request.getCareTargetStatus() != null) {
+            assessment.setCareTargetStatus(request.getCareTargetStatus());
+        }
+        if (request.getMealType() != null) {
+            assessment.setMealType(request.getMealType());
+        }
+        if (request.getDiseaseTypes() != null) {
+            assessment.setDiseaseTypes(request.getDiseaseTypes());
         }
     }
 }

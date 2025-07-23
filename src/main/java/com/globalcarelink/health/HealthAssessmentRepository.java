@@ -52,6 +52,16 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     List<HealthAssessment> findByAdlScoreRange(@Param("minScore") Integer minScore, @Param("maxScore") Integer maxScore);
 
     /**
+     * 질환 유형별 평가 조회
+     */
+    List<HealthAssessment> findByDiseaseTypesContaining(String diseaseType);
+
+    /**
+     * 출생년도 범위별 평가 조회 (연령대 조회용)
+     */
+    List<HealthAssessment> findByBirthYearBetween(Integer startYear, Integer endYear);
+
+    /**
      * 재외동포 대상 평가 조회 (Member 엔티티와 조인 필요 - 추후 구현)
      */
     @Query(value = """
@@ -79,15 +89,15 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     @Query(value = """
         SELECT 
             CASE 
-                WHEN adl_score BETWEEN 100 AND 140 THEN '경증(100-140)'
-                WHEN adl_score BETWEEN 141 AND 180 THEN '중등증(141-180)'
-                WHEN adl_score BETWEEN 181 AND 220 THEN '중증(181-220)'
-                WHEN adl_score BETWEEN 221 AND 300 THEN '최중증(221-300)'
-                ELSE '기타'
+                WHEN adl_score BETWEEN 100 AND 149 THEN '경증'
+                WHEN adl_score BETWEEN 150 AND 199 THEN '중등증'
+                WHEN adl_score BETWEEN 200 AND 249 THEN '중증'
+                WHEN adl_score >= 250 THEN '최중증'
+                ELSE '미분류'
             END as score_range,
             COUNT(*) as count
         FROM health_assessments 
-        WHERE adl_score IS NOT NULL 
+        WHERE adl_score IS NOT NULL
         GROUP BY score_range
         ORDER BY MIN(adl_score)
         """, nativeQuery = true)
@@ -99,10 +109,9 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     @Query(value = """
         SELECT 
             CASE 
-                WHEN (YEAR(CURRENT_DATE) - birth_year) BETWEEN 60 AND 69 THEN '60대'
-                WHEN (YEAR(CURRENT_DATE) - birth_year) BETWEEN 70 AND 79 THEN '70대' 
-                WHEN (YEAR(CURRENT_DATE) - birth_year) BETWEEN 80 AND 89 THEN '80대'
-                WHEN (YEAR(CURRENT_DATE) - birth_year) >= 90 THEN '90대 이상'
+                WHEN YEAR(CURRENT_DATE) - birth_year BETWEEN 65 AND 74 THEN '65-74세'
+                WHEN YEAR(CURRENT_DATE) - birth_year BETWEEN 75 AND 84 THEN '75-84세'
+                WHEN YEAR(CURRENT_DATE) - birth_year >= 85 THEN '85세 이상'
                 ELSE '기타'
             END as age_group,
             ltci_grade,
@@ -120,57 +129,70 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     @Query(value = """
         SELECT 
             gender,
-            ltci_grade,
             AVG(adl_score) as avg_adl_score,
-            COUNT(*) as count
+            AVG(ltci_grade) as avg_care_grade,
+            COUNT(*) as total_count
         FROM health_assessments 
-        WHERE gender IS NOT NULL AND ltci_grade IS NOT NULL AND adl_score IS NOT NULL
-        GROUP BY gender, ltci_grade
-        ORDER BY gender, ltci_grade
+        WHERE gender IS NOT NULL 
+        GROUP BY gender
         """, nativeQuery = true)
     List<Map<String, Object>> findGenderCarePatternAnalysis();
 
     /**
-     * 최근 30일 평가 현황
-     */
-    @Query("SELECT COUNT(h) FROM HealthAssessment h WHERE h.assessmentDate >= :thirtyDaysAgo")
-    Long countRecentAssessments(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
-
-    /**
-     * 미완성 평가 조회
-     */
-    @Query("SELECT h FROM HealthAssessment h WHERE h.mobilityLevel IS NULL OR h.eatingLevel IS NULL OR h.toiletLevel IS NULL OR h.communicationLevel IS NULL ORDER BY h.assessmentDate DESC")
-    List<HealthAssessment> findIncompleteAssessments();
-
-    /**
-     * 특정 회원의 평가 개선 추이 (ADL 점수 변화)
+     * 호스피스 케어 대상자 조회
+     * - 1-2등급 최중증/중증 환자
+     * - 말기 질환 관련 키워드 포함
      */
     @Query(value = """
-        SELECT 
-            assessment_date,
-            adl_score,
-            LAG(adl_score) OVER (ORDER BY assessment_date) as previous_score
-        FROM health_assessments 
-        WHERE member_id = :memberId AND adl_score IS NOT NULL
-        ORDER BY assessment_date
+        SELECT h.* FROM health_assessments h 
+        WHERE (h.ltci_grade IN (1, 2) OR h.adl_score >= 250)
+        OR (h.disease_types LIKE '%말기%' OR h.disease_types LIKE '%암%' OR h.disease_types LIKE '%호스피스%')
+        ORDER BY h.ltci_grade ASC, h.adl_score DESC
         """, nativeQuery = true)
-    List<Map<String, Object>> findMemberAssessmentTrend(@Param("memberId") String memberId);
-
-    /**
-     * 호스피스 케어 대상자 조회 (careTargetStatus 1-2)
-     */
-    @Query("SELECT h FROM HealthAssessment h WHERE h.careTargetStatus IN (1, 2) ORDER BY h.assessmentDate DESC")
     List<HealthAssessment> findHospiceCareTargets();
 
     /**
-     * 치매 전문 케어 대상자 조회 (인지지원등급 + 의사소통 3등급)
+     * 치매 전문 케어 대상자 조회
+     * - 인지지원등급 또는 치매 관련 질환
+     * - 의사소통 능력 저하자 (3점)
      */
-    @Query("SELECT h FROM HealthAssessment h WHERE h.ltciGrade = 6 OR h.communicationLevel = 3 ORDER BY h.assessmentDate DESC")
+    @Query(value = """
+        SELECT h.* FROM health_assessments h 
+        WHERE h.ltci_grade = 6 
+        OR h.communication_level = 3
+        OR (h.disease_types LIKE '%치매%' OR h.disease_types LIKE '%알츠하이머%' OR h.disease_types LIKE '%인지%')
+        ORDER BY h.communication_level DESC, h.assessment_date DESC
+        """, nativeQuery = true)
     List<HealthAssessment> findDementiaCareTargets();
 
     /**
-     * 중증 환자 조회 (1-2등급 + 높은 ADL 점수)
+     * 중증 환자 조회
+     * - 1-3등급 중증 이상
+     * - ADL 점수 200점 이상
      */
-    @Query("SELECT h FROM HealthAssessment h WHERE h.ltciGrade IN (1, 2) OR h.adlScore >= 220 ORDER BY h.assessmentDate DESC")
+    @Query("SELECT h FROM HealthAssessment h WHERE (h.ltciGrade BETWEEN 1 AND 3) OR h.adlScore >= 200 ORDER BY h.ltciGrade ASC, h.adlScore DESC")
     List<HealthAssessment> findSevereCareTargets();
+
+    /**
+     * 최근 지정 기간 내 평가 개수 조회
+     */
+    @Query("SELECT COUNT(h) FROM HealthAssessment h WHERE h.assessmentDate >= :since")
+    Long countRecentAssessments(@Param("since") LocalDateTime since);
+
+    /**
+     * 회원의 평가 개선 추이 분석
+     */
+    @Query(value = """
+        SELECT 
+            DATE(assessment_date) as assessment_date,
+            adl_score,
+            ltci_grade,
+            overall_care_grade,
+            LAG(adl_score) OVER (ORDER BY assessment_date) as previous_adl_score
+        FROM health_assessments 
+        WHERE member_id = :memberId 
+        ORDER BY assessment_date DESC
+        LIMIT 10
+        """, nativeQuery = true)
+    List<Map<String, Object>> findMemberAssessmentTrend(@Param("memberId") String memberId);
 }

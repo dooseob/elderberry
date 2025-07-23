@@ -1,276 +1,483 @@
 package com.globalcarelink.common.exception;
 
+import com.globalcarelink.common.util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-@RestControllerAdvice
+/**
+ * 전역 예외 처리기 (개선된 버전)
+ * 상세한 유효성 검증 오류 정보 제공
+ * 보안을 고려한 오류 메시지 처리
+ */
 @Slf4j
+@RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomException.BadRequest.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(CustomException.BadRequest ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("잘못된 요청 - ID: {}, URI: {}, 메시지: {}", errorId, request.getRequestURI(), ex.getMessage());
+    private final ValidationErrorBuilder validationErrorBuilder;
+
+    /**
+     * 커스텀 예외 처리
+     */
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ValidationErrorDetails> handleCustomException(
+            CustomException ex, HttpServletRequest request) {
         
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
+        log.warn("커스텀 예외 발생: {} - URI: {}", ex.getMessage(), request.getRequestURI());
+        
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create(ex.getMessage())
+                .withTimestamp()
+                .withErrorId("CUSTOM")
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("httpMethod", request.getMethod())
                 .build();
-        
-        return ResponseEntity.badRequest().body(response);
+
+        HttpStatus status = switch (ex) {
+            case CustomException.BadRequest badRequest -> HttpStatus.BAD_REQUEST;
+            case CustomException.NotFound notFound -> HttpStatus.NOT_FOUND;
+            case CustomException.Conflict conflict -> HttpStatus.CONFLICT;
+            case CustomException.Unauthorized unauthorized -> HttpStatus.UNAUTHORIZED;
+            case CustomException.Forbidden forbidden -> HttpStatus.FORBIDDEN;
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
+
+        return ResponseEntity.status(status).body(errorDetails);
     }
 
-    @ExceptionHandler(CustomException.NotFound.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(CustomException.NotFound ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.info("리소스 없음 - ID: {}, URI: {}, 메시지: {}", errorId, request.getRequestURI(), ex.getMessage());
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
-                .message("요청한 리소스를 찾을 수 없습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
-
-    @ExceptionHandler(CustomException.Unauthorized.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorized(CustomException.Unauthorized ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("인증 실패 - ID: {}, URI: {}, IP: {}", errorId, request.getRequestURI(), getClientIP(request));
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Unauthorized")
-                .message("인증이 필요합니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
-
-    @ExceptionHandler(CustomException.Forbidden.class)
-    public ResponseEntity<ErrorResponse> handleForbidden(CustomException.Forbidden ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("접근 권한 없음 - ID: {}, URI: {}, IP: {}", errorId, request.getRequestURI(), getClientIP(request));
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
-                .message("접근 권한이 없습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("Spring Security 접근 거부 - ID: {}, URI: {}, IP: {}", errorId, request.getRequestURI(), getClientIP(request));
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Access Denied")
-                .message("접근 권한이 없습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("잘못된 인증 정보 - ID: {}, URI: {}, IP: {}", errorId, request.getRequestURI(), getClientIP(request));
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Bad Credentials")
-                .message("인증 정보가 올바르지 않습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
-
+    /**
+     * Bean Validation 예외 처리 (@Valid 어노테이션)
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("유효성 검증 실패 - ID: {}, URI: {}", errorId, request.getRequestURI());
+    public ResponseEntity<ValidationErrorDetails> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
         
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> 
-            errors.put(error.getField(), error.getDefaultMessage())
-        );
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Failed")
-                .message("입력 값이 올바르지 않습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .details(errors)
-                .build();
-        
-        return ResponseEntity.badRequest().body(response);
+        log.warn("유효성 검증 실패: {} 개 오류 - URI: {}", 
+                ex.getBindingResult().getErrorCount(), request.getRequestURI());
+
+        ValidationErrorDetails.ValidationErrorDetailsBuilder builder = validationErrorBuilder
+                .create("입력값 유효성 검증에 실패했습니다")
+                .withTimestamp()
+                .withErrorId("VALIDATION")
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("httpMethod", request.getMethod())
+                .addMetadata("totalErrors", ex.getBindingResult().getErrorCount());
+
+        // 필드 오류 처리
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            ValidationErrorDetails.FieldError error = createDetailedFieldError(fieldError);
+            builder.fieldErrors(builder.build().getFieldErrors() == null ? 
+                    new ArrayList<>() : new ArrayList<>(builder.build().getFieldErrors()));
+            builder.build().getFieldErrors().add(error);
+        }
+
+        // 글로벌 오류 처리
+        ex.getBindingResult().getGlobalErrors().forEach(globalError -> {
+            builder.addGlobalError(
+                globalError.getDefaultMessage(),
+                globalError.getCode(),
+                ValidationErrorDetails.ErrorType.BUSINESS_RULE_VIOLATION
+            );
+        });
+
+        return ResponseEntity.badRequest().body(builder.build());
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> handleBindException(BindException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("바인딩 오류 - ID: {}, URI: {}", errorId, request.getRequestURI());
-        
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> 
-            errors.put(error.getField(), error.getDefaultMessage())
-        );
-        
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Binding Error")
-                .message("요청 데이터 바인딩에 실패했습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .details(errors)
-                .build();
-        
-        return ResponseEntity.badRequest().body(response);
-    }
-
+    /**
+     * Bean Validation 예외 처리 (직접 검증)
+     */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("제약 조건 위반 - ID: {}, URI: {}", errorId, request.getRequestURI());
+    public ResponseEntity<ValidationErrorDetails> handleConstraintViolationException(
+            ConstraintViolationException ex, HttpServletRequest request) {
         
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> 
-            errors.put(violation.getPropertyPath().toString(), violation.getMessage())
-        );
+        log.warn("제약 조건 위반: {} 개 오류 - URI: {}", 
+                ex.getConstraintViolations().size(), request.getRequestURI());
+
+        ValidationErrorDetails.ValidationErrorDetailsBuilder builder = validationErrorBuilder
+                .create("제약 조건 위반이 발생했습니다")
+                .withTimestamp()
+                .withErrorId("CONSTRAINT")
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("totalViolations", ex.getConstraintViolations().size());
+
+        List<ValidationErrorDetails.FieldError> fieldErrors = new ArrayList<>();
         
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Constraint Violation")
-                .message("데이터 제약 조건을 위반했습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .details(errors)
-                .build();
-        
-        return ResponseEntity.badRequest().body(response);
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            String fieldName = violation.getPropertyPath().toString();
+            Object rejectedValue = violation.getInvalidValue();
+            String message = violation.getMessage();
+            String constraintType = violation.getConstraintDescriptor().getAnnotation().annotationType().getSimpleName();
+
+            ValidationErrorDetails.FieldError fieldError = createConstraintFieldError(
+                    fieldName, rejectedValue, message, constraintType, violation);
+            fieldErrors.add(fieldError);
+        }
+
+        return ResponseEntity.badRequest()
+                .body(builder.fieldErrors(fieldErrors).build());
     }
 
+    /**
+     * 바인딩 예외 처리
+     */
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ValidationErrorDetails> handleBindException(
+            BindException ex, HttpServletRequest request) {
+        
+        log.warn("바인딩 오류: {} - URI: {}", ex.getMessage(), request.getRequestURI());
+
+        ValidationErrorDetails.ValidationErrorDetailsBuilder builder = validationErrorBuilder
+                .create("요청 데이터 바인딩에 실패했습니다")
+                .withTimestamp()
+                .withErrorId("BINDING")
+                .addMetadata("requestUri", request.getRequestURI());
+
+        List<ValidationErrorDetails.FieldError> fieldErrors = new ArrayList<>();
+        
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            fieldErrors.add(createDetailedFieldError(fieldError));
+        }
+
+        return ResponseEntity.badRequest()
+                .body(builder.fieldErrors(fieldErrors).build());
+    }
+
+    /**
+     * 타입 불일치 예외 처리
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.warn("타입 불일치 - ID: {}, URI: {}, 파라미터: {}", errorId, request.getRequestURI(), ex.getName());
+    public ResponseEntity<ValidationErrorDetails> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
         
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Type Mismatch")
-                .message("요청 파라미터 타입이 올바르지 않습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
+        log.warn("타입 불일치: {} - URI: {}", ex.getMessage(), request.getRequestURI());
+
+        String fieldName = ex.getName();
+        Object rejectedValue = ex.getValue();
+        Class<?> requiredType = ex.getRequiredType();
+        
+        ValidationErrorDetails.FieldError fieldError = ValidationErrorDetails.FieldError.builder()
+                .field(fieldName)
+                .rejectedValue(rejectedValue)
+                .message(String.format("%s의 값이 올바른 형식이 아닙니다. %s 타입이 필요합니다 (현재: %s)", 
+                                     fieldName, requiredType != null ? requiredType.getSimpleName() : "알 수 없음", rejectedValue))
+                .code("field.type.mismatch")
+                .constraint("TypeMatch")
+                .helpMessage(getTypeHelpMessage(requiredType))
                 .build();
-        
-        return ResponseEntity.badRequest().body(response);
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("요청 파라미터의 타입이 올바르지 않습니다")
+                .withTimestamp()
+                .withErrorId("TYPE_MISMATCH")
+                .fieldErrors(List.of(fieldError))
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("expectedType", requiredType != null ? requiredType.getSimpleName() : "unknown")
+                .build();
+
+        return ResponseEntity.badRequest().body(errorDetails);
     }
 
+    /**
+     * 필수 파라미터 누락 예외 처리
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ValidationErrorDetails> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException ex, HttpServletRequest request) {
+        
+        log.warn("필수 파라미터 누락: {} - URI: {}", ex.getParameterName(), request.getRequestURI());
+
+        ValidationErrorDetails.FieldError fieldError = validationErrorBuilder
+                .requiredField(ex.getParameterName());
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("필수 요청 파라미터가 누락되었습니다")
+                .withTimestamp()
+                .withErrorId("MISSING_PARAM")
+                .fieldErrors(List.of(fieldError))
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("parameterType", ex.getParameterType())
+                .build();
+
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    /**
+     * HTTP 메시지 읽기 오류 처리
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ValidationErrorDetails> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+        
+        log.warn("HTTP 메시지 읽기 오류 - URI: {}", request.getRequestURI());
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("요청 본문을 읽을 수 없습니다")
+                .withTimestamp()
+                .withErrorId("MESSAGE_NOT_READABLE")
+                .addGlobalError("JSON 형식이 올바르지 않거나 필수 필드가 누락되었습니다", 
+                              "message.not.readable", 
+                              ValidationErrorDetails.ErrorType.DATA_INTEGRITY_VIOLATION)
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("contentType", request.getContentType())
+                .build();
+
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    /**
+     * 데이터 무결성 위반 예외 처리
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.error("데이터 무결성 위반 - ID: {}, URI: {}", errorId, request.getRequestURI(), ex);
+    public ResponseEntity<ValidationErrorDetails> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex, HttpServletRequest request) {
         
-        ErrorResponse response = ErrorResponse.builder()
-                .errorId(errorId)
-                .status(HttpStatus.CONFLICT.value())
-                .error("Data Integrity Violation")
-                .message("데이터 무결성 제약을 위반했습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
+        log.error("데이터 무결성 위반 - URI: {}", request.getRequestURI(), ex);
+
+        // 보안상 상세한 데이터베이스 오류는 노출하지 않음
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("데이터 처리 중 오류가 발생했습니다")
+                .withTimestamp()
+                .withErrorId("DATA_INTEGRITY")
+                .addGlobalError("중복된 데이터이거나 참조 무결성 제약 조건을 위반했습니다", 
+                              "data.integrity.violation", 
+                              ValidationErrorDetails.ErrorType.DATA_INTEGRITY_VIOLATION)
+                .addMetadata("requestUri", request.getRequestURI())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDetails);
     }
 
+    /**
+     * 인증 예외 처리
+     */
+    @ExceptionHandler({AuthenticationException.class, BadCredentialsException.class})
+    public ResponseEntity<ValidationErrorDetails> handleAuthenticationException(
+            Exception ex, HttpServletRequest request) {
+        
+        log.warn("인증 실패 - URI: {} - IP: {}", 
+                request.getRequestURI(), SecurityUtil.getClientIpAddress(request));
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("인증에 실패했습니다")
+                .withTimestamp()
+                .withErrorId("AUTH_FAILED")
+                .addGlobalError("사용자 인증 정보가 올바르지 않습니다", 
+                              "authentication.failed", 
+                              ValidationErrorDetails.ErrorType.SECURITY_VIOLATION)
+                .addMetadata("requestUri", request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    /**
+     * 권한 부족 예외 처리
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ValidationErrorDetails> handleAccessDeniedException(
+            AccessDeniedException ex, HttpServletRequest request) {
+        
+        log.warn("접근 권한 부족 - URI: {} - IP: {}", 
+                request.getRequestURI(), SecurityUtil.getClientIpAddress(request));
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("접근 권한이 없습니다")
+                .withTimestamp()
+                .withErrorId("ACCESS_DENIED")
+                .addGlobalError("이 리소스에 접근할 권한이 없습니다", 
+                              "access.denied", 
+                              ValidationErrorDetails.ErrorType.PERMISSION_DENIED)
+                .addMetadata("requestUri", request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+    }
+
+    /**
+     * HTTP 메서드 미지원 예외 처리
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ValidationErrorDetails> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        
+        log.warn("지원하지 않는 HTTP 메서드: {} - URI: {}", ex.getMethod(), request.getRequestURI());
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("지원하지 않는 HTTP 메서드입니다")
+                .withTimestamp()
+                .withErrorId("METHOD_NOT_SUPPORTED")
+                .addGlobalError(String.format("이 엔드포인트는 %s 메서드를 지원하지 않습니다. 지원되는 메서드: %s", 
+                                             ex.getMethod(), Arrays.toString(ex.getSupportedMethods())), 
+                              "method.not.supported", 
+                              ValidationErrorDetails.ErrorType.BUSINESS_RULE_VIOLATION)
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("requestMethod", ex.getMethod())
+                .addMetadata("supportedMethods", ex.getSupportedMethods())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorDetails);
+    }
+
+    /**
+     * 핸들러 없음 예외 처리 (404)
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ValidationErrorDetails> handleNoHandlerFoundException(
+            NoHandlerFoundException ex, HttpServletRequest request) {
+        
+        log.warn("핸들러 없음: {} {} - IP: {}", 
+                ex.getHttpMethod(), ex.getRequestURL(), SecurityUtil.getClientIpAddress(request));
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("요청한 리소스를 찾을 수 없습니다")
+                .withTimestamp()
+                .withErrorId("NOT_FOUND")
+                .addGlobalError("요청한 URL이 존재하지 않거나 더 이상 사용되지 않습니다", 
+                              "resource.not.found", 
+                              ValidationErrorDetails.ErrorType.RESOURCE_NOT_FOUND)
+                .addMetadata("requestUri", ex.getRequestURL())
+                .addMetadata("httpMethod", ex.getHttpMethod())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    /**
+     * 일반 예외 처리 (최후 수단)
+     */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
-        String errorId = UUID.randomUUID().toString();
-        log.error("예상치 못한 오류 발생 - ID: {}, URI: {}", errorId, request.getRequestURI(), ex);
+    public ResponseEntity<ValidationErrorDetails> handleGeneralException(
+            Exception ex, HttpServletRequest request) {
         
-        ErrorResponse response = ErrorResponse.builder()
+        String errorId = "ERR-" + UUID.randomUUID().toString().substring(0, 8);
+        log.error("예상치 못한 오류 발생 [{}] - URI: {}", errorId, request.getRequestURI(), ex);
+
+        ValidationErrorDetails errorDetails = validationErrorBuilder
+                .create("내부 서버 오류가 발생했습니다")
+                .withTimestamp()
                 .errorId(errorId)
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
-                .message("서버 내부 오류가 발생했습니다")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
+                .addGlobalError("시스템에서 예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요", 
+                              "internal.server.error", 
+                              ValidationErrorDetails.ErrorType.EXTERNAL_SERVICE_ERROR)
+                .addMetadata("requestUri", request.getRequestURI())
+                .addMetadata("errorId", errorId)
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 
-    private String getClientIP(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
-        }
-        
-        String xRealIP = request.getHeader("X-Real-IP");
-        if (xRealIP != null && !xRealIP.isEmpty()) {
-            return xRealIP;
-        }
-        
-        return request.getRemoteAddr();
+    // ===== 헬퍼 메서드들 =====
+
+    /**
+     * 상세한 필드 오류 생성
+     */
+    private ValidationErrorDetails.FieldError createDetailedFieldError(FieldError fieldError) {
+        String field = fieldError.getField();
+        Object rejectedValue = fieldError.getRejectedValue();
+        String code = fieldError.getCode();
+        String message = fieldError.getDefaultMessage();
+
+        // 코드에 따른 상세 오류 정보 생성
+        return switch (code != null ? code : "") {
+            case "NotNull", "NotEmpty", "NotBlank" -> validationErrorBuilder.requiredField(field);
+            case "Size" -> createSizeFieldError(field, rejectedValue, fieldError);
+            case "Min", "Max", "Range" -> createRangeFieldError(field, rejectedValue, fieldError);
+            case "Email" -> validationErrorBuilder.invalidEmail(field, rejectedValue);
+            case "Pattern" -> createPatternFieldError(field, rejectedValue, fieldError);
+            default -> ValidationErrorDetails.FieldError.builder()
+                    .field(field)
+                    .rejectedValue(rejectedValue)
+                    .message(message != null ? message : field + " 값이 유효하지 않습니다")
+                    .code("field.invalid")
+                    .constraint(code)
+                    .build();
+        };
     }
 
-    @lombok.Builder
-    @lombok.Getter
-    @lombok.AllArgsConstructor
-    @lombok.NoArgsConstructor
-    public static class ErrorResponse {
-        private String errorId;
-        private int status;
-        private String error;
-        private String message;
-        private String path;
-        private LocalDateTime timestamp;
-        private Map<String, String> details;
+    /**
+     * 제약 조건 위반 필드 오류 생성
+     */
+    private ValidationErrorDetails.FieldError createConstraintFieldError(
+            String fieldName, Object rejectedValue, String message, String constraintType,
+            ConstraintViolation<?> violation) {
+        
+        return switch (constraintType) {
+            case "NotNull" -> validationErrorBuilder.requiredField(fieldName);
+            case "Size" -> {
+                Integer min = (Integer) violation.getConstraintDescriptor().getAttributes().get("min");
+                Integer max = (Integer) violation.getConstraintDescriptor().getAttributes().get("max");
+                yield validationErrorBuilder.stringLength(fieldName, rejectedValue, min, max);
+            }
+            case "Min", "Max" -> {
+                Long min = (Long) violation.getConstraintDescriptor().getAttributes().get("value");
+                yield validationErrorBuilder.numberRange(fieldName, rejectedValue, min, null);
+            }
+            case "Email" -> validationErrorBuilder.invalidEmail(fieldName, rejectedValue);
+            case "Pattern" -> {
+                String pattern = (String) violation.getConstraintDescriptor().getAttributes().get("regexp");
+                yield validationErrorBuilder.patternMismatch(fieldName, rejectedValue, pattern, message);
+            }
+            default -> ValidationErrorDetails.FieldError.builder()
+                    .field(fieldName)
+                    .rejectedValue(rejectedValue)
+                    .message(message)
+                    .code("field.constraint.violation")
+                    .constraint(constraintType)
+                    .build();
+        };
+    }
+
+    private ValidationErrorDetails.FieldError createSizeFieldError(String field, Object rejectedValue, FieldError fieldError) {
+        // Size 어노테이션의 min, max 값을 추출하려고 시도하지만, 
+        // FieldError에서는 직접 접근이 어려우므로 기본값 사용
+        return validationErrorBuilder.stringLength(field, rejectedValue, null, null);
+    }
+
+    private ValidationErrorDetails.FieldError createRangeFieldError(String field, Object rejectedValue, FieldError fieldError) {
+        // 범위 정보를 추출하려고 시도하지만, 기본값 사용
+        return validationErrorBuilder.numberRange(field, rejectedValue, null, null);
+    }
+
+    private ValidationErrorDetails.FieldError createPatternFieldError(String field, Object rejectedValue, FieldError fieldError) {
+        return validationErrorBuilder.patternMismatch(field, rejectedValue, "", fieldError.getDefaultMessage());
+    }
+
+    private String getTypeHelpMessage(Class<?> requiredType) {
+        if (requiredType == null) return "올바른 형식으로 입력해주세요";
+        
+        return switch (requiredType.getSimpleName()) {
+            case "Integer", "int" -> "정수 값을 입력해주세요 (예: 123)";
+            case "Long", "long" -> "정수 값을 입력해주세요 (예: 123)";
+            case "Double", "double", "Float", "float" -> "숫자 값을 입력해주세요 (예: 123.45)";
+            case "Boolean", "boolean" -> "true 또는 false를 입력해주세요";
+            case "LocalDate" -> "날짜 형식으로 입력해주세요 (예: 2024-01-01)";
+            case "LocalDateTime" -> "날짜시간 형식으로 입력해주세요 (예: 2024-01-01T10:00:00)";
+            default -> "올바른 " + requiredType.getSimpleName() + " 형식으로 입력해주세요";
+        };
     }
 }

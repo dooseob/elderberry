@@ -1,151 +1,183 @@
 package com.globalcarelink.profile;
 
 import com.globalcarelink.auth.Member;
-import com.globalcarelink.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
+/**
+ * 국내 프로필 엔티티
+ * BaseProfile을 상속받아 공통 필드 중복 제거
+ */
 @Entity
 @Table(name = "domestic_profiles")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class DomesticProfile extends BaseEntity {
+public class DomesticProfile extends BaseProfile {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, unique = true)
-    private Member member;
-    
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
-    
-    @Column(name = "gender", length = 10)
-    private String gender;
-    
-    @Column(name = "address", length = 500)
-    private String address;
-    
-    @Column(name = "detailed_address", length = 200)
-    private String detailedAddress;
-    
-    @Column(name = "postal_code", length = 10)
-    private String postalCode;
-    
-    @Column(name = "emergency_contact_name", length = 50)
-    private String emergencyContactName;
-    
-    @Column(name = "emergency_contact_phone", length = 20)
-    private String emergencyContactPhone;
-    
-    @Column(name = "emergency_contact_relation", length = 30)
-    private String emergencyContactRelation;
+    // ===== 국내 프로필 고유 필드 =====
     
     @Column(name = "health_insurance_number", length = 50)
+    @Size(max = 50, message = "건강보험번호는 50자 이하여야 합니다")
     private String healthInsuranceNumber;
     
     @Column(name = "ltci_grade")
+    @Min(value = 1, message = "장기요양등급은 1 이상이어야 합니다")
+    @Max(value = 6, message = "장기요양등급은 6 이하여야 합니다")
     private Integer ltciGrade;
     
     @Column(name = "ltci_certificate_number", length = 50)
+    @Size(max = 50, message = "장기요양인정서번호는 50자 이하여야 합니다")
     private String ltciCertificateNumber;
     
     @Column(name = "preferred_region", length = 100)
+    @Size(max = 100, message = "선호지역은 100자 이하여야 합니다")
     private String preferredRegion;
     
-    @Column(name = "care_level", length = 20)
-    private String careLevel;
-    
-    @Column(name = "special_needs", length = 1000)
-    private String specialNeeds;
-    
     @Column(name = "family_visit_frequency", length = 50)
+    @Size(max = 50, message = "가족방문빈도는 50자 이하여야 합니다")
     private String familyVisitFrequency;
-    
-    @Column(name = "budget_range", length = 50)
-    private String budgetRange;
-    
-    @Column(name = "profile_completion_percentage")
-    @Builder.Default
-    private Integer profileCompletionPercentage = 0;
-    
-    public void updateBasicInfo(LocalDate birthDate, String gender, String address, 
-                               String detailedAddress, String postalCode) {
-        this.birthDate = birthDate;
-        this.gender = gender;
-        this.address = address;
-        this.detailedAddress = detailedAddress;
-        this.postalCode = postalCode;
-        calculateProfileCompletion();
-    }
-    
-    public void updateEmergencyContact(String name, String phone, String relation) {
-        this.emergencyContactName = name;
-        this.emergencyContactPhone = phone;
-        this.emergencyContactRelation = relation;
-        calculateProfileCompletion();
-    }
-    
-    public void updateHealthInfo(String healthInsuranceNumber, Integer ltciGrade, 
-                                String ltciCertificateNumber) {
+
+    /**
+     * 국내 프로필 생성자 (Builder 패턴용)
+     */
+    public DomesticProfile(Member member, String healthInsuranceNumber, Integer ltciGrade, 
+                          String ltciCertificateNumber, String preferredRegion, 
+                          String familyVisitFrequency) {
+        this.member = member;
         this.healthInsuranceNumber = healthInsuranceNumber;
         this.ltciGrade = ltciGrade;
         this.ltciCertificateNumber = ltciCertificateNumber;
-        calculateProfileCompletion();
-    }
-    
-    public void updateCareInfo(String preferredRegion, String careLevel, 
-                              String specialNeeds, String familyVisitFrequency, String budgetRange) {
         this.preferredRegion = preferredRegion;
-        this.careLevel = careLevel;
-        this.specialNeeds = specialNeeds;
         this.familyVisitFrequency = familyVisitFrequency;
-        this.budgetRange = budgetRange;
-        calculateProfileCompletion();
+        updateCompletionPercentage();
     }
-    
-    private void calculateProfileCompletion() {
-        int totalFields = 15;
-        int completedFields = 0;
+
+    /**
+     * 건강보험 정보 업데이트
+     */
+    public void updateHealthInfo(String healthInsuranceNumber, Integer ltciGrade, 
+                                String ltciCertificateNumber) {
+        if (healthInsuranceNumber != null && !healthInsuranceNumber.trim().isEmpty()) {
+            this.healthInsuranceNumber = healthInsuranceNumber;
+        }
+        if (ltciGrade != null && ltciGrade >= 1 && ltciGrade <= 6) {
+            this.ltciGrade = ltciGrade;
+        }
+        if (ltciCertificateNumber != null && !ltciCertificateNumber.trim().isEmpty()) {
+            this.ltciCertificateNumber = ltciCertificateNumber;
+        }
         
-        if (birthDate != null) completedFields++;
-        if (gender != null && !gender.trim().isEmpty()) completedFields++;
-        if (address != null && !address.trim().isEmpty()) completedFields++;
-        if (detailedAddress != null && !detailedAddress.trim().isEmpty()) completedFields++;
-        if (postalCode != null && !postalCode.trim().isEmpty()) completedFields++;
-        if (emergencyContactName != null && !emergencyContactName.trim().isEmpty()) completedFields++;
-        if (emergencyContactPhone != null && !emergencyContactPhone.trim().isEmpty()) completedFields++;
-        if (emergencyContactRelation != null && !emergencyContactRelation.trim().isEmpty()) completedFields++;
-        if (healthInsuranceNumber != null && !healthInsuranceNumber.trim().isEmpty()) completedFields++;
-        if (ltciGrade != null) completedFields++;
-        if (ltciCertificateNumber != null && !ltciCertificateNumber.trim().isEmpty()) completedFields++;
-        if (preferredRegion != null && !preferredRegion.trim().isEmpty()) completedFields++;
-        if (careLevel != null && !careLevel.trim().isEmpty()) completedFields++;
-        if (specialNeeds != null && !specialNeeds.trim().isEmpty()) completedFields++;
-        if (budgetRange != null && !budgetRange.trim().isEmpty()) completedFields++;
+        updateCompletionPercentage();
+    }
+
+    /**
+     * 선호도 정보 업데이트
+     */
+    public void updatePreferences(String preferredRegion, String familyVisitFrequency) {
+        if (preferredRegion != null && !preferredRegion.trim().isEmpty()) {
+            this.preferredRegion = preferredRegion;
+        }
+        if (familyVisitFrequency != null && !familyVisitFrequency.trim().isEmpty()) {
+            this.familyVisitFrequency = familyVisitFrequency;
+        }
         
-        this.profileCompletionPercentage = Math.round((float) completedFields / totalFields * 100);
+        updateCompletionPercentage();
     }
-    
-    public boolean isProfileComplete() {
-        return profileCompletionPercentage >= 80;
+
+    @Override
+    protected void updateCompletionPercentage() {
+        // 공통 필드 완성도 (70% 가중치)
+        int commonCompletion = calculateCommonFieldsCompletion();
+        
+        // 국내 프로필 고유 필드 완성도 (30% 가중치)
+        int domesticFields = 5; // 고유 필드 개수
+        int completedDomesticFields = 0;
+        
+        if (healthInsuranceNumber != null && !healthInsuranceNumber.trim().isEmpty()) completedDomesticFields++;
+        if (ltciGrade != null) completedDomesticFields++;
+        if (ltciCertificateNumber != null && !ltciCertificateNumber.trim().isEmpty()) completedDomesticFields++;
+        if (preferredRegion != null && !preferredRegion.trim().isEmpty()) completedDomesticFields++;
+        if (familyVisitFrequency != null && !familyVisitFrequency.trim().isEmpty()) completedDomesticFields++;
+        
+        int domesticCompletion = (int) Math.round((double) completedDomesticFields / domesticFields * 100);
+        
+        // 가중 평균 계산
+        this.profileCompletionPercentage = (int) Math.round(commonCompletion * 0.7 + domesticCompletion * 0.3);
     }
-    
-    public boolean hasBasicInfo() {
-        return birthDate != null && gender != null && address != null;
+
+    @Override
+    public String getProfileType() {
+        return "국내 프로필";
     }
-    
-    public boolean hasEmergencyContact() {
-        return emergencyContactName != null && emergencyContactPhone != null;
+
+    /**
+     * 장기요양보험 등급 텍스트 반환
+     */
+    public String getLtciGradeText() {
+        if (ltciGrade == null) {
+            return "미등록";
+        }
+        
+        return switch (ltciGrade) {
+            case 1 -> "1등급 (최중증)";
+            case 2 -> "2등급 (중증)";
+            case 3 -> "3등급 (중등증)";
+            case 4 -> "4등급 (경증)";
+            case 5 -> "5등급 (경증)";
+            case 6 -> "인지지원등급";
+            default -> "알 수 없음";
+        };
     }
-    
-    public boolean hasHealthInfo() {
-        return healthInsuranceNumber != null || ltciGrade != null;
+
+    /**
+     * 국내 프로필 요약 정보
+     */
+    public String getDomesticProfileSummary() {
+        StringBuilder summary = new StringBuilder(getProfileSummary());
+        summary.append("\n=== 국내 프로필 정보 ===\n");
+        
+        if (healthInsuranceNumber != null) {
+            summary.append("건강보험번호: ").append(healthInsuranceNumber).append("\n");
+        }
+        if (ltciGrade != null) {
+            summary.append("장기요양등급: ").append(getLtciGradeText()).append("\n");
+        }
+        if (preferredRegion != null) {
+            summary.append("선호지역: ").append(preferredRegion).append("\n");
+        }
+        if (familyVisitFrequency != null) {
+            summary.append("가족방문빈도: ").append(familyVisitFrequency).append("\n");
+        }
+        
+        return summary.toString();
+    }
+
+    /**
+     * 장기요양보험 등급 보유 여부
+     */
+    public boolean hasLtciGrade() {
+        return ltciGrade != null && ltciGrade >= 1 && ltciGrade <= 6;
+    }
+
+    /**
+     * 중증 환자 여부 (1-3등급)
+     */
+    public boolean isSevereCase() {
+        return hasLtciGrade() && ltciGrade <= 3;
+    }
+
+    /**
+     * 인지지원등급 여부
+     */
+    public boolean isCognitiveSupport() {
+        return hasLtciGrade() && ltciGrade == 6;
     }
 }

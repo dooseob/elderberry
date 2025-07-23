@@ -1,247 +1,315 @@
 package com.globalcarelink.profile;
 
 import com.globalcarelink.auth.Member;
-import com.globalcarelink.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
+/**
+ * 해외 프로필 엔티티 (재외동포)
+ * BaseProfile을 상속받아 공통 필드 중복 제거
+ */
 @Entity
 @Table(name = "overseas_profiles")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class OverseasProfile extends BaseEntity {
+public class OverseasProfile extends BaseProfile {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, unique = true)
-    private Member member;
-    
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
-    
-    @Column(name = "gender", length = 10)
-    private String gender;
-    
-    @Column(name = "overseas_address", length = 500)
-    private String overseasAddress;
+    // ===== 해외 프로필 고유 필드 =====
     
     @Column(name = "residence_country", length = 50, nullable = false)
+    @NotBlank(message = "거주 국가는 필수입니다")
+    @Size(max = 50, message = "거주 국가는 50자 이하여야 합니다")
     private String residenceCountry;
     
     @Column(name = "residence_city", length = 100)
+    @Size(max = 100, message = "거주 도시는 100자 이하여야 합니다")
     private String residenceCity;
     
     @Column(name = "korean_address", length = 500)
+    @Size(max = 500, message = "한국 주소는 500자 이하여야 합니다")
     private String koreanAddress;
     
     @Column(name = "korean_postal_code", length = 10)
+    @Size(max = 10, message = "한국 우편번호는 10자 이하여야 합니다")
     private String koreanPostalCode;
     
     @Column(name = "passport_number", length = 50)
+    @Size(max = 50, message = "여권번호는 50자 이하여야 합니다")
     private String passportNumber;
     
     @Column(name = "passport_expiry_date")
+    @Future(message = "여권 만료일은 미래 날짜여야 합니다")
     private LocalDate passportExpiryDate;
     
     @Column(name = "visa_status", length = 50)
+    @Size(max = 50, message = "비자 상태는 50자 이하여야 합니다")
     private String visaStatus;
     
     @Column(name = "visa_expiry_date")
     private LocalDate visaExpiryDate;
     
     @Column(name = "overseas_contact_name", length = 50)
+    @Size(max = 50, message = "현지 연락처명은 50자 이하여야 합니다")
     private String overseasContactName;
     
-    @Column(name = "overseas_contact_phone", length = 30)
+    @Column(name = "overseas_contact_phone", length = 20)
+    @Pattern(regexp = "^[0-9\\-+\\s()]*$", message = "유효하지 않은 전화번호 형식입니다")
     private String overseasContactPhone;
     
     @Column(name = "overseas_contact_relation", length = 30)
+    @Size(max = 30, message = "현지 연락처 관계는 30자 이하여야 합니다")
     private String overseasContactRelation;
     
-    @Column(name = "korea_contact_name", length = 50)
-    private String koreaContactName;
-    
-    @Column(name = "korea_contact_phone", length = 20)
-    private String koreaContactPhone;
-    
-    @Column(name = "korea_contact_relation", length = 30)
-    private String koreaContactRelation;
-    
-    @Column(name = "overseas_insurance_number", length = 100)
-    private String overseasInsuranceNumber;
-    
-    @Column(name = "overseas_insurance_provider", length = 100)
-    private String overseasInsuranceProvider;
-    
-    @Column(name = "travel_insurance", length = 100)
-    private String travelInsurance;
-    
-    @Column(name = "entry_purpose", length = 100)
-    private String entryPurpose;
-    
-    @Column(name = "expected_stay_duration", length = 50)
-    private String expectedStayDuration;
-    
-    @Column(name = "preferred_communication_method", length = 50)
-    private String preferredCommunicationMethod;
+    @Column(name = "language_preference", length = 100)
+    @Size(max = 100, message = "언어 선호도는 100자 이하여야 합니다")
+    private String languagePreference;
     
     @Column(name = "time_zone_preference", length = 50)
+    @Size(max = 50, message = "시간대 선호도는 50자 이하여야 합니다")
     private String timeZonePreference;
     
     @Column(name = "preferred_region_in_korea", length = 100)
+    @Size(max = 100, message = "한국 내 선호지역은 100자 이하여야 합니다")
     private String preferredRegionInKorea;
     
-    @Column(name = "budget_range", length = 50)
-    private String budgetRange;
-    
-    @Column(name = "care_level", length = 20)
-    private String careLevel;
-    
-    @Column(name = "special_needs", length = 1000)
-    private String specialNeeds;
-    
-    @Column(name = "cultural_dietary_requirements", length = 500)
+    @Column(name = "cultural_dietary_requirements", columnDefinition = "TEXT")
     private String culturalDietaryRequirements;
     
-    @Column(name = "profile_completion_percentage")
+    @Column(name = "coordinator_required", nullable = false)
     @Builder.Default
-    private Integer profileCompletionPercentage = 0;
-    
-    @Column(name = "coordinator_required")
-    @Builder.Default
-    private Boolean coordinatorRequired = true;
-    
-    public void updateBasicInfo(LocalDate birthDate, String gender, String overseasAddress, 
-                               String residenceCountry, String residenceCity) {
-        this.birthDate = birthDate;
-        this.gender = gender;
-        this.overseasAddress = overseasAddress;
+    private Boolean coordinatorRequired = false;
+
+    /**
+     * 해외 프로필 생성자 (Builder 패턴용)
+     */
+    public OverseasProfile(Member member, String residenceCountry, String residenceCity,
+                          String koreanAddress, String koreanPostalCode, String passportNumber,
+                          LocalDate passportExpiryDate, String visaStatus, LocalDate visaExpiryDate,
+                          String languagePreference, String timeZonePreference, 
+                          String preferredRegionInKorea, Boolean coordinatorRequired) {
+        this.member = member;
         this.residenceCountry = residenceCountry;
         this.residenceCity = residenceCity;
-        calculateProfileCompletion();
-    }
-    
-    public void updateKoreanAddress(String koreanAddress, String koreanPostalCode) {
         this.koreanAddress = koreanAddress;
         this.koreanPostalCode = koreanPostalCode;
-        calculateProfileCompletion();
-    }
-    
-    public void updatePassportInfo(String passportNumber, LocalDate passportExpiryDate, 
-                                  String visaStatus, LocalDate visaExpiryDate) {
         this.passportNumber = passportNumber;
         this.passportExpiryDate = passportExpiryDate;
         this.visaStatus = visaStatus;
         this.visaExpiryDate = visaExpiryDate;
-        calculateProfileCompletion();
-    }
-    
-    public void updateOverseasContact(String name, String phone, String relation) {
-        this.overseasContactName = name;
-        this.overseasContactPhone = phone;
-        this.overseasContactRelation = relation;
-        calculateProfileCompletion();
-    }
-    
-    public void updateKoreaContact(String name, String phone, String relation) {
-        this.koreaContactName = name;
-        this.koreaContactPhone = phone;
-        this.koreaContactRelation = relation;
-        calculateProfileCompletion();
-    }
-    
-    public void updateInsuranceInfo(String overseasInsuranceNumber, String overseasInsuranceProvider, 
-                                   String travelInsurance) {
-        this.overseasInsuranceNumber = overseasInsuranceNumber;
-        this.overseasInsuranceProvider = overseasInsuranceProvider;
-        this.travelInsurance = travelInsurance;
-        calculateProfileCompletion();
-    }
-    
-    public void updateTripInfo(String entryPurpose, String expectedStayDuration, 
-                              String preferredCommunicationMethod, String timeZonePreference) {
-        this.entryPurpose = entryPurpose;
-        this.expectedStayDuration = expectedStayDuration;
-        this.preferredCommunicationMethod = preferredCommunicationMethod;
+        this.languagePreference = languagePreference;
         this.timeZonePreference = timeZonePreference;
-        calculateProfileCompletion();
-    }
-    
-    public void updateCareInfo(String preferredRegionInKorea, String budgetRange, String careLevel, 
-                              String specialNeeds, String culturalDietaryRequirements) {
         this.preferredRegionInKorea = preferredRegionInKorea;
-        this.budgetRange = budgetRange;
-        this.careLevel = careLevel;
-        this.specialNeeds = specialNeeds;
-        this.culturalDietaryRequirements = culturalDietaryRequirements;
-        calculateProfileCompletion();
+        this.coordinatorRequired = coordinatorRequired != null ? coordinatorRequired : false;
+        updateCompletionPercentage();
     }
-    
-    public void setCoordinatorRequired(boolean required) {
-        this.coordinatorRequired = required;
-    }
-    
-    private void calculateProfileCompletion() {
-        int totalFields = 25; 
-        int completedFields = 0;
+
+    /**
+     * 거주지 정보 업데이트
+     */
+    public void updateResidenceInfo(String residenceCountry, String residenceCity, 
+                                   String koreanAddress, String koreanPostalCode) {
+        if (residenceCountry != null && !residenceCountry.trim().isEmpty()) {
+            this.residenceCountry = residenceCountry;
+        }
+        if (residenceCity != null && !residenceCity.trim().isEmpty()) {
+            this.residenceCity = residenceCity;
+        }
+        if (koreanAddress != null && !koreanAddress.trim().isEmpty()) {
+            this.koreanAddress = koreanAddress;
+        }
+        if (koreanPostalCode != null && !koreanPostalCode.trim().isEmpty()) {
+            this.koreanPostalCode = koreanPostalCode;
+        }
         
-        if (birthDate != null) completedFields++;
-        if (gender != null && !gender.trim().isEmpty()) completedFields++;
-        if (overseasAddress != null && !overseasAddress.trim().isEmpty()) completedFields++;
-        if (residenceCountry != null && !residenceCountry.trim().isEmpty()) completedFields++;
-        if (residenceCity != null && !residenceCity.trim().isEmpty()) completedFields++;
-        if (koreanAddress != null && !koreanAddress.trim().isEmpty()) completedFields++;
-        if (koreanPostalCode != null && !koreanPostalCode.trim().isEmpty()) completedFields++;
-        if (passportNumber != null && !passportNumber.trim().isEmpty()) completedFields++;
-        if (passportExpiryDate != null) completedFields++;
-        if (visaStatus != null && !visaStatus.trim().isEmpty()) completedFields++;
-        if (visaExpiryDate != null) completedFields++;
-        if (overseasContactName != null && !overseasContactName.trim().isEmpty()) completedFields++;
-        if (overseasContactPhone != null && !overseasContactPhone.trim().isEmpty()) completedFields++;
-        if (overseasContactRelation != null && !overseasContactRelation.trim().isEmpty()) completedFields++;
-        if (koreaContactName != null && !koreaContactName.trim().isEmpty()) completedFields++;
-        if (koreaContactPhone != null && !koreaContactPhone.trim().isEmpty()) completedFields++;
-        if (koreaContactRelation != null && !koreaContactRelation.trim().isEmpty()) completedFields++;
-        if (overseasInsuranceNumber != null && !overseasInsuranceNumber.trim().isEmpty()) completedFields++;
-        if (overseasInsuranceProvider != null && !overseasInsuranceProvider.trim().isEmpty()) completedFields++;
-        if (travelInsurance != null && !travelInsurance.trim().isEmpty()) completedFields++;
-        if (entryPurpose != null && !entryPurpose.trim().isEmpty()) completedFields++;
-        if (expectedStayDuration != null && !expectedStayDuration.trim().isEmpty()) completedFields++;
-        if (preferredCommunicationMethod != null && !preferredCommunicationMethod.trim().isEmpty()) completedFields++;
-        if (timeZonePreference != null && !timeZonePreference.trim().isEmpty()) completedFields++;
-        if (budgetRange != null && !budgetRange.trim().isEmpty()) completedFields++;
+        updateCompletionPercentage();
+    }
+
+    /**
+     * 여권/비자 정보 업데이트
+     */
+    public void updateDocumentInfo(String passportNumber, LocalDate passportExpiryDate,
+                                  String visaStatus, LocalDate visaExpiryDate) {
+        if (passportNumber != null && !passportNumber.trim().isEmpty()) {
+            this.passportNumber = passportNumber;
+        }
+        if (passportExpiryDate != null) {
+            this.passportExpiryDate = passportExpiryDate;
+        }
+        if (visaStatus != null && !visaStatus.trim().isEmpty()) {
+            this.visaStatus = visaStatus;
+        }
+        if (visaExpiryDate != null) {
+            this.visaExpiryDate = visaExpiryDate;
+        }
         
-        this.profileCompletionPercentage = Math.round((float) completedFields / totalFields * 100);
+        updateCompletionPercentage();
     }
-    
-    public boolean isProfileComplete() {
-        return profileCompletionPercentage >= 70; 
+
+    /**
+     * 현지 연락처 정보 업데이트
+     */
+    public void updateOverseasContact(String name, String phone, String relation) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.overseasContactName = name;
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            this.overseasContactPhone = phone;
+        }
+        if (relation != null && !relation.trim().isEmpty()) {
+            this.overseasContactRelation = relation;
+        }
+        
+        updateCompletionPercentage();
     }
-    
-    public boolean hasBasicInfo() {
-        return birthDate != null && gender != null && residenceCountry != null;
+
+    /**
+     * 선호도 정보 업데이트
+     */
+    public void updatePreferences(String languagePreference, String timeZonePreference,
+                                 String preferredRegionInKorea, String culturalDietaryRequirements,
+                                 Boolean coordinatorRequired) {
+        if (languagePreference != null && !languagePreference.trim().isEmpty()) {
+            this.languagePreference = languagePreference;
+        }
+        if (timeZonePreference != null && !timeZonePreference.trim().isEmpty()) {
+            this.timeZonePreference = timeZonePreference;
+        }
+        if (preferredRegionInKorea != null && !preferredRegionInKorea.trim().isEmpty()) {
+            this.preferredRegionInKorea = preferredRegionInKorea;
+        }
+        if (culturalDietaryRequirements != null && !culturalDietaryRequirements.trim().isEmpty()) {
+            this.culturalDietaryRequirements = culturalDietaryRequirements;
+        }
+        if (coordinatorRequired != null) {
+            this.coordinatorRequired = coordinatorRequired;
+        }
+        
+        updateCompletionPercentage();
     }
-    
-    public boolean hasPassportInfo() {
-        return passportNumber != null && passportExpiryDate != null;
+
+    @Override
+    protected void updateCompletionPercentage() {
+        // 공통 필드 완성도 (60% 가중치)
+        int commonCompletion = calculateCommonFieldsCompletion();
+        
+        // 해외 프로필 고유 필드 완성도 (40% 가중치)
+        int overseasFields = 13; // 고유 필드 개수
+        int completedOverseasFields = 0;
+        
+        if (residenceCountry != null && !residenceCountry.trim().isEmpty()) completedOverseasFields++;
+        if (residenceCity != null && !residenceCity.trim().isEmpty()) completedOverseasFields++;
+        if (koreanAddress != null && !koreanAddress.trim().isEmpty()) completedOverseasFields++;
+        if (koreanPostalCode != null && !koreanPostalCode.trim().isEmpty()) completedOverseasFields++;
+        if (passportNumber != null && !passportNumber.trim().isEmpty()) completedOverseasFields++;
+        if (passportExpiryDate != null) completedOverseasFields++;
+        if (visaStatus != null && !visaStatus.trim().isEmpty()) completedOverseasFields++;
+        if (visaExpiryDate != null) completedOverseasFields++;
+        if (overseasContactName != null && !overseasContactName.trim().isEmpty()) completedOverseasFields++;
+        if (overseasContactPhone != null && !overseasContactPhone.trim().isEmpty()) completedOverseasFields++;
+        if (languagePreference != null && !languagePreference.trim().isEmpty()) completedOverseasFields++;
+        if (timeZonePreference != null && !timeZonePreference.trim().isEmpty()) completedOverseasFields++;
+        if (preferredRegionInKorea != null && !preferredRegionInKorea.trim().isEmpty()) completedOverseasFields++;
+        
+        int overseasCompletion = (int) Math.round((double) completedOverseasFields / overseasFields * 100);
+        
+        // 가중 평균 계산
+        this.profileCompletionPercentage = (int) Math.round(commonCompletion * 0.6 + overseasCompletion * 0.4);
     }
-    
+
+    @Override
+    public String getProfileType() {
+        return "해외 프로필 (재외동포)";
+    }
+
+    /**
+     * 해외 프로필 요약 정보
+     */
+    public String getOverseasProfileSummary() {
+        StringBuilder summary = new StringBuilder(getProfileSummary());
+        summary.append("\n=== 해외 프로필 정보 ===\n");
+        
+        if (residenceCountry != null) {
+            summary.append("거주 국가: ").append(residenceCountry);
+            if (residenceCity != null) {
+                summary.append(" (").append(residenceCity).append(")");
+            }
+            summary.append("\n");
+        }
+        if (passportNumber != null) {
+            summary.append("여권번호: ").append(passportNumber).append("\n");
+        }
+        if (visaStatus != null) {
+            summary.append("비자 상태: ").append(visaStatus).append("\n");
+        }
+        if (languagePreference != null) {
+            summary.append("언어 선호도: ").append(languagePreference).append("\n");
+        }
+        if (preferredRegionInKorea != null) {
+            summary.append("한국 내 선호지역: ").append(preferredRegionInKorea).append("\n");
+        }
+        
+        summary.append("코디네이터 필요: ").append(coordinatorRequired ? "예" : "아니오");
+        
+        return summary.toString();
+    }
+
+    /**
+     * 문서 유효성 확인
+     */
+    public boolean hasValidDocuments() {
+        LocalDate now = LocalDate.now();
+        boolean passportValid = passportExpiryDate != null && passportExpiryDate.isAfter(now);
+        boolean visaValid = visaExpiryDate == null || visaExpiryDate.isAfter(now); // 비자는 선택사항
+        
+        return passportValid && visaValid;
+    }
+
+    /**
+     * 여권 만료 임박 여부 (30일 이내)
+     */
+    public boolean isPassportExpiringSoon() {
+        if (passportExpiryDate == null) {
+            return false;
+        }
+        
+        LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
+        return passportExpiryDate.isBefore(thirtyDaysFromNow);
+    }
+
+    /**
+     * 비자 만료 임박 여부 (30일 이내)
+     */
+    public boolean isVisaExpiringSoon() {
+        if (visaExpiryDate == null) {
+            return false;
+        }
+        
+        LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
+        return visaExpiryDate.isBefore(thirtyDaysFromNow);
+    }
+
+    /**
+     * 한국 내 연락처 보유 여부
+     */
+    public boolean hasKoreanContact() {
+        return koreanAddress != null && !koreanAddress.trim().isEmpty();
+    }
+
+    /**
+     * 현지 연락처 보유 여부
+     */
     public boolean hasOverseasContact() {
-        return overseasContactName != null && overseasContactPhone != null;
-    }
-    
-    public boolean hasKoreaContact() {
-        return koreaContactName != null && koreaContactPhone != null;
-    }
-    
-    public boolean isDocumentationComplete() {
-        return hasPassportInfo() && visaStatus != null;
+        return overseasContactName != null && !overseasContactName.trim().isEmpty() &&
+               overseasContactPhone != null && !overseasContactPhone.trim().isEmpty();
     }
 }
