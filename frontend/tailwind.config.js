@@ -21,6 +21,7 @@ export default {
           900: '#4c1d95',
         },
         elderberry: {
+          25: '#fefcfb',
           50: '#f8f5f3',
           100: '#f0e8e3',
           200: '#e3d1c8',
