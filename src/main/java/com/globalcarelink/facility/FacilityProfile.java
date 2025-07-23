@@ -29,6 +29,19 @@ public class FacilityProfile extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ===== 외부 연동 정보 =====
+
+    @Column(name = "external_id", unique = true, length = 50)
+    @Size(max = 50, message = "외부 ID는 50자 이하여야 합니다")
+    private String externalId; // 공공데이터 API 기관 코드
+
+    @Column(name = "data_source", length = 20)
+    @Size(max = 20, message = "데이터 소스는 20자 이하여야 합니다")
+    private String dataSource; // 데이터 출처 (PUBLIC_API, MANUAL 등)
+
+    @Column(name = "last_synced_at")
+    private LocalDateTime lastSyncedAt; // 마지막 동기화 시간
+
     // ===== 기본 정보 =====
 
     @Column(name = "facility_code", unique = true, length = 20)
@@ -71,6 +84,9 @@ public class FacilityProfile extends BaseEntity {
 
     @Column(name = "homepage", length = 200)
     private String homepage;
+
+    @Column(name = "website_url", length = 200)
+    private String websiteUrl; // 웹사이트 URL (homepage와 별도)
 
     @Column(name = "address", nullable = false, length = 200)
     @NotBlank(message = "주소는 필수입니다")
@@ -151,15 +167,52 @@ public class FacilityProfile extends BaseEntity {
     @Builder.Default
     private Integer nurseCount = 0; // 간호사 수
 
-    @Column(name = "caregiver_count")
-    @Min(value = 0, message = "요양보호사 수는 0 이상이어야 합니다")
+    @Column(name = "doctor_count")
+    @Min(value = 0, message = "의사 수는 0 이상이어야 합니다")
     @Builder.Default
-    private Integer caregiverCount = 0; // 요양보호사 수
+    private Integer doctorCount = 0; // 의사 수
 
-    @Column(name = "social_worker_count")
-    @Min(value = 0, message = "사회복지사 수는 0 이상이어야 합니다")
+    @Column(name = "total_staff")
+    @Min(value = 0, message = "총 직원 수는 0 이상이어야 합니다")
     @Builder.Default
-    private Integer socialWorkerCount = 0; // 사회복지사 수
+    private Integer totalStaff = 0; // 총 직원 수
+
+    // ===== 시설 상세 정보 =====
+
+    @Column(name = "total_floor_area")
+    @Min(value = 0, message = "총 연면적은 0 이상이어야 합니다")
+    private Double totalFloorArea; // 총 연면적
+
+    @Column(name = "building_structure", length = 50)
+    private String buildingStructure; // 건물 구조
+
+    @Column(name = "parking_spaces")
+    @Min(value = 0, message = "주차 공간은 0 이상이어야 합니다")
+    private Integer parkingSpaces; // 주차 공간
+
+    @Column(name = "special_services", length = 500)
+    private String specialServices; // 전문 서비스 (콤마 구분)
+
+    @Column(name = "meal_cost")
+    @Min(value = 0, message = "식비는 0 이상이어야 합니다")
+    private Integer mealCost; // 월 식비
+
+    // ===== 운영 정보 =====
+
+    @Column(name = "operation_status", length = 20)
+    private String operationStatus; // 운영 상태
+
+    @Column(name = "establishment_date", length = 10)
+    private String establishmentDate; // 개설일
+
+    @Column(name = "closure_date", length = 10)
+    private String closureDate; // 폐업일
+
+    @Column(name = "representative_name", length = 50)
+    private String representativeName; // 대표자명
+
+    @Column(name = "business_registration_number", length = 20)
+    private String businessRegistrationNumber; // 사업자등록번호
 
     // ===== 시설 특징 및 편의시설 =====
 
