@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
+    id("com.github.node-gradle.node") version "5.0.0"
 }
 
 group = "com.globalcarelink"
@@ -68,4 +69,131 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// ==========================================
+// 프론트엔드-백엔드 통합 빌드 설정
+// ==========================================
+
+node {
+    version.set("20.11.0")
+    npmVersion.set("10.2.4")
+    download.set(true)
+    workDir.set(file("${project.projectDir}/.gradle/nodejs"))
+    npmWorkDir.set(file("${project.projectDir}/.gradle/npm"))
+}
+
+// 프론트엔드 디렉토리 설정
+val frontendDir = "${project.projectDir}/frontend"
+val staticDir = "${project.projectDir}/src/main/resources/static"
+
+// npm install 태스크
+tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmInstall") {
+    description = "프론트엔드 의존성 설치"
+    workingDir.set(file(frontendDir))
+    args.set(listOf("install"))
+    inputs.file("$frontendDir/package.json")
+    inputs.file("$frontendDir/package-lock.json")
+    outputs.dir("$frontendDir/node_modules")
+}
+
+// 프론트엔드 빌드 태스크
+tasks.register<com.github.gradle.node.npm.task.NpmTask>("buildFrontend") {
+    description = "프론트엔드 빌드 (정적 파일 생성)"
+    dependsOn("npmInstall")
+    workingDir.set(file(frontendDir))
+    args.set(listOf("run", "build"))
+    inputs.dir("$frontendDir/src")
+    inputs.file("$frontendDir/vite.config.ts")
+    inputs.file("$frontendDir/package.json")
+    outputs.dir(staticDir)
+    
+    doFirst {
+        println("🏗️  프론트엔드 빌드 시작...")
+        println("   소스: $frontendDir/src")
+        println("   출력: $staticDir")
+    }
+    
+    doLast {
+        println("✅ 프론트엔드 빌드 완료")
+    }
+}
+
+// 프론트엔드 개발 서버 태스크
+tasks.register<com.github.gradle.node.npm.task.NpmTask>("devFrontend") {
+    description = "프론트엔드 개발 서버 실행 (포트 5173)"
+    dependsOn("npmInstall")
+    workingDir.set(file(frontendDir))
+    args.set(listOf("run", "dev"))
+    
+    doFirst {
+        println("🚀 프론트엔드 개발 서버 시작 중...")
+        println("   URL: http://localhost:5173")
+        println("   API Proxy: http://localhost:8080/api")
+    }
+}
+
+// 정적 파일 정리 태스크
+tasks.register<Delete>("cleanStatic") {
+    description = "정적 파일 디렉토리 정리"
+    delete(staticDir)
+}
+
+// Spring Boot JAR 빌드시 프론트엔드도 함께 빌드
+tasks.named("processResources") {
+    dependsOn("buildFrontend")
+}
+
+// clean 시 정적 파일도 정리
+tasks.named("clean") {
+    dependsOn("cleanStatic")
+}
+
+// 개발용 태스크 그룹 생성
+tasks.register("dev") {
+    description = "개발 환경 시작 (백엔드 + 프론트엔드)"
+    group = "development"
+    
+    doLast {
+        println("""
+        🎯 개발 환경 가이드:
+        
+        1. 백엔드 API 서버 실행:
+           ./gradlew bootRun
+           
+        2. 프론트엔드 개발 서버 실행 (별도 터미널):
+           ./gradlew devFrontend
+           
+        3. 또는 PowerShell 스크립트 사용:
+           .\start-dev.ps1
+           
+        🌐 접속 URL:
+        - 프론트엔드: http://localhost:5173
+        - 백엔드 API: http://localhost:8080/api
+        - Swagger UI: http://localhost:8080/swagger-ui.html
+        """.trimIndent())
+    }
+}
+
+// 통합 배포 빌드 태스크
+tasks.register("buildForDeploy") {
+    description = "배포용 통합 빌드 (프론트엔드 + 백엔드)"
+    group = "build"
+    dependsOn("clean", "buildFrontend", "bootJar")
+    
+    doLast {
+        println("""
+        ✅ 배포용 빌드 완료!
+        
+        📦 생성된 파일:
+        - JAR: build/libs/${project.name}-${project.version}.jar
+        - 정적 파일: src/main/resources/static/
+        
+        🚀 실행 방법:
+        java -jar build/libs/${project.name}-${project.version}.jar
+        
+        🌐 접속 URL:
+        - 통합 서비스: http://localhost:8080
+        """.trimIndent())
+    }
 }

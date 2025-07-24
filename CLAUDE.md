@@ -1,6 +1,6 @@
 # 엘더베리 프로젝트 개발 가이드
 
-## 📋 현재 개발 상황 (2025-07-23)
+## 📋 현재 개발 상황 (2025-07-24)
 
 ### ✅ 완료된 주요 작업
 - **로그 기반 디버깅 시스템**: 완벽 구축 및 운영 중
@@ -9,6 +9,8 @@
 - **JWT 인증 시스템**: Spring Boot 3.x 호환성 완료
 - **핵심 Repository 메서드들**: 대부분 구현 완료
 - **주요 DTO 클래스들**: 생성 및 메서드 추가 완료
+- **🤖 챗봇 통합 프록시**: Context7 방식 최소 변경으로 완성 (2025-07-24)
+- **🎯 아키텍처 통일**: 단일 API 도메인으로 모든 서비스 통합
 
 ### ⚠️ 진행 중인 작업
 - **Spring Boot 백엔드**: 67개 컴파일 에러 점진적 해결 중
@@ -40,12 +42,28 @@ java -cp build\classes com.globalcarelink.PlainJavaServer  # 백엔드 (포트 8
 .\run-debug.bat
 ```
 
+### 3. 챗봇 통합 시스템 (신규 2025-07-24)
+```powershell
+# 챗봇 통합 테스트
+.\test-chatbot-integration.ps1
+
+# 통합 개발 환경 (Java + Python + React)
+.\start-unified-dev.ps1
+```
+
 #### **📊 디버깅 시스템 기능**
 - **실시간 포트 모니터링**: 5173(프론트), 8080(백엔드) 상태 확인
 - **컴파일 상태 체크**: Spring Boot 에러 개수 추적
 - **로그 파일 모니터링**: 실시간 로그 추적 및 분석
 - **빠른 액션**: F(프론트), B(백엔드), A(전체) 시작
 - **라이브 모니터링**: 3초마다 자동 갱신
+
+#### **🤖 챗봇 통합 시스템 기능 (Context7 방식)**
+- **단일 API 도메인**: 모든 요청이 localhost:8080/api/* 로 통합
+- **프록시 패턴**: /api/chatbot/* → Python 챗봇 서버(8000)로 자동 전달
+- **최소 변경**: 기존 코드 단 2개 파일만 수정 (SimpleChatbotProxy.java 추가)
+- **점진적 통합**: Python 챗봇 유무에 관계없이 동작
+- **CORS 문제 해결**: 단일 도메인으로 브라우저 정책 문제 없음
 
 ## 🔧 에러 해결 가이드
 
@@ -107,12 +125,22 @@ public void setGrade(String grade) { this.grade = grade; }
 ### 프론트엔드
 - `frontend/`: React + TypeScript + Vite
 
-## 🎯 개발 권장사항
+## 🎯 개발 권장사항 (2025-07-24 업데이트)
 
+### ⭐ **최우선 권장사항**
+1. **🚀 프론트엔드 연동 진행**: 통합 API로 React 개발 시작
+2. **🤖 챗봇 통합 활용**: `/api/chatbot/*` 엔드포인트 사용
+3. **📊 통합 테스트**: `.\test-chatbot-integration.ps1` 활용
+
+### 🔄 **기존 권장사항 (유지)**
 1. **현재 시스템 활용**: Plain Java 서버로 기능 개발 진행
 2. **점진적 개선**: 필요한 기능부터 Spring Boot 에러 해결
 3. **로그 모니터링**: 실시간 디버깅 시스템 적극 활용
 4. **단계적 접근**: 한 번에 모든 에러 해결보다는 우선순위별 접근
+
+### 📚 **새로 추가된 문서**
+- **아키텍처 가이드**: `docs/ARCHITECTURE_INTEGRATION_GUIDE.md`
+- **작업 보고서**: `docs/work-reports/2025-07-24-architecture-integration-completion.md`
 
 ---
 

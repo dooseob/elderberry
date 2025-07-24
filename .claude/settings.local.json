@@ -28,7 +28,9 @@
       "Bash(rm:*)",
       "Bash(powershell.exe:*)",
       "Bash(node:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npm run:*)",
+      "Bash(.check-system.ps1)"
     ],
     "deny": []
   }

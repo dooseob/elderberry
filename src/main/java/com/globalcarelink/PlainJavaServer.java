@@ -27,6 +27,7 @@ public class PlainJavaServer {
         server.createContext("/health", new HealthHandler());
         server.createContext("/api/status", new StatusHandler());
         server.createContext("/api/test", new TestHandler());
+        server.createContext("/api/chatbot", new SimpleChatbotProxy());
         
         server.setExecutor(null);
         server.start();
@@ -47,8 +48,10 @@ public class PlainJavaServer {
                             "사용 가능한 엔드포인트:\n" +
                             "- GET /health - 서버 상태 확인\n" +
                             "- GET /api/status - 상세 상태 정보\n" +
-                            "- GET /api/test - API 테스트\n\n" +
+                            "- GET /api/test - API 테스트\n" +
+                            "- ALL /api/chatbot/* - 챗봇 서비스 (Python 프록시)\n\n" +
                             "프론트엔드: http://localhost:5173\n" +
+                            "챗봇 서비스: http://localhost:8000 (프록시됨)\n" +
                             "현재 시간: " + LocalDateTime.now();
             
             exchange.sendResponseHeaders(200, response.getBytes().length);

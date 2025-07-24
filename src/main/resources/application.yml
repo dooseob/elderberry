@@ -57,6 +57,26 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
     default-property-inclusion: NON_NULL
+  
+  # 웹 설정 (프론트엔드-백엔드 통합)
+  web:
+    resources:
+      static-locations: classpath:/static/
+      cache:
+        period: 86400 # 24시간 캐시 (개발환경에서는 0으로 설정)
+    mvc:
+      # SPA 라우팅 지원 (React Router)
+      throw-exception-if-no-handler-found: true
+  
+  # 정적 리소스 처리 추가 설정
+  resources:
+    add-mappings: true
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+    static-locations: classpath:/static/
 
 # 서버 설정
 server:
@@ -86,6 +106,12 @@ jwt:
 
 # 애플리케이션 설정
 app:
+  # 챗봇 서비스 설정
+  chatbot:
+    base-url: http://localhost:8000
+    connect-timeout: 10000
+    read-timeout: 30000
+    enabled: true
   # 공공데이터 API 설정
   public-data:
     api-key: CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==
@@ -201,6 +227,12 @@ spring:
     level:
       com.globalcarelink: DEBUG
       org.springframework.web.reactive.function.client: DEBUG
+  
+  # 개발 환경 정적 파일 설정 (캐시 비활성화)
+  web:
+    resources:
+      cache:
+        period: 0 # 개발환경에서는 캐시 비활성화
 
 # 개발 환경 공공데이터 API 설정
 app:
