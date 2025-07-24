@@ -11,6 +11,7 @@
     "quick-check": "node claude-guide.js --quick-check",
     "spring-boot-help": "node helpers/spring-boot-helper.js",
     "chatbot-help": "node helpers/chatbot-helper.js",
+    "pre-work-check": "node helpers/pre-work-check.js",
     "version": "node claude-guide.js --version"
   },
   "keywords": [
