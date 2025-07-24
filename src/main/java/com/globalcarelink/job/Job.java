@@ -344,28 +344,6 @@ public class Job extends BaseEntity {
                LocalDate.now().isAfter(this.applicationDeadline);
     }
 
-    /**
-     * 급여 범위 문자열 반환
-     */
-    public String getSalaryRange() {
-        if (salaryType == SalaryType.NEGOTIABLE) {
-            return "협의";
-        }
-        
-        StringBuilder sb = new StringBuilder();
-        if (minSalary != null) {
-            sb.append(String.format("%,.0f", minSalary));
-        }
-        if (maxSalary != null && !maxSalary.equals(minSalary)) {
-            if (minSalary != null) {
-                sb.append(" ~ ");
-            }
-            sb.append(String.format("%,.0f", maxSalary));
-        }
-        sb.append("원 (").append(salaryType.getDisplayName()).append(")");
-        
-        return sb.toString();
-    }
 
     /**
      * 공고 마감 처리

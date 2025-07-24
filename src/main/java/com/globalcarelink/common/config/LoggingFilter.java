@@ -1,22 +1,30 @@
 package com.globalcarelink.common.config;
 
+import com.globalcarelink.common.event.PerformanceEvent;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoggingFilter extends OncePerRequestFilter {
+
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final String TRACE_ID = "traceId";
     private static final String USER_ID = "userId";
@@ -50,6 +58,9 @@ public class LoggingFilter extends OncePerRequestFilter {
             
             if (duration > 3000) {
                 log.warn("느린 요청 감지: {}ms - {} {}", duration, request.getMethod(), request.getRequestURI());
+                
+                // 구조화된 성능 이벤트 발행
+                publishSlowRequestEvent(request, response, duration);
             }
             
             clearMDC();
@@ -98,5 +109,49 @@ public class LoggingFilter extends OncePerRequestFilter {
 
     private String extractUserId(String email) {
         return email != null ? email.split("@")[0] : "unknown";
+    }
+
+    /**
+     * 느린 요청에 대한 성능 이벤트 발행
+     */
+    private void publishSlowRequestEvent(HttpServletRequest request, HttpServletResponse response, long duration) {
+        try {
+            String traceId = MDC.get(TRACE_ID);
+            String eventId = "PERF-" + UUID.randomUUID().toString().substring(0, 8);
+            
+            Map<String, Object> performanceMetrics = new HashMap<>();
+            performanceMetrics.put("actualDuration", duration);
+            performanceMetrics.put("threshold", 3000L);
+            performanceMetrics.put("exceedRatio", (double) duration / 3000L);
+            performanceMetrics.put("responseStatus", response.getStatus());
+            performanceMetrics.put("contentLength", response.getBufferSize());
+            
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = null;
+            if (authentication != null && authentication.isAuthenticated() && 
+                !"anonymousUser".equals(authentication.getName())) {
+                userEmail = authentication.getName();
+            }
+            
+            PerformanceEvent performanceEvent = PerformanceEvent.builder()
+                    .source(this)
+                    .eventId(eventId)
+                    .traceId(traceId)
+                    .operationType("HTTP_REQUEST")
+                    .methodName("doFilter")
+                    .className("LoggingFilter")
+                    .executionTimeMs(duration)
+                    .thresholdMs(3000L)
+                    .requestUri(request.getRequestURI())
+                    .httpMethod(request.getMethod())
+                    .userEmail(userEmail)
+                    .performanceMetrics(performanceMetrics)
+                    .build();
+
+            eventPublisher.publishEvent(performanceEvent);
+            
+        } catch (Exception eventEx) {
+            log.warn("느린 요청 PerformanceEvent 발행 실패", eventEx);
+        }
     }
 }

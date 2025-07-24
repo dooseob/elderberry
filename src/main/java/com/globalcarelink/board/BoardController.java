@@ -2,6 +2,7 @@ package com.globalcarelink.board;
 
 import com.globalcarelink.auth.Member;
 import com.globalcarelink.auth.MemberService;
+import com.globalcarelink.board.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -130,7 +132,7 @@ public class BoardController {
     @PostMapping("/{id}/posts")
     public ResponseEntity<Post> createPost(
             @PathVariable Long id,
-            @RequestBody PostCreateRequest request,
+            @Valid @RequestBody PostCreateRequest request,
             Authentication auth) {
         
         log.info("새 게시글 작성: 게시판ID={}, 제목={}", id, request.getTitle());
@@ -178,7 +180,7 @@ public class BoardController {
     public ResponseEntity<Post> updatePost(
             @PathVariable Long boardId,
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequest request,
+            @Valid @RequestBody PostUpdateRequest request,
             Authentication auth) {
         
         log.info("게시글 수정: 게시판ID={}, 게시글ID={}", boardId, postId);
@@ -245,7 +247,7 @@ public class BoardController {
     public ResponseEntity<Comment> createComment(
             @PathVariable Long boardId,
             @PathVariable Long postId,
-            @RequestBody CommentCreateRequest request,
+            @Valid @RequestBody CommentCreateRequest request,
             Authentication auth) {
         
         log.info("새 댓글 작성: 게시글ID={}", postId);
@@ -272,7 +274,7 @@ public class BoardController {
             @PathVariable Long boardId,
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @RequestBody CommentUpdateRequest request,
+            @Valid @RequestBody CommentUpdateRequest request,
             Authentication auth) {
         
         log.info("댓글 수정: 댓글ID={}", commentId);
@@ -312,7 +314,7 @@ public class BoardController {
      */
     @PostMapping
     public ResponseEntity<Board> createBoard(
-            @RequestBody BoardCreateRequest request,
+            @Valid @RequestBody BoardCreateRequest request,
             Authentication auth) {
         
         log.info("새 게시판 생성: 이름={}", request.getName());
@@ -339,7 +341,7 @@ public class BoardController {
     @PutMapping("/{id}")
     public ResponseEntity<Board> updateBoard(
             @PathVariable Long id,
-            @RequestBody BoardUpdateRequest request,
+            @Valid @RequestBody BoardUpdateRequest request,
             Authentication auth) {
         
         log.info("게시판 수정: ID={}", id);
@@ -404,79 +406,4 @@ public class BoardController {
                 member.getRole() == com.globalcarelink.auth.MemberRole.FACILITY);
     }
 
-    // DTO 클래스들 (임시로 내부 클래스로 구현, 추후 별도 파일로 분리 예정)
-
-    public static class PostCreateRequest {
-        private String title;
-        private String content;
-        private Boolean isPinned = false;
-        
-        // Getter/Setter
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-        public Boolean getIsPinned() { return isPinned; }
-        public void setIsPinned(Boolean isPinned) { this.isPinned = isPinned; }
-    }
-
-    public static class PostUpdateRequest extends PostCreateRequest {
-        // 업데이트용 DTO (모든 필드 옵셔널)
-    }
-
-    public static class CommentCreateRequest {
-        private String content;
-        private Long parentId;
-        
-        // Getter/Setter
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-        public Long getParentId() { return parentId; }
-        public void setParentId(Long parentId) { this.parentId = parentId; }
-    }
-
-    public static class CommentUpdateRequest {
-        private String content;
-        
-        // Getter/Setter
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-    }
-
-    public static class BoardCreateRequest {
-        private String name;
-        private String description;
-        private Board.BoardType type;
-        private boolean adminOnly;
-        private Integer sortOrder;
-        
-        // Getter/Setter
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
-        public Board.BoardType getType() { return type; }
-        public void setType(Board.BoardType type) { this.type = type; }
-        public boolean isAdminOnly() { return adminOnly; }
-        public void setAdminOnly(boolean adminOnly) { this.adminOnly = adminOnly; }
-        public Integer getSortOrder() { return sortOrder; }
-        public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
-    }
-    
-    public static class BoardUpdateRequest {
-        private String name;
-        private String description;
-        private boolean adminOnly;
-        private Integer sortOrder;
-        
-        // Getter/Setter
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
-        public boolean isAdminOnly() { return adminOnly; }
-        public void setAdminOnly(boolean adminOnly) { this.adminOnly = adminOnly; }
-        public Integer getSortOrder() { return sortOrder; }
-        public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
-    }
 }

@@ -1,15 +1,21 @@
 package com.globalcarelink.common.exception;
 
+import com.globalcarelink.common.event.ErrorEvent;
+import com.globalcarelink.common.event.SecurityEvent;
 import com.globalcarelink.common.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -40,6 +46,7 @@ import java.util.UUID;
 public class GlobalExceptionHandler {
 
     private final ValidationErrorBuilder validationErrorBuilder;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 커스텀 예외 처리
@@ -49,6 +56,9 @@ public class GlobalExceptionHandler {
             CustomException ex, HttpServletRequest request) {
         
         log.warn("커스텀 예외 발생: {} - URI: {}", ex.getMessage(), request.getRequestURI());
+        
+        // 구조화된 에러 이벤트 발행
+        publishErrorEvent(ex, request, "BUSINESS");
         
         ValidationErrorDetails errorDetails = validationErrorBuilder
                 .create(ex.getMessage())
@@ -79,6 +89,9 @@ public class GlobalExceptionHandler {
         
         log.warn("유효성 검증 실패: {} 개 오류 - URI: {}", 
                 ex.getBindingResult().getErrorCount(), request.getRequestURI());
+
+        // 구조화된 에러 이벤트 발행
+        publishErrorEvent(ex, request, "VALIDATION");
 
         ValidationErrorDetails.ValidationErrorDetailsBuilder builder = validationErrorBuilder
                 .create("입력값 유효성 검증에 실패했습니다")
@@ -282,6 +295,9 @@ public class GlobalExceptionHandler {
         log.warn("인증 실패 - URI: {} - IP: {}", 
                 request.getRequestURI(), SecurityUtil.getClientIpAddress(request));
 
+        // 구조화된 보안 이벤트 발행
+        publishSecurityEvent(ex, request, "AUTH_FAILURE", "인증 정보가 올바르지 않음");
+
         ValidationErrorDetails errorDetails = validationErrorBuilder
                 .create("인증에 실패했습니다")
                 .withTimestamp()
@@ -304,6 +320,9 @@ public class GlobalExceptionHandler {
         
         log.warn("접근 권한 부족 - URI: {} - IP: {}", 
                 request.getRequestURI(), SecurityUtil.getClientIpAddress(request));
+
+        // 구조화된 보안 이벤트 발행
+        publishSecurityEvent(ex, request, "ACCESS_DENIED", "리소스 접근 권한 부족");
 
         ValidationErrorDetails errorDetails = validationErrorBuilder
                 .create("접근 권한이 없습니다")
@@ -376,6 +395,9 @@ public class GlobalExceptionHandler {
         
         String errorId = "ERR-" + UUID.randomUUID().toString().substring(0, 8);
         log.error("예상치 못한 오류 발생 [{}] - URI: {}", errorId, request.getRequestURI(), ex);
+
+        // 구조화된 에러 이벤트 발행
+        publishErrorEvent(ex, request, "TECHNICAL");
 
         ValidationErrorDetails errorDetails = validationErrorBuilder
                 .create("내부 서버 오류가 발생했습니다")
@@ -479,5 +501,158 @@ public class GlobalExceptionHandler {
             case "LocalDateTime" -> "날짜시간 형식으로 입력해주세요 (예: 2024-01-01T10:00:00)";
             default -> "올바른 " + requiredType.getSimpleName() + " 형식으로 입력해주세요";
         };
+    }
+
+    // ===== 이벤트 발행 헬퍼 메서드들 =====
+
+    /**
+     * 에러 이벤트 발행
+     */
+    private void publishErrorEvent(Exception ex, HttpServletRequest request, String errorCategory) {
+        try {
+            String traceId = MDC.get("traceId");
+            String eventId = "ERR-" + UUID.randomUUID().toString().substring(0, 8);
+            
+            ErrorEvent errorEvent = ErrorEvent.builder()
+                    .source(this)
+                    .eventId(eventId)
+                    .traceId(traceId)
+                    .errorType(ex.getClass().getSimpleName())
+                    .errorMessage(ex.getMessage())
+                    .stackTrace(getStackTraceString(ex))
+                    .methodName(extractMethodName(ex))
+                    .className(extractClassName(ex))
+                    .requestUri(request.getRequestURI())
+                    .httpMethod(request.getMethod())
+                    .userEmail(getCurrentUserEmail())
+                    .clientIp(SecurityUtil.getClientIpAddress(request))
+                    .executionTimeMs(null) // 예외 처리 시점에서는 알 수 없음
+                    .requestParameters(extractRequestParameters(request))
+                    .errorCategory(errorCategory)
+                    .build();
+
+            eventPublisher.publishEvent(errorEvent);
+            
+        } catch (Exception eventEx) {
+            log.warn("ErrorEvent 발행 실패", eventEx);
+        }
+    }
+
+    /**
+     * 보안 이벤트 발행
+     */
+    private void publishSecurityEvent(Exception ex, HttpServletRequest request, 
+                                    String securityEventType, String failureReason) {
+        try {
+            String traceId = MDC.get("traceId");
+            String eventId = "SEC-" + UUID.randomUUID().toString().substring(0, 8);
+            
+            SecurityEvent securityEvent = SecurityEvent.builder()
+                    .source(this)
+                    .eventId(eventId)
+                    .traceId(traceId)
+                    .securityEventType(securityEventType)
+                    .userEmail(getCurrentUserEmail())
+                    .clientIp(SecurityUtil.getClientIpAddress(request))
+                    .userAgent(request.getHeader("User-Agent"))
+                    .requestUri(request.getRequestURI())
+                    .httpMethod(request.getMethod())
+                    .failureReason(failureReason)
+                    .attemptedResource(request.getRequestURI())
+                    .sessionId(request.getSession(false) != null ? 
+                               request.getSession(false).getId() : null)
+                    .build();
+
+            eventPublisher.publishEvent(securityEvent);
+            
+        } catch (Exception eventEx) {
+            log.warn("SecurityEvent 발행 실패", eventEx);
+        }
+    }
+
+    private String getCurrentUserEmail() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated() && 
+                !"anonymousUser".equals(authentication.getName())) {
+                return authentication.getName();
+            }
+        } catch (Exception e) {
+            // 인증 정보 조회 실패 시 무시
+        }
+        return null;
+    }
+
+    private String getStackTraceString(Exception ex) {
+        if (ex == null) return null;
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(ex.toString()).append("\n");
+        
+        StackTraceElement[] elements = ex.getStackTrace();
+        int maxLines = Math.min(10, elements.length); // 스택 트레이스 제한
+        
+        for (int i = 0; i < maxLines; i++) {
+            sb.append("\tat ").append(elements[i].toString()).append("\n");
+        }
+        
+        if (elements.length > maxLines) {
+            sb.append("\t... ").append(elements.length - maxLines).append(" more\n");
+        }
+        
+        return sb.toString();
+    }
+
+    private String extractMethodName(Exception ex) {
+        StackTraceElement[] elements = ex.getStackTrace();
+        if (elements.length > 0) {
+            return elements[0].getMethodName();
+        }
+        return "unknown";
+    }
+
+    private String extractClassName(Exception ex) {
+        StackTraceElement[] elements = ex.getStackTrace();
+        if (elements.length > 0) {
+            String className = elements[0].getClassName();
+            return className.substring(className.lastIndexOf('.') + 1);
+        }
+        return "unknown";
+    }
+
+    private Map<String, Object> extractRequestParameters(HttpServletRequest request) {
+        Map<String, Object> params = new HashMap<>();
+        
+        // Query parameters 추출
+        if (request.getParameterMap() != null) {
+            request.getParameterMap().forEach((key, values) -> {
+                if (values.length == 1) {
+                    params.put(key, sanitizeParameterValue(key, values[0]));
+                } else {
+                    params.put(key, Arrays.stream(values)
+                            .map(v -> sanitizeParameterValue(key, v))
+                            .toArray(String[]::new));
+                }
+            });
+        }
+        
+        return params;
+    }
+
+    private String sanitizeParameterValue(String key, String value) {
+        if (value == null) return null;
+        
+        String lowerKey = key.toLowerCase();
+        if (lowerKey.contains("password") || lowerKey.contains("secret") || 
+            lowerKey.contains("token") || lowerKey.contains("key")) {
+            return "[PROTECTED]";
+        }
+        
+        // 값이 너무 긴 경우 자르기
+        if (value.length() > 100) {
+            return value.substring(0, 100) + "...";
+        }
+        
+        return value;
     }
 }

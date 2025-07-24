@@ -2,6 +2,8 @@ package com.globalcarelink.job;
 
 import com.globalcarelink.auth.Member;
 import com.globalcarelink.auth.MemberRepository;
+import com.globalcarelink.job.dto.JobCreateRequest;
+import com.globalcarelink.job.dto.JobUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +31,6 @@ import java.util.concurrent.CompletableFuture;
 public class JobService {
 
     private final JobRepository jobRepository;
-    private final JobApplicationRepository jobApplicationRepository;
     private final MemberRepository memberRepository;
 
     /**
@@ -379,45 +380,4 @@ public class JobService {
         }
     }
 
-    // DTO 클래스들은 별도 파일로 생성 예정
-    public static class JobCreateRequest {
-        // 필드들과 getter/setter는 별도 DTO 파일에서 구현
-        private String title;
-        private String description;
-        // ... 기타 필드들
-        
-        // Getter/Setter 메서드들
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
-        // ... 기타 getter/setter들 (실제로는 별도 DTO 파일에 구현)
-        
-        // 임시로 필요한 필드들만 추가
-        public String getCompanyName() { return null; }
-        public String getWorkLocation() { return null; }
-        public String getDetailAddress() { return null; }
-        public BigDecimal getLatitude() { return null; }
-        public BigDecimal getLongitude() { return null; }
-        public Job.JobCategory getCategory() { return null; }
-        public Job.SalaryType getSalaryType() { return null; }
-        public BigDecimal getMinSalary() { return null; }
-        public BigDecimal getMaxSalary() { return null; }
-        public Job.ExperienceLevel getExperienceLevel() { return null; }
-        public Integer getMinExperienceYears() { return null; }
-        public Job.WorkType getWorkType() { return null; }
-        public String getWorkHours() { return null; }
-        public Integer getRecruitCount() { return 1; }
-        public LocalDate getApplicationDeadline() { return null; }
-        public String getPreferredQualifications() { return null; }
-        public String getBenefits() { return null; }
-        public String getContactPhone() { return null; }
-        public String getContactEmail() { return null; }
-        public String getContactPerson() { return null; }
-        public Boolean getIsUrgent() { return false; }
-    }
-
-    public static class JobUpdateRequest extends JobCreateRequest {
-        // 업데이트용 DTO (모든 필드 옵셔널)
-    }
 }

@@ -94,20 +94,4 @@ public class Board extends BaseEntity {
         }
     }
 
-    /**
-     * 게시글 수 조회
-     */
-    public int getPostCount() {
-        return this.posts != null ? this.posts.size() : 0;
-    }
-
-    /**
-     * 활성 게시글 수 조회 (삭제되지 않은 게시글만)
-     */
-    public long getActivePostCount() {
-        return this.posts != null ? 
-            this.posts.stream()
-                .filter(post -> !post.getIsDeleted())
-                .count() : 0;
-    }
 }

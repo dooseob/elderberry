@@ -112,6 +112,9 @@ app:
     connect-timeout: 10000
     read-timeout: 30000
     enabled: true
+    service:
+      url: http://localhost:8000
+      timeout: 10
   # 공공데이터 API 설정
   public-data:
     api-key: CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==

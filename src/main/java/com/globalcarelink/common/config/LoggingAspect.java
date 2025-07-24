@@ -1,20 +1,31 @@
 package com.globalcarelink.common.config;
 
+import com.globalcarelink.common.event.PerformanceEvent;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class LoggingAspect {
 
     private static final org.slf4j.Logger performanceLogger = LoggerFactory.getLogger("performance");
+    private final ApplicationEventPublisher eventPublisher;
 
     @Pointcut("execution(* com.globalcarelink..*Service.*(..))")
     public void serviceLayer() {}
@@ -44,6 +55,9 @@ public class LoggingAspect {
             
             if (duration > 1000) {
                 performanceLogger.info("느린 서비스 메서드: {}.{} - {}ms", className, methodName, duration);
+                
+                // 구조화된 성능 이벤트 발행
+                publishPerformanceEvent("SERVICE", className, methodName, duration, 1000L);
             }
             
             return result;
@@ -112,6 +126,9 @@ public class LoggingAspect {
             
             if (duration > 500) {
                 performanceLogger.warn("느린 DB 쿼리: {}.{} - {}ms", className, methodName, duration);
+                
+                // 구조화된 성능 이벤트 발행
+                publishPerformanceEvent("REPOSITORY", className, methodName, duration, 500L);
             }
             
             return result;
@@ -152,5 +169,56 @@ public class LoggingAspect {
         }
         
         return argString;
+    }
+
+    // ===== 성능 이벤트 발행 헬퍼 메서드 =====
+
+    /**
+     * 성능 이벤트 발행
+     */
+    private void publishPerformanceEvent(String operationType, String className, 
+                                       String methodName, long duration, long threshold) {
+        try {
+            String traceId = MDC.get("traceId");
+            String eventId = "PERF-" + UUID.randomUUID().toString().substring(0, 8);
+            
+            Map<String, Object> performanceMetrics = new HashMap<>();
+            performanceMetrics.put("actualDuration", duration);
+            performanceMetrics.put("threshold", threshold);
+            performanceMetrics.put("exceedRatio", (double) duration / threshold);
+            
+            PerformanceEvent performanceEvent = PerformanceEvent.builder()
+                    .source(this)
+                    .eventId(eventId)
+                    .traceId(traceId)
+                    .operationType(operationType)
+                    .methodName(methodName)
+                    .className(className)
+                    .executionTimeMs(duration)
+                    .thresholdMs(threshold)
+                    .requestUri(MDC.get("requestUri"))
+                    .httpMethod(MDC.get("method"))
+                    .userEmail(getCurrentUserEmail())
+                    .performanceMetrics(performanceMetrics)
+                    .build();
+
+            eventPublisher.publishEvent(performanceEvent);
+            
+        } catch (Exception eventEx) {
+            log.warn("PerformanceEvent 발행 실패", eventEx);
+        }
+    }
+
+    private String getCurrentUserEmail() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated() && 
+                !"anonymousUser".equals(authentication.getName())) {
+                return authentication.getName();
+            }
+        } catch (Exception e) {
+            // 인증 정보 조회 실패 시 무시
+        }
+        return null;
     }
 }

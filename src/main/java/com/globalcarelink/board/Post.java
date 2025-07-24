@@ -113,36 +113,6 @@ public class Post extends BaseEntity {
         this.viewCount = (this.viewCount != null ? this.viewCount : 0) + 1;
     }
 
-    /**
-     * 댓글 수 조회
-     */
-    public int getCommentCount() {
-        return this.comments != null ? this.comments.size() : 0;
-    }
-
-    /**
-     * 활성 댓글 수 조회 (삭제되지 않은 댓글만)
-     */
-    public long getActiveCommentCount() {
-        return this.comments != null ? 
-            this.comments.stream()
-                .filter(comment -> !comment.getIsDeleted())
-                .count() : 0;
-    }
-
-    /**
-     * 작성자 이름 반환 (안전한 접근)
-     */
-    public String getAuthorName() {
-        return this.author != null ? this.author.getName() : "알 수 없음";
-    }
-
-    /**
-     * 게시판 이름 반환 (안전한 접근)
-     */
-    public String getBoardName() {
-        return this.board != null ? this.board.getName() : "알 수 없음";
-    }
 
     /**
      * 소프트 삭제

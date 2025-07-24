@@ -36,9 +36,9 @@ if ($backendRunning) {
 
 Write-Host ""
 Write-Host "🎯 현재 개발 상황:" -ForegroundColor Cyan
-Write-Host "• Plain Java 서버: 정상 동작 (기본 기능 구현됨)" -ForegroundColor White
-Write-Host "• Spring Boot 백엔드: 개발 진행 중 (67개 에러 점진적 해결)" -ForegroundColor White
+Write-Host "• Spring Boot 백엔드: 통합 완료 (단일 애플리케이션)" -ForegroundColor White
 Write-Host "• React 프론트엔드: 정상 동작" -ForegroundColor White
+Write-Host "• 챗봇 프록시: Spring Boot 통합 완료" -ForegroundColor White
 Write-Host "• 로그 기반 디버깅: 활성화" -ForegroundColor White
 
 Write-Host ""
@@ -55,11 +55,11 @@ switch ($choice) {
     "1" {
         Write-Host "`n🚀 전체 개발 환경 시작..." -ForegroundColor Green
         
-        # 백엔드 시작 (Plain Java Server)
+        # 백엔드 시작 (Spring Boot)
         if (!$backendRunning) {
-            Write-Host "백엔드 서버 시작 중..." -ForegroundColor Yellow
-            Start-Process PowerShell -ArgumentList "-Command", "java -cp build\classes com.globalcarelink.PlainJavaServer" -WindowStyle Minimized
-            Start-Sleep 3
+            Write-Host "Spring Boot 백엔드 서버 시작 중..." -ForegroundColor Yellow
+            Start-Process PowerShell -ArgumentList "-Command", ".\gradlew.bat bootRun" -WindowStyle Minimized
+            Start-Sleep 5
         }
         
         # 프론트엔드 시작
@@ -82,8 +82,8 @@ switch ($choice) {
         npm run dev
     }
     "3" {
-        Write-Host "`n🔧 백엔드 서버 시작..." -ForegroundColor Green
-        java -cp build\classes com.globalcarelink.PlainJavaServer
+        Write-Host "`n🔧 Spring Boot 백엔드 서버 시작..." -ForegroundColor Green
+        .\gradlew.bat bootRun
     }
     "4" {
         Write-Host "`n🔍 디버깅 시스템 실행..." -ForegroundColor Green

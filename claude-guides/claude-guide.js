@@ -5,12 +5,20 @@
 
 const path = require('path');
 const fs = require('fs').promises;
+const SolutionsDbLearningService = require('./services/SolutionsDbLearningService');
+const DynamicChecklistService = require('./services/DynamicChecklistService');
 
 class ClaudeGuideSystem {
     constructor() {
-        this.version = "3.0.0-unified";
+        this.version = "4.0.0-ai-enhanced";
         this.projectName = "ElderberryProject";
         this.guidelinesFile = path.join(__dirname, 'CLAUDE_GUIDELINES.md');
+        
+        // Solutions-DB 학습 서비스 초기화
+        this.solutionsLearning = new SolutionsDbLearningService();
+        
+        // 동적 체크리스트 생성 서비스 초기화
+        this.dynamicChecklist = new DynamicChecklistService();
         
         // 엘더베리 프로젝트 특화 설정
         this.projectConfig = {
@@ -29,6 +37,8 @@ class ClaudeGuideSystem {
         console.log(`🤖 Claude 가이드 시스템 v${this.version} 초기화 완료`);
         console.log(`🍇 프로젝트: ${this.projectName}`);
         console.log(`📋 현재 단계: ${this.projectConfig.currentPhase}`);
+        console.log(`🧠 AI 학습 기능: Solutions-DB 연동 활성화`);
+        console.log(`🔥 동적 체크리스트: 경험 기반 자동 생성 활성화`);
     }
     
     // 🚀 메인 API: 스마트 가이드 생성
@@ -44,18 +54,35 @@ class ClaudeGuideSystem {
             // 2. 핵심 가이드라인 검색
             const relevantGuidelines = await this.searchGuidelines(userMessage, workType);
             
-            // 3. 엘더베리 컨텍스트 적용
+            // 3. 실제 경험 데이터 조회
+            const experienceAdvice = await this.solutionsLearning.getExperienceBasedAdvice(workType, userMessage);
+            
+            // 4. 동적 체크리스트 생성
+            const dynamicChecklist = await this.dynamicChecklist.generateDynamicChecklist(
+                workType, 
+                userMessage, 
+                this.projectConfig
+            );
+            
+            // 5. 엘더베리 컨텍스트 적용
             const elderberryContext = this.getElderberryContext(userMessage, workType);
             
-            // 4. 통합 가이드 생성
+            // 6. 통합 가이드 생성
             const guide = {
                 // 기본 정보
                 title: `${workType} 가이드`,
                 workType: workType,
                 timestamp: new Date().toISOString(),
+                version: this.version,
                 
-                // 즉시 체크리스트 (30초)
-                quickChecklist: this.generateQuickChecklist(workType, elderberryContext),
+                // 🧠 AI 학습 기반 경험 데이터
+                experienceData: experienceAdvice,
+                
+                // 🔥 동적 체크리스트 - 경험 기반 자동 생성
+                dynamicChecklist: dynamicChecklist,
+                
+                // 즉시 체크리스트 (30초) - 경험 데이터로 강화 (하위 호환성)
+                quickChecklist: this.convertDynamicToQuickChecklist(dynamicChecklist, experienceAdvice),
                 
                 // 상세 가이드 (2-5분)
                 detailedGuide: relevantGuidelines,
@@ -63,11 +90,11 @@ class ClaudeGuideSystem {
                 // 엘더베리 특화 정보
                 elderberryInfo: elderberryContext,
                 
-                // 다음 단계
-                nextSteps: this.generateNextSteps(workType, elderberryContext),
+                // 다음 단계 - 경험 기반 최적화
+                nextSteps: this.generateEnhancedNextSteps(workType, elderberryContext, experienceAdvice),
                 
-                // 주의사항
-                warnings: this.generateWarnings(workType, elderberryContext),
+                // 주의사항 - 과거 이슈 기반 경고 포함
+                warnings: this.generateEnhancedWarnings(workType, elderberryContext, experienceAdvice),
                 
                 // 도움 명령어
                 helpCommands: this.getHelpCommands(workType)
@@ -169,7 +196,61 @@ class ClaudeGuideSystem {
         return context;
     }
     
-    // ⚡ 30초 즉시 체크리스트 생성
+    // 🔄 동적 체크리스트를 빠른 체크리스트로 변환 (하위 호환성)
+    convertDynamicToQuickChecklist(dynamicChecklist, experienceAdvice) {
+        return {
+            title: dynamicChecklist.title,
+            type: 'dynamic_converted',
+            experienceEnhanced: dynamicChecklist.metadata.basedOnExperience,
+            experienceStats: experienceAdvice.totalExperience,
+            items: dynamicChecklist.items.slice(0, 8).map(item => item.content), // 상위 8개만
+            estimatedTime: dynamicChecklist.statistics?.averageEstimatedTime || '30초',
+            priority: dynamicChecklist.priority,
+            metadata: dynamicChecklist.metadata
+        };
+    }
+
+    // 🧠 AI 학습 기반 강화된 즉시 체크리스트 생성 (레거시 지원)
+    generateEnhancedQuickChecklist(workType, context, experienceAdvice) {
+        // 기본 체크리스트
+        const basicChecklist = this.generateQuickChecklist(workType, context);
+        
+        // 경험 데이터가 있으면 강화된 항목 추가
+        if (experienceAdvice.hasExperienceData) {
+            const experienceItems = [];
+            
+            // 과거 이슈 기반 주의사항
+            experienceAdvice.warningsFromPastIssues.forEach(warning => {
+                experienceItems.push(`🔥 ${warning}`);
+            });
+            
+            // 효과적인 예방 조치
+            experienceAdvice.preventiveActions.forEach(action => {
+                experienceItems.push(`💡 ${action.action} (효과율: ${action.effectiveness})`);
+            });
+            
+            // 관련 패턴 기반 체크
+            experienceAdvice.relevantPatterns.slice(0, 2).forEach(pattern => {
+                if (pattern.type === 'error') {
+                    experienceItems.push(`⚠️ "${pattern.pattern}" 에러 ${pattern.count}회 발생 - 주의 필요`);
+                } else if (pattern.type === 'performance') {
+                    experienceItems.push(`⚡ "${pattern.location}" 성능 이슈 ${pattern.count}회 발생 - 최적화 고려`);
+                }
+            });
+            
+            return {
+                ...basicChecklist,
+                title: `🧠 AI 강화 ${workType} 즉시 체크 (30초)`,
+                experienceEnhanced: true,
+                experienceStats: experienceAdvice.totalExperience,
+                items: [...basicChecklist.items, ...experienceItems.slice(0, 3)] // 최대 3개 추가
+            };
+        }
+        
+        return basicChecklist;
+    }
+
+    // ⚡ 30초 즉시 체크리스트 생성 (기본)
     generateQuickChecklist(workType, context) {
         const baseChecklist = [
             "🔥 CLAUDE.md 프로젝트 가이드 확인",
@@ -222,7 +303,44 @@ class ClaudeGuideSystem {
         };
     }
     
-    // 📋 다음 단계 생성
+    // 🧠 AI 학습 기반 강화된 다음 단계 생성
+    generateEnhancedNextSteps(workType, context, experienceAdvice) {
+        // 기본 다음 단계
+        const basicSteps = this.generateNextSteps(workType, context);
+        
+        // 경험 데이터가 있으면 우선순위 조정 및 새로운 단계 추가
+        if (experienceAdvice.hasExperienceData && experienceAdvice.relevantPatterns.length > 0) {
+            const experienceSteps = [];
+            
+            // 과거 이슈 기반 우선 점검 사항
+            experienceAdvice.relevantPatterns.slice(0, 2).forEach(pattern => {
+                if (pattern.type === 'error' && pattern.solutions.length > 0) {
+                    experienceSteps.push({
+                        step: `"${pattern.pattern}" 에러 예방 점검 (과거 ${pattern.count}회 발생)`,
+                        time: "10분",
+                        priority: "high",
+                        experienceBased: true,
+                        solutions: pattern.solutions.slice(0, 2)
+                    });
+                } else if (pattern.type === 'performance' && pattern.optimizations.length > 0) {
+                    experienceSteps.push({
+                        step: `"${pattern.location}" 성능 최적화 적용 (과거 평균 ${pattern.averageTime}ms)`,
+                        time: "20분", 
+                        priority: "medium",
+                        experienceBased: true,
+                        optimizations: Array.from(pattern.optimizations).slice(0, 2)
+                    });
+                }
+            });
+            
+            // 경험 기반 단계를 앞에 배치
+            return [...experienceSteps, ...basicSteps];
+        }
+        
+        return basicSteps;
+    }
+
+    // 📋 다음 단계 생성 (기본)
     generateNextSteps(workType, context) {
         const steps = {
             'spring_boot_error': [
@@ -246,7 +364,46 @@ class ClaudeGuideSystem {
         ];
     }
     
-    // ⚠️ 주의사항 생성
+    // 🧠 AI 학습 기반 강화된 주의사항 생성
+    generateEnhancedWarnings(workType, context, experienceAdvice) {
+        // 기본 주의사항
+        const basicWarnings = this.generateWarnings(workType, context);
+        
+        // 경험 데이터 기반 추가 경고
+        const experienceWarnings = [];
+        
+        if (experienceAdvice.hasExperienceData) {
+            // 과거 이슈 기반 경고 추가
+            experienceAdvice.warningsFromPastIssues.forEach(warning => {
+                experienceWarnings.push(`🧠 AI 경고: ${warning}`);
+            });
+            
+            // 관련 패턴 기반 구체적 경고
+            experienceAdvice.relevantPatterns.forEach(pattern => {
+                if (pattern.type === 'error' && pattern.count >= 3) {
+                    experienceWarnings.push(
+                        `🚨 "${pattern.pattern}" 에러 다발 주의: ${pattern.count}회 발생, ${pattern.severity} 심각도`
+                    );
+                }
+                if (pattern.type === 'performance' && pattern.averageTime > 2000) {
+                    experienceWarnings.push(
+                        `⚡ "${pattern.location}" 성능 저하 주의: 평균 ${Math.round(pattern.averageTime)}ms 소요`
+                    );
+                }
+            });
+            
+            // 경험 통계 기반 일반적 경고
+            if (experienceAdvice.totalExperience) {
+                experienceWarnings.push(
+                    `📊 프로젝트 경험 통계: ${experienceAdvice.totalExperience} - 과거 이슈 패턴 참고 권장`
+                );
+            }
+        }
+        
+        return [...experienceWarnings.slice(0, 3), ...basicWarnings]; // 최대 3개 경험 경고 + 기본 경고
+    }
+
+    // ⚠️ 주의사항 생성 (기본)
     generateWarnings(workType, context) {
         const warnings = [];
         
@@ -389,12 +546,88 @@ class ClaudeGuideSystem {
     
     // 📺 가이드 표시
     displayGuide(guide) {
-        console.log(`\n📋 ${guide.title}`);
+        console.log(`\n📋 ${guide.title} v${guide.version}`);
         console.log("=".repeat(50));
         
-        console.log("\n🔥 즉시 체크리스트:");
-        guide.quickChecklist.items.forEach(item => {
-            console.log(`   ${item}`);
+        // AI 학습 데이터 표시
+        if (guide.experienceData.hasExperienceData) {
+            console.log(`\n🧠 AI 학습 기반 가이드 (${guide.experienceData.totalExperience})`);
+            
+            // 관련 패턴이 있으면 표시
+            if (guide.experienceData.relevantPatterns.length > 0) {
+                console.log("\n💡 과거 경험 패턴:");
+                guide.experienceData.relevantPatterns.slice(0, 2).forEach(pattern => {
+                    if (pattern.type === 'error') {
+                        console.log(`   ⚠️ "${pattern.pattern}" 에러 ${pattern.count}회 발생 (${pattern.severity})`);
+                        if (pattern.solutions.length > 0) {
+                            console.log(`      해결책: ${pattern.solutions[0]}`);
+                        }
+                    } else if (pattern.type === 'performance') {
+                        console.log(`   ⚡ "${pattern.location}" 성능 이슈 ${pattern.count}회 (평균 ${Math.round(pattern.averageTime)}ms)`);
+                        if (pattern.optimizations.length > 0) {
+                            console.log(`      최적화: ${Array.from(pattern.optimizations)[0]}`);
+                        }
+                    }
+                });
+            }
+        } else {
+            console.log(`\n🧠 AI 학습 상태: ${guide.experienceData.message}`);
+        }
+        
+        // 동적 체크리스트 표시 (우선)
+        if (guide.dynamicChecklist && guide.dynamicChecklist.items.length > 0) {
+            console.log(`\n🔥 ${guide.dynamicChecklist.title}`);
+            console.log(`   📊 최적화 통계: ${guide.dynamicChecklist.statistics.totalItems}개 항목 → ${guide.dynamicChecklist.items.length}개 선별`);
+            
+            // 카테고리별 표시
+            const categories = ['immediate', 'preparation', 'implementation', 'verification'];
+            categories.forEach(category => {
+                const categoryItems = guide.dynamicChecklist.categories[category];
+                if (categoryItems && categoryItems.length > 0) {
+                    const categoryNames = {
+                        immediate: '🚨 즉시 조치',
+                        preparation: '📋 사전 준비', 
+                        implementation: '⚡ 구현 단계',
+                        verification: '✅ 검증 단계'
+                    };
+                    
+                    console.log(`\n   ${categoryNames[category]}:`);
+                    categoryItems.slice(0, 3).forEach(item => { // 카테고리당 최대 3개
+                        const typeIcon = {
+                            'error_prevention': '🚨',
+                            'security_check': '🔒',
+                            'performance_optimization': '⚡', 
+                            'message_specific': '🎯',
+                            'best_practice': '💡',
+                            'static': '📋'
+                        };
+                        const icon = typeIcon[item.type] || '📋';
+                        console.log(`     ${icon} ${item.content} (${item.estimatedTime})`);
+                        
+                        // 세부 정보가 있으면 추가 표시
+                        if (item.details && (item.type === 'error_prevention' || item.type === 'performance_optimization')) {
+                            if (item.details.commonCauses && item.details.commonCauses.length > 0) {
+                                console.log(`        💡 주요 원인: ${item.details.commonCauses[0]}`);
+                            }
+                            if (item.details.knownOptimizations && item.details.knownOptimizations.length > 0) {
+                                console.log(`        ⚡ 최적화 방안: ${item.details.knownOptimizations[0]}`);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        
+        console.log(`\n🔥 ${guide.quickChecklist.experienceEnhanced ? 'AI 강화 ' : ''}즉시 체크리스트 (하위 호환):`);
+        if (guide.quickChecklist.experienceStats) {
+            console.log(`   📊 경험 통계: ${guide.quickChecklist.experienceStats}`);
+        }
+        guide.quickChecklist.items.forEach((item, index) => {
+            const prefix = item.startsWith('🔥') ? '   ' : 
+                          item.startsWith('💡') ? '   ' : 
+                          item.startsWith('⚠️') ? '   ' : 
+                          item.startsWith('⚡') ? '   ' : '   ';
+            console.log(`${prefix}${item}`);
         });
         
         if (guide.elderberryInfo.urgentNotices && guide.elderberryInfo.urgentNotices.length > 0) {
@@ -408,12 +641,31 @@ class ClaudeGuideSystem {
         guide.nextSteps.forEach((step, index) => {
             const priority = step.priority === 'high' ? '🔥' : '📋';
             console.log(`   ${index + 1}. ${priority} ${step.step} (${step.time})`);
+            
+            // 경험 기반 추가 정보 표시
+            if (step.experienceBased) {
+                if (step.solutions && step.solutions.length > 0) {
+                    console.log(`      💡 추천 해결책: ${step.solutions[0]}`);
+                }
+                if (step.optimizations && step.optimizations.length > 0) {
+                    console.log(`      ⚡ 최적화 방안: ${step.optimizations[0]}`);
+                }
+            }
         });
         
         if (guide.warnings.length > 0) {
             console.log("\n⚠️ 주의사항:");
-            guide.warnings.forEach(warning => {
-                console.log(`   ${warning}`);
+            guide.warnings.forEach((warning, index) => {
+                const isAIWarning = warning.startsWith('🧠 AI 경고:') || 
+                                   warning.startsWith('🚨') && warning.includes('에러 다발') ||
+                                   warning.startsWith('⚡') && warning.includes('성능 저하') ||
+                                   warning.startsWith('📊') && warning.includes('경험 통계');
+                
+                if (isAIWarning) {
+                    console.log(`   🤖 ${warning}`);
+                } else {
+                    console.log(`   ${warning}`);
+                }
             });
         }
         
@@ -422,7 +674,18 @@ class ClaudeGuideSystem {
             console.log(`   ${cmd}`);
         });
         
+        // AI 학습 상태 요약
+        if (guide.experienceData.hasExperienceData) {
+            console.log(`\n🧠 AI 학습 요약:`);
+            console.log(`   • 총 경험: ${guide.experienceData.totalExperience}`);
+            console.log(`   • 관련 패턴: ${guide.experienceData.relevantPatterns.length}개 발견`);
+            console.log(`   • 예방 조치: ${guide.experienceData.preventiveActions.length}개 추천`);
+            console.log(`   • 과거 경고: ${guide.experienceData.warningsFromPastIssues.length}개 제공`);
+        }
+        
         console.log(`\n✅ 가이드 생성 완료 (${guide.workType})`);
+        console.log(`📅 생성 시간: ${new Date(guide.timestamp).toLocaleString('ko-KR')}`);
+        console.log(`🤖 시스템 버전: ${guide.version}`);
     }
     
     // 🔄 Fallback 가이드라인 (파일이 없을 때)

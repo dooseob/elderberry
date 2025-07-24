@@ -98,19 +98,6 @@ public class Comment extends BaseEntity {
         }
     }
 
-    /**
-     * 작성자 이름 반환 (안전한 접근)
-     */
-    public String getAuthorName() {
-        return this.author != null ? this.author.getName() : "알 수 없음";
-    }
-
-    /**
-     * 대댓글 여부 확인
-     */
-    public boolean isReply() {
-        return this.parent != null;
-    }
 
     /**
      * 소프트 삭제

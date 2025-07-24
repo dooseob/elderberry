@@ -1,0 +1,148 @@
+{
+  "version": "2.0.0",
+  "description": "Claude AI 기반 자기 진화형 개발 가이드 시스템 설정",
+  "last_updated": "2025-07-24",
+  
+  "analysis": {
+    "enabled": true,
+    "auto_fix_suggestions": true,
+    "performance_monitoring": true,
+    "file_patterns": [
+      "**/*.java",
+      "**/*.js", 
+      "**/*.ts",
+      "**/*.jsx",
+      "**/*.tsx"
+    ],
+    "exclude_patterns": [
+      "**/node_modules/**",
+      "**/build/**",
+      "**/target/**",
+      "**/dist/**",
+      "**/.git/**",
+      "**/test-data/**",
+      "**/*.min.js"
+    ],
+    "max_file_size_kb": 500,
+    "parallel_processing": true,
+    "ast_analysis_enabled": true
+  },
+  
+  "feedback": {
+    "enabled": true,
+    "auto_learning": true,
+    "commit_tracking": true,
+    "build_verification": true,
+    "ci_integration": true,
+    "git_commit_patterns": [
+      "fix\\(guide-([A-Z_0-9]+)\\)",
+      "improve\\(([A-Z_0-9]+)\\)",
+      "refactor\\(guide-([A-Z_0-9]+)\\)"
+    ],
+    "learning_threshold": {
+      "min_suggestions_for_rule_generation": 5,
+      "min_confidence_for_new_rule": 0.8,
+      "success_rate_history_days": 30
+    }
+  },
+  
+  "notifications": {
+    "enabled": true,
+    "console_output": true,
+    "file_reports": true,
+    "slack_webhook": null,
+    "email_alerts": {
+      "enabled": false,
+      "smtp_server": null,
+      "recipients": []
+    },
+    "discord_webhook": null
+  },
+  
+  "thresholds": {
+    "critical_issues_alert": 5,
+    "high_severity_alert": 15,
+    "success_rate_minimum": 0.7,
+    "improvement_rate_minimum": 0.05,
+    "performance_degradation_threshold": -0.1,
+    "max_analysis_time_minutes": 30
+  },
+  
+  "quality_gates": {
+    "block_on_critical_issues": false,
+    "require_minimum_success_rate": false,
+    "auto_create_issues": false,
+    "integration_with_sonarqube": false,
+    "integration_with_github_actions": true
+  },
+  
+  "machine_learning": {
+    "enabled": true,
+    "pattern_recognition": true,
+    "auto_rule_generation": true,
+    "success_prediction": true,
+    "anomaly_detection": true,
+    "model_update_frequency_days": 7,
+    "training_data_retention_days": 90
+  },
+  
+  "reporting": {
+    "generate_daily_reports": true,
+    "generate_weekly_summaries": true,
+    "include_performance_metrics": true,
+    "include_learning_progress": true,
+    "export_formats": ["json", "html", "markdown"],
+    "report_retention_days": 30
+  },
+  
+  "security": {
+    "mask_sensitive_data": true,
+    "encrypt_feedback_data": false,
+    "secure_api_endpoints": true,
+    "rate_limiting": {
+      "enabled": true,
+      "max_requests_per_hour": 1000
+    }
+  },
+  
+  "integrations": {
+    "github": {
+      "enabled": false,
+      "token": null,
+      "auto_create_prs": false,
+      "comment_on_prs": false
+    },
+    "jira": {
+      "enabled": false,
+      "server_url": null,
+      "username": null,
+      "api_token": null,
+      "auto_create_tickets": false
+    },
+    "jenkins": {
+      "enabled": false,
+      "server_url": null,
+      "build_trigger": false
+    }
+  },
+  
+  "advanced": {
+    "experimental_features": {
+      "ai_code_generation": false,
+      "predictive_bug_detection": false,
+      "auto_test_generation": false,
+      "intelligent_code_review": true
+    },
+    "performance_optimization": {
+      "cache_analysis_results": true,
+      "cache_duration_hours": 24,
+      "parallel_file_processing": true,
+      "memory_limit_mb": 1024
+    },
+    "debugging": {
+      "verbose_logging": false,
+      "save_intermediate_results": false,
+      "performance_profiling": false
+    }
+  }
+}

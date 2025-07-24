@@ -281,16 +281,6 @@ public class Review extends BaseEntity {
         return sum.divide(BigDecimal.valueOf(count), 1, BigDecimal.ROUND_HALF_UP);
     }
 
-    /**
-     * 도움됨 비율 계산
-     */
-    public double getHelpfulPercentage() {
-        int total = helpfulCount + notHelpfulCount;
-        if (total == 0) {
-            return 0.0;
-        }
-        return (double) helpfulCount / total * 100;
-    }
 
     /**
      * 이미지 첨부 여부

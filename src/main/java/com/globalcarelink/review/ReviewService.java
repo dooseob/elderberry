@@ -4,6 +4,8 @@ import com.globalcarelink.auth.Member;
 import com.globalcarelink.auth.MemberRepository;
 import com.globalcarelink.facility.FacilityProfile;
 import com.globalcarelink.facility.FacilityProfileRepository;
+import com.globalcarelink.review.dto.ReviewCreateRequest;
+import com.globalcarelink.review.dto.ReviewUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -364,86 +366,4 @@ public class ReviewService {
         return updatedReview;
     }
 
-    // DTO 클래스들 (임시로 내부 클래스로 구현, 추후 별도 파일로 분리 예정)
-    public static class ReviewCreateRequest {
-        private String title;
-        private String content;
-        private BigDecimal overallRating;
-        private BigDecimal serviceQualityRating;
-        private BigDecimal facilityRating;
-        private BigDecimal staffRating;
-        private BigDecimal priceRating;
-        private BigDecimal accessibilityRating;
-        private Review.ReviewType reviewType = Review.ReviewType.FACILITY;
-        private Boolean recommended = true;
-        private LocalDateTime visitDate;
-        private Integer serviceDurationDays;
-        private Boolean anonymous = false;
-        private List<String> imageUrls;
-        private List<String> tags;
-
-        // Getter/Setter 메서드들
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-        public BigDecimal getOverallRating() { return overallRating; }
-        public void setOverallRating(BigDecimal overallRating) { this.overallRating = overallRating; }
-        public BigDecimal getServiceQualityRating() { return serviceQualityRating; }
-        public void setServiceQualityRating(BigDecimal serviceQualityRating) { this.serviceQualityRating = serviceQualityRating; }
-        public BigDecimal getFacilityRating() { return facilityRating; }
-        public void setFacilityRating(BigDecimal facilityRating) { this.facilityRating = facilityRating; }
-        public BigDecimal getStaffRating() { return staffRating; }
-        public void setStaffRating(BigDecimal staffRating) { this.staffRating = staffRating; }
-        public BigDecimal getPriceRating() { return priceRating; }
-        public void setPriceRating(BigDecimal priceRating) { this.priceRating = priceRating; }
-        public BigDecimal getAccessibilityRating() { return accessibilityRating; }
-        public void setAccessibilityRating(BigDecimal accessibilityRating) { this.accessibilityRating = accessibilityRating; }
-        public Review.ReviewType getReviewType() { return reviewType; }
-        public void setReviewType(Review.ReviewType reviewType) { this.reviewType = reviewType; }
-        public Boolean getRecommended() { return recommended; }
-        public void setRecommended(Boolean recommended) { this.recommended = recommended; }
-        public LocalDateTime getVisitDate() { return visitDate; }
-        public void setVisitDate(LocalDateTime visitDate) { this.visitDate = visitDate; }
-        public Integer getServiceDurationDays() { return serviceDurationDays; }
-        public void setServiceDurationDays(Integer serviceDurationDays) { this.serviceDurationDays = serviceDurationDays; }
-        public Boolean getAnonymous() { return anonymous; }
-        public void setAnonymous(Boolean anonymous) { this.anonymous = anonymous; }
-        public List<String> getImageUrls() { return imageUrls; }
-        public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
-        public List<String> getTags() { return tags; }
-        public void setTags(List<String> tags) { this.tags = tags; }
-    }
-
-    public static class ReviewUpdateRequest {
-        private String title;
-        private String content;
-        private BigDecimal overallRating;
-        private BigDecimal serviceQualityRating;
-        private BigDecimal facilityRating;
-        private BigDecimal staffRating;
-        private BigDecimal priceRating;
-        private BigDecimal accessibilityRating;
-        private Boolean recommended;
-
-        // Getter/Setter 메서드들
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-        public BigDecimal getOverallRating() { return overallRating; }
-        public void setOverallRating(BigDecimal overallRating) { this.overallRating = overallRating; }
-        public BigDecimal getServiceQualityRating() { return serviceQualityRating; }
-        public void setServiceQualityRating(BigDecimal serviceQualityRating) { this.serviceQualityRating = serviceQualityRating; }
-        public BigDecimal getFacilityRating() { return facilityRating; }
-        public void setFacilityRating(BigDecimal facilityRating) { this.facilityRating = facilityRating; }
-        public BigDecimal getStaffRating() { return staffRating; }
-        public void setStaffRating(BigDecimal staffRating) { this.staffRating = staffRating; }
-        public BigDecimal getPriceRating() { return priceRating; }
-        public void setPriceRating(BigDecimal priceRating) { this.priceRating = priceRating; }
-        public BigDecimal getAccessibilityRating() { return accessibilityRating; }
-        public void setAccessibilityRating(BigDecimal accessibilityRating) { this.accessibilityRating = accessibilityRating; }
-        public Boolean getRecommended() { return recommended; }
-        public void setRecommended(Boolean recommended) { this.recommended = recommended; }
-    }
 }
