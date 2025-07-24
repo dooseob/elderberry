@@ -22,7 +22,13 @@
       "Bash(npm install:*)",
       "Bash(/mnt/c/Program Files/Java/jdk-21/bin/java -version)",
       "Bash(cmd.exe:*)",
-      "Bash(repomix:*)"
+      "Bash(repomix:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(rm:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(node:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

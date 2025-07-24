@@ -29,7 +29,11 @@ Write-Host "`n[2] Development Status" -ForegroundColor Cyan
 
 # Check for compilation errors
 Write-Host "Checking compilation status..." -ForegroundColor White
-$compileResult = & .\.gradle-temp\gradle-8.10.2\bin\gradle.bat compileJava --continue 2>&1 | Out-String
+if (Test-Path "gradlew.bat") {
+    $compileResult = & .\gradlew.bat compileJava --continue 2>&1 | Out-String
+} else {
+    $compileResult = "Gradle wrapper not found"
+}
 $errorCount = ($compileResult | Select-String "errors" | Select-Object -Last 1)
 
 if ($errorCount) {
@@ -173,7 +177,7 @@ Write-Host "3. DTO 타입 불일치 해결" -ForegroundColor White
 Write-Host "4. Profile 관련 메서드 구현" -ForegroundColor White
 
 Write-Host "`n⚡ 빠른 명령어:" -ForegroundColor Yellow
-Write-Host "• 컴파일 체크: .\.gradle-temp\gradle-8.10.2\bin\gradle.bat compileJava" -ForegroundColor Cyan
+Write-Host "• 컴파일 체크: .\gradlew.bat compileJava" -ForegroundColor Cyan
 Write-Host "• 백엔드 시작: java -cp build\classes com.globalcarelink.PlainJavaServer" -ForegroundColor Cyan
 Write-Host "• 프론트엔드 시작: cd frontend && npm run dev" -ForegroundColor Cyan
 Write-Host "• 로그 모니터링: .\debug-system.ps1" -ForegroundColor Cyan

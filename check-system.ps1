@@ -45,6 +45,6 @@ if (Test-Path "logs") {
 Write-Host "`nQuick Commands:" -ForegroundColor Cyan
 Write-Host "  📱 Start Dev: .\start-dev.ps1" -ForegroundColor Yellow
 Write-Host "  🔍 Debug: .\debug-system.ps1" -ForegroundColor Yellow
-Write-Host "  🔧 Compile Check: .\.gradle-temp\gradle-8.10.2\bin\gradle.bat compileJava" -ForegroundColor Yellow
+Write-Host "  🔧 Compile Check: .\gradlew.bat compileJava" -ForegroundColor Yellow
 
 Write-Host "`n✨ System Ready!" -ForegroundColor Green 

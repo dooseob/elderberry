@@ -30,12 +30,22 @@ java -cp build\classes com.globalcarelink.PlainJavaServer  # 백엔드 (포트 8
 
 ### 2. 로그 기반 디버깅 시스템
 ```powershell
-# 실시간 시스템 모니터링
+# 실시간 시스템 모니터링 (PowerShell)
 .\debug-system.ps1
 
 # 시스템 상태만 확인
 .\check-system.ps1
+
+# Windows 배치 파일로 실행 (권장)
+.\run-debug.bat
 ```
+
+#### **📊 디버깅 시스템 기능**
+- **실시간 포트 모니터링**: 5173(프론트), 8080(백엔드) 상태 확인
+- **컴파일 상태 체크**: Spring Boot 에러 개수 추적
+- **로그 파일 모니터링**: 실시간 로그 추적 및 분석
+- **빠른 액션**: F(프론트), B(백엔드), A(전체) 시작
+- **라이브 모니터링**: 3초마다 자동 갱신
 
 ## 🔧 에러 해결 가이드
 
@@ -83,9 +93,11 @@ public void setGrade(String grade) { this.grade = grade; }
 ## 📁 핵심 파일 구조
 
 ### 디버깅 시스템
-- `debug-system.ps1`: 통합 디버깅 및 모니터링
-- `start-dev.ps1`: 개발 서버 시작
-- `check-system.ps1`: 시스템 상태 확인
+- `debug-system.ps1`: 통합 디버깅 및 모니터링 (188줄)
+- `start-dev.ps1`: 개발 서버 시작 (100줄)
+- `check-system.ps1`: 시스템 상태 확인 (51줄)
+- `start-backend.ps1`: 백엔드 전용 시작 (43줄)
+- `run-debug.bat`: Windows 배치 파일 (PowerShell 실행)
 - `logs/`: 로그 파일들
 
 ### 백엔드
@@ -113,6 +125,64 @@ public void setGrade(String grade) { this.grade = grade; }
 - 중간 확인 없이 완료까지 작업
 - 로컬 데이터 사용 (임시 데이터 생성 금지)
 - 코드 작성 후 중복 및 오류 확인
+
+---
+
+## 🍇 **엘더베리 프로젝트 지능형 가이드 시스템**
+
+### ⚡ **즉시 사용 (30초)**
+```bash
+# claude-guides 폴더로 이동
+cd claude-guides
+
+# 빠른 상태 체크 (30초)
+npm run quick-check
+
+# 필요한 도움 받기
+npm run spring-boot-help    # Spring Boot 에러 해결
+npm run chatbot-help        # AI 챗봇 연동 준비
+npm run phase-check         # 현재 Phase 상태
+```
+
+### 🎯 **엘더베리 특화 기능**
+- **🔧 Spring Boot 에러 해결**: 67개 컴파일 에러 체계적 해결
+- **🤖 AI 챗봇 연동**: Python 기반 AI 챗봇팀과 협업 지원  
+- **📊 Phase별 가이드**: Phase 6(공공데이터) → Phase 7(챗봇) 맞춤 가이드
+- **🇰🇷 한국어 개발 표준**: 한국어 주석 및 개발 가이드라인
+- **🌏 재외동포 특화**: 다국어 지원 및 특화 비즈니스 로직
+
+### 📋 **주요 명령어**
+```bash
+npm run quick-check         # 30초 프로젝트 상태 체크
+npm run spring-boot-help    # Spring Boot 67개 에러 해결 가이드
+npm run chatbot-help        # AI 챗봇팀 협업 및 연동 가이드
+npm run phase-check         # 현재 Phase 상세 분석
+npm run guide              # 맞춤형 지능형 가이드 생성
+npm run help               # 전체 도움말
+```
+
+### 🚀 **프로그래밍 방식 사용**
+```javascript
+const ElderberryGuide = require('./claude-guides/elderberry-intelligent-guide.js');
+const system = new ElderberryGuide();
+
+// 빠른 체크리스트
+const quick = system.generateElderberryQuickChecklist('api_implementation');
+
+// 맞춤형 가이드 생성
+const guide = await system.getElderberryGuide(
+    "FacilityService 리팩토링 필요",
+    ["FacilityService.java"],
+    { priority: "high", korean: true }
+);
+```
+
+### 📚 **가이드 문서**
+- 📖 [빠른 시작 가이드](claude-guides/QUICK_START.md) - 30초 시작
+- 📋 [전체 사용법](claude-guides/ELDERBERRY_USAGE_GUIDE.md) - 완전한 활용법
+- 🔧 [실무 예제](claude-guides/ELDERBERRY_USAGE_GUIDE.md#-실무-예제) - 구체적 사용 사례
+
+**🎯 목표**: 엘더베리 프로젝트 개발 효율성 300% 향상!
 
 ---
 
