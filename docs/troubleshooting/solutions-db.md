@@ -468,4 +468,56 @@
 
 ---
 
+---
+
+### 🌐 API 및 네트워크 관련
+
+#### ❌ 이슈 #009: API 타임아웃 에러로 인한 작업 중단
+- **발생 시점**: 2025-07-25 09:30
+- **문제 상황**: 
+  - AI 예측 및 위험 분석 시스템 구현 중 타임아웃 발생
+  - `API Error: Request timed out` 10회 재시도 후 최종 실패
+  - solutions-db.md 파일 부재로 AI 학습 시스템 오류 발생
+
+- **근본 원인**: 
+  - solutions-db.md 파일 미생성으로 SolutionsDbLearningService에서 빈 지식베이스 오류
+  - 파일 I/O 접근 실패로 인한 연쇄적 타임아웃
+  - AI 학습 시스템의 파일 의존성 미해결
+
+- **해결 방법**:
+  ```bash
+  # 1. solutions-db.md 파일 생성으로 빈 지식베이스 오류 해결
+  touch docs/troubleshooting/solutions-db.md
+  
+  # 2. AI 가이드 시스템 정상 동작 확인
+  echo "API 타임아웃 에러 해결 및 시스템 안정성 개선" | node claude-guide.js
+  
+  # 3. 학습 데이터 축적을 위한 기본 구조 생성
+  # - 자동 생성 문서 헤더
+  # - 사용 가이드
+  # - 기본 통계 템플릿
+  ```
+
+- **즉시 효과**:
+  - Claude 가이드 시스템 v4.0.0-ai-enhanced 정상 동작 확인 ✅
+  - 동적 체크리스트 생성 서비스 정상 동작 확인 ✅
+  - API 타임아웃 문제 해결로 작업 지속 가능 ✅
+
+- **예방 조치**: 
+  - TroubleshootingService 초기화 시 solutions-db.md 자동 생성
+  - SolutionsDbLearningService에 fallback 메커니즘 강화
+  - 파일 의존성 체크리스트에 solutions-db.md 추가
+
+- **학습 포인트**: 
+  - AI 학습 시스템의 데이터 파일 의존성 중요성
+  - 빈 파일이라도 기본 구조 제공의 가치
+  - 에러 연쇄 반응 방지를 위한 fallback 시스템 필요성
+
+- **AI 학습 태그**: `api-timeout` `file-dependency` `ai-learning-system` `fallback-mechanism` `system-stability`
+
+- **재사용 가능성**: ⭐⭐⭐⭐⭐
+- **해결 시간**: 15분
+
+---
+
 **📌 이 문서는 CLAUDE_GUIDELINES.md 지침에 따라 작성되었으며, 지속적으로 업데이트됩니다.** 

@@ -30,7 +30,8 @@
       "Bash(node:*)",
       "Bash(cp:*)",
       "Bash(npm run:*)",
-      "Bash(.check-system.ps1)"
+      "Bash(.check-system.ps1)",
+      "Bash(pwsh:*)"
     ],
     "deny": []
   }
