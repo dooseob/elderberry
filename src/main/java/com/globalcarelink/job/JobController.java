@@ -2,6 +2,9 @@ package com.globalcarelink.job;
 
 import com.globalcarelink.auth.Member;
 import com.globalcarelink.auth.MemberService;
+import com.globalcarelink.job.dto.JobApplicationRequest;
+import com.globalcarelink.job.dto.ApplicationStatusUpdateRequest;
+import com.globalcarelink.job.dto.InterviewScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -10,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 /**
@@ -330,7 +335,7 @@ public class JobController {
     @PostMapping("/{jobId}/apply")
     public ResponseEntity<JobApplication> applyToJob(
             @PathVariable Long jobId,
-            @RequestBody JobApplicationRequest request,
+            @Valid @RequestBody JobApplicationRequest request,
             Authentication auth) {
         
         log.info("구인 공고 지원: 공고ID={}", jobId);
@@ -395,7 +400,7 @@ public class JobController {
     @PutMapping("/applications/{applicationId}/status")
     public ResponseEntity<JobApplication> updateApplicationStatus(
             @PathVariable Long applicationId,
-            @RequestBody ApplicationStatusUpdateRequest request,
+            @Valid @RequestBody ApplicationStatusUpdateRequest request,
             Authentication auth) {
         
         log.info("지원서 상태 업데이트: 지원서ID={}, 상태={}", applicationId, request.getStatus());
@@ -417,7 +422,7 @@ public class JobController {
     @PutMapping("/applications/{applicationId}/interview")
     public ResponseEntity<JobApplication> scheduleInterview(
             @PathVariable Long applicationId,
-            @RequestBody InterviewScheduleRequest request,
+            @Valid @RequestBody InterviewScheduleRequest request,
             Authentication auth) {
         
         log.info("면접 일정 설정: 지원서ID={}", applicationId);
@@ -469,56 +474,5 @@ public class JobController {
         }
     }
 
-    // DTO 클래스들 (임시로 내부 클래스로 구현, 추후 별도 파일로 분리 예정)
-
-    public static class JobApplicationRequest {
-        private String coverLetter;
-        private String resumeFileName;
-        private String resumeFilePath;
-        private String expectedSalary;
-        private String applicantNotes;
-        private String contactPhone;
-        private String contactEmail;
-        
-        // Getter/Setter
-        public String getCoverLetter() { return coverLetter; }
-        public void setCoverLetter(String coverLetter) { this.coverLetter = coverLetter; }
-        public String getResumeFileName() { return resumeFileName; }
-        public void setResumeFileName(String resumeFileName) { this.resumeFileName = resumeFileName; }
-        public String getResumeFilePath() { return resumeFilePath; }
-        public void setResumeFilePath(String resumeFilePath) { this.resumeFilePath = resumeFilePath; }
-        public String getExpectedSalary() { return expectedSalary; }
-        public void setExpectedSalary(String expectedSalary) { this.expectedSalary = expectedSalary; }
-        public String getApplicantNotes() { return applicantNotes; }
-        public void setApplicantNotes(String applicantNotes) { this.applicantNotes = applicantNotes; }
-        public String getContactPhone() { return contactPhone; }
-        public void setContactPhone(String contactPhone) { this.contactPhone = contactPhone; }
-        public String getContactEmail() { return contactEmail; }
-        public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
-    }
-
-    public static class ApplicationStatusUpdateRequest {
-        private JobApplication.ApplicationStatus status;
-        private String employerNotes;
-        
-        // Getter/Setter
-        public JobApplication.ApplicationStatus getStatus() { return status; }
-        public void setStatus(JobApplication.ApplicationStatus status) { this.status = status; }
-        public String getEmployerNotes() { return employerNotes; }
-        public void setEmployerNotes(String employerNotes) { this.employerNotes = employerNotes; }
-    }
-
-    public static class InterviewScheduleRequest {
-        private java.time.LocalDateTime dateTime;
-        private String location;
-        private JobApplication.InterviewType interviewType;
-        
-        // Getter/Setter
-        public java.time.LocalDateTime getDateTime() { return dateTime; }
-        public void setDateTime(java.time.LocalDateTime dateTime) { this.dateTime = dateTime; }
-        public String getLocation() { return location; }
-        public void setLocation(String location) { this.location = location; }
-        public JobApplication.InterviewType getInterviewType() { return interviewType; }
-        public void setInterviewType(JobApplication.InterviewType interviewType) { this.interviewType = interviewType; }
-    }
+    // DTO 클래스들은 별도 패키지(com.globalcarelink.job.dto)로 분리됨
 }

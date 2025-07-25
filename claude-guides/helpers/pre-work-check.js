@@ -129,7 +129,7 @@ class PreWorkChecker {
      */
     checkDocumentationStructure() {
         // solutions-db.md 확인
-        const solutionsDbPath = path.join(__dirname, '../../docs/troubleshooting/solutions-db.md');
+        const solutionsDbPath = path.join(__dirname, '../troubleshooting/solutions-db.md');
         if (fs.existsSync(solutionsDbPath)) {
             console.log("  ✅ docs/troubleshooting/solutions-db.md 존재 확인");
             console.log("    💡 새 이슈는 이 파일에 추가하세요!");
@@ -152,7 +152,7 @@ class PreWorkChecker {
         
         // 월별 트러블슈팅 폴더 확인
         const currentMonth = "2025-07";
-        const monthlyPath = path.join(__dirname, `../../docs/troubleshooting/${currentMonth}`);
+        const monthlyPath = path.join(__dirname, `../troubleshooting/${currentMonth}`);
         if (fs.existsSync(monthlyPath)) {
             console.log(`  ✅ docs/troubleshooting/${currentMonth}/ 폴더 확인`);
             this.checks.push("월별 이슈 구조 확인");

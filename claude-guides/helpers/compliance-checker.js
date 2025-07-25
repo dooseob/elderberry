@@ -174,7 +174,7 @@ class ComplianceChecker {
      */
     async checkTroubleshootingDocumented() {
         try {
-            const solutionsDbPath = path.join(process.cwd(), 'docs/troubleshooting/solutions-db.md');
+            const solutionsDbPath = path.join(__dirname, '../troubleshooting/solutions-db.md');
             
             try {
                 await fs.access(solutionsDbPath);

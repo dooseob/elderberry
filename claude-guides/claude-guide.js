@@ -7,18 +7,22 @@ const path = require('path');
 const fs = require('fs').promises;
 const SolutionsDbLearningService = require('./services/SolutionsDbLearningService');
 const DynamicChecklistService = require('./services/DynamicChecklistService');
+const DocumentLearningService = require('./services/DocumentLearningService');
 
 class ClaudeGuideSystem {
     constructor() {
         this.version = "4.0.0-ai-enhanced";
         this.projectName = "ElderberryProject";
-        this.guidelinesFile = path.join(__dirname, 'CLAUDE_GUIDELINES.md');
+        this.guidelinesFile = path.join(__dirname, 'CLAUDE.md');
         
         // Solutions-DB 학습 서비스 초기화
         this.solutionsLearning = new SolutionsDbLearningService();
         
         // 동적 체크리스트 생성 서비스 초기화
         this.dynamicChecklist = new DynamicChecklistService();
+        
+        // 문서 학습 서비스 초기화 (WORK_LOG.md, work-reports/ 학습)
+        this.documentLearning = new DocumentLearningService();
         
         // 엘더베리 프로젝트 특화 설정
         this.projectConfig = {
@@ -38,6 +42,7 @@ class ClaudeGuideSystem {
         console.log(`🍇 프로젝트: ${this.projectName}`);
         console.log(`📋 현재 단계: ${this.projectConfig.currentPhase}`);
         console.log(`🧠 AI 학습 기능: Solutions-DB 연동 활성화`);
+        console.log(`📚 문서 학습 기능: WORK_LOG.md & work-reports 연동 활성화`);
         console.log(`🔥 동적 체크리스트: 경험 기반 자동 생성 활성화`);
     }
     
@@ -54,8 +59,16 @@ class ClaudeGuideSystem {
             // 2. 핵심 가이드라인 검색
             const relevantGuidelines = await this.searchGuidelines(userMessage, workType);
             
-            // 3. 실제 경험 데이터 조회
+            // 3. 실제 경험 데이터 조회 (Solutions-DB)
             const experienceAdvice = await this.solutionsLearning.getExperienceBasedAdvice(workType, userMessage);
+            
+            // 3.1. 문서 히스토리 학습 데이터 조회 (WORK_LOG.md, work-reports)
+            const documentInsights = await this.documentLearning.extractDevelopmentInsights();
+            const workRecommendations = await this.documentLearning.generateWorkRecommendations({
+                workType,
+                userMessage,
+                currentHour: new Date().getHours()
+            });
             
             // 4. 동적 체크리스트 생성
             const dynamicChecklist = await this.dynamicChecklist.generateDynamicChecklist(
@@ -77,6 +90,10 @@ class ClaudeGuideSystem {
                 
                 // 🧠 AI 학습 기반 경험 데이터
                 experienceData: experienceAdvice,
+                
+                // 📚 문서 히스토리 학습 데이터
+                documentInsights: documentInsights,
+                workRecommendations: workRecommendations,
                 
                 // 🔥 동적 체크리스트 - 경험 기반 자동 생성
                 dynamicChecklist: dynamicChecklist,
@@ -572,6 +589,44 @@ class ClaudeGuideSystem {
             }
         } else {
             console.log(`\n🧠 AI 학습 상태: ${guide.experienceData.message}`);
+        }
+        
+        // 📚 문서 히스토리 학습 데이터 표시
+        if (guide.documentInsights) {
+            console.log(`\n📚 문서 히스토리 분석`);
+            
+            // 개발 속도 패턴
+            if (guide.documentInsights.velocityInsights) {
+                const velocity = guide.documentInsights.velocityInsights;
+                console.log(`   ⏱️ 평균 작업 시간: ${velocity.averageTaskTime}시간/작업`);
+                if (velocity.peakProductivityHours.length > 0) {
+                    console.log(`   🔥 생산성 최고 시간: ${velocity.peakProductivityHours.slice(0, 3).join(', ')}시`);
+                }
+            }
+            
+            // 품질 지표
+            if (guide.documentInsights.qualityInsights) {
+                const quality = guide.documentInsights.qualityInsights;
+                if (quality.bugRate > 0.3) {
+                    console.log(`   ⚠️ 버그 발생률: ${Math.round(quality.bugRate * 100)}% (주의 필요)`);
+                } else if (quality.bugRate > 0) {
+                    console.log(`   ✅ 버그 발생률: ${Math.round(quality.bugRate * 100)}% (양호)`);
+                }
+            }
+        }
+        
+        // 📊 작업 추천사항 표시
+        if (guide.workRecommendations && guide.workRecommendations.length > 0) {
+            console.log(`\n📊 상황별 추천사항:`);
+            guide.workRecommendations.slice(0, 2).forEach(rec => {
+                const typeIcons = {
+                    'timing': '⏰',
+                    'quality': '🔍', 
+                    'technical': '⚙️'
+                };
+                console.log(`   ${typeIcons[rec.type] || '💡'} ${rec.message}`);
+                console.log(`      → ${rec.suggestion}`);
+            });
         }
         
         // 동적 체크리스트 표시 (우선)

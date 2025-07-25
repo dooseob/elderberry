@@ -31,7 +31,8 @@
       "Bash(cp:*)",
       "Bash(npm run:*)",
       "Bash(.check-system.ps1)",
-      "Bash(pwsh:*)"
+      "Bash(pwsh:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   }

@@ -1,51 +1,69 @@
-# Claude AI 기반 자기 진화형 개발 가이드 시스템 v2.0
+# 🤖 Elderberry-Intellect 자기 진화형 개발 지원 시스템 v4.0
 
-**Context7 지침에 따른 체계적 코드 분석, 학습, 개선 시스템**
+**통합 AI 학습 시스템 | Context7 지침 기반 | 문서 히스토리 학습**
 
-프로젝트의 코드 품질과 개발 효율성을 향상시키기 위한 AI 기반 자기 진화형 가이드 시스템입니다. 단순한 정적 분석을 넘어서 **개발자의 피드백을 학습하고 스스로 개선하는 지능형 시스템**입니다.
-
----
-
-## 🌟 주요 특징
-
-### 🧠 지능형 분석
-- **AST 기반 구조 분석**: 단순 텍스트 매칭을 넘어선 코드 구조 이해
-- **컨텍스트 인식**: 파일 타입, 프로젝트 구조, 의존성을 고려한 정교한 분석
-- **성능 모니터링**: 실행 시간, 메모리 사용량 등 실시간 성능 추적
-
-### 🔄 자동화된 학습
-- **피드백 루프**: Git 커밋에서 제안 수용/거부 패턴 자동 학습
-- **성공률 추적**: 각 규칙의 효과성을 지속적으로 모니터링
-- **새 규칙 생성**: 성공 패턴을 기반으로 한 자동 규칙 생성
-
-### 📊 실시간 성과 분석
-- **학습 진행률**: AI 제안의 성공률 및 개선률 추적
-- **트렌드 분석**: 시간에 따른 코드 품질 변화 모니터링
-- **예측 분석**: 미래 이슈 발생 가능성 예측
+로그 기반 디버깅, 트러블슈팅 문서화, AI 가이드 시스템을 유기적으로 연결하여 **실제 경험으로부터 학습하고 미래의 문제를 예방하는 진화형 개발 환경**입니다.
 
 ---
 
-## ⚡ 30초 빠른 시작
+## 🌟 v4.0 주요 특징
 
-### v2.0 AI 강화 시스템 (권장)
+### 🧠 통합 AI 학습 시스템
+- **Solutions-DB 학습**: 실제 문제 해결 경험 자동 축적 및 학습
+- **문서 히스토리 분석**: WORK_LOG.md, work-reports에서 개발 패턴 추출
+- **경험 기반 예측**: 과거 데이터로 위험 요소 사전 감지
+
+### 🔄 3단계 통합 사이클
+1. **감지 (Detect)**: 로그 시스템이 실시간 이상 징후 포착
+2. **기록 (Record)**: 트러블슈팅 자동 문서화로 지식 축적  
+3. **예방 (Prevent)**: AI 가이드가 경험 기반 맞춤 조언 제공
+
+### 📚 완전 통합 문서 관리
+- **troubleshooting/**: 문제 해결 데이터베이스 (중앙 집중식)
+- **docs/**: 전체 프로젝트 문서 (active/reference/archive)
+- **DocumentLearningService**: WORK_LOG.md & work-reports 패턴 학습
+- **DynamicChecklistService**: 경험 기반 체크리스트 생성
+
+### 🔥 실시간 성능 최적화
+- **평균 작업 시간 분석**: 44시간/작업 기준 효율성 제고
+- **생산성 최고 시간 식별**: 15시, 13시, 17시 집중 시간 활용
+- **상황별 맞춤 추천**: 시간대/작업유형별 최적화 가이드
+
+---
+
+## ⚡ v4.0 통합 시스템 30초 시작
+
+### 🚀 통합 AI 가이드 실행
 ```bash
-# 전체 AI 시스템 실행 (분석 → 학습 → 리포트)
-node claude-guides/claude-ai-enhanced.js
+# 📋 메인 AI 가이드 시스템 (경험 기반 학습 포함)
+cd claude-guides
+echo "작업 내용" | node claude-guide.js
 
-# 지능형 코드 분석만 실행
-node claude-guides/analyzers/intelligent-context-analyzer.js
+# 🔥 빠른 대화형 실행
+node claude-guide.js
+# → 작업 내용 입력 후 맞춤 가이드 제공
 
-# Git 커밋 기반 학습 실행
-node claude-guides/feedback/automated-feedback-system.js process-commits
+# 🧠 예시: Spring Boot 에러 해결
+echo "Spring Boot 컴파일 에러 해결" | node claude-guide.js
 ```
 
-### v1.0 레거시 시스템 (호환성 유지)
+### 📊 특화 시스템 실행  
 ```bash
-# 1. 즉시 사용
-npm run guide
+# 📈 문서 히스토리 학습만 실행
+node services/DocumentLearningService.js
 
-# 2. 빠른 상태 체크 (30초)
-npm run quick-check
+# 🔧 동적 체크리스트 생성
+node services/DynamicChecklistService.js
+
+# 💡 Solutions-DB 학습 확인
+node services/SolutionsDbLearningService.js
+```
+
+### 🛠️ 레거시 호환 명령어
+```bash
+# NPM 스크립트 사용
+npm run guide          # 메인 가이드
+npm run quick-check    # 30초 체크
 
 # 3. Spring Boot 에러 해결
 npm run spring-boot-help

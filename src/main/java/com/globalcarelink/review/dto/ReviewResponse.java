@@ -89,23 +89,51 @@ public class ReviewResponse {
         response.setCreatedDate(review.getCreatedDate());
         response.setLastModifiedDate(review.getLastModifiedDate());
         
-        // 프레젠테이션 로직 적용
+        // 프레젠테이션 로직 적용 (엔티티에서 DTO로 이동)
         response.setHelpfulPercentage(calculateHelpfulPercentage(review.getHelpfulCount(), review.getNotHelpfulCount()));
         response.setRatingDisplay(formatRatingDisplay(review.getOverallRating()));
         response.setIsPositive(review.getOverallRating() != null && review.getOverallRating().compareTo(BigDecimal.valueOf(3.5)) >= 0);
         response.setIsRecent(review.getCreatedDate() != null && review.getCreatedDate().isAfter(LocalDateTime.now().minusDays(7)));
-        response.setIsEditable(review.isEditable(review.getReviewer()));
+        response.setIsEditable(calculateIsEditable(review));
         
-        // 작성자 정보 (익명 처리)
-        if (review.getAnonymous() != null && review.getAnonymous()) {
-            response.setReviewerName("익명");
-            response.setIsAnonymousReviewer(true);
-        } else if (review.getReviewer() != null) {
-            response.setReviewerName(maskUserName(review.getReviewer().getName()));
-            response.setIsAnonymousReviewer(false);
-        }
+        // 작성자 정보 (익명 처리) - 엔티티에서 DTO로 이동된 로직
+        response.setReviewerName(getReviewerDisplayName(review));
+        response.setIsAnonymousReviewer(review.getAnonymous() != null ? review.getAnonymous() : false);
         
         return response;
+    }
+    
+    /**
+     * 수정 가능 여부 확인 (엔티티에서 DTO로 이동)
+     */
+    private static Boolean calculateIsEditable(Review review) {
+        // 작성자 본인만 가능, 24시간 이내, 활성 상태
+        if (review.getStatus() != Review.ReviewStatus.ACTIVE) {
+            return false;
+        }
+        
+        if (review.getCreatedDate() == null) {
+            return false;
+        }
+        
+        // 24시간 이내만 수정 가능
+        LocalDateTime cutoff = review.getCreatedDate().plusHours(24);
+        return LocalDateTime.now().isBefore(cutoff);
+    }
+    
+    /**
+     * 리뷰어 이름 또는 익명 반환 (엔티티에서 DTO로 이동)
+     */
+    private static String getReviewerDisplayName(Review review) {
+        if (review.getAnonymous() != null && review.getAnonymous()) {
+            return "익명";
+        }
+        
+        if (review.getReviewer() != null && review.getReviewer().getName() != null) {
+            return maskUserName(review.getReviewer().getName());
+        }
+        
+        return "익명";
     }
     
     /**

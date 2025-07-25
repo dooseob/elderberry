@@ -1,5 +1,6 @@
 package com.globalcarelink.facility;
 
+import com.globalcarelink.facility.dto.RecommendationRequest;
 import com.globalcarelink.health.HealthAssessment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -319,7 +320,7 @@ public class FacilityProfileController {
     @PostMapping("/recommendations")
     @PreAuthorize("hasAnyRole('USER_DOMESTIC', 'USER_OVERSEAS', 'COORDINATOR', 'ADMIN')")
     public ResponseEntity<List<FacilityProfileService.FacilityRecommendation>> recommendFacilities(
-        @RequestBody RecommendationRequest request) {
+        @Valid @RequestBody RecommendationRequest request) {
         
         log.info("시설 추천 요청 - 케어등급: {}, 지역: {}", 
                 request.getHealthAssessment().getOverallCareGrade(),
@@ -437,13 +438,5 @@ public class FacilityProfileController {
         return ResponseEntity.ok().build();
     }
 
-    // ===== DTO 클래스들 =====
-
-    @lombok.Builder
-    @lombok.Getter
-    @lombok.AllArgsConstructor
-    public static class RecommendationRequest {
-        private final HealthAssessment healthAssessment;
-        private final FacilityProfileService.FacilityMatchingPreference preference;
-    }
+    // ===== DTO 클래스들은 별도 패키지(com.globalcarelink.facility.dto)로 분리됨 =====
 }

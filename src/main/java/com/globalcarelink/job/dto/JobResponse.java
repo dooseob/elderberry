@@ -99,14 +99,37 @@ public class JobResponse {
         response.setCreatedDate(job.getCreatedDate());
         response.setLastModifiedDate(job.getLastModifiedDate());
         
-        // 프레젠테이션 로직 적용
+        // 프레젠테이션 로직 적용 (엔티티에서 DTO로 이동)
         response.setSalaryRange(formatSalaryRange(job.getSalaryType(), job.getMinSalary(), job.getMaxSalary()));
-        response.setApplicationCount(job.getApplicationCount());
-        response.setIsDeadlineApproaching(job.isDeadlineApproaching());
-        response.setIsExpired(job.isExpired());
+        response.setApplicationCount(calculateApplicationCount(job));
+        response.setIsDeadlineApproaching(calculateDeadlineApproaching(job));
+        response.setIsExpired(calculateExpired(job));
         response.setIsActive(job.getStatus() == Job.JobStatus.ACTIVE);
         
         return response;
+    }
+    
+    /**
+     * 지원자 수 계산 (엔티티에서 DTO로 이동)
+     */
+    private static Integer calculateApplicationCount(Job job) {
+        return job.getApplications() != null ? job.getApplications().size() : 0;
+    }
+    
+    /**
+     * 마감일 임박 여부 확인 (엔티티에서 DTO로 이동)
+     */
+    private static Boolean calculateDeadlineApproaching(Job job) {
+        return job.getApplicationDeadline() != null && 
+               LocalDate.now().plusDays(3).isAfter(job.getApplicationDeadline());
+    }
+    
+    /**
+     * 마감일 지남 여부 확인 (엔티티에서 DTO로 이동)
+     */
+    private static Boolean calculateExpired(Job job) {
+        return job.getApplicationDeadline() != null && 
+               LocalDate.now().isAfter(job.getApplicationDeadline());
     }
     
     /**

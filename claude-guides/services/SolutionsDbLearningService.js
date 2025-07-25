@@ -13,7 +13,7 @@ const path = require('path');
 class SolutionsDbLearningService {
     constructor() {
         this.version = "1.0.0";
-        this.solutionsDbPath = path.join(process.cwd(), 'docs/troubleshooting/solutions-db.md');
+        this.solutionsDbPath = path.join(__dirname, '../troubleshooting/solutions-db.md');
         this.knowledgeCache = null;
         this.lastCacheUpdate = null;
         this.cacheValidityMinutes = 5; // 5분간 캐시 유효
