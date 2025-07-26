@@ -1,39 +1,45 @@
-# 🌟 Elderberry - AI 진화형 개발 플랫폼
+# 🌟 Elderberry - AI 기반 돌봄 서비스 매칭 플랫폼
 
 > **해외 거주 한인을 위한 AI 기반 돌봄 서비스 매칭 플랫폼**  
-> **+ Elderberry-Intellect 자기 진화형 개발 지원 시스템**
+> **Java 21 + Spring Boot 3.x + React 18 + 통합 에이전트 시스템**
 
 ---
 
-## 🚀 30초 빠른 시작
+## 🚀 빠른 시작
 
 ```bash
-# 🔥 통합 개발 서버 시작
+# 🔥 기본 개발 서버 시작
 ./start-dev.ps1
 
-# 🧠 AI 가이드 시스템 사용
-cd claude-guides
-echo "작업 내용" | node claude-guide.js
+# 🧠 통합 개발 모드 (Java + React)
+./start-unified-dev.ps1
 
-# 📊 시스템 상태 확인
-./check-system.ps1
+# 🔧 WSL1 개발 워크플로우
+./wsl1-dev-workflow.ps1
+
+# 📦 빌드 및 배포
+./build-deploy.ps1
 ```
 
 ---
 
-## 📋 현재 상황 (2025-07-25)
+## 📋 현재 상황 (2025-01-26)
 
 ### ✅ **완료된 핵심 시스템**
-- **🤖 Elderberry-Intellect AI 시스템**: 자기 진화형 개발 지원 완성
-- **🔧 Plain Java 서버**: 정상 동작 (포트 8080)
-- **🎨 React 프론트엔드**: 정상 동작 (포트 5173)
-- **📚 통합 문서 관리**: 지능형 구조화 완료
-- **🧠 AI 학습 시스템**: 실제 경험 기반 가이드 제공
+- **🤖 Java 에이전트 시스템**: 유기적 협업 에이전트 아키텍처 완성
+- **🏗️ Spring Boot 백엔드**: 완전한 프로젝트 구조 및 표준화 완료
+- **🎨 React 프론트엔드**: TypeScript + Tailwind 정상 동작 (포트 5173)
+- **🗄️ H2 Database**: 파일 기반 데이터베이스 (./data/elderberry)
+- **🔐 JWT 인증 시스템**: Spring Security 6.x 통합 완성
+- **🌐 공공데이터 API**: 요양시설, 병원, 약국 정보 자동 동기화
+- **🎯 시설 매칭 시스템**: 추천 알고리즘 및 매칭 이력 관리
+- **📊 포트폴리오 자동화**: STAR 방법론 기반 자동 기록
 
-### ⚠️ **진행 중인 작업**
-- **🏗️ Spring Boot 백엔드**: 67개 컴파일 에러 해결 중
-- **🤝 AI 챗봇 연동**: API 스펙 협의 중
-- **🎨 프론트엔드 연동**: React 컴포넌트 개발 중
+### 🧹 **프로젝트 정리 완료** (Phase 1-4)
+- **중복 파일 제거**: 30+ 파일 정리, 10,000+ 줄 코드 감소
+- **PowerShell 스크립트**: 12개 → 4개 통합
+- **JavaScript 서비스**: Java 에이전트와 중복 제거
+- **프로젝트 구조**: 최적화 및 표준화 완료
 
 ---
 
@@ -41,13 +47,24 @@ echo "작업 내용" | node claude-guide.js
 
 ```
 Elderberry Platform
-├── 💼 Business Logic (Spring Boot)
-├── 🎨 Frontend (React + TypeScript)
-├── 🤖 AI Support System (Elderberry-Intellect)
-│   ├── 🧠 경험 학습 (DocumentLearningService)
-│   ├── 🔧 동적 체크리스트 (DynamicChecklistService)  
-│   └── 💡 문제 해결 DB (SolutionsDbLearningService)
-└── 📊 Real-time Monitoring (로그 기반 디버깅)
+├── 💼 Backend (Spring Boot 3.x + Java 21)
+│   ├── 🤖 Agents System (유기적 협업 에이전트)
+│   │   ├── ClaudeGuideAgent (학습 및 지침)
+│   │   ├── PortfolioTroubleshootAgent (포트폴리오 및 트러블슈팅)
+│   │   └── UnifiedTroubleshootingAgent (통합 트러블슈팅)
+│   ├── 🔐 Auth System (JWT + Spring Security)
+│   ├── 🌐 Public Data API (요양시설, 병원, 약국)
+│   ├── 🎯 Matching System (시설 추천 알고리즘)
+│   └── 🗄️ H2 Database (파일 기반)
+├── 🎨 Frontend (React 18 + TypeScript + Tailwind)
+│   ├── 🏥 Facility Management
+│   ├── 👥 Member & Profile System
+│   └── 📊 Health Assessment
+├── 🔧 Claude Guides (JavaScript 분석 도구)
+│   ├── 📊 Analysis Services
+│   ├── 🔍 Security Analysis (Snyk, SonarQube)
+│   └── 📈 Predictive Analysis
+└── 📚 Documentation (자동 생성 및 관리)
 ```
 
 ---
