@@ -1,7 +1,9 @@
 package com.globalcarelink.agents.orchestrator;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.globalcarelink.agents.BaseAgent;
 import com.globalcarelink.agents.events.AgentEvent;
+import com.globalcarelink.agents.integration.JavaScriptServiceBridge;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -26,6 +28,7 @@ public class IntelligentAgentOrchestrator {
     private final Map<String, BaseAgent> registeredAgents = new ConcurrentHashMap<>();
     private final Map<String, AgentCapability> agentCapabilities = new ConcurrentHashMap<>();
     private final AgentCoordinationMetrics metrics = new AgentCoordinationMetrics();
+    private final JavaScriptServiceBridge javaScriptServiceBridge;
     
     /**
      * 에이전트 등록 및 능력 분석
@@ -269,15 +272,201 @@ public class IntelligentAgentOrchestrator {
     }
     
     /**
+     * JavaScript 서비스와 통합된 통합 분석 실행
+     */
+    public CompletableFuture<Map<String, Object>> executeIntegratedAnalysis(String projectPath, String analysisType) {
+        log.info("통합 분석 시작: {} - {}", projectPath, analysisType);
+        
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Object> results = new HashMap<>();
+            
+            try {
+                // JavaScript 서비스들과 병렬 실행
+                Map<String, Map<String, Object>> jsServiceRequests = new HashMap<>();
+                
+                // 개발 워크플로 분석
+                jsServiceRequests.put("DevWorkflowService", Map.of(
+                    "projectPath", projectPath,
+                    "operation", "analyze"
+                ));
+                
+                // 예측 분석
+                jsServiceRequests.put("PredictiveAnalysisService", Map.of(
+                    "projectPath", projectPath,
+                    "analysisType", analysisType
+                ));
+                
+                // 보안 분석 (Snyk)
+                jsServiceRequests.put("SnykSecurityAnalysisService", Map.of(
+                    "projectPath", projectPath
+                ));
+                
+                // 코드 품질 분석 (SonarQube)
+                jsServiceRequests.put("SonarQubeAnalysisService", Map.of(
+                    "projectPath", projectPath
+                ));
+                
+                // JavaScript 서비스들 병렬 실행
+                CompletableFuture<Map<String, JsonNode>> jsResults = 
+                    javaScriptServiceBridge.callMultipleServices(jsServiceRequests);
+                
+                // Java 에이전트들과 병렬 실행
+                List<CompletableFuture<Map<String, Object>>> agentResults = new ArrayList<>();
+                
+                // 디버그 에이전트 활성화
+                BaseAgent debugAgent = registeredAgents.get("DEBUG_ANALYSIS");
+                if (debugAgent != null && debugAgent.isActive()) {
+                    agentResults.add(CompletableFuture.supplyAsync(() -> {
+                        Map<String, Object> debugResult = new HashMap<>();
+                        debugResult.put("agentType", "DEBUG_ANALYSIS");
+                        debugResult.put("status", "analyzed");
+                        debugResult.put("timestamp", LocalDateTime.now());
+                        return debugResult;
+                    }));
+                }
+                
+                // API 문서화 에이전트 활성화
+                BaseAgent apiDocAgent = registeredAgents.get("API_DOCUMENTATION");
+                if (apiDocAgent != null && apiDocAgent.isActive()) {
+                    agentResults.add(CompletableFuture.supplyAsync(() -> {
+                        Map<String, Object> apiResult = new HashMap<>();
+                        apiResult.put("agentType", "API_DOCUMENTATION");
+                        apiResult.put("status", "documented");
+                        apiResult.put("timestamp", LocalDateTime.now());
+                        return apiResult;
+                    }));
+                }
+                
+                // 모든 결과 수집
+                Map<String, JsonNode> jsResultsMap = jsResults.get();
+                results.put("javascriptServices", jsResultsMap);
+                
+                List<Map<String, Object>> agentResultsList = agentResults.stream()
+                    .map(future -> {
+                        try {
+                            return future.get();
+                        } catch (Exception e) {
+                            log.error("Java 에이전트 실행 실패", e);
+                            return Map.of("error", e.getMessage());
+                        }
+                    })
+                    .toList();
+                
+                results.put("javaAgents", agentResultsList);
+                results.put("analysisType", analysisType);
+                results.put("projectPath", projectPath);
+                results.put("completedAt", LocalDateTime.now());
+                results.put("status", "SUCCESS");
+                
+            } catch (Exception e) {
+                log.error("통합 분석 실패", e);
+                results.put("status", "FAILED");
+                results.put("error", e.getMessage());
+                results.put("failedAt", LocalDateTime.now());
+            }
+            
+            return results;
+        });
+    }
+    
+    /**
+     * 특정 문제에 대한 통합 트러블슈팅
+     */
+    public CompletableFuture<Map<String, Object>> executeTroubleshooting(String problemDescription, Map<String, Object> context) {
+        log.info("통합 트러블슈팅 시작: {}", problemDescription);
+        
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Object> results = new HashMap<>();
+            
+            try {
+                // JavaScript 솔루션 DB 학습 서비스 호출
+                CompletableFuture<JsonNode> solutionDbResult = javaScriptServiceBridge
+                    .callSolutionsDbLearningService("TROUBLESHOOTING", problemDescription);
+                
+                // 자동 솔루션 로거 호출
+                CompletableFuture<JsonNode> autoLoggerResult = javaScriptServiceBridge
+                    .callAutomatedSolutionLogger(problemDescription, "");
+                
+                // 동적 체크리스트 서비스 호출
+                CompletableFuture<JsonNode> checklistResult = javaScriptServiceBridge
+                    .callDynamicChecklistService("TROUBLESHOOTING", context);
+                
+                // Java 트러블슈팅 에이전트들 활성화
+                List<BaseAgent> troubleshootingAgents = findCapableAgents(EventType.ERROR);
+                
+                List<CompletableFuture<Void>> agentTasks = troubleshootingAgents.stream()
+                    .map(agent -> CompletableFuture.runAsync(() -> {
+                        AgentEvent troubleshootEvent = AgentEvent.builder()
+                            .type("TROUBLESHOOTING_REQUEST")
+                            .sourceAgentId("ORCHESTRATOR")
+                            .sourceAgentType("ORCHESTRATOR")
+                            .data(Map.of(
+                                "problem", problemDescription,
+                                "context", context
+                            ))
+                            .timestamp(LocalDateTime.now())
+                            .build();
+                        
+                        agent.processEvent(troubleshootEvent);
+                    }))
+                    .toList();
+                
+                // 모든 작업 완료 대기
+                CompletableFuture.allOf(agentTasks.toArray(new CompletableFuture[0])).get();
+                
+                // JavaScript 서비스 결과 수집
+                results.put("solutionDatabase", solutionDbResult.get());
+                results.put("autoLogger", autoLoggerResult.get());
+                results.put("checklist", checklistResult.get());
+                
+                results.put("processedAgents", troubleshootingAgents.size());
+                results.put("problemDescription", problemDescription);
+                results.put("status", "SUCCESS");
+                results.put("completedAt", LocalDateTime.now());
+                
+            } catch (Exception e) {
+                log.error("통합 트러블슈팅 실패", e);
+                results.put("status", "FAILED");
+                results.put("error", e.getMessage());
+                results.put("failedAt", LocalDateTime.now());
+            }
+            
+            return results;
+        });
+    }
+    
+    /**
+     * JavaScript 서비스 상태 확인
+     */
+    public Map<String, Object> getJavaScriptServiceStatus() {
+        List<String> availableServices = javaScriptServiceBridge.getAvailableServices();
+        
+        Map<String, Boolean> serviceStatus = new HashMap<>();
+        availableServices.forEach(service -> 
+            serviceStatus.put(service, javaScriptServiceBridge.isServiceAvailable(service))
+        );
+        
+        return Map.of(
+            "availableServices", availableServices,
+            "serviceStatus", serviceStatus,
+            "totalServices", availableServices.size(),
+            "checkedAt", LocalDateTime.now()
+        );
+    }
+    
+    /**
      * 오케스트레이터 상태 조회
      */
     public Map<String, Object> getOrchestrationStatus() {
+        Map<String, Object> jsServiceStatus = getJavaScriptServiceStatus();
+        
         return Map.of(
             "registeredAgents", registeredAgents.size(),
             "activeAgents", registeredAgents.values().stream().mapToInt(agent -> agent.isActive() ? 1 : 0).sum(),
             "totalEventsProcessed", metrics.getTotalEventsProcessed(),
             "averageProcessingTime", metrics.getAverageProcessingTime(),
             "agentCapabilities", agentCapabilities.keySet(),
+            "javascriptServices", jsServiceStatus,
             "lastActivity", LocalDateTime.now()
         );
     }

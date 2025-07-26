@@ -1,0 +1,255 @@
+package com.globalcarelink.agents.integration;
+
+import com.globalcarelink.agents.cleanup.DuplicateFileDetector;
+import com.globalcarelink.agents.documentation.SystemDocumentationAgent;
+import com.globalcarelink.agents.events.AgentEvent;
+import com.globalcarelink.agents.orchestrator.IntelligentAgentOrchestrator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 문서 시스템 통합 테스트
+ * - docs/* 와 claude-guides/* 디렉토리 통합 검증
+ * - 중복 파일 검사 및 정리 검증
+ * - 에이전트 문서 시스템 통합 검증
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+class DocumentationIntegrationTest {
+    
+    @Autowired
+    private SystemDocumentationAgent documentationAgent;
+    
+    @Autowired
+    private DuplicateFileDetector duplicateDetector;
+    
+    @Autowired
+    private JavaScriptServiceBridge javaScriptServiceBridge;
+    
+    @Autowired
+    private IntelligentAgentOrchestrator orchestrator;
+    
+    @BeforeEach
+    void setUp() {
+        // 문서 에이전트를 오케스트레이터에 등록
+        orchestrator.registerAgent(documentationAgent);
+    }
+    
+    @Test
+    void testSystemDocumentationAgent() {
+        // Given & When
+        assertTrue(documentationAgent.isActive(), "시스템 문서 에이전트가 활성화되어야 합니다");
+        assertEquals("SYSTEM_DOCUMENTATION", documentationAgent.getAgentType());
+        
+        // 문서 레지스트리 확인
+        Map<String, SystemDocumentationAgent.DocumentMetadata> registry = 
+            documentationAgent.getDocumentRegistry();
+        
+        // Then
+        assertNotNull(registry);
+        assertFalse(registry.isEmpty(), "문서 레지스트리에 문서가 등록되어야 합니다");
+        
+        System.out.println("등록된 문서 수: " + registry.size());
+        
+        // 핵심 문서들이 등록되어 있는지 확인
+        assertTrue(registry.containsKey("guideline-evolution-system"), 
+            "가이드라인 진화 시스템 문서가 등록되어야 합니다");
+        assertTrue(registry.containsKey("system-integration-migration"), 
+            "시스템 통합 마이그레이션 문서가 등록되어야 합니다");
+        
+        // 카테고리별 문서 조회 테스트
+        var architectureDocs = documentationAgent.getDocumentsByCategory(
+            SystemDocumentationAgent.DocumentCategory.ARCHITECTURE);
+        assertFalse(architectureDocs.isEmpty(), "아키텍처 카테고리 문서가 있어야 합니다");
+        
+        System.out.println("아키텍처 문서 수: " + architectureDocs.size());
+    }
+    
+    @Test
+    void testDocumentSearch() {
+        // Given
+        AgentEvent searchEvent = AgentEvent.builder()
+            .type("DOCUMENT_SEARCH")
+            .sourceAgentId("TEST")
+            .sourceAgentType("TEST")
+            .data(Map.of(
+                "query", "agent",
+                "category", "ARCHITECTURE"
+            ))
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        // When
+        documentationAgent.processEvent(searchEvent);
+        
+        // Then - 이벤트 처리가 성공적으로 완료되어야 함
+        assertTrue(documentationAgent.isActive());
+        System.out.println("문서 검색 이벤트 처리 완료");
+    }
+    
+    @Test
+    void testDuplicateFileDetection() {
+        // When
+        DuplicateFileDetector.DuplicateAnalysisResult result = duplicateDetector.detectDuplicates();
+        
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getDuplicateGroups());
+        assertNotNull(result.getRecommendations());
+        
+        System.out.println("중복 파일 검사 결과:");
+        System.out.println("- 중복 그룹 수: " + result.getDuplicateGroups().size());
+        System.out.println("- 총 중복 파일 수: " + result.getTotalDuplicates());
+        System.out.println("- 정리 권장사항 수: " + result.getRecommendations().size());
+        
+        // 중복 그룹별 상세 정보 출력
+        for (int i = 0; i < result.getDuplicateGroups().size() && i < 5; i++) {
+            DuplicateFileDetector.DuplicateGroup group = result.getDuplicateGroups().get(i);
+            System.out.println("중복 그룹 " + (i + 1) + ":");
+            System.out.println("  타입: " + group.getType());
+            System.out.println("  설명: " + group.getDescription());
+            System.out.println("  파일 수: " + group.getFiles().size());
+            for (DuplicateFileDetector.FileInfo file : group.getFiles()) {
+                System.out.println("    - " + file.getPath());
+            }
+        }
+    }
+    
+    @Test
+    void testJavaScriptServiceConsolidation() {
+        // When
+        Map<String, Object> consolidationInfo = javaScriptServiceBridge.getServiceConsolidationInfo();
+        
+        // Then
+        assertNotNull(consolidationInfo);
+        assertTrue(consolidationInfo.containsKey("categorizedServices"));
+        assertTrue(consolidationInfo.containsKey("availableServices"));
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> categorizedServices = 
+            (Map<String, Object>) consolidationInfo.get("categorizedServices");
+        
+        System.out.println("JavaScript 서비스 통합 정보:");
+        System.out.println("- 총 카테고리 수: " + consolidationInfo.get("totalCategories"));
+        
+        categorizedServices.forEach((category, services) -> 
+            System.out.println("  " + category + ": " + services)
+        );
+        
+        // 주요 카테고리가 있는지 확인
+        assertTrue(categorizedServices.containsKey("analysis"), "분석 카테고리가 있어야 합니다");
+        assertTrue(categorizedServices.containsKey("integration"), "통합 카테고리가 있어야 합니다");
+    }
+    
+    @Test
+    void testIntegratedDocumentationWorkflow() throws Exception {
+        // Given - 통합 문서 시스템 워크플로 테스트
+        String projectPath = System.getProperty("user.dir");
+        
+        // When - 통합 분석 실행
+        CompletableFuture<Map<String, Object>> analysisResult = 
+            orchestrator.executeIntegratedAnalysis(projectPath, "DOCUMENTATION");
+        
+        Map<String, Object> result = analysisResult.get(30, TimeUnit.SECONDS);
+        
+        // Then
+        assertNotNull(result);
+        assertEquals("DOCUMENTATION", result.get("analysisType"));
+        assertTrue(result.containsKey("status"));
+        
+        System.out.println("통합 문서 시스템 워크플로 테스트:");
+        System.out.println("- 상태: " + result.get("status"));
+        System.out.println("- 분석 타입: " + result.get("analysisType"));
+        System.out.println("- 완료 시간: " + result.get("completedAt"));
+        
+        if (result.containsKey("javascriptServices")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> jsServices = (Map<String, Object>) result.get("javascriptServices");
+            System.out.println("- JavaScript 서비스 결과 수: " + jsServices.size());
+        }
+    }
+    
+    @Test
+    void testDocumentationAgentEventHandling() {
+        // Given
+        AgentEvent documentRequestEvent = AgentEvent.builder()
+            .type("DOCUMENT_REQUEST")
+            .sourceAgentId("TEST")
+            .sourceAgentType("TEST")
+            .data(Map.of("documentId", "guideline-evolution-system"))
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        AgentEvent duplicateCheckEvent = AgentEvent.builder()
+            .type("DUPLICATE_CHECK")
+            .sourceAgentId("TEST")
+            .sourceAgentType("TEST")
+            .data(Map.of())
+            .timestamp(LocalDateTime.now())
+            .build();
+        
+        // When & Then
+        assertDoesNotThrow(() -> {
+            documentationAgent.processEvent(documentRequestEvent);
+            documentationAgent.processEvent(duplicateCheckEvent);
+        });
+        
+        System.out.println("문서 에이전트 이벤트 처리 테스트 완료");
+    }
+    
+    @Test
+    void testOrchestatorWithDocumentationAgent() {
+        // When
+        Map<String, Object> status = orchestrator.getOrchestrationStatus();
+        
+        // Then
+        assertNotNull(status);
+        assertTrue(status.containsKey("registeredAgents"));
+        assertTrue(status.containsKey("javascriptServices"));
+        
+        int registeredAgents = (Integer) status.get("registeredAgents");
+        assertTrue(registeredAgents > 0, "에이전트가 등록되어야 합니다");
+        
+        System.out.println("오케스트레이터 상태 (문서 에이전트 포함):");
+        System.out.println("- 등록된 에이전트 수: " + registeredAgents);
+        System.out.println("- 활성 에이전트 수: " + status.get("activeAgents"));
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> jsServiceStatus = (Map<String, Object>) status.get("javascriptServices");
+        System.out.println("- JavaScript 서비스 상태: " + jsServiceStatus.get("totalServices"));
+    }
+    
+    @Test
+    void testFileSystemIntegrity() {
+        // Given & When
+        var documentRegistry = documentationAgent.getDocumentRegistry();
+        var duplicateResult = duplicateDetector.detectDuplicates();
+        
+        // Then
+        System.out.println("파일 시스템 무결성 검사:");
+        System.out.println("- 총 등록 문서 수: " + documentRegistry.size());
+        System.out.println("- 중복 파일 그룹 수: " + duplicateResult.getDuplicateGroups().size());
+        
+        // 중복이 있더라도 시스템이 정상 작동해야 함
+        assertTrue(documentationAgent.isActive());
+        
+        // 정리 권장사항이 있는지 확인
+        if (!duplicateResult.getRecommendations().isEmpty()) {
+            System.out.println("정리 권장사항:");
+            for (int i = 0; i < Math.min(3, duplicateResult.getRecommendations().size()); i++) {
+                var recommendation = duplicateResult.getRecommendations().get(i);
+                System.out.println("  " + (i + 1) + ". " + recommendation.getDescription());
+            }
+        }
+    }
+}

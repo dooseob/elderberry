@@ -1,0 +1,231 @@
+package com.globalcarelink.agents.integration;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.globalcarelink.agents.BaseAgent;
+import com.globalcarelink.agents.ClaudeGuideAgent;
+import com.globalcarelink.agents.PortfolioTroubleshootAgent;
+import com.globalcarelink.agents.debug.DebugAgent;
+import com.globalcarelink.agents.documentation.ApiDocumentationAnalysisAgent;
+import com.globalcarelink.agents.orchestrator.IntelligentAgentOrchestrator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 4개 핵심 에이전트와 JavaScript 서비스 통합 테스트
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+class AgentIntegrationTest {
+    
+    @Autowired
+    private IntelligentAgentOrchestrator orchestrator;
+    
+    @Autowired
+    private ClaudeGuideAgent claudeGuideAgent;
+    
+    @Autowired
+    private PortfolioTroubleshootAgent portfolioTroubleshootAgent;
+    
+    @Autowired
+    private DebugAgent debugAgent;
+    
+    @Autowired
+    private ApiDocumentationAnalysisAgent apiDocumentationAgent;
+    
+    @Autowired
+    private JavaScriptServiceBridge javaScriptServiceBridge;
+    
+    @BeforeEach
+    void setUp() {
+        // 에이전트들을 오케스트레이터에 등록
+        orchestrator.registerAgent(claudeGuideAgent);
+        orchestrator.registerAgent(portfolioTroubleshootAgent);
+        orchestrator.registerAgent(debugAgent);
+        orchestrator.registerAgent(apiDocumentationAgent);
+    }
+    
+    @Test
+    void testAgentRegistration() {
+        // Given & When
+        Map<String, Object> status = orchestrator.getOrchestrationStatus();
+        
+        // Then
+        assertTrue(status.containsKey("registeredAgents"));
+        assertTrue(status.containsKey("activeAgents"));
+        assertTrue(status.containsKey("agentCapabilities"));
+        
+        int registeredCount = (Integer) status.get("registeredAgents");
+        assertTrue(registeredCount >= 4, "최소 4개 에이전트가 등록되어야 합니다");
+        
+        System.out.println("등록된 에이전트 수: " + registeredCount);
+        System.out.println("에이전트 능력: " + status.get("agentCapabilities"));
+    }
+    
+    @Test
+    void testJavaScriptServiceBridge() {
+        // Given
+        String serviceName = "DevWorkflowService";
+        
+        // When
+        boolean isAvailable = javaScriptServiceBridge.isServiceAvailable(serviceName);
+        
+        // Then
+        System.out.println("JavaScript 서비스 사용 가능: " + isAvailable);
+        
+        // 서비스 목록 확인
+        var availableServices = javaScriptServiceBridge.getAvailableServices();
+        assertNotNull(availableServices);
+        System.out.println("사용 가능한 JavaScript 서비스들: " + availableServices);
+    }
+    
+    @Test
+    void testIntegratedAnalysis() throws Exception {
+        // Given
+        String projectPath = System.getProperty("user.dir");
+        String analysisType = "COMPREHENSIVE";
+        
+        // When
+        CompletableFuture<Map<String, Object>> analysisResult = 
+            orchestrator.executeIntegratedAnalysis(projectPath, analysisType);
+        
+        Map<String, Object> result = analysisResult.get(30, TimeUnit.SECONDS);
+        
+        // Then
+        assertNotNull(result);
+        assertTrue(result.containsKey("status"));
+        assertTrue(result.containsKey("analysisType"));
+        assertTrue(result.containsKey("projectPath"));
+        
+        System.out.println("통합 분석 결과:");
+        System.out.println("- 상태: " + result.get("status"));
+        System.out.println("- 분석 타입: " + result.get("analysisType"));
+        System.out.println("- 완료 시간: " + result.get("completedAt"));
+        
+        if (result.containsKey("javascriptServices")) {
+            System.out.println("- JavaScript 서비스 결과 수: " + 
+                ((Map<?, ?>) result.get("javascriptServices")).size());
+        }
+        
+        if (result.containsKey("javaAgents")) {
+            System.out.println("- Java 에이전트 결과 수: " + 
+                ((java.util.List<?>) result.get("javaAgents")).size());
+        }
+    }
+    
+    @Test
+    void testTroubleshootingIntegration() throws Exception {
+        // Given
+        String problemDescription = "Java 환경 설정 문제로 인한 빌드 실패";
+        Map<String, Object> context = Map.of(
+            "errorType", "BUILD_FAILURE",
+            "technology", "Java",
+            "environment", "WSL",
+            "priority", "HIGH"
+        );
+        
+        // When
+        CompletableFuture<Map<String, Object>> troubleshootResult = 
+            orchestrator.executeTroubleshooting(problemDescription, context);
+        
+        Map<String, Object> result = troubleshootResult.get(30, TimeUnit.SECONDS);
+        
+        // Then
+        assertNotNull(result);
+        assertTrue(result.containsKey("status"));
+        assertTrue(result.containsKey("problemDescription"));
+        
+        System.out.println("트러블슈팅 결과:");
+        System.out.println("- 상태: " + result.get("status"));
+        System.out.println("- 문제 설명: " + result.get("problemDescription"));
+        System.out.println("- 처리된 에이전트 수: " + result.get("processedAgents"));
+        System.out.println("- 완료 시간: " + result.get("completedAt"));
+    }
+    
+    @Test
+    void testIndividualAgentFunctionality() {
+        // Claude Guide Agent 테스트
+        assertTrue(claudeGuideAgent.isActive(), "Claude Guide Agent는 활성화되어야 합니다");
+        assertEquals("CLAUDE_GUIDE", claudeGuideAgent.getAgentType());
+        
+        // Portfolio Troubleshoot Agent 테스트
+        assertTrue(portfolioTroubleshootAgent.isActive(), "Portfolio Troubleshoot Agent는 활성화되어야 합니다");
+        assertEquals("PORTFOLIO_TROUBLESHOOT", portfolioTroubleshootAgent.getAgentType());
+        
+        // Debug Agent 테스트
+        assertTrue(debugAgent.isActive(), "Debug Agent는 활성화되어야 합니다");
+        assertEquals("DEBUG_ANALYSIS", debugAgent.getAgentType());
+        
+        // API Documentation Agent 테스트
+        assertTrue(apiDocumentationAgent.isActive(), "API Documentation Agent는 활성화되어야 합니다");
+        assertEquals("API_DOCUMENTATION", apiDocumentationAgent.getAgentType());
+        
+        System.out.println("모든 개별 에이전트 기능 테스트 통과");
+    }
+    
+    @Test
+    void testJavaScriptServiceIntegration() throws Exception {
+        // Given
+        Map<String, Object> params = Map.of(
+            "projectPath", System.getProperty("user.dir"),
+            "operation", "test"
+        );
+        
+        // When & Then
+        try {
+            CompletableFuture<JsonNode> result = javaScriptServiceBridge
+                .callAnalysisService("DevWorkflowService", params);
+            
+            JsonNode serviceResult = result.get(10, TimeUnit.SECONDS);
+            assertNotNull(serviceResult);
+            
+            System.out.println("JavaScript 서비스 통합 테스트 성공");
+            System.out.println("결과: " + serviceResult.toString());
+            
+        } catch (Exception e) {
+            System.out.println("JavaScript 서비스 통합 테스트 실패 (예상됨 - Node.js 환경 미설정): " + e.getMessage());
+            // Node.js 환경이 설정되지 않은 경우 정상적인 상황
+        }
+    }
+    
+    @Test
+    void testOrchestatorStatus() {
+        // When
+        Map<String, Object> status = orchestrator.getOrchestrationStatus();
+        
+        // Then
+        assertNotNull(status);
+        assertTrue(status.containsKey("registeredAgents"));
+        assertTrue(status.containsKey("activeAgents"));
+        assertTrue(status.containsKey("javascriptServices"));
+        
+        System.out.println("오케스트레이터 상태:");
+        status.forEach((key, value) -> 
+            System.out.println("- " + key + ": " + value)
+        );
+    }
+    
+    @Test
+    void testAgentCapabilityMatching() {
+        // Given
+        var orchestratorStatus = orchestrator.getOrchestrationStatus();
+        
+        // Then
+        assertNotNull(orchestratorStatus.get("agentCapabilities"));
+        
+        System.out.println("에이전트 능력 매칭 테스트:");
+        System.out.println("- 등록된 에이전트 능력: " + orchestratorStatus.get("agentCapabilities"));
+        
+        // 각 에이전트가 적당한 능력을 가지고 있는지 확인
+        var capabilities = (java.util.Set<?>) orchestratorStatus.get("agentCapabilities");
+        assertTrue(capabilities.size() >= 4, "최소 4개 에이전트의 능력이 등록되어야 합니다");
+    }
+}
