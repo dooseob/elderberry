@@ -2,6 +2,9 @@ package com.globalcarelink.agents;
 
 import com.globalcarelink.agents.events.AgentEvent;
 import com.globalcarelink.agents.portfolio.PortfolioStory;
+import com.globalcarelink.agents.evolution.GuidelineEvolutionSystem;
+import com.globalcarelink.agents.evolution.models.ProjectExperience;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -9,13 +12,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Claude 지침 학습 및 보완 에이전트
- * 목적: 1) 실제 프로젝트 경험을 통한 Claude 가이드라인 개선
- *      2) 개발자 지원을 위한 맞춤형 지침 생성
- *      3) 패턴 기반 예측적 가이드 제공
+ * Claude 지침 진화 에이전트 (814줄 규칙 진화 시스템 통합)
+ * 목적: 1) 814줄 Claude 규칙을 실시간으로 분석하고 개선
+ *      2) 실제 프로젝트 경험을 통한 규칙 효과성 측정
+ *      3) 더 완성도 높은 규칙으로 자동 진화
+ *      4) 개발자 지원을 위한 맞춤형 지침 생성
+ *      5) A/B 테스트를 통한 신규 규칙 검증
  */
 @Component
+@RequiredArgsConstructor
 public class ClaudeGuideAgent extends BaseAgent {
+    
+    private final GuidelineEvolutionSystem evolutionSystem;
     
     // 학습된 패턴 저장소
     private final Map<String, GuidePattern> learnedPatterns = new ConcurrentHashMap<>();
@@ -26,13 +34,17 @@ public class ClaudeGuideAgent extends BaseAgent {
     // 실시간 가이드 요청 처리
     private final Map<String, ActiveGuidance> activeGuidances = new ConcurrentHashMap<>();
     
-    public ClaudeGuideAgent() {
+    public ClaudeGuideAgent(GuidelineEvolutionSystem evolutionSystem) {
         super("CLAUDE_GUIDE");
+        this.evolutionSystem = evolutionSystem;
     }
     
     @Override
     protected void doInitialize() {
-        logger.info("Claude 지침 학습 에이전트 초기화");
+        logger.info("🧠 Claude 지침 진화 에이전트 초기화 (814줄 규칙 진화 시스템)");
+        
+        // 814줄 원본 규칙 로드 및 진화 시스템 초기화
+        evolutionSystem.initialize814Guidelines();
         
         // 기존 학습 패턴 로드
         loadExistingPatterns();
@@ -42,6 +54,8 @@ public class ClaudeGuideAgent extends BaseAgent {
         
         // 실시간 학습 시작
         startRealtimeLearning();
+        
+        logger.info("✅ 814줄 규칙 진화 시스템 활성화 완료");
     }
     
     @Override
@@ -61,6 +75,12 @@ public class ClaudeGuideAgent extends BaseAgent {
                 break;
             case "CODE_REVIEW_COMPLETED":
                 learnFromCodeReview(event);
+                break;
+            case "GUIDELINE_EFFECTIVENESS_TEST":
+                testGuidelineEffectiveness(event);
+                break;
+            case "RULE_EVOLUTION_REQUEST":
+                processRuleEvolutionRequest(event);
                 break;
         }
     }
@@ -444,6 +464,147 @@ public class ClaudeGuideAgent extends BaseAgent {
     
     private void learnFromCodeReview(AgentEvent event) {
         // 코드 리뷰에서 학습하는 로직
+        @SuppressWarnings("unchecked")
+        Map<String, Object> reviewData = (Map<String, Object>) event.getData();
+        
+        String guidelineId = (String) reviewData.get("guidelineId");
+        if (guidelineId != null) {
+            // 코드 리뷰 결과를 바탕으로 진화 시스템에 경험 데이터 전달
+            ProjectExperience experience = buildExperienceFromCodeReview(reviewData);
+            var evolutionResult = evolutionSystem.analyzeAndEvolveGuideline(guidelineId, experience);
+            
+            if (evolutionResult.isImproved()) {
+                logger.info("🔄 코드 리뷰를 통한 규칙 진화: {}", guidelineId);
+                
+                // 다른 에이전트들에게 진화 알림
+                publishEvent("GUIDELINE_EVOLVED_FROM_REVIEW", Map.of(
+                    "guidelineId", guidelineId,
+                    "evolutionResult", evolutionResult,
+                    "reviewId", reviewData.get("reviewId")
+                ));
+            }
+        }
+    }
+    
+    /**
+     * 814줄 규칙 효과성 테스트
+     */
+    private void testGuidelineEffectiveness(AgentEvent event) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> testData = (Map<String, Object>) event.getData();
+        
+        String guidelineId = (String) testData.get("guidelineId");
+        ProjectExperience experience = (ProjectExperience) testData.get("experience");
+        
+        logger.info("🧪 규칙 효과성 테스트 시작: {}", guidelineId);
+        
+        var evolutionResult = evolutionSystem.analyzeAndEvolveGuideline(guidelineId, experience);
+        
+        // 진화 결과 분석
+        if (evolutionResult.isImproved()) {
+            logger.info("✅ 규칙 개선 성공: {} (개선율: {:.1f}%)", 
+                       guidelineId, evolutionResult.getImprovementRate() * 100);
+        } else {
+            logger.info("📊 규칙 효과성 측정 완료: {} (현재 효과성: {:.1f}%)", 
+                       guidelineId, evolutionResult.getCurrentEffectiveness() * 100);
+        }
+        
+        // 결과를 다른 에이전트들과 공유
+        publishEvent("GUIDELINE_EFFECTIVENESS_MEASURED", Map.of(
+            "guidelineId", guidelineId,
+            "effectivenessScore", evolutionResult.getCurrentEffectiveness(),
+            "needsImprovement", evolutionResult.needsImprovement(),
+            "evolutionResult", evolutionResult
+        ));
+    }
+    
+    /**
+     * 규칙 진화 요청 처리
+     */
+    private void processRuleEvolutionRequest(AgentEvent event) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> requestData = (Map<String, Object>) event.getData();
+        
+        String requesterAgent = (String) requestData.get("requesterAgent");
+        String domain = (String) requestData.get("domain");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> context = (Map<String, Object>) requestData.get("context");
+        
+        logger.info("🔍 규칙 진화 요청 처리: {} 도메인 (요청자: {})", domain, requesterAgent);
+        
+        // 최적 규칙 추천
+        var recommendation = evolutionSystem.recommendOptimalGuideline(domain, context);
+        
+        // 응답 전송
+        publishEvent("OPTIMAL_GUIDELINE_RECOMMENDED", Map.of(
+            "requesterAgent", requesterAgent,
+            "domain", domain,
+            "recommendation", recommendation,
+            "timestamp", LocalDateTime.now()
+        ));
+        
+        logger.info("📋 최적 규칙 추천 완료: {} (신뢰도: {:.1f}%)", 
+                   recommendation.getGuidelineId(), 
+                   recommendation.getConfidenceScore() * 100);
+    }
+    
+    /**
+     * 진화 시스템 상태 조회
+     */
+    public Map<String, Object> getEvolutionSystemStatus() {
+        var evolutionReport = evolutionSystem.generateEvolutionReport();
+        var guidelineSummary = generateGuidelineSummary();
+        
+        return Map.of(
+            "agentType", getAgentType(),
+            "evolutionReport", evolutionReport,
+            "guidelineSummary", guidelineSummary,
+            "activeGuidances", activeGuidances.size(),
+            "learnedPatterns", learnedPatterns.size(),
+            "improvements", improvementHistory.size(),
+            "lastUpdate", LocalDateTime.now()
+        );
+    }
+    
+    private ProjectExperience buildExperienceFromCodeReview(Map<String, Object> reviewData) {
+        return ProjectExperience.builder()
+            .experienceId("review_" + reviewData.get("reviewId"))
+            .guidelineId((String) reviewData.get("guidelineId"))
+            .projectName((String) reviewData.getOrDefault("projectName", "Elderberry"))
+            .developer((String) reviewData.getOrDefault("developer", "Unknown"))
+            .startTime(LocalDateTime.now().minusHours(2))
+            .endTime(LocalDateTime.now())
+            .successRate(calculateSuccessRateFromReview(reviewData))
+            .timeEfficiency(0.8) // 코드 리뷰는 일반적으로 효율적
+            .codeQualityScore(calculateQualityFromReview(reviewData))
+            .bugsFound((Integer) reviewData.getOrDefault("bugsFound", 0))
+            .codeReviewComments((Integer) reviewData.getOrDefault("commentsCount", 0))
+            .techStack(List.of("Java 21", "Spring Boot", "React"))
+            .projectSize("medium")
+            .complexity("medium")
+            .timeline("2-3 days")
+            .build();
+    }
+    
+    private double calculateSuccessRateFromReview(Map<String, Object> reviewData) {
+        Integer commentsCount = (Integer) reviewData.getOrDefault("commentsCount", 0);
+        Boolean approved = (Boolean) reviewData.getOrDefault("approved", false);
+        
+        if (approved && commentsCount <= 3) return 0.95;
+        if (approved && commentsCount <= 5) return 0.85;
+        if (approved) return 0.75;
+        return 0.6;
+    }
+    
+    private double calculateQualityFromReview(Map<String, Object> reviewData) {
+        Integer commentsCount = (Integer) reviewData.getOrDefault("commentsCount", 0);
+        Integer criticalIssues = (Integer) reviewData.getOrDefault("criticalIssues", 0);
+        
+        double baseScore = 0.8;
+        baseScore -= (commentsCount * 0.02); // 코멘트당 2% 감점
+        baseScore -= (criticalIssues * 0.1);  // 심각한 이슈당 10% 감점
+        
+        return Math.max(0.0, Math.min(1.0, baseScore));
     }
     
     // Inner classes
