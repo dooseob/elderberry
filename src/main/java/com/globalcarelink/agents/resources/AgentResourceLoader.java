@@ -27,6 +27,13 @@ public class AgentResourceLoader {
     private static final String DOCUMENTATION_PATH = AGENT_RESOURCE_BASE + "documentation/";
     private static final String KNOWLEDGE_PATH = AGENT_RESOURCE_BASE + "knowledge/";
     private static final String TROUBLESHOOTING_PATH = AGENT_RESOURCE_BASE + "troubleshooting/";
+    private static final String SERVICES_PATH = AGENT_RESOURCE_BASE + "services/";
+    private static final String HELPERS_PATH = AGENT_RESOURCE_BASE + "helpers/";
+    private static final String CONFIG_PATH = AGENT_RESOURCE_BASE + "config/";
+    private static final String ANALYZERS_PATH = AGENT_RESOURCE_BASE + "analyzers/";
+    private static final String DASHBOARD_PATH = AGENT_RESOURCE_BASE + "dashboard/";
+    private static final String FEEDBACK_PATH = AGENT_RESOURCE_BASE + "feedback/";
+    private static final String PORTFOLIO_PATH = AGENT_RESOURCE_BASE + "portfolio/";
     
     private final Map<String, String> resourceCache = new HashMap<>();
     
@@ -51,6 +58,62 @@ public class AgentResourceLoader {
      */
     public String loadTroubleshooting(String troubleshootingPath) {
         String fullPath = TROUBLESHOOTING_PATH + troubleshootingPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 서비스 리소스 로드
+     */
+    public String loadService(String servicePath) {
+        String fullPath = SERVICES_PATH + servicePath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 헬퍼 리소스 로드
+     */
+    public String loadHelper(String helperPath) {
+        String fullPath = HELPERS_PATH + helperPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 설정 리소스 로드
+     */
+    public String loadConfig(String configPath) {
+        String fullPath = CONFIG_PATH + configPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 분석기 리소스 로드
+     */
+    public String loadAnalyzer(String analyzerPath) {
+        String fullPath = ANALYZERS_PATH + analyzerPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 대시보드 리소스 로드
+     */
+    public String loadDashboard(String dashboardPath) {
+        String fullPath = DASHBOARD_PATH + dashboardPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 피드백 리소스 로드
+     */
+    public String loadFeedback(String feedbackPath) {
+        String fullPath = FEEDBACK_PATH + feedbackPath;
+        return loadResource(fullPath);
+    }
+    
+    /**
+     * 포트폴리오 리소스 로드
+     */
+    public String loadPortfolio(String portfolioPath) {
+        String fullPath = PORTFOLIO_PATH + portfolioPath;
         return loadResource(fullPath);
     }
     
@@ -139,12 +202,19 @@ public class AgentResourceLoader {
             case "documentation" -> DOCUMENTATION_PATH;
             case "knowledge" -> KNOWLEDGE_PATH;
             case "troubleshooting" -> TROUBLESHOOTING_PATH;
+            case "services" -> SERVICES_PATH;
+            case "helpers" -> HELPERS_PATH;
+            case "config" -> CONFIG_PATH;
+            case "analyzers" -> ANALYZERS_PATH;
+            case "dashboard" -> DASHBOARD_PATH;
+            case "feedback" -> FEEDBACK_PATH;
+            case "portfolio" -> PORTFOLIO_PATH;
             default -> AGENT_RESOURCE_BASE;
         };
         
         List<String> resources = listResources(basePath);
         for (String resource : resources) {
-            if (resource.endsWith(".md") || resource.endsWith(".json")) {
+            if (resource.endsWith(".md") || resource.endsWith(".json") || resource.endsWith(".js") || resource.endsWith(".html")) {
                 String content = loadResource(resource);
                 if (content != null) {
                     documents.put(resource, content);
@@ -163,7 +233,9 @@ public class AgentResourceLoader {
         String lowerKeyword = keyword.toLowerCase();
         
         // 모든 카테고리에서 검색
-        for (String category : Arrays.asList("documentation", "knowledge", "troubleshooting")) {
+        for (String category : Arrays.asList("documentation", "knowledge", "troubleshooting", 
+                                           "services", "helpers", "config", "analyzers", 
+                                           "dashboard", "feedback", "portfolio")) {
             Map<String, String> documents = loadDocumentsByCategory(category);
             
             for (Map.Entry<String, String> entry : documents.entrySet()) {

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 /**
  * 시스템 문서 관리 에이전트
  * - docs/* 디렉토리의 프로젝트 문서 관리
- * - claude-guides/* 디렉토리의 가이드 문서 관리
+ * - src/main/resources/agents/* 디렉토리의 가이드 문서 관리
  * - 문서 통합 및 중복 제거
  * - 에이전트 시스템을 위한 문서 제공
  */

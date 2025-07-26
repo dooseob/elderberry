@@ -224,7 +224,7 @@ public class GuidelineEvolutionSystem {
     private void loadGuidelinesFromDatabase() {
         try {
             // 클래스패스가 아닌 실제 파일 경로에서 로드
-            java.nio.file.Path guidelinesPath = java.nio.file.Paths.get("claude-guides/knowledge-base/guidelines-database.json");
+            java.nio.file.Path guidelinesPath = java.nio.file.Paths.get("src/main/resources/agents/knowledge/guidelines-database.json");
             
             if (!java.nio.file.Files.exists(guidelinesPath)) {
                 log.warn("⚠️ guidelines-database.json 파일을 찾을 수 없음. 샘플 데이터로 대체");

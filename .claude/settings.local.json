@@ -50,7 +50,9 @@
       "Bash(docker:*)",
       "Bash(\"$JAVA_HOME/bin/java.exe\" -version)",
       "WebFetch(domain:docs.spring.io)",
-      "WebFetch(domain:spring.io)"
+      "WebFetch(domain:spring.io)",
+      "Bash(diff:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

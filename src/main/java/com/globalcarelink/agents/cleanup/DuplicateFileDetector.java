@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 /**
  * 중복 파일 탐지 및 정리 도구
- * - docs/* 와 claude-guides/* 디렉토리 간 중복 파일 찾기
+ * - docs/* 와 src/main/resources/agents/* 디렉토리 간 중복 파일 찾기
  * - 파일 내용 기반 중복 검사
  * - 정리 권장사항 제시
  */
@@ -36,7 +36,7 @@ public class DuplicateFileDetector {
         
         // 주요 디렉토리 스캔
         scanDirectory(Paths.get("docs"));
-        scanDirectory(Paths.get("claude-guides"));
+        scanDirectory(Paths.get("src/main/resources/agents"));
         scanDirectory(Paths.get("src/main/java/com/globalcarelink/agents"));
         
         // 중복 분석
@@ -231,7 +231,7 @@ public class DuplicateFileDetector {
      * 주 파일 선택
      */
     private FileInfo selectPrimaryFile(List<FileInfo> files) {
-        // 우선순위: 에이전트 시스템 내 파일 > docs > claude-guides
+        // 우선순위: 에이전트 시스템 내 파일 > docs > 기타
         return files.stream()
             .min((f1, f2) -> {
                 String path1 = f1.getPath().toString();
@@ -240,8 +240,8 @@ public class DuplicateFileDetector {
                 if (path1.contains("agents") && !path2.contains("agents")) return -1;
                 if (!path1.contains("agents") && path2.contains("agents")) return 1;
                 
-                if (path1.contains("docs") && path2.contains("claude-guides")) return -1;
-                if (path1.contains("claude-guides") && path2.contains("docs")) return 1;
+                if (path1.contains("docs") && !path2.contains("docs")) return -1;
+                if (!path1.contains("docs") && path2.contains("docs")) return 1;
                 
                 return path1.compareTo(path2);
             })
