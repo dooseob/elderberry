@@ -1,6 +1,6 @@
 {
-  "version": "2.0",
-  "last_updated": "2025-07-24",
+  "version": "2.1",
+  "last_updated": "2025-01-26",
   "description": "구조화된 개발 가이드라인 데이터베이스 - AI 기반 자동 분석 및 제안 시스템용",
   "categories": {
     "architecture": "아키텍처 및 설계 원칙",
@@ -9,7 +9,9 @@
     "testing": "테스트 전략",
     "code_quality": "코드 품질",
     "database": "데이터베이스 설계",
-    "api_design": "API 설계"
+    "api_design": "API 설계",
+    "pragmatic_development": "실용적 개발 철학",
+    "technical_debt": "기술 부채 관리"
   },
   "severity_levels": {
     "critical": { "score": 10, "description": "즉시 수정 필요 - 시스템 안정성에 직접적 영향" },
@@ -180,6 +182,135 @@
         "test_coverage": "> 85%",
         "test_reliability": "> 95%"
       }
+    },
+    {
+      "id": "PRAG_001",
+      "category": "pragmatic_development",
+      "severity": "medium",
+      "title": "과도한 추상화 및 패턴 남용",
+      "description": "현재 요구사항에 비해 과도하게 복잡한 디자인 패턴이나 추상화를 적용하고 있습니다.",
+      "pattern_to_detect": {
+        "file_patterns": ["**/*.java"],
+        "code_patterns": [
+          "interface.*Factory.*Factory",
+          "abstract.*Builder.*Builder",
+          "class.*Strategy.*Strategy.*Strategy",
+          "@Component.*@Service.*@Repository.*과다한_레이어"
+        ],
+        "ast_checks": [
+          {
+            "type": "abstraction_layers",
+            "threshold": 4,
+            "message": "추상화 레이어가 4단계를 초과합니다."
+          },
+          {
+            "type": "interface_implementation_ratio",
+            "threshold": 0.8,
+            "message": "인터페이스 대비 구현체 비율이 80%를 초과합니다."
+          }
+        ]
+      },
+      "good_code_example": "// ✅ 좋은 예: 필요한 만큼의 간단한 구조\n@Service\npublic class FacilityService {\n    private final FacilityRepository repository;\n    \n    public List<Facility> findNearby(Double lat, Double lng) {\n        return repository.findByLocationNear(lat, lng);\n    }\n}",
+      "bad_code_example": "// ❌ 나쁜 예: 과도한 추상화\npublic interface FacilityServiceFactory {\n    FacilityServiceBuilder createBuilder();\n}\n\npublic interface FacilityServiceBuilder {\n    FacilityServiceBuilder withStrategy(SearchStrategy strategy);\n    FacilityService build();\n}\n\n// 단순한 조회에 과도한 패턴 적용",
+      "solution": {
+        "steps": [
+          "현재 요구사항에 정말 필요한 추상화인지 검토",
+          "YAGNI(You Aren't Gonna Need It) 원칙 적용",
+          "단순한 구현으로 시작하여 필요시 점진적 개선",
+          "팀의 기술 수준에 맞는 적절한 복잡도 유지"
+        ],
+        "estimated_time": "30-120분",
+        "difficulty": "medium"
+      },
+      "related_rules": ["ARCH_001", "CODE_001"],
+      "success_metrics": {
+        "complexity_reduction": "40%",
+        "maintainability_improvement": "60%",
+        "team_understanding": "> 90%"
+      }
+    },
+    {
+      "id": "PRAG_002", 
+      "category": "pragmatic_development",
+      "severity": "high",
+      "title": "비즈니스 가치 없는 기술적 완벽주의",
+      "description": "사용자나 비즈니스에 직접적 가치를 주지 않는 기술적 완벽성에 과도한 시간을 소비하고 있습니다.",
+      "pattern_to_detect": {
+        "file_patterns": ["**/*.java", "**/*.md"],
+        "code_patterns": [
+          "TODO.*완벽한.*구현",
+          "FIXME.*나중에.*리팩토링",
+          "//.*더.*깔끔하게.*만들기"
+        ],
+        "ast_checks": [
+          {
+            "type": "premature_optimization",
+            "indicators": ["caching", "pooling", "complex_algorithms"],
+            "context": "MVP_phase",
+            "message": "MVP 단계에서 과도한 최적화가 감지되었습니다."
+          }
+        ]
+      },
+      "good_code_example": "// ✅ 좋은 예: MVP 단계에 적합한 구현\n@GetMapping(\"/facilities/search\")\npublic List<FacilityDto> searchFacilities(@RequestParam String region) {\n    // 단순하지만 동작하는 구현\n    return facilityService.findByRegion(region)\n                         .stream()\n                         .map(this::toDto)\n                         .collect(toList());\n}",
+      "bad_code_example": "// ❌ 나쁜 예: MVP 단계에서 과도한 최적화\n@GetMapping(\"/facilities/search\")\npublic ResponseEntity<CacheableResponse<PaginatedResult<FacilityDto>>> searchFacilities(\n        @Valid @RequestBody ComplexSearchCriteria criteria) {\n    // 복잡한 캐싱, 페이지네이션, 검증 로직\n    // 현재 사용자가 실제로 필요로 하지 않는 기능들\n}",
+      "solution": {
+        "steps": [
+          "현재 사용자 요구사항 명확히 정의",
+          "MVP vs 완성품 기능 구분",
+          "비즈니스 가치 우선순위 매트릭스 작성",
+          "기술 부채 허용 범위 정의"
+        ],
+        "estimated_time": "15-30분",
+        "difficulty": "easy"
+      },
+      "related_rules": ["ARCH_001", "PERF_001"],
+      "success_metrics": {
+        "delivery_speed": "2x faster",
+        "user_value_delivery": "immediate",
+        "development_satisfaction": "> 80%"
+      }
+    },
+    {
+      "id": "DEBT_001",
+      "category": "technical_debt",
+      "severity": "medium", 
+      "title": "허용 가능한 기술 부채 vs 위험한 부채",
+      "description": "기술 부채를 적절히 분류하지 않아 불필요한 리팩토링이나 위험한 부채 방치가 발생합니다.",
+      "pattern_to_detect": {
+        "file_patterns": ["**/*.java"],
+        "code_patterns": [
+          "//.*TODO.*보안",
+          "//.*FIXME.*성능",
+          "System\\.out\\.println",
+          "hardcoded.*password|token|secret"
+        ],
+        "ast_checks": [
+          {
+            "type": "technical_debt_classification",
+            "dangerous_patterns": ["security_issues", "data_corruption", "memory_leaks"],
+            "acceptable_patterns": ["code_duplication", "hardcoded_constants", "simple_error_messages"],
+            "message": "기술 부채의 위험도 분류가 필요합니다."
+          }
+        ]
+      },
+      "good_code_example": "// ✅ 허용 가능한 기술 부채 예시\n@Value(\"${server.port:8080}\") // 설정 파일로 이후 이동 예정\nprivate int serverPort;\n\npublic String getSimpleMessage() {\n    return \"작업이 완료되었습니다.\"; // 다국어는 v2에서 지원\n}",
+      "bad_code_example": "// ❌ 위험한 기술 부채 예시\nString password = \"admin123\"; // 하드코딩된 비밀번호\n\nPublic void processPayment(PaymentInfo info) {\n    // TODO: 결제 검증 로직 추가 필요\n    paymentGateway.charge(info); // 검증 없는 결제 처리\n}",
+      "solution": {
+        "steps": [
+          "기술 부채를 위험도별로 분류",
+          "즉시 해결: 보안, 데이터 무결성",
+          "허용 가능: 코드 중복, 하드코딩",
+          "해결 일정 수립 및 모니터링"
+        ],
+        "estimated_time": "60-180분",
+        "difficulty": "medium"
+      },
+      "related_rules": ["SEC_001", "PRAG_001"],
+      "success_metrics": {
+        "critical_debt_elimination": "100%",
+        "acceptable_debt_ratio": "< 30%",
+        "debt_tracking_coverage": "> 90%"
+      }
     }
   ],
   "auto_fix_templates": {
@@ -196,6 +327,24 @@
         "attributePaths": "로딩할 연관 엔티티 경로",
         "originalQuery": "기존 쿼리",
         "originalMethod": "기존 메서드 시그니처"
+      }
+    },
+    "PRAG_001": {
+      "template": "// 단순화된 구현 제안\n@Service\npublic class {{simplifiedServiceName}} {\n    private final {{repositoryName}} repository;\n    \n    {{simplifiedMethods}}\n}",
+      "variables": {
+        "simplifiedServiceName": "단순화된 서비스명",
+        "repositoryName": "사용할 리포지토리",
+        "simplifiedMethods": "단순화된 메서드들"
+      }
+    },
+    "DEBT_001": {
+      "template": "// 기술 부채 분류 및 해결 계획\n// 위험도: {{riskLevel}}\n// 해결 우선순위: {{priority}}\n// 예상 해결 시간: {{estimatedTime}}\n{{currentCode}}\n// TODO: {{actionPlan}}",
+      "variables": {
+        "riskLevel": "위험도 (낮음/중간/높음/치명적)",
+        "priority": "해결 우선순위",
+        "estimatedTime": "예상 해결 시간",
+        "currentCode": "현재 코드",
+        "actionPlan": "구체적 해결 계획"
       }
     }
   },
