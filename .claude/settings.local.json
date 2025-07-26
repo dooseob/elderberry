@@ -32,7 +32,25 @@
       "Bash(npm run:*)",
       "Bash(.check-system.ps1)",
       "Bash(pwsh:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "WebFetch(domain:cuong.io)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude --version)",
+      "Bash(claude upgrade)",
+      "Bash(npm outdated)",
+      "Bash(npm update)",
+      "Bash(npm update:*)",
+      "Bash(npm test)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(echo $JAVA_HOME)",
+      "Bash(\"$JAVA_HOME/bin/java\" -version)",
+      "Bash(\"/mnt/c/Program Files/Java/jdk-17/bin/java.exe\" -version)",
+      "Bash(echo:*)",
+      "Bash(docker:*)",
+      "Bash(\"$JAVA_HOME/bin/java.exe\" -version)",
+      "WebFetch(domain:docs.spring.io)",
+      "WebFetch(domain:spring.io)"
     ],
     "deny": []
   }

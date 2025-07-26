@@ -1,9 +1,15 @@
 # ==========================================
-# 배포용 통합 빌드 스크립트
+# 배포용 통합 빌드 스크립트 v3.0
+# Java 21 LTS + React 18 환경 최적화
 # 프론트엔드 + 백엔드 → 단일 JAR 파일
 # ==========================================
 
-Write-Host "📦 배포용 통합 빌드 시작..." -ForegroundColor Green
+Write-Host "📦 Java 21 + React 18 통합 빌드 시작..." -ForegroundColor Green
+
+# Java 버전 확인
+Write-Host "☕ Java 버전 확인..." -ForegroundColor Yellow
+java -version
+Write-Host ""
 Write-Host ""
 
 # 현재 디렉터리 확인
@@ -47,7 +53,8 @@ try {
 
     # Step 4: 백엔드 빌드 (Gradle)
     Write-Host "🔧 백엔드 JAR 빌드 중..." -ForegroundColor Yellow
-    ./gradlew clean bootJar
+    Write-Host "🏠 Gradle 빌드 (Java 21 기능 활성화)..." -ForegroundColor Cyan
+    ./gradlew clean bootJar --no-daemon
     if ($LASTEXITCODE -ne 0) {
         throw "백엔드 빌드 실패"
     }
@@ -102,7 +109,7 @@ try {
     Write-Host ""
     Write-Host "🔍 문제 해결 방법:" -ForegroundColor Yellow
     Write-Host "  1. Node.js와 npm이 설치되어 있는지 확인" -ForegroundColor Gray
-    Write-Host "  2. Java 21이 설치되어 있는지 확인" -ForegroundColor Gray
+    Write-Host "  2. Java 21 LTS가 올바르게 설치되어 있는지 확인 (JAVA_HOME 설정)" -ForegroundColor Gray
     Write-Host "  3. 인터넷 연결 상태 확인 (의존성 다운로드)" -ForegroundColor Gray
     Write-Host "  4. 디스크 공간 확인" -ForegroundColor Gray
     Write-Host "  5. 권한 문제가 있다면 관리자 권한으로 실행" -ForegroundColor Gray

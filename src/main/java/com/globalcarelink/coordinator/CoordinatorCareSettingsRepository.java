@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 코디네이터 케어 설정 Repository
@@ -34,6 +36,9 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
      */
     @EntityGraph(attributePaths = {"languageSkills"})
     List<CoordinatorCareSettings> findBySpecialty(String specialty);
+    
+    @EntityGraph(attributePaths = {"languageSkills"})
+    Page<CoordinatorCareSettings> findBySpecialty(String specialty, Pageable pageable);
 
     /**
      * 최소 만족도 이상으로 조회
@@ -58,12 +63,18 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
      */
     @EntityGraph(attributePaths = {"languageSkills"})
     List<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDesc();
+    
+    @EntityGraph(attributePaths = {"languageSkills"})
+    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDesc(Pageable pageable);
 
     /**
      * 성과 점수 순으로 활성 코디네이터 조회
      */
     @EntityGraph(attributePaths = {"languageSkills"})
     List<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDesc();
+    
+    @EntityGraph(attributePaths = {"languageSkills"})
+    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDesc(Pageable pageable);
 
     /**
      * 케어 등급 범위에 적합한 코디네이터 조회 (언어 스킬 포함)

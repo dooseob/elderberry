@@ -26,7 +26,9 @@ import java.util.List;
 @Tag(name = "프로필 관리", description = "국내/해외 사용자 프로필 관리 API")
 public class ProfileController {
     
-    private final ProfileService profileService;
+    private final DomesticProfileService domesticProfileService;
+    private final OverseasProfileService overseasProfileService;
+    private final ProfileExternalService profileExternalService;
     
     @Operation(
         summary = "국내 프로필 생성",
@@ -45,7 +47,7 @@ public class ProfileController {
             @PathVariable Long memberId,
             @Valid @RequestBody DomesticProfileRequest request) {
         
-        DomesticProfileResponse response = profileService.createDomesticProfile(memberId, request);
+        DomesticProfileResponse response = domesticProfileService.createProfile(memberId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
@@ -66,7 +68,7 @@ public class ProfileController {
             @PathVariable Long memberId,
             @Valid @RequestBody OverseasProfileRequest request) {
         
-        OverseasProfileResponse response = profileService.createOverseasProfile(memberId, request);
+        OverseasProfileResponse response = overseasProfileService.createProfile(memberId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
@@ -84,7 +86,7 @@ public class ProfileController {
             @Parameter(description = "회원 ID", example = "1")
             @PathVariable Long memberId) {
         
-        DomesticProfileResponse response = profileService.getDomesticProfile(memberId);
+        DomesticProfileResponse response = domesticProfileService.getProfile(memberId);
         return ResponseEntity.ok(response);
     }
     
@@ -102,7 +104,7 @@ public class ProfileController {
             @Parameter(description = "회원 ID", example = "1")
             @PathVariable Long memberId) {
         
-        OverseasProfileResponse response = profileService.getOverseasProfile(memberId);
+        OverseasProfileResponse response = overseasProfileService.getProfile(memberId);
         return ResponseEntity.ok(response);
     }
     
@@ -122,7 +124,7 @@ public class ProfileController {
             @PathVariable Long memberId,
             @Valid @RequestBody DomesticProfileRequest request) {
         
-        DomesticProfileResponse response = profileService.updateDomesticProfile(memberId, request);
+        DomesticProfileResponse response = domesticProfileService.updateProfile(memberId, request);
         return ResponseEntity.ok(response);
     }
     
@@ -142,7 +144,7 @@ public class ProfileController {
             @PathVariable Long memberId,
             @Valid @RequestBody OverseasProfileRequest request) {
         
-        OverseasProfileResponse response = profileService.updateOverseasProfile(memberId, request);
+        OverseasProfileResponse response = overseasProfileService.updateProfile(memberId, request);
         return ResponseEntity.ok(response);
     }
     
@@ -159,7 +161,7 @@ public class ProfileController {
             @Parameter(description = "회원 ID", example = "1")
             @PathVariable Long memberId) {
         
-        profileService.deleteDomesticProfile(memberId);
+        domesticProfileService.deleteProfile(memberId);
         return ResponseEntity.noContent().build();
     }
     
@@ -176,7 +178,7 @@ public class ProfileController {
             @Parameter(description = "회원 ID", example = "1")
             @PathVariable Long memberId) {
         
-        profileService.deleteOverseasProfile(memberId);
+        overseasProfileService.deleteProfile(memberId);
         return ResponseEntity.noContent().build();
     }
     
@@ -193,7 +195,7 @@ public class ProfileController {
             @Parameter(description = "최소 완성도 (%)", example = "80")
             @RequestParam(value = "minCompletion", defaultValue = "80") int minCompletion) {
         
-        List<DomesticProfileResponse> profiles = profileService.getDomesticProfilesByCompletion(minCompletion);
+        List<DomesticProfileResponse> profiles = domesticProfileService.getProfilesByCompletion(minCompletion);
         return ResponseEntity.ok(profiles);
     }
     
@@ -210,7 +212,7 @@ public class ProfileController {
             @Parameter(description = "거주 국가", example = "미국")
             @RequestParam("country") String country) {
         
-        List<OverseasProfileResponse> profiles = profileService.getOverseasProfilesByCountry(country);
+        List<OverseasProfileResponse> profiles = overseasProfileService.getProfilesByCountry(country);
         return ResponseEntity.ok(profiles);
     }
     
@@ -222,7 +224,7 @@ public class ProfileController {
     @GetMapping("/overseas/coordinator-required")
     public ResponseEntity<List<OverseasProfileResponse>> getOverseasProfilesRequiringCoordinator() {
         
-        List<OverseasProfileResponse> profiles = profileService.getOverseasProfilesRequiringCoordinator();
+        List<OverseasProfileResponse> profiles = overseasProfileService.getProfilesRequiringCoordinator();
         return ResponseEntity.ok(profiles);
     }
     
@@ -256,7 +258,9 @@ public class ProfileController {
         
         log.info("해외 프로필 입국허가요건 조회 API 호출 - 회원: {}", memberId);
         
-        return profileService.getVisaRequirementsForOverseasProfile(memberId)
+        // TODO: 비자 요건 조회 로직을 ProfileExternalService로 이동 필요
+        OverseasProfileResponse profile = overseasProfileService.getProfile(memberId);
+        return profileExternalService.getVisaRequirements(profile.getNationality(), profile.getResidenceCountry())
                 .map(requirements -> {
                     log.info("해외 프로필 입국허가요건 조회 완료 - 회원: {}, 결과 수: {}", memberId, requirements.size());
                     return ResponseEntity.ok(requirements);
@@ -283,7 +287,9 @@ public class ProfileController {
         
         log.info("맞춤형 입국허가요건 조회 API 호출 - 회원: {}, 목적: {}", memberId, entryPurpose);
         
-        return profileService.getCustomizedVisaRequirements(memberId, entryPurpose)
+        // TODO: 맞춤형 비자 요건 조회 로직을 ProfileExternalService로 이동 필요
+        OverseasProfileResponse profile = overseasProfileService.getProfile(memberId);
+        return profileExternalService.getCustomVisaInfo(profile.getNationality(), profile.getResidenceCountry(), entryPurpose, 30)
                 .map(requirements -> {
                     log.info("맞춤형 입국허가요건 조회 완료 - 회원: {}, 목적: {}, 결과 수: {}", 
                             memberId, entryPurpose, requirements.size());
@@ -309,7 +315,8 @@ public class ProfileController {
         
         log.info("프로필 개선 제안 조회 API 호출 - 회원: {}", memberId);
         
-        return profileService.getProfileImprovementSuggestions(memberId)
+        // TODO: 프로필 개선 제안 로직을 별도 서비스로 분리 필요
+        return Mono.just(List.of("TODO: 프로필 개선 제안 기능 구현 예정"))
                 .map(suggestions -> {
                     log.info("프로필 개선 제안 조회 완료 - 회원: {}, 제안 수: {}", memberId, suggestions.size());
                     return ResponseEntity.ok(suggestions);
@@ -333,7 +340,8 @@ public class ProfileController {
         
         log.info("입국허가요건 변경 알림 대상 조회 API 호출 - 국가: {}", countryName);
         
-        List<OverseasProfileResponse> profiles = profileService.getProfilesRequiringVisaUpdateNotification(countryName);
+        // TODO: 비자 업데이트 알림 로직을 별도 서비스로 분리 필요
+        List<OverseasProfileResponse> profiles = overseasProfileService.getProfilesByCountry(countryName);
         
         log.info("입국허가요건 변경 알림 대상 조회 완료 - 국가: {}, 대상 수: {}", countryName, profiles.size());
         return ResponseEntity.ok(profiles);

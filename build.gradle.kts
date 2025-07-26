@@ -1,8 +1,8 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.3.5"
-    id("io.spring.dependency-management") version "1.1.6"
-    id("com.github.node-gradle.node") version "5.0.0"
+    id("org.springframework.boot") version "3.4.1"
+    id("io.spring.dependency-management") version "1.2.0"
+    id("com.github.node-gradle.node") version "8.0.0"
 }
 
 group = "com.globalcarelink"
@@ -41,15 +41,15 @@ dependencies {
     implementation("org.springframework:spring-aspects")
     
     // OpenAPI/Swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.1")
     
     // Database
     runtimeOnly("com.h2database:h2")
     
     // JWT
-    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     
     // Caffeine Cache
     implementation("com.github.ben-manes.caffeine:caffeine")
@@ -58,7 +58,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     
     // JSON Logging
-    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
     
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -79,8 +79,8 @@ tasks.withType<Test> {
 // ==========================================
 
 node {
-    version.set("20.11.0")
-    npmVersion.set("10.2.4")
+    version.set("22.13.1")
+    npmVersion.set("10.9.3")
     download.set(true)
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
     npmWorkDir.set(file("${project.projectDir}/.gradle/npm"))

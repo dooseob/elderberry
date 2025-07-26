@@ -1,10 +1,20 @@
-Write-Host "Starting Elderberry Backend Server..." -ForegroundColor Green
+# ==========================================
+# 엘더베리 백엔드 서버 시작 스크립트
+# Java 21 LTS 환경 최적화
+# ==========================================
+
+Write-Host "🚀 Elderberry Backend Server (Java 21) 시작..." -ForegroundColor Green
 
 # Create necessary directories
 if (!(Test-Path "logs")) { New-Item -ItemType Directory -Path "logs" }
 if (!(Test-Path "data")) { New-Item -ItemType Directory -Path "data" }
 
-# Check if JAR file exists
+# Java 버전 확인
+Write-Host "☕ Java 버전 확인..." -ForegroundColor Yellow
+java -version
+Write-Host ""
+
+# JAR 파일 존재 확인
 $jarFile = Get-ChildItem -Path "build/libs" -Filter "*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
 
 if ($jarFile) {
@@ -22,7 +32,8 @@ if ($jarFile) {
     # Try to build with gradlew if available
     if (Test-Path "gradlew.bat") {
         Write-Host "Building with Gradle..." -ForegroundColor Yellow
-        .\gradlew.bat build
+        Write-Host "🏠 Gradle 빌드 (Java 21 환경)..." -ForegroundColor Cyan
+        .\gradlew.bat clean build --no-daemon
         
         # Check again for JAR file
         $jarFile = Get-ChildItem -Path "build/libs" -Filter "*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1

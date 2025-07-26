@@ -30,16 +30,22 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
      * 시설명으로 검색 (부분 일치)
      */
     List<FacilityProfile> findByFacilityNameContainingIgnoreCase(String facilityName);
+    
+    Page<FacilityProfile> findByFacilityNameContainingIgnoreCase(String facilityName, Pageable pageable);
 
     /**
      * 시설 타입별 조회
      */
     List<FacilityProfile> findByFacilityType(String facilityType);
+    
+    Page<FacilityProfile> findByFacilityType(String facilityType, Pageable pageable);
 
     /**
      * 시설 등급별 조회
      */
     List<FacilityProfile> findByFacilityGrade(String facilityGrade);
+    
+    Page<FacilityProfile> findByFacilityGrade(String facilityGrade, Pageable pageable);
 
     /**
      * 시설 등급 범위로 조회 (A가 가장 높음)

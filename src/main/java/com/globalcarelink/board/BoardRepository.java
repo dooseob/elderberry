@@ -21,6 +21,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      * 활성화된 게시판 목록 조회 (정렬 순서대로)
      */
     List<Board> findByIsActiveTrueOrderBySortOrderAsc();
+    
+    Page<Board> findByIsActiveTrueOrderBySortOrderAsc(Pageable pageable);
 
     /**
      * 게시판 타입으로 조회
@@ -32,16 +34,23 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     @Query("SELECT b FROM Board b WHERE b.isActive = true AND b.name LIKE %:name% ORDER BY b.sortOrder ASC")
     List<Board> findByNameContainingAndIsActiveTrue(@Param("name") String name);
+    
+    @Query("SELECT b FROM Board b WHERE b.isActive = true AND b.name LIKE %:name% ORDER BY b.sortOrder ASC")
+    Page<Board> findByNameContainingAndIsActiveTrue(@Param("name") String name, Pageable pageable);
 
     /**
      * 관리자 전용 게시판 조회
      */
     List<Board> findByAdminOnlyTrueAndIsActiveTrueOrderBySortOrderAsc();
+    
+    Page<Board> findByAdminOnlyTrueAndIsActiveTrueOrderBySortOrderAsc(Pageable pageable);
 
     /**
      * 일반 사용자용 게시판 조회 (관리자 전용 제외)
      */
     List<Board> findByAdminOnlyFalseAndIsActiveTrueOrderBySortOrderAsc();
+    
+    Page<Board> findByAdminOnlyFalseAndIsActiveTrueOrderBySortOrderAsc(Pageable pageable);
 
     /**
      * 게시판별 게시글 수 조회

@@ -1,0 +1,196 @@
+# 테스트 환경 설정 (Phase 2.4 강화)
+# H2 파일 모드 및 실제 DB 상호작용 테스트 지원
+
+spring:
+  # 테스트 프로파일 활성화
+  profiles:
+    active: test
+  
+  # H2 파일 모드 데이터베이스 설정
+  datasource:
+    url: jdbc:h2:file:./test-data/testdb;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: test
+    password: test
+  
+  # JPA/Hibernate 설정 (테스트 최적화)
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        # 테스트용 배치 설정
+        jdbc:
+          batch_size: 10
+        # 쿼리 성능 모니터링
+        generate_statistics: true
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 50
+  
+  # H2 콘솔 (테스트 디버깅용)
+  h2:
+    console:
+      enabled: true
+      path: /test-h2-console
+      settings:
+        web-allow-others: false
+        trace: true
+  
+  # 테스트용 캐시 비활성화
+  cache:
+    type: none
+  
+  # Redis 설정 (테스트용 임베디드)
+  data:
+    redis:
+      host: localhost
+      port: 6370  # 테스트용 포트
+      timeout: 1000ms
+      lettuce:
+        pool:
+          max-active: 5
+          max-idle: 5
+          min-idle: 1
+
+# 테스트 서버 설정
+server:
+  port: 0  # 랜덤 포트 사용
+
+# 테스트용 JWT 설정
+jwt:
+  secret: test-jwt-secret-key-for-integration-tests-minimum-32-chars
+  access-token-expiration: 3600000   # 1시간
+  refresh-token-expiration: 86400000  # 24시간
+
+# 테스트용 로깅 설정
+logging:
+  level:
+    com.globalcarelink: DEBUG
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    # 테스트 성능 모니터링
+    org.hibernate.stat: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [TEST] %logger{36} - %msg%n"
+
+# 애플리케이션 테스트 설정
+app:
+  # 테스트용 보안 설정
+  security:
+    production-mode: false
+  
+  # 테스트용 CORS 설정 (관대한 설정)
+  cors:
+    allowed-origins: "*"
+  
+  # 테스트용 챗봇 설정 (비활성화)
+  chatbot:
+    enabled: false
+    base-url: http://localhost:8000
+    connect-timeout: 5000
+    read-timeout: 10000
+  
+  # 테스트용 공공데이터 API 설정 (Mock 사용)
+  public-data:
+    api-key: test-api-key
+    base-url: http://localhost:8081
+    connect-timeout: 5000
+    read-timeout: 10000
+    
+    # 테스트용 재시도 설정 (빠른 실패)
+    retry:
+      max-attempts: 1
+      backoff-delay: 100
+      backoff-multiplier: 1
+    
+    # 테스트용 캐시 설정 (짧은 TTL)
+    cache:
+      ltci-search-ttl: 10     # 10초
+      ltci-detail-ttl: 20     # 20초
+      hospital-search-ttl: 10
+      pharmacy-search-ttl: 10
+      facility-status-ttl: 5
+  
+  # 테스트용 비동기 설정 (작은 풀 사이즈)
+  async:
+    core-pool-size: 2
+    max-pool-size: 5
+    queue-capacity: 10
+    thread-name-prefix: "test-async-"
+
+# 테스트용 액추에이터 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Phase 2.4 강화된 테스트 전략 설정
+test:
+  # 테스트 데이터 설정
+  data:
+    cleanup-after-test: true
+    preserve-between-tests: false
+    large-dataset-size: 100
+  
+  # 성능 테스트 임계값
+  performance:
+    max-query-time-ms: 100
+    max-batch-size: 50
+    slow-query-threshold-ms: 50
+  
+  # 통합 테스트 설정
+  integration:
+    use-real-database: true
+    enable-transaction-rollback: true
+    verify-data-integrity: true
+
+---
+# 테스트 전용 프로파일 설정
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# 테스트 환경별 추가 설정
+test:
+  scenarios:
+    # 국내 프로필 테스트 시나리오
+    domestic-profile:
+      test-members-count: 10
+      completion-rate-variance: 20
+    
+    # 해외 프로필 테스트 시나리오  
+    overseas-profile:
+      test-countries: ["US", "CA", "AU", "JP", "KR"]
+      visa-types: ["TOURIST", "STUDENT", "WORK", "IMMIGRATION"]
+    
+    # 성능 테스트 시나리오
+    performance:
+      large-dataset-size: 1000
+      concurrent-users: 10
+      stress-test-duration-seconds: 30
+
+# 테스트 환경 검증을 위한 설정
+validation:
+  # 데이터 무결성 검증
+  data-integrity:
+    enabled: true
+    check-foreign-keys: true
+    verify-constraints: true
+  
+  # 성능 검증
+  performance:
+    enabled: true
+    fail-on-slow-queries: false  # 경고만 출력
+    track-memory-usage: true

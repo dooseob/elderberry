@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface DomesticProfileRepository extends JpaRepository<DomesticProfile, Long> {
@@ -18,23 +20,44 @@ public interface DomesticProfileRepository extends JpaRepository<DomesticProfile
     @Query("SELECT d FROM DomesticProfile d WHERE d.profileCompletionPercentage >= :percentage")
     List<DomesticProfile> findByProfileCompletionPercentageGreaterThanEqual(@Param("percentage") Integer percentage);
     
+    @Query("SELECT d FROM DomesticProfile d WHERE d.profileCompletionPercentage >= :percentage")
+    Page<DomesticProfile> findByProfileCompletionPercentageGreaterThanEqual(@Param("percentage") Integer percentage, Pageable pageable);
+    
     @Query("SELECT d FROM DomesticProfile d WHERE d.ltciGrade = :grade")
     List<DomesticProfile> findByLtciGrade(@Param("grade") Integer grade);
+    
+    @Query("SELECT d FROM DomesticProfile d WHERE d.ltciGrade = :grade")
+    Page<DomesticProfile> findByLtciGrade(@Param("grade") Integer grade, Pageable pageable);
     
     @Query("SELECT d FROM DomesticProfile d WHERE d.careLevel = :careLevel")
     List<DomesticProfile> findByCareLevel(@Param("careLevel") String careLevel);
     
+    @Query("SELECT d FROM DomesticProfile d WHERE d.careLevel = :careLevel")
+    Page<DomesticProfile> findByCareLevel(@Param("careLevel") String careLevel, Pageable pageable);
+    
     @Query("SELECT d FROM DomesticProfile d WHERE d.preferredRegion = :region")
     List<DomesticProfile> findByPreferredRegion(@Param("region") String region);
+    
+    @Query("SELECT d FROM DomesticProfile d WHERE d.preferredRegion = :region")
+    Page<DomesticProfile> findByPreferredRegion(@Param("region") String region, Pageable pageable);
     
     @Query("SELECT d FROM DomesticProfile d WHERE d.budgetRange = :budgetRange")
     List<DomesticProfile> findByBudgetRange(@Param("budgetRange") String budgetRange);
     
+    @Query("SELECT d FROM DomesticProfile d WHERE d.budgetRange = :budgetRange")
+    Page<DomesticProfile> findByBudgetRange(@Param("budgetRange") String budgetRange, Pageable pageable);
+    
     @Query("SELECT d FROM DomesticProfile d JOIN d.member m WHERE m.isJobSeeker = true AND d.profileCompletionPercentage >= :percentage")
     List<DomesticProfile> findJobSeekersWithProfileCompletion(@Param("percentage") Integer percentage);
     
+    @Query("SELECT d FROM DomesticProfile d JOIN d.member m WHERE m.isJobSeeker = true AND d.profileCompletionPercentage >= :percentage")
+    Page<DomesticProfile> findJobSeekersWithProfileCompletion(@Param("percentage") Integer percentage, Pageable pageable);
+    
     @Query("SELECT d FROM DomesticProfile d WHERE d.address LIKE %:city%")
     List<DomesticProfile> findByCity(@Param("city") String city);
+    
+    @Query("SELECT d FROM DomesticProfile d WHERE d.address LIKE %:city%")
+    Page<DomesticProfile> findByCity(@Param("city") String city, Pageable pageable);
     
     @Query("SELECT COUNT(d) FROM DomesticProfile d WHERE d.profileCompletionPercentage >= 80")
     long countCompleteProfiles();

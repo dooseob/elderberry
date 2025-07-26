@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface OverseasProfileRepository extends JpaRepository<OverseasProfile, Long> {
@@ -19,17 +21,32 @@ public interface OverseasProfileRepository extends JpaRepository<OverseasProfile
     @Query("SELECT o FROM OverseasProfile o WHERE o.residenceCountry = :country")
     List<OverseasProfile> findByResidenceCountry(@Param("country") String country);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.residenceCountry = :country")
+    Page<OverseasProfile> findByResidenceCountry(@Param("country") String country, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.residenceCountry = :country AND o.residenceCity = :city")
     List<OverseasProfile> findByResidenceCountryAndCity(@Param("country") String country, @Param("city") String city);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.residenceCountry = :country AND o.residenceCity = :city")
+    Page<OverseasProfile> findByResidenceCountryAndCity(@Param("country") String country, @Param("city") String city, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o WHERE o.profileCompletionPercentage >= :percentage")
     List<OverseasProfile> findByProfileCompletionPercentageGreaterThanEqual(@Param("percentage") Integer percentage);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.profileCompletionPercentage >= :percentage")
+    Page<OverseasProfile> findByProfileCompletionPercentageGreaterThanEqual(@Param("percentage") Integer percentage, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.coordinatorRequired = true")
     List<OverseasProfile> findRequiringCoordinator();
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.coordinatorRequired = true")
+    Page<OverseasProfile> findRequiringCoordinator(Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.coordinatorRequired = true AND o.profileCompletionPercentage >= :percentage")
     List<OverseasProfile> findRequiringCoordinatorWithCompletion(@Param("percentage") Integer percentage);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.coordinatorRequired = true AND o.profileCompletionPercentage >= :percentage")
+    Page<OverseasProfile> findRequiringCoordinatorWithCompletion(@Param("percentage") Integer percentage, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o WHERE o.passportExpiryDate <= :date")
     List<OverseasProfile> findByPassportExpiryDateBefore(@Param("date") LocalDate date);
@@ -60,6 +77,9 @@ public interface OverseasProfileRepository extends JpaRepository<OverseasProfile
     
     @Query("SELECT o FROM OverseasProfile o JOIN o.member m WHERE m.isJobSeeker = true AND o.profileCompletionPercentage >= :percentage")
     List<OverseasProfile> findJobSeekersWithProfileCompletion(@Param("percentage") Integer percentage);
+    
+    @Query("SELECT o FROM OverseasProfile o JOIN o.member m WHERE m.isJobSeeker = true AND o.profileCompletionPercentage >= :percentage")
+    Page<OverseasProfile> findJobSeekersWithProfileCompletion(@Param("percentage") Integer percentage, Pageable pageable);
     
     @Query("SELECT COUNT(o) FROM OverseasProfile o WHERE o.profileCompletionPercentage >= 70")
     long countCompleteProfiles();

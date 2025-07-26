@@ -81,19 +81,19 @@
     "url": "https://github.com/elderberry-project/elderberry-intellect.git"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
-    "commander": "^9.0.0", 
-    "inquirer": "^8.2.0",
-    "ora": "^5.4.1",
-    "boxen": "^5.1.2",
-    "table": "^6.8.0",
-    "figlet": "^1.5.2"
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0", 
+    "inquirer": "^12.8.2",
+    "ora": "^8.2.0",
+    "boxen": "^8.0.1",
+    "table": "^6.9.0",
+    "figlet": "^1.8.2"
   },
   "devDependencies": {
-    "jest": "^29.0.0",
-    "eslint": "^8.0.0",
-    "prettier": "^2.8.0",
-    "nodemon": "^2.0.20"
+    "jest": "^30.0.5",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "nodemon": "^3.1.10"
   },
   "jest": {
     "testEnvironment": "node",

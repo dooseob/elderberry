@@ -1,4 +1,4 @@
-# 엘더베리 개발 서버 시작 스크립트 v2.0
+# 엘더베리 개발 서버 시작 스크립트 v3.0 - Java 21 LTS 최적화
 Write-Host "====================================" -ForegroundColor Green
 Write-Host "🚀 엘더베리 개발 환경 시작" -ForegroundColor Green
 Write-Host "====================================" -ForegroundColor Green
@@ -58,7 +58,8 @@ switch ($choice) {
         # 백엔드 시작 (Spring Boot)
         if (!$backendRunning) {
             Write-Host "Spring Boot 백엔드 서버 시작 중..." -ForegroundColor Yellow
-            Start-Process PowerShell -ArgumentList "-Command", ".\gradlew.bat bootRun" -WindowStyle Minimized
+            Write-Host "Java 21 환경에서 Spring Boot 시작..." -ForegroundColor Cyan
+            Start-Process PowerShell -ArgumentList "-Command", ".\gradlew.bat bootRun --no-daemon" -WindowStyle Minimized
             Start-Sleep 5
         }
         
@@ -82,8 +83,11 @@ switch ($choice) {
         npm run dev
     }
     "3" {
-        Write-Host "`n🔧 Spring Boot 백엔드 서버 시작..." -ForegroundColor Green
-        .\gradlew.bat bootRun
+        Write-Host "`n🔧 Java 21 Spring Boot 백엔드 서버 시작..." -ForegroundColor Green
+        Write-Host "☕ Java 버전 확인..." -ForegroundColor Yellow
+        java -version
+        Write-Host "🚀 Spring Boot 시작 중..." -ForegroundColor Yellow
+        .\gradlew.bat bootRun --no-daemon
     }
     "4" {
         Write-Host "`n🔍 디버깅 시스템 실행..." -ForegroundColor Green
