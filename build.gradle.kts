@@ -1,8 +1,8 @@
 plugins {
     java
     id("org.springframework.boot") version "3.4.1"
-    id("io.spring.dependency-management") version "1.2.0"
-    id("com.github.node-gradle.node") version "8.0.0"
+    id("io.spring.dependency-management") version "1.1.6"
+    id("com.github.node-gradle.node") version "7.0.2"
 }
 
 group = "com.globalcarelink"
@@ -41,7 +41,7 @@ dependencies {
     implementation("org.springframework:spring-aspects")
     
     // OpenAPI/Swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     
     // Database
     runtimeOnly("com.h2database:h2")
@@ -90,15 +90,8 @@ node {
 val frontendDir = "${project.projectDir}/frontend"
 val staticDir = "${project.projectDir}/src/main/resources/static"
 
-// npm install 태스크
-tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmInstall") {
-    description = "프론트엔드 의존성 설치"
-    workingDir.set(file(frontendDir))
-    args.set(listOf("install"))
-    inputs.file("$frontendDir/package.json")
-    inputs.file("$frontendDir/package-lock.json")
-    outputs.dir("$frontendDir/node_modules")
-}
+// npm install 태스크 (node-gradle 플러그인이 자동 생성)
+// npmInstall 태스크는 플러그인에서 자동으로 생성됨
 
 // 프론트엔드 빌드 태스크
 tasks.register<com.github.gradle.node.npm.task.NpmTask>("buildFrontend") {

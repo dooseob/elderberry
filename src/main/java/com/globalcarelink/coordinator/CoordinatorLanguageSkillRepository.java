@@ -1,5 +1,7 @@
 package com.globalcarelink.coordinator;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,11 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      * 우선순위 순으로 활성 언어 스킬 조회
      */
     List<CoordinatorLanguageSkill> findByIsActiveTrueOrderByPriorityOrder();
+    
+    /**
+     * 우선순위 순으로 활성 언어 스킬 조회 (페이징)
+     */
+    Page<CoordinatorLanguageSkill> findByIsActiveTrueOrderByPriorityOrderWithPaging(Pageable pageable);
 
     /**
      * 코디네이터 ID와 언어 코드, 활성 상태로 조회
@@ -30,6 +37,11 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      * 인덱스 활용: coordinator_id, is_active, priority_order
      */
     List<CoordinatorLanguageSkill> findByCoordinatorIdAndIsActiveTrueOrderByPriorityOrder(String coordinatorId);
+    
+    /**
+     * 코디네이터별 활성 언어 스킬 조회 (우선순위 정렬, 페이징)
+     */
+    Page<CoordinatorLanguageSkill> findByCoordinatorIdAndIsActiveTrueOrderByPriorityOrderWithPaging(String coordinatorId, Pageable pageable);
 
     /**
      * 특정 언어를 구사하는 코디네이터 조회
@@ -37,6 +49,12 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      */
     @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.languageCode = :languageCode ORDER BY cls.proficiencyLevel DESC")
     List<CoordinatorLanguageSkill> findByLanguageCodeAndIsActiveTrue(@Param("languageCode") String languageCode);
+    
+    /**
+     * 특정 언어를 구사하는 코디네이터 조회 (페이징)
+     */
+    @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.languageCode = :languageCode ORDER BY cls.proficiencyLevel DESC")
+    Page<CoordinatorLanguageSkill> findByLanguageCodeAndIsActiveTrueWithPaging(@Param("languageCode") String languageCode, Pageable pageable);
 
     /**
      * 특정 숙련도 이상의 언어 스킬 조회
@@ -44,6 +62,12 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      */
     @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.proficiencyLevel >= :minLevel ORDER BY cls.proficiencyLevel DESC")
     List<CoordinatorLanguageSkill> findByProficiencyLevelGreaterThanEqual(@Param("minLevel") CoordinatorLanguageSkill.LanguageProficiency minLevel);
+    
+    /**
+     * 특정 숙련도 이상의 언어 스킬 조회 (페이징)
+     */
+    @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.proficiencyLevel >= :minLevel ORDER BY cls.proficiencyLevel DESC")
+    Page<CoordinatorLanguageSkill> findByProficiencyLevelGreaterThanEqualWithPaging(@Param("minLevel") CoordinatorLanguageSkill.LanguageProficiency minLevel, Pageable pageable);
 
     /**
      * 다중 언어 구사 코디네이터 조회
@@ -102,6 +126,12 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      */
     @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.certification IS NOT NULL AND cls.certification != '' ORDER BY cls.certification")
     List<CoordinatorLanguageSkill> findWithCertification();
+    
+    /**
+     * 언어 인증서 보유 코디네이터 조회 (페이징)
+     */
+    @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = true AND cls.certification IS NOT NULL AND cls.certification != '' ORDER BY cls.certification")
+    Page<CoordinatorLanguageSkill> findWithCertificationWithPaging(Pageable pageable);
 
     /**
      * 코디네이터의 주요 언어 (가장 높은 숙련도) 조회
@@ -119,6 +149,23 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
         ORDER BY cls.priorityOrder
         """)
     List<CoordinatorLanguageSkill> findPrimaryLanguages(@Param("coordinatorId") String coordinatorId);
+    
+    /**
+     * 코디네이터의 주요 언어 (가장 높은 숙련도) 조회 (페이징)
+     */
+    @Query("""
+        SELECT cls FROM CoordinatorLanguageSkill cls
+        WHERE cls.isActive = true 
+        AND cls.coordinatorId = :coordinatorId
+        AND cls.proficiencyLevel = (
+            SELECT MAX(cls2.proficiencyLevel) 
+            FROM CoordinatorLanguageSkill cls2 
+            WHERE cls2.coordinatorId = :coordinatorId 
+            AND cls2.isActive = true
+        )
+        ORDER BY cls.priorityOrder
+        """)
+    Page<CoordinatorLanguageSkill> findPrimaryLanguagesWithPaging(@Param("coordinatorId") String coordinatorId, Pageable pageable);
 
     /**
      * 언어 스킬 우선순위 업데이트를 위한 배치 조회
@@ -131,6 +178,12 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
      */
     @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = false AND cls.updatedAt < :cutoffDate")
     List<CoordinatorLanguageSkill> findInactiveSkillsOlderThan(@Param("cutoffDate") java.time.LocalDateTime cutoffDate);
+    
+    /**
+     * 비활성 언어 스킬 정리를 위한 조회 (페이징)
+     */
+    @Query("SELECT cls FROM CoordinatorLanguageSkill cls WHERE cls.isActive = false AND cls.updatedAt < :cutoffDate")
+    Page<CoordinatorLanguageSkill> findInactiveSkillsOlderThanWithPaging(@Param("cutoffDate") java.time.LocalDateTime cutoffDate, Pageable pageable);
 
     /**
      * 코디네이터별 언어 스킬 개수 조회
@@ -160,6 +213,24 @@ public interface CoordinatorLanguageSkillRepository extends JpaRepository<Coordi
     List<CoordinatorLanguageSkill> findByLanguageAndRegion(
         @Param("languageCode") String languageCode,
         @Param("region") String region
+    );
+    
+    /**
+     * 특정 지역에서 특정 언어를 구사하는 코디네이터 조회 (페이징)
+     */
+    @Query("""
+        SELECT cls FROM CoordinatorLanguageSkill cls
+        JOIN CoordinatorCareSettings ccs ON cls.coordinatorId = ccs.coordinatorId
+        WHERE cls.isActive = true 
+        AND ccs.isActive = true
+        AND cls.languageCode = :languageCode
+        AND :region MEMBER OF ccs.workingRegions
+        ORDER BY cls.proficiencyLevel DESC, ccs.customerSatisfaction DESC
+        """)
+    Page<CoordinatorLanguageSkill> findByLanguageAndRegionWithPaging(
+        @Param("languageCode") String languageCode,
+        @Param("region") String region,
+        Pageable pageable
     );
 
     /**

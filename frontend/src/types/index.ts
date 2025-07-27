@@ -16,6 +16,9 @@ export * from './board';
 export * from './profile';
 export * from './profileApi';
 
+// 알림 관련 타입들
+export * from './notifications';
+
 // 상수들 (주석으로 변경 - 순환 참조 방지)
 // export * from '../constants/profile';
 

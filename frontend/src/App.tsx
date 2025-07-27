@@ -24,6 +24,7 @@ import {
   LazyLoginPage,
   LazyRegisterPage,
   LazyDashboardPage,
+  LazyMyPage,
   LazyUnauthorizedPage,
   LazyHealthAssessmentWizard,
   LazyFacilitySearchPage,
@@ -33,7 +34,8 @@ import {
   LazyPostDetailPage,
   LazyPostCreatePage,
   LazyProfileListPage,
-  LazyProfileDetailPage
+  LazyProfileDetailPage,
+  LazyNotificationsPage
 } from './utils/lazyImports';
 
 import './App.css';
@@ -62,6 +64,32 @@ function App() {
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
                       <LazyDashboardPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/mypage" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                      <LazyMyPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/notifications" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <LazyNotificationsPage />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>

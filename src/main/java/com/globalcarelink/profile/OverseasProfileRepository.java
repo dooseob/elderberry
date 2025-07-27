@@ -51,29 +51,56 @@ public interface OverseasProfileRepository extends JpaRepository<OverseasProfile
     @Query("SELECT o FROM OverseasProfile o WHERE o.passportExpiryDate <= :date")
     List<OverseasProfile> findByPassportExpiryDateBefore(@Param("date") LocalDate date);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.passportExpiryDate <= :date")
+    Page<OverseasProfile> findByPassportExpiryDateBefore(@Param("date") LocalDate date, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.visaExpiryDate <= :date")
     List<OverseasProfile> findByVisaExpiryDateBefore(@Param("date") LocalDate date);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.visaExpiryDate <= :date")
+    Page<OverseasProfile> findByVisaExpiryDateBefore(@Param("date") LocalDate date, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o WHERE o.preferredRegionInKorea = :region")
     List<OverseasProfile> findByPreferredRegionInKorea(@Param("region") String region);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.preferredRegionInKorea = :region")
+    Page<OverseasProfile> findByPreferredRegionInKorea(@Param("region") String region, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.budgetRange = :budgetRange")
     List<OverseasProfile> findByBudgetRange(@Param("budgetRange") String budgetRange);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.budgetRange = :budgetRange")
+    Page<OverseasProfile> findByBudgetRange(@Param("budgetRange") String budgetRange, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o WHERE o.careLevel = :careLevel")
     List<OverseasProfile> findByCareLevel(@Param("careLevel") String careLevel);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.careLevel = :careLevel")
+    Page<OverseasProfile> findByCareLevel(@Param("careLevel") String careLevel, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.entryPurpose = :purpose")
     List<OverseasProfile> findByEntryPurpose(@Param("purpose") String purpose);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.entryPurpose = :purpose")
+    Page<OverseasProfile> findByEntryPurpose(@Param("purpose") String purpose, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o WHERE o.expectedStayDuration = :duration")
     List<OverseasProfile> findByExpectedStayDuration(@Param("duration") String duration);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.expectedStayDuration = :duration")
+    Page<OverseasProfile> findByExpectedStayDuration(@Param("duration") String duration, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.preferredCommunicationMethod = :method")
     List<OverseasProfile> findByPreferredCommunicationMethod(@Param("method") String method);
     
+    @Query("SELECT o FROM OverseasProfile o WHERE o.preferredCommunicationMethod = :method")
+    Page<OverseasProfile> findByPreferredCommunicationMethod(@Param("method") String method, Pageable pageable);
+    
     @Query("SELECT o FROM OverseasProfile o WHERE o.timeZonePreference = :timeZone")
     List<OverseasProfile> findByTimeZonePreference(@Param("timeZone") String timeZone);
+    
+    @Query("SELECT o FROM OverseasProfile o WHERE o.timeZonePreference = :timeZone")
+    Page<OverseasProfile> findByTimeZonePreference(@Param("timeZone") String timeZone, Pageable pageable);
     
     @Query("SELECT o FROM OverseasProfile o JOIN o.member m WHERE m.isJobSeeker = true AND o.profileCompletionPercentage >= :percentage")
     List<OverseasProfile> findJobSeekersWithProfileCompletion(@Param("percentage") Integer percentage);

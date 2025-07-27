@@ -49,6 +49,12 @@ export const LazyDashboardPage = lazyWithMinDelay(
   150
 );
 
+// 마이페이지 (우선순위: 높음 - 자주 접근하는 페이지)
+export const LazyMyPage = lazyWithMinDelay(
+  () => import('../components/mypage/MyPage'),
+  150
+);
+
 // 게시판 관련 페이지 (우선순위: 중간)
 export const LazyBoardListPage = lazyWithMinDelay(
   () => import('../features/boards/BoardListPage')
@@ -115,10 +121,16 @@ export const LazyUnauthorizedPage = lazyWithMinDelay(
   100
 );
 
+// 알림 관련 페이지
+export const LazyNotificationsPage = lazyWithMinDelay(
+  () => import('../pages/NotificationsPage'),
+  150
+);
+
 // 청크 분석을 위한 컴포넌트 이름 매핑
 export const CHUNK_NAMES = {
   auth: ['LazyLoginPage', 'LazyRegisterPage'],
-  dashboard: ['LazyDashboardPage'],
+  dashboard: ['LazyDashboardPage', 'LazyMyPage'],
   boards: ['LazyBoardListPage', 'LazyPostDetailPage', 'LazyPostCreatePage'],
   profiles: ['LazyProfileListPage', 'LazyProfileDetailPage'],
   jobs: ['LazyJobListPage', 'LazyJobDetailPage'],
@@ -126,5 +138,6 @@ export const CHUNK_NAMES = {
   facility: ['LazyFacilitySearchPage'],
   coordinator: ['LazyCoordinatorMatchingWizard'],
   chat: ['LazyChatHomePage', 'LazyChatPage'],
+  notifications: ['LazyNotificationsPage'],
   misc: ['LazyUnauthorizedPage']
 } as const;

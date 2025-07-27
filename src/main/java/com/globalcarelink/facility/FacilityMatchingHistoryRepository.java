@@ -26,16 +26,22 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
      * 사용자별 매칭 이력 조회
      */
     List<FacilityMatchingHistory> findByUserIdOrderByCreatedAtDesc(String userId);
+    
+    Page<FacilityMatchingHistory> findByUserIdOrderByCreatedAtDescWithPaging(String userId, Pageable pageable);
 
     /**
      * 시설별 매칭 이력 조회
      */
     List<FacilityMatchingHistory> findByFacilityIdOrderByCreatedAtDesc(Long facilityId);
+    
+    Page<FacilityMatchingHistory> findByFacilityIdOrderByCreatedAtDescWithPaging(Long facilityId, Pageable pageable);
 
     /**
      * 코디네이터별 매칭 이력 조회
      */
     List<FacilityMatchingHistory> findByCoordinatorIdOrderByCreatedAtDesc(String coordinatorId);
+    
+    Page<FacilityMatchingHistory> findByCoordinatorIdOrderByCreatedAtDescWithPaging(String coordinatorId, Pageable pageable);
 
     /**
      * 특정 사용자-시설 조합의 최신 매칭 이력
@@ -119,6 +125,17 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
         """)
     List<FacilityMatchingHistory> findFailedHighScoreMatches(@Param("minScore") BigDecimal minScore,
                                                            @Param("startDate") LocalDateTime startDate);
+                                                           
+    @Query("""
+        SELECT h FROM FacilityMatchingHistory h
+        WHERE h.initialMatchScore >= :minScore 
+        AND h.status = 'FAILED'
+        AND h.createdAt >= :startDate
+        ORDER BY h.initialMatchScore DESC
+        """)
+    Page<FacilityMatchingHistory> findFailedHighScoreMatchesWithPaging(@Param("minScore") BigDecimal minScore,
+                                                           @Param("startDate") LocalDateTime startDate,
+                                                           Pageable pageable);
 
     // ===== 시간별 분석 =====
 
@@ -197,6 +214,36 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
         """)
     List<FacilityMatchingHistory> findUnexpectedSuccesses(@Param("lowScoreThreshold") BigDecimal lowScoreThreshold,
                                                          @Param("startDate") LocalDateTime startDate);
+
+    /**
+     * 높은 점수였지만 선택되지 않은 매칭들 (추천 알고리즘 개선 기회, 페이징)
+     */
+    @Query("""
+        SELECT h FROM FacilityMatchingHistory h
+        WHERE h.initialMatchScore >= :highScoreThreshold
+        AND h.wasViewed = true
+        AND h.wasSelected = false
+        AND h.createdAt >= :startDate
+        ORDER BY h.initialMatchScore DESC
+        """)
+    Page<FacilityMatchingHistory> findMissedOpportunitiesPageable(@Param("highScoreThreshold") BigDecimal highScoreThreshold,
+                                                                   @Param("startDate") LocalDateTime startDate,
+                                                                   Pageable pageable);
+
+    /**
+     * 낮은 점수였지만 선택된 매칭들 (숨겨진 선호 패턴 발견, 페이징)
+     */
+    @Query("""
+        SELECT h FROM FacilityMatchingHistory h
+        WHERE h.initialMatchScore <= :lowScoreThreshold
+        AND h.status = 'COMPLETED'
+        AND h.outcome = 'CONTRACT_SIGNED'
+        AND h.createdAt >= :startDate
+        ORDER BY h.userSatisfactionScore DESC, h.initialMatchScore ASC
+        """)
+    Page<FacilityMatchingHistory> findUnexpectedSuccessesPageable(@Param("lowScoreThreshold") BigDecimal lowScoreThreshold,
+                                                                   @Param("startDate") LocalDateTime startDate,
+                                                                   Pageable pageable);
 
     // ===== 트렌드 분석 =====
 

@@ -26,10 +26,12 @@ import {
 } from '../icons/LucideIcons';
 
 import { useAuthStore } from '../../stores/authStore';
+import { useNotificationStore } from '../../stores/notificationStore';
 import { MemberRole } from '../../types/auth';
 import Button from '../ui/Button';
 import SkipLink from '../ui/SkipLink';
 import ThemeToggle from '../ui/ThemeToggle';
+import { NotificationDropdown } from '../notifications/NotificationDropdown';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { useRoleBasedPreload, usePreloadOnHover } from '../../utils/preloadRoutes';
 
@@ -77,9 +79,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { 
+    summary, 
+    isDropdownOpen, 
+    toggleDropdown, 
+    closeDropdown,
+    fetchNotifications,
+    startPolling
+  } = useNotificationStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [notifications] = useState(3); // Mock notification count
   
   // 포커스 트랩 훅 (프로필 메뉴용)
   const profileMenuRef = useFocusTrap({
@@ -114,6 +123,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const toggleProfileMenu = () => {
     setIsProfileMenuOpen(!isProfileMenuOpen);
   };
+
+  // 알림 초기화 및 실시간 폴링 시작
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      startPolling();
+    }
+  }, [user, fetchNotifications, startPolling]);
 
   // 사이드바 외부 클릭 시 닫기
   useEffect(() => {
@@ -263,22 +280,32 @@ export default function MainLayout({ children }: MainLayoutProps) {
             <ThemeToggle />
             
             {/* 알림 */}
-            <button 
-              className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-elderberry-500 focus:ring-offset-2"
-              aria-label={notifications > 0 ? `알림 ${notifications}개` : '알림'}
-              aria-describedby={notifications > 0 ? 'notification-count' : undefined}
-            >
-              <Bell className="w-5 h-5" aria-hidden="true" />
-              {notifications > 0 && (
-                <span 
-                  id="notification-count"
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
-                  aria-label={`${notifications}개의 읽지 않은 알림`}
-                >
-                  {notifications}
-                </span>
-              )}
-            </button>
+            <div className="relative">
+              <button 
+                onClick={toggleDropdown}
+                className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-elderberry-500 focus:ring-offset-2"
+                aria-label={summary.unread > 0 ? `알림 ${summary.unread}개` : '알림'}
+                aria-describedby={summary.unread > 0 ? 'notification-count' : undefined}
+                aria-expanded={isDropdownOpen}
+                aria-haspopup="menu"
+              >
+                <Bell className="w-5 h-5" aria-hidden="true" />
+                {summary.unread > 0 && (
+                  <span 
+                    id="notification-count"
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+                    aria-label={`${summary.unread}개의 읽지 않은 알림`}
+                  >
+                    {summary.unread > 99 ? '99+' : summary.unread}
+                  </span>
+                )}
+              </button>
+              
+              <NotificationDropdown
+                isOpen={isDropdownOpen}
+                onClose={closeDropdown}
+              />
+            </div>
 
             {/* 프로필 드롭다운 */}
             <div className="relative profile-menu" ref={profileMenuRef}>
@@ -318,12 +345,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     </div>
                     
                     <Link
-                      to="/profile"
+                      to="/mypage"
                       onClick={() => setIsProfileMenuOpen(false)}
                       className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                       role="menuitem"
                     >
                       <User className="w-4 h-4" aria-hidden="true" />
+                      <span>마이페이지</span>
+                    </Link>
+                    
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      role="menuitem"
+                    >
+                      <FileText className="w-4 h-4" aria-hidden="true" />
                       <span>프로필 관리</span>
                     </Link>
                     
