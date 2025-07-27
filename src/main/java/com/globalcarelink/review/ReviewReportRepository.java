@@ -20,30 +20,31 @@ public interface ReviewReportRepository extends JpaRepository<ReviewReport, Long
     /**
      * 특정 리뷰에 대한 특정 사용자의 신고 조회
      */
-    Optional<ReviewReport> findByReviewIdAndReporterId(Long reviewId, Long reporterId);
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.review.id = :reviewId AND rr.reporter.id = :reporterId")
+    Optional<ReviewReport> findByReviewIdAndReporterId(@Param("reviewId") Long reviewId, @Param("reporterId") Long reporterId);
 
     /**
      * 특정 리뷰의 모든 신고 조회
      */
-    @Query("SELECT rr FROM ReviewReport rr WHERE rr.review.id = :reviewId ORDER BY rr.createdDate DESC")
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.review.id = :reviewId ORDER BY rr.createdAt DESC")
     Page<ReviewReport> findByReviewId(@Param("reviewId") Long reviewId, Pageable pageable);
 
     /**
      * 특정 사용자가 신고한 모든 신고 조회
      */
-    @Query("SELECT rr FROM ReviewReport rr WHERE rr.reporter.id = :reporterId ORDER BY rr.createdDate DESC")
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.reporter.id = :reporterId ORDER BY rr.createdAt DESC")
     Page<ReviewReport> findByReporterId(@Param("reporterId") Long reporterId, Pageable pageable);
 
     /**
      * 처리 대기 중인 신고 조회 (관리자용)
      */
-    @Query("SELECT rr FROM ReviewReport rr WHERE rr.status = 'PENDING' ORDER BY rr.createdDate ASC")
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.status = 'PENDING' ORDER BY rr.createdAt ASC")
     Page<ReviewReport> findPendingReports(Pageable pageable);
 
     /**
      * 검토 중인 신고 조회 (관리자용)
      */
-    @Query("SELECT rr FROM ReviewReport rr WHERE rr.status = 'UNDER_REVIEW' ORDER BY rr.createdDate ASC")
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.status = 'UNDER_REVIEW' ORDER BY rr.createdAt ASC")
     Page<ReviewReport> findUnderReviewReports(Pageable pageable);
 
     /**
@@ -55,7 +56,7 @@ public interface ReviewReportRepository extends JpaRepository<ReviewReport, Long
     /**
      * 특정 사유별 신고 조회
      */
-    @Query("SELECT rr FROM ReviewReport rr WHERE rr.reason = :reason ORDER BY rr.createdDate DESC")
+    @Query("SELECT rr FROM ReviewReport rr WHERE rr.reason = :reason ORDER BY rr.createdAt DESC")
     Page<ReviewReport> findByReason(@Param("reason") ReviewReport.ReportReason reason, Pageable pageable);
 
     /**
@@ -79,13 +80,14 @@ public interface ReviewReportRepository extends JpaRepository<ReviewReport, Long
     /**
      * 오늘 접수된 신고 수 조회
      */
-    @Query("SELECT COUNT(rr) FROM ReviewReport rr WHERE DATE(rr.createdDate) = CURRENT_DATE")
+    @Query("SELECT COUNT(rr) FROM ReviewReport rr WHERE rr.createdAt >= CURRENT_DATE AND rr.createdAt < CURRENT_DATE + 1 DAY")
     long countTodayReports();
 
     /**
      * 특정 리뷰에 대한 특정 사용자의 신고 존재 여부 확인
      */
-    boolean existsByReviewIdAndReporterId(Long reviewId, Long reporterId);
+    @Query("SELECT COUNT(rr) > 0 FROM ReviewReport rr WHERE rr.review.id = :reviewId AND rr.reporter.id = :reporterId")
+    boolean existsByReviewIdAndReporterId(@Param("reviewId") Long reviewId, @Param("reporterId") Long reporterId);
 
     /**
      * 가장 많이 신고된 리뷰 조회 (관리자용)
@@ -108,6 +110,6 @@ public interface ReviewReportRepository extends JpaRepository<ReviewReport, Long
     /**
      * 월별 신고 통계
      */
-    @Query("SELECT YEAR(rr.createdDate), MONTH(rr.createdDate), COUNT(rr) FROM ReviewReport rr GROUP BY YEAR(rr.createdDate), MONTH(rr.createdDate) ORDER BY YEAR(rr.createdDate) DESC, MONTH(rr.createdDate) DESC")
+    @Query("SELECT EXTRACT(YEAR FROM rr.createdAt), EXTRACT(MONTH FROM rr.createdAt), COUNT(rr) FROM ReviewReport rr GROUP BY EXTRACT(YEAR FROM rr.createdAt), EXTRACT(MONTH FROM rr.createdAt) ORDER BY EXTRACT(YEAR FROM rr.createdAt) DESC, EXTRACT(MONTH FROM rr.createdAt) DESC")
     List<Object[]> getMonthlyReportStats();
 }

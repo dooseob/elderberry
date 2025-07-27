@@ -17,7 +17,8 @@ public interface ReviewVoteRepository extends JpaRepository<ReviewVote, Long> {
     /**
      * 특정 리뷰에 대한 사용자의 투표 조회
      */
-    Optional<ReviewVote> findByReviewIdAndVoterId(Long reviewId, Long voterId);
+    @Query("SELECT rv FROM ReviewVote rv WHERE rv.review.id = :reviewId AND rv.voter.id = :voterId")
+    Optional<ReviewVote> findByReviewIdAndVoterId(@Param("reviewId") Long reviewId, @Param("voterId") Long voterId);
 
     /**
      * 특정 리뷰에 대한 도움됨 투표 수 조회
@@ -40,7 +41,8 @@ public interface ReviewVoteRepository extends JpaRepository<ReviewVote, Long> {
     /**
      * 특정 리뷰와 투표자로 투표 존재 여부 확인
      */
-    boolean existsByReviewIdAndVoterId(Long reviewId, Long voterId);
+    @Query("SELECT COUNT(rv) > 0 FROM ReviewVote rv WHERE rv.review.id = :reviewId AND rv.voter.id = :voterId")
+    boolean existsByReviewIdAndVoterId(@Param("reviewId") Long reviewId, @Param("voterId") Long voterId);
 
     /**
      * 특정 리뷰의 총 투표 수 조회

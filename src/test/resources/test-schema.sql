@@ -14,69 +14,57 @@ CREATE TABLE IF NOT EXISTS test_members (
     modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 국내 프로필 테이블
-CREATE TABLE IF NOT EXISTS test_domestic_profiles (
+-- 비활성화된 엔티티들은 temp-disabled 폴더에 있으므로 테스트 스키마에서 제거
+-- test_domestic_profiles, test_overseas_profiles, test_jobs, test_job_applications
+
+-- 건강 평가 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_health_assessments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    age INTEGER,
-    gender VARCHAR(10),
-    phone VARCHAR(20),
-    address VARCHAR(300),
-    care_level VARCHAR(20),
-    completion_percentage INTEGER DEFAULT 0,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    mobility_level INTEGER NOT NULL,
+    eating_level INTEGER NOT NULL,
+    toilet_level INTEGER NOT NULL,
+    communication_level INTEGER NOT NULL,
+    ltci_grade INTEGER,
+    care_target_status INTEGER,
+    meal_type INTEGER,
+    final_care_grade INTEGER,
+    assessment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES test_members(id)
 );
 
--- 해외 프로필 테이블
-CREATE TABLE IF NOT EXISTS test_overseas_profiles (
+-- 코디네이터 케어 설정 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_coordinator_care_settings (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    member_id BIGINT NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    age INTEGER,
-    gender VARCHAR(10),
-    residence_country VARCHAR(50) NOT NULL,
-    nationality VARCHAR(50) NOT NULL,
-    passport_number VARCHAR(20),
-    visa_status VARCHAR(20),
-    needs_coordinator BOOLEAN DEFAULT FALSE,
-    completion_percentage INTEGER DEFAULT 0,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES test_members(id)
+    coordinator_id BIGINT NOT NULL,
+    base_care_level INTEGER DEFAULT 1,
+    max_care_level INTEGER DEFAULT 5,
+    experience_years INTEGER DEFAULT 0,
+    customer_satisfaction DECIMAL(3,2) DEFAULT 0.0,
+    performance_score DECIMAL(3,2) DEFAULT 0.0,
+    working_regions VARCHAR(500),
+    specialty_areas VARCHAR(500),
+    available_weekends BOOLEAN DEFAULT FALSE,
+    available_emergency BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (coordinator_id) REFERENCES test_members(id)
 );
 
--- 구인공고 테이블
-CREATE TABLE IF NOT EXISTS test_jobs (
+-- 코디네이터 언어 스킬 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_coordinator_language_skills (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    employer_id BIGINT NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    company_name VARCHAR(100) NOT NULL,
-    work_location VARCHAR(300) NOT NULL,
-    category VARCHAR(50) NOT NULL,
-    salary_type VARCHAR(20) NOT NULL,
-    min_salary DECIMAL(12,2),
-    max_salary DECIMAL(12,2),
-    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-    view_count BIGINT DEFAULT 0,
-    is_urgent BOOLEAN DEFAULT FALSE,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (employer_id) REFERENCES test_members(id)
-);
-
--- 지원서 테이블
-CREATE TABLE IF NOT EXISTS test_job_applications (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    job_id BIGINT NOT NULL,
-    applicant_id BIGINT NOT NULL,
-    cover_letter TEXT,
-    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-    applied_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (job_id) REFERENCES test_jobs(id),
-    FOREIGN KEY (applicant_id) REFERENCES test_members(id)
+    coordinator_id BIGINT NOT NULL,
+    language_code VARCHAR(10) NOT NULL,
+    proficiency_level VARCHAR(20) NOT NULL DEFAULT 'BASIC',
+    certified BOOLEAN DEFAULT FALSE,
+    certification_level VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (coordinator_id) REFERENCES test_members(id),
+    UNIQUE KEY unique_coordinator_language (coordinator_id, language_code)
 );
 
 -- 시설 프로필 테이블
@@ -105,30 +93,104 @@ CREATE TABLE IF NOT EXISTS test_reviews (
     anonymous BOOLEAN DEFAULT FALSE,
     helpful_count INTEGER DEFAULT 0,
     not_helpful_count INTEGER DEFAULT 0,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reviewer_id) REFERENCES test_members(id),
+    FOREIGN KEY (facility_id) REFERENCES test_facility_profiles(id)
+);
+
+-- 리뷰 신고 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_review_reports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    review_id BIGINT NOT NULL,
+    reporter_id BIGINT NOT NULL,
+    reason VARCHAR(50) NOT NULL,
+    description TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    resolver_id BIGINT,
+    resolved_at TIMESTAMP,
+    admin_notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (review_id) REFERENCES test_reviews(id),
+    FOREIGN KEY (reporter_id) REFERENCES test_members(id),
+    FOREIGN KEY (resolver_id) REFERENCES test_members(id)
+);
+
+-- 리뷰 투표 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_review_votes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    review_id BIGINT NOT NULL,
+    voter_id BIGINT NOT NULL,
+    vote_type VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (review_id) REFERENCES test_reviews(id),
+    FOREIGN KEY (voter_id) REFERENCES test_members(id),
+    UNIQUE KEY unique_review_voter (review_id, voter_id)
+);
+
+-- 시설 매칭 히스토리 테이블 (현재 활성 엔티티)
+CREATE TABLE IF NOT EXISTS test_facility_matching_histories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    health_assessment_id BIGINT NOT NULL,
+    facility_id BIGINT NOT NULL,
+    matching_score DECIMAL(5,2) NOT NULL,
+    matching_type VARCHAR(50) NOT NULL DEFAULT 'AUTOMATIC',
+    matching_factors TEXT,
+    user_feedback TEXT,
+    completion_status VARCHAR(20) DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (health_assessment_id) REFERENCES test_health_assessments(id),
     FOREIGN KEY (facility_id) REFERENCES test_facility_profiles(id)
 );
 
 -- 테스트 성능 모니터링을 위한 인덱스
 CREATE INDEX IF NOT EXISTS idx_test_members_email ON test_members(email);
 CREATE INDEX IF NOT EXISTS idx_test_members_role ON test_members(role);
-CREATE INDEX IF NOT EXISTS idx_test_domestic_profiles_member_id ON test_domestic_profiles(member_id);
-CREATE INDEX IF NOT EXISTS idx_test_overseas_profiles_member_id ON test_overseas_profiles(member_id);
-CREATE INDEX IF NOT EXISTS idx_test_overseas_profiles_country ON test_overseas_profiles(residence_country);
-CREATE INDEX IF NOT EXISTS idx_test_jobs_status ON test_jobs(status);
-CREATE INDEX IF NOT EXISTS idx_test_jobs_category ON test_jobs(category);
-CREATE INDEX IF NOT EXISTS idx_test_job_applications_job_id ON test_job_applications(job_id);
-CREATE INDEX IF NOT EXISTS idx_test_job_applications_applicant_id ON test_job_applications(applicant_id);
+
+-- 건강 평가 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_health_assessments_member_id ON test_health_assessments(member_id);
+CREATE INDEX IF NOT EXISTS idx_test_health_assessments_final_care_grade ON test_health_assessments(final_care_grade);
+
+-- 코디네이터 설정 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_coordinator_care_settings_coordinator_id ON test_coordinator_care_settings(coordinator_id);
+CREATE INDEX IF NOT EXISTS idx_test_coordinator_care_settings_care_level ON test_coordinator_care_settings(base_care_level, max_care_level);
+
+-- 코디네이터 언어 스킬 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_coordinator_language_skills_coordinator_id ON test_coordinator_language_skills(coordinator_id);
+CREATE INDEX IF NOT EXISTS idx_test_coordinator_language_skills_language ON test_coordinator_language_skills(language_code);
+
+-- 시설 프로필 인덱스
 CREATE INDEX IF NOT EXISTS idx_test_facility_profiles_type ON test_facility_profiles(type);
+CREATE INDEX IF NOT EXISTS idx_test_facility_profiles_active ON test_facility_profiles(is_active);
+
+-- 리뷰 인덱스
 CREATE INDEX IF NOT EXISTS idx_test_reviews_facility_id ON test_reviews(facility_id);
 CREATE INDEX IF NOT EXISTS idx_test_reviews_status ON test_reviews(status);
+CREATE INDEX IF NOT EXISTS idx_test_reviews_reviewer_id ON test_reviews(reviewer_id);
 
-COMMENT ON TABLE test_members IS '테스트용 회원 테이블 - Phase 2.4 강화된 테스트 전략 지원';
-COMMENT ON TABLE test_domestic_profiles IS '테스트용 국내 프로필 테이블';
-COMMENT ON TABLE test_overseas_profiles IS '테스트용 해외 프로필 테이블';
-COMMENT ON TABLE test_jobs IS '테스트용 구인공고 테이블';
-COMMENT ON TABLE test_job_applications IS '테스트용 지원서 테이블';
+-- 리뷰 신고 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_review_reports_review_id ON test_review_reports(review_id);
+CREATE INDEX IF NOT EXISTS idx_test_review_reports_status ON test_review_reports(status);
+CREATE INDEX IF NOT EXISTS idx_test_review_reports_reporter_id ON test_review_reports(reporter_id);
+
+-- 리뷰 투표 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_review_votes_review_id ON test_review_votes(review_id);
+CREATE INDEX IF NOT EXISTS idx_test_review_votes_voter_id ON test_review_votes(voter_id);
+
+-- 시설 매칭 히스토리 인덱스
+CREATE INDEX IF NOT EXISTS idx_test_facility_matching_histories_health_assessment_id ON test_facility_matching_histories(health_assessment_id);
+CREATE INDEX IF NOT EXISTS idx_test_facility_matching_histories_facility_id ON test_facility_matching_histories(facility_id);
+CREATE INDEX IF NOT EXISTS idx_test_facility_matching_histories_status ON test_facility_matching_histories(completion_status);
+
+COMMENT ON TABLE test_members IS '테스트용 회원 테이블 - 현실적 테스트 데이터 지원';
+COMMENT ON TABLE test_health_assessments IS '테스트용 건강 평가 테이블 - 다양한 케어 등급 시나리오 지원';
+COMMENT ON TABLE test_coordinator_care_settings IS '테스트용 코디네이터 케어 설정 테이블';
+COMMENT ON TABLE test_coordinator_language_skills IS '테스트용 코디네이터 언어 스킬 테이블';
 COMMENT ON TABLE test_facility_profiles IS '테스트용 시설 프로필 테이블';
 COMMENT ON TABLE test_reviews IS '테스트용 리뷰 테이블';
+COMMENT ON TABLE test_review_reports IS '테스트용 리뷰 신고 테이블';
+COMMENT ON TABLE test_review_votes IS '테스트용 리뷰 투표 테이블';
+COMMENT ON TABLE test_facility_matching_histories IS '테스트용 시설 매칭 히스토리 테이블';

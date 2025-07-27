@@ -29,7 +29,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     
-    @Value("${spring.security.jwt.expiration}")
+    @Value("${jwt.access-token-expiration:3600000}")
     private long jwtExpiration;
     
     @Transactional

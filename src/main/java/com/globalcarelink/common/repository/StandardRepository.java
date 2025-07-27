@@ -23,12 +23,9 @@ public interface StandardRepository<T, ID> extends JpaRepository<T, ID> {
     // ===== 기본 조회 메서드 (페이징 지원) =====
     
     /**
-     * 모든 엔티티 조회 (페이징)
+     * 모든 엔티티 조회 (페이징) - JpaRepository에서 상속받음
      */
-    @Override
-    default Page<T> findAll(Pageable pageable) {
-        return JpaRepository.super.findAll(pageable);
-    }
+    // @Override 제거 - JpaRepository에서 이미 제공하는 메서드
     
     /**
      * 활성 상태 엔티티만 조회 (페이징)
@@ -110,12 +107,9 @@ public interface StandardRepository<T, ID> extends JpaRepository<T, ID> {
     long countActive();
     
     /**
-     * 전체 엔티티 수 조회 (JpaRepository의 count() 재정의)
+     * 전체 엔티티 수 조회 - JpaRepository에서 상속받음
      */
-    @Override
-    default long count() {
-        return JpaRepository.super.count();
-    }
+    // @Override 제거 - JpaRepository에서 이미 제공하는 메서드
     
     /**
      * 키워드 매칭 엔티티 수 조회

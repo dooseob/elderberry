@@ -32,22 +32,26 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     Optional<CoordinatorCareSettings> findByCoordinatorIdAndIsActiveTrue(String coordinatorId);
 
     /**
-     * 전문 분야로 조회
+     * 전문 분야로 조회 (specialtyAreas 컬렉션에서 검색)
      */
     @EntityGraph(attributePaths = {"languageSkills"})
-    List<CoordinatorCareSettings> findBySpecialty(String specialty);
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND :specialty MEMBER OF c.specialtyAreas ORDER BY c.experienceYears DESC")
+    List<CoordinatorCareSettings> findBySpecialty(@Param("specialty") String specialty);
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findBySpecialtyWithPaging(String specialty, Pageable pageable);
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND :specialty MEMBER OF c.specialtyAreas ORDER BY c.experienceYears DESC")
+    Page<CoordinatorCareSettings> findBySpecialty(@Param("specialty") String specialty, Pageable pageable);
 
     /**
      * 최소 만족도 이상으로 조회
      */
     @EntityGraph(attributePaths = {"languageSkills"})
-    List<CoordinatorCareSettings> findByMinSatisfaction(Double minSatisfaction);
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.customerSatisfaction >= :minSatisfaction ORDER BY c.customerSatisfaction DESC")
+    List<CoordinatorCareSettings> findByMinSatisfaction(@Param("minSatisfaction") Double minSatisfaction);
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findByMinSatisfactionWithPaging(Double minSatisfaction, Pageable pageable);
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.customerSatisfaction >= :minSatisfaction ORDER BY c.customerSatisfaction DESC")
+    Page<CoordinatorCareSettings> findByMinSatisfaction(@Param("minSatisfaction") Double minSatisfaction, Pageable pageable);
 
     /**
      * 활성 코디네이터 수 조회
@@ -68,7 +72,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     List<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDesc();
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDescWithPaging(Pageable pageable);
+    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByCustomerSatisfactionDesc(Pageable pageable);
 
     /**
      * 성과 점수 순으로 활성 코디네이터 조회
@@ -77,7 +81,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     List<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDesc();
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDescWithPaging(Pageable pageable);
+    Page<CoordinatorCareSettings> findByIsActiveTrueOrderByPerformanceScoreDesc(Pageable pageable);
 
     /**
      * 케어 등급 범위에 적합한 코디네이터 조회 (언어 스킬 포함)
@@ -88,7 +92,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     
     @EntityGraph(attributePaths = {"languageSkills"})
     @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.baseCareLevel <= :careGrade AND c.maxCareLevel >= :careGrade ORDER BY c.customerSatisfaction DESC, c.experienceYears DESC")
-    Page<CoordinatorCareSettings> findEligibleForCareGradeWithPaging(@Param("careGrade") Integer careGrade, Pageable pageable);
+    Page<CoordinatorCareSettings> findEligibleForCareGrade(@Param("careGrade") Integer careGrade, Pageable pageable);
 
     /**
      * 특정 지역에서 활동하는 코디네이터 조회 (언어 스킬 포함)
@@ -99,7 +103,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     
     @EntityGraph(attributePaths = {"languageSkills"})
     @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND :region MEMBER OF c.workingRegions ORDER BY c.customerSatisfaction DESC")
-    Page<CoordinatorCareSettings> findByWorkingRegionsContainingWithPaging(@Param("region") String region, Pageable pageable);
+    Page<CoordinatorCareSettings> findByWorkingRegionsContaining(@Param("region") String region, Pageable pageable);
 
     /**
      * 주말 근무 가능한 코디네이터 조회 (언어 스킬 포함)
@@ -108,7 +112,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     List<CoordinatorCareSettings> findByIsActiveTrueAndAvailableWeekendsTrue();
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findByIsActiveTrueAndAvailableWeekendsTrueWithPaging(Pageable pageable);
+    Page<CoordinatorCareSettings> findByIsActiveTrueAndAvailableWeekendsTrue(Pageable pageable);
 
     /**
      * 응급 상황 대응 가능한 코디네이터 조회 (언어 스킬 포함)
@@ -117,7 +121,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     List<CoordinatorCareSettings> findByIsActiveTrueAndAvailableEmergencyTrue();
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    Page<CoordinatorCareSettings> findByIsActiveTrueAndAvailableEmergencyTrueWithPaging(Pageable pageable);
+    Page<CoordinatorCareSettings> findByIsActiveTrueAndAvailableEmergencyTrue(Pageable pageable);
 
     /**
      * 특정 전문 분야 코디네이터 조회 (언어 스킬 포함)
@@ -128,7 +132,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     
     @EntityGraph(attributePaths = {"languageSkills"})
     @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND :specialty MEMBER OF c.specialtyAreas ORDER BY c.experienceYears DESC")
-    Page<CoordinatorCareSettings> findBySpecialtyAreasContainingWithPaging(@Param("specialty") String specialty, Pageable pageable);
+    Page<CoordinatorCareSettings> findBySpecialtyAreasContaining(@Param("specialty") String specialty, Pageable pageable);
 
     /**
      * 고객 만족도 기준 이상 코디네이터 조회 (언어 스킬 포함)
@@ -139,7 +143,7 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     
     @EntityGraph(attributePaths = {"languageSkills"})
     @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.customerSatisfaction >= :minSatisfaction ORDER BY c.customerSatisfaction DESC")
-    Page<CoordinatorCareSettings> findByCustomerSatisfactionGreaterThanEqualWithPaging(@Param("minSatisfaction") Double minSatisfaction, Pageable pageable);
+    Page<CoordinatorCareSettings> findByCustomerSatisfactionGreaterThanEqual(@Param("minSatisfaction") Double minSatisfaction, Pageable pageable);
 
     /**
      * 경력 기준 이상 코디네이터 조회 (언어 스킬 포함)
@@ -150,18 +154,18 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
     
     @EntityGraph(attributePaths = {"languageSkills"})
     @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.experienceYears >= :minExperience ORDER BY c.experienceYears DESC")
-    Page<CoordinatorCareSettings> findByExperienceYearsGreaterThanEqualWithPaging(@Param("minExperience") Integer minExperience, Pageable pageable);
+    Page<CoordinatorCareSettings> findByExperienceYearsGreaterThanEqual(@Param("minExperience") Integer minExperience, Pageable pageable);
 
     /**
-     * 현재 케이스 수가 최대치 미만인 코디네이터 조회 (언어 스킬 포함)
+     * 활성 코디네이터 조회 (언어 스킬 포함)
      */
     @EntityGraph(attributePaths = {"languageSkills"})
-    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.currentActiveCases < c.maxSimultaneousCases ORDER BY (CAST(c.currentActiveCases AS double) / c.maxSimultaneousCases) ASC")
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true ORDER BY c.customerSatisfaction DESC")
     List<CoordinatorCareSettings> findAvailableCoordinators();
     
     @EntityGraph(attributePaths = {"languageSkills"})
-    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true AND c.currentActiveCases < c.maxSimultaneousCases ORDER BY (CAST(c.currentActiveCases AS double) / c.maxSimultaneousCases) ASC")
-    Page<CoordinatorCareSettings> findAvailableCoordinatorsWithPaging(Pageable pageable);
+    @Query("SELECT c FROM CoordinatorCareSettings c WHERE c.isActive = true ORDER BY c.customerSatisfaction DESC")
+    Page<CoordinatorCareSettings> findAvailableCoordinators(Pageable pageable);
 
     /**
      * 복합 조건 매칭을 위한 고급 쿼리 (언어 스킬 포함)
@@ -173,13 +177,11 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
         AND c.baseCareLevel <= :careGrade 
         AND c.maxCareLevel >= :careGrade
         AND c.customerSatisfaction >= :minSatisfaction
-        AND c.currentActiveCases < c.maxSimultaneousCases
         AND (:region IS NULL OR :region MEMBER OF c.workingRegions)
         AND (:needsWeekend = false OR c.availableWeekends = true)
         AND (:needsEmergency = false OR c.availableEmergency = true)
         ORDER BY 
             c.customerSatisfaction DESC,
-            (CAST(c.currentActiveCases AS double) / c.maxSimultaneousCases) ASC,
             c.experienceYears DESC
         """)
     List<CoordinatorCareSettings> findOptimalMatches(
@@ -239,7 +241,6 @@ public interface CoordinatorCareSettingsRepository extends JpaRepository<Coordin
         SELECT c.* FROM coordinator_care_settings c
         WHERE c.is_active = true
         AND c.customer_satisfaction >= :minSatisfaction
-        AND c.current_active_cases < c.max_simultaneous_cases
         ORDER BY c.customer_satisfaction DESC, c.experience_years DESC
         LIMIT :maxResults
         """, nativeQuery = true)

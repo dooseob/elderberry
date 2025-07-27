@@ -50,4 +50,18 @@ public class FacilityMatchingPreference {
     public Integer getMaxMonthlyFee() {
         return maxMonthlyFee;
     }
+    
+    /**
+     * 최소 시설 등급 조회
+     */
+    public String getMinFacilityGrade() {
+        if (preferredGrades == null || preferredGrades.isEmpty()) {
+            return null;
+        }
+        // 가장 높은 등급(A)부터 낮은 등급 순으로 정렬해서 첫 번째를 반환
+        return preferredGrades.stream()
+            .sorted()
+            .findFirst()
+            .orElse(null);
+    }
 } 

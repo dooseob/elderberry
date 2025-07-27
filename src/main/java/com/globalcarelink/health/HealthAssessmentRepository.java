@@ -21,7 +21,7 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     /**
      * 회원 ID로 건강 평가 조회
      */
-    Optional<HealthAssessment> findByMemberId(Long memberId);
+    Optional<HealthAssessment> findByMemberId(String memberId);
 
     /**
      * 회원별 최신 건강 평가 조회
@@ -45,7 +45,7 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     List<HealthAssessment> findCompleteAssessments();
     
     @Query("SELECT h FROM HealthAssessment h WHERE h.mobilityLevel IS NOT NULL AND h.eatingLevel IS NOT NULL AND h.toiletLevel IS NOT NULL AND h.communicationLevel IS NOT NULL")
-    Page<HealthAssessment> findCompleteAssessmentsWithPaging(Pageable pageable);
+    Page<HealthAssessment> findCompleteAssessments(Pageable pageable);
 
     /**
      * 특정 케어 등급 범위의 평가 조회
@@ -54,7 +54,7 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     List<HealthAssessment> findByCareGradeRange(@Param("minGrade") Integer minGrade, @Param("maxGrade") Integer maxGrade);
     
     @Query("SELECT h FROM HealthAssessment h WHERE h.ltciGrade BETWEEN :minGrade AND :maxGrade ORDER BY h.assessmentDate DESC")
-    Page<HealthAssessment> findByCareGradeRangeWithPaging(@Param("minGrade") Integer minGrade, @Param("maxGrade") Integer maxGrade, Pageable pageable);
+    Page<HealthAssessment> findByCareGradeRange(@Param("minGrade") Integer minGrade, @Param("maxGrade") Integer maxGrade, Pageable pageable);
 
     /**
      * ADL 점수 범위별 조회
@@ -63,21 +63,21 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
     List<HealthAssessment> findByAdlScoreRange(@Param("minScore") Integer minScore, @Param("maxScore") Integer maxScore);
     
     @Query("SELECT h FROM HealthAssessment h WHERE h.adlScore BETWEEN :minScore AND :maxScore ORDER BY h.adlScore ASC")
-    Page<HealthAssessment> findByAdlScoreRangeWithPaging(@Param("minScore") Integer minScore, @Param("maxScore") Integer maxScore, Pageable pageable);
+    Page<HealthAssessment> findByAdlScoreRange(@Param("minScore") Integer minScore, @Param("maxScore") Integer maxScore, Pageable pageable);
 
     /**
      * 질환 유형별 평가 조회
      */
     List<HealthAssessment> findByDiseaseTypesContaining(String diseaseType);
     
-    Page<HealthAssessment> findByDiseaseTypesContainingWithPaging(String diseaseType, Pageable pageable);
+    Page<HealthAssessment> findByDiseaseTypesContaining(String diseaseType, Pageable pageable);
 
     /**
      * 출생년도 범위별 평가 조회 (연령대 조회용)
      */
     List<HealthAssessment> findByBirthYearBetween(Integer startYear, Integer endYear);
     
-    Page<HealthAssessment> findByBirthYearBetweenWithPaging(Integer startYear, Integer endYear, Pageable pageable);
+    Page<HealthAssessment> findByBirthYearBetween(Integer startYear, Integer endYear, Pageable pageable);
 
     /**
      * 재외동포 대상 평가 조회 (Member 엔티티와 조인 필요 - 추후 구현)
@@ -95,7 +95,7 @@ public interface HealthAssessmentRepository extends JpaRepository<HealthAssessme
      */
     List<HealthAssessment> findByAssessmentDateBetween(LocalDateTime startDate, LocalDateTime endDate);
     
-    Page<HealthAssessment> findByAssessmentDateBetweenWithPaging(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    Page<HealthAssessment> findByAssessmentDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     /**
      * 케어 등급별 통계

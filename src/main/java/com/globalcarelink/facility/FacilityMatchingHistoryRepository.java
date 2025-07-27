@@ -27,21 +27,24 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
      */
     List<FacilityMatchingHistory> findByUserIdOrderByCreatedAtDesc(String userId);
     
-    Page<FacilityMatchingHistory> findByUserIdOrderByCreatedAtDescWithPaging(String userId, Pageable pageable);
+    /**
+     * 사용자별 매칭 이력 조회 (페이징)
+     */
+    Page<FacilityMatchingHistory> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 
     /**
      * 시설별 매칭 이력 조회
      */
     List<FacilityMatchingHistory> findByFacilityIdOrderByCreatedAtDesc(Long facilityId);
     
-    Page<FacilityMatchingHistory> findByFacilityIdOrderByCreatedAtDescWithPaging(Long facilityId, Pageable pageable);
+    Page<FacilityMatchingHistory> findByFacilityIdOrderByCreatedAtDesc(Long facilityId, Pageable pageable);
 
     /**
      * 코디네이터별 매칭 이력 조회
      */
     List<FacilityMatchingHistory> findByCoordinatorIdOrderByCreatedAtDesc(String coordinatorId);
     
-    Page<FacilityMatchingHistory> findByCoordinatorIdOrderByCreatedAtDescWithPaging(String coordinatorId, Pageable pageable);
+    Page<FacilityMatchingHistory> findByCoordinatorIdOrderByCreatedAtDesc(String coordinatorId, Pageable pageable);
 
     /**
      * 특정 사용자-시설 조합의 최신 매칭 이력
@@ -133,7 +136,7 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
         AND h.createdAt >= :startDate
         ORDER BY h.initialMatchScore DESC
         """)
-    Page<FacilityMatchingHistory> findFailedHighScoreMatchesWithPaging(@Param("minScore") BigDecimal minScore,
+    Page<FacilityMatchingHistory> findFailedHighScoreMatches(@Param("minScore") BigDecimal minScore,
                                                            @Param("startDate") LocalDateTime startDate,
                                                            Pageable pageable);
 
@@ -142,28 +145,28 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
     /**
      * 매칭 완료까지 평균 소요 시간 분석
      */
-    @Query("""
-        SELECT AVG(EXTRACT(HOUR FROM (h.completedAt - h.createdAt))) as avgHours,
-               MIN(EXTRACT(HOUR FROM (h.completedAt - h.createdAt))) as minHours,
-               MAX(EXTRACT(HOUR FROM (h.completedAt - h.createdAt))) as maxHours
-        FROM FacilityMatchingHistory h
-        WHERE h.status = 'COMPLETED' AND h.completedAt IS NOT NULL
-        AND h.createdAt >= :startDate
-        """)
+    @Query(value = """
+        SELECT AVG(EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600) as avgHours,
+               MIN(EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600) as minHours,
+               MAX(EXTRACT(EPOCH FROM (completed_at - created_at)) / 3600) as maxHours
+        FROM facility_matching_history
+        WHERE status = 'COMPLETED' AND completed_at IS NOT NULL
+        AND created_at >= :startDate
+        """, nativeQuery = true)
     Object[] calculateAverageMatchingDuration(@Param("startDate") LocalDateTime startDate);
 
     /**
      * 단계별 평균 소요 시간 분석
      */
-    @Query("""
+    @Query(value = """
         SELECT 
-            AVG(CASE WHEN h.viewedAt IS NOT NULL THEN EXTRACT(HOUR FROM (h.viewedAt - h.createdAt)) END) as avgTimeToView,
-            AVG(CASE WHEN h.contactedAt IS NOT NULL THEN EXTRACT(HOUR FROM (h.contactedAt - h.createdAt)) END) as avgTimeToContact,
-            AVG(CASE WHEN h.visitedAt IS NOT NULL THEN EXTRACT(HOUR FROM (h.visitedAt - h.createdAt)) END) as avgTimeToVisit,
-            AVG(CASE WHEN h.selectedAt IS NOT NULL THEN EXTRACT(HOUR FROM (h.selectedAt - h.createdAt)) END) as avgTimeToSelect
-        FROM FacilityMatchingHistory h
-        WHERE h.createdAt >= :startDate
-        """)
+            AVG(CASE WHEN viewed_at IS NOT NULL THEN EXTRACT(EPOCH FROM (viewed_at - created_at)) / 3600 END) as avgTimeToView,
+            AVG(CASE WHEN contacted_at IS NOT NULL THEN EXTRACT(EPOCH FROM (contacted_at - created_at)) / 3600 END) as avgTimeToContact,
+            AVG(CASE WHEN visited_at IS NOT NULL THEN EXTRACT(EPOCH FROM (visited_at - created_at)) / 3600 END) as avgTimeToVisit,
+            AVG(CASE WHEN selected_at IS NOT NULL THEN EXTRACT(EPOCH FROM (selected_at - created_at)) / 3600 END) as avgTimeToSelect
+        FROM facility_matching_history
+        WHERE created_at >= :startDate
+        """, nativeQuery = true)
     Object[] calculateStepwiseAverageDuration(@Param("startDate") LocalDateTime startDate);
 
     // ===== 비용 분석 =====
@@ -244,6 +247,18 @@ public interface FacilityMatchingHistoryRepository extends JpaRepository<Facilit
     Page<FacilityMatchingHistory> findUnexpectedSuccessesPageable(@Param("lowScoreThreshold") BigDecimal lowScoreThreshold,
                                                                    @Param("startDate") LocalDateTime startDate,
                                                                    Pageable pageable);
+
+    // ===== 날짜 기반 조회 =====
+    
+    /**
+     * 특정 날짜 이후 생성된 매칭 이력 조회
+     */
+    List<FacilityMatchingHistory> findByCreatedAtAfter(LocalDateTime startDate);
+    
+    /**
+     * 특정 날짜 이후 생성된 매칭 이력 조회 (페이징)
+     */
+    Page<FacilityMatchingHistory> findByCreatedAtAfter(LocalDateTime startDate, Pageable pageable);
 
     // ===== 트렌드 분석 =====
 

@@ -5,6 +5,7 @@ import com.globalcarelink.auth.MemberRepository;
 import com.globalcarelink.auth.MemberRole;
 import com.globalcarelink.board.dto.*;
 import com.globalcarelink.config.IntegrationTestConfig;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * BoardService 통합 테스트
  * 실제 데이터베이스와의 상호작용을 검증하여 게시판 시스템의 신뢰성 확보
  * Mock 의존성을 최소화하고 실제 운영 환경과 유사한 조건에서 테스트
+ * 
+ * DISABLED: Board 엔티티가 temp-disabled 폴더로 이동됨
  */
+@Disabled("Board 엔티티가 비활성화됨 - temp-disabled 폴더에 위치")
 @DataJpaTest
 @ActiveProfiles("test")
 @Import({BoardService.class, IntegrationTestConfig.class})

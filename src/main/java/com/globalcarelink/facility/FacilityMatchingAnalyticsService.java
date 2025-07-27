@@ -81,7 +81,8 @@ public class FacilityMatchingAnalyticsService {
                 .matchingScore(history.getInitialMatchScore())
                 .status(history.getStatus().name())
                 .outcome(history.getOutcome() != null ? history.getOutcome().name() : null)
-                .satisfactionScore(history.getSatisfactionScore())
+                .satisfactionScore(history.getSatisfactionScore() != null ? 
+                    history.getSatisfactionScore().intValue() : null)
                 .feedback(history.getFeedback())
                 .build());
     }

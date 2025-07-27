@@ -17,7 +17,7 @@ public abstract class SystemEvent extends ApplicationEvent {
     
     private final String eventId;
     private final String traceId;
-    private final LocalDateTime timestamp;
+    private final LocalDateTime eventTimestamp;
     private final String eventType;
     private final String source;
     private final Map<String, Object> metadata;
@@ -27,7 +27,7 @@ public abstract class SystemEvent extends ApplicationEvent {
         super(source);
         this.eventId = eventId;
         this.traceId = traceId;
-        this.timestamp = LocalDateTime.now();
+        this.eventTimestamp = LocalDateTime.now();
         this.eventType = eventType;
         this.source = source.getClass().getSimpleName();
         this.metadata = metadata;

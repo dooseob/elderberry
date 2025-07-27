@@ -7,7 +7,7 @@ import { MotionScaleIn, MotionSlideUp, MotionFadeIn } from './ConditionalMotion'
 import { RefreshCw, AlertTriangle, Home } from 'lucide-react';
 import Button from './Button';
 import { devLogger, errorLogger } from '../../utils/devLogger';
-import '../../../styles/animations.css';
+import '../../styles/animations.css';
 
 interface Props {
   children?: ReactNode;

@@ -31,21 +31,21 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
      */
     List<FacilityProfile> findByFacilityNameContainingIgnoreCase(String facilityName);
     
-    Page<FacilityProfile> findByFacilityNameContainingIgnoreCaseWithPaging(String facilityName, Pageable pageable);
+    Page<FacilityProfile> findByFacilityNameContainingIgnoreCase(String facilityName, Pageable pageable);
 
     /**
      * 시설 타입별 조회
      */
     List<FacilityProfile> findByFacilityType(String facilityType);
     
-    Page<FacilityProfile> findByFacilityTypeWithPaging(String facilityType, Pageable pageable);
+    Page<FacilityProfile> findByFacilityType(String facilityType, Pageable pageable);
 
     /**
      * 시설 등급별 조회
      */
     List<FacilityProfile> findByFacilityGrade(String facilityGrade);
     
-    Page<FacilityProfile> findByFacilityGradeWithPaging(String facilityGrade, Pageable pageable);
+    Page<FacilityProfile> findByFacilityGrade(String facilityGrade, Pageable pageable);
 
     /**
      * 시설 등급 범위로 조회 (A가 가장 높음)
@@ -59,21 +59,23 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
      * 지역(시/도)별 조회
      */
     List<FacilityProfile> findByRegion(String region);
+    
+    /**
+     * 지역(시/도)별 조회 (페이징)
+     */
+    Page<FacilityProfile> findByRegion(String region, Pageable pageable);
 
     /**
      * 구/군별 조회
      */
     List<FacilityProfile> findByRegionAndDistrict(String region, String district);
-
-    /**
-     * 지역별 조회 (페이징)
-     */
-    Page<FacilityProfile> findByRegionWithPaging(String region, Pageable pageable);
-
+    
     /**
      * 구/군별 조회 (페이징)
      */
-    Page<FacilityProfile> findByRegionAndDistrictWithPaging(String region, String district, Pageable pageable);
+    Page<FacilityProfile> findByRegionAndDistrict(String region, String district, Pageable pageable);
+
+    // 중복 메서드 제거 - 위의 findByRegion(String, Pageable)과 findByRegionAndDistrict(String, String, Pageable) 사용
 
     /**
      * 복합 조건 조회 (지역 + 타입 + 등급, 페이징)

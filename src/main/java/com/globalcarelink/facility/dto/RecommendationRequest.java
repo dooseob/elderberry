@@ -1,7 +1,6 @@
 package com.globalcarelink.facility.dto;
 
 import com.globalcarelink.health.HealthAssessment;
-import com.globalcarelink.facility.FacilityProfileService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
@@ -22,5 +21,5 @@ public class RecommendationRequest {
     private HealthAssessment healthAssessment;
     
     @NotNull(message = "시설 매칭 선호도는 필수입니다")
-    private FacilityProfileService.FacilityMatchingPreference preference;
+    private FacilityMatchingPreference preference;
 }

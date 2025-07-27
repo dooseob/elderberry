@@ -19,6 +19,9 @@ import MainLayout from './components/layout/MainLayout';
 import LazyPageFallback from './components/ui/LazyPageFallback';
 import LazyLoadErrorBoundary from './components/ui/LazyLoadErrorBoundary';
 
+// 토스트 컨텍스트 프로바이더
+import { ToastProvider } from './hooks/useToast';
+
 // 지연 로딩 페이지 컴포넌트들
 import {
   LazyLoginPage,
@@ -43,8 +46,9 @@ import './App.css';
 function App() {
   return (
     <LazyLoadErrorBoundary>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
+      <ToastProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
           <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
           <Routes>
             {/* 공개 라우트 */}
@@ -221,10 +225,11 @@ function App() {
             {/* 404 페이지 - 대시보드로 리다이렉트 */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
-        </Suspense>
-      </div>
-    </Router>
-  </LazyLoadErrorBoundary>
+          </Suspense>
+          </div>
+        </Router>
+      </ToastProvider>
+    </LazyLoadErrorBoundary>
   );
 }
 

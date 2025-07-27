@@ -129,9 +129,10 @@ public class LanguageMatchingService {
         String languageCode, 
         double baseFee) {
         
-        CoordinatorLanguageSkill skill = languageSkillRepository
-            .findByCoordinatorIdAndLanguageCodeAndIsActiveTrue(coordinatorId, languageCode)
-            .orElse(null);
+        List<CoordinatorLanguageSkill> skills = languageSkillRepository
+            .findByCoordinatorIdAndLanguageCodeAndIsActiveTrue(coordinatorId, languageCode);
+        
+        CoordinatorLanguageSkill skill = skills.isEmpty() ? null : skills.get(0);
         
         if (skill == null || skill.getServiceFeeRate() == null) {
             return ServiceFeeCalculation.builder()

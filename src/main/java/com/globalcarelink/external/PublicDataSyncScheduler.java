@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * Context7 모범사례 적용 - 병렬 처리 최적화로 성능 향상
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(name = "app.scheduler.enabled", havingValue = "true", matchIfMissing = true)
 public class PublicDataSyncScheduler {
@@ -28,14 +27,22 @@ public class PublicDataSyncScheduler {
     private final PublicDataApiClient publicDataApiClient;
     
     // 전용 Executor들 주입
-    @Qualifier("schedulerTaskExecutor")
     private final AsyncTaskExecutor schedulerExecutor;
-    
-    @Qualifier("apiTaskExecutor")
     private final AsyncTaskExecutor apiExecutor;
-    
-    @Qualifier("dbTaskExecutor") 
     private final AsyncTaskExecutor dbExecutor;
+
+    public PublicDataSyncScheduler(
+            FacilitySyncService facilitySyncService,
+            PublicDataApiClient publicDataApiClient,
+            @Qualifier("schedulerTaskExecutor") AsyncTaskExecutor schedulerExecutor,
+            @Qualifier("apiTaskExecutor") AsyncTaskExecutor apiExecutor,
+            @Qualifier("dbTaskExecutor") AsyncTaskExecutor dbExecutor) {
+        this.facilitySyncService = facilitySyncService;
+        this.publicDataApiClient = publicDataApiClient;
+        this.schedulerExecutor = schedulerExecutor;
+        this.apiExecutor = apiExecutor;
+        this.dbExecutor = dbExecutor;
+    }
 
     /**
      * 전국 시설 정보 동기화 (병렬 처리 최적화)

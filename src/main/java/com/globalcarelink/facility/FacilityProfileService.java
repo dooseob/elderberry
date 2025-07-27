@@ -2,6 +2,8 @@ package com.globalcarelink.facility;
 
 import com.globalcarelink.common.exception.CustomException;
 import com.globalcarelink.facility.dto.FacilityProfileResponse;
+import com.globalcarelink.facility.dto.FacilityProfileCreateRequest;
+import com.globalcarelink.facility.dto.FacilityProfileUpdateRequest;
 import com.globalcarelink.health.HealthAssessment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,8 +133,29 @@ public class FacilityProfileService {
      */
     @Transactional
     @CachePut(value = "facility-profiles", key = "#result.id")
-    public FacilityProfile createFacility(FacilityProfile facility) {
-        log.info("시설 프로필 생성 시작 - 시설명: {}", facility.getFacilityName());
+    public FacilityProfileResponse createFacility(FacilityProfileCreateRequest request, String createdBy) {
+        log.info("시설 프로필 생성 시작 - 시설명: {}", request.getFacilityName());
+
+        // Request를 Entity로 변환
+        FacilityProfile facility = FacilityProfile.builder()
+                .facilityName(request.getFacilityName())
+                .facilityType(request.getFacilityType())
+                .facilityGrade(request.getFacilityGrade())
+                .region(request.getRegion())
+                .district(request.getDistrict())
+                .address(request.getAddress())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .totalCapacity(request.getTotalCapacity())
+                .monthlyBasicFee(request.getMonthlyBasicFee())
+                .mealCost(request.getMealCost())
+                .specializations(request.getSpecializations())
+                .hasDoctor(request.getHasDoctor())
+                .hasNurse24h(request.getHasNurse24h())
+                .isActive(true)
+                // .createdBy(createdBy) // FacilityProfile에 해당 필드가 없으면 제거
+                // .createdAt(LocalDateTime.now()) // 자동 설정되므로 제거
+                .build();
 
         // 기본값 설정
         setDefaultValues(facility);
@@ -151,7 +174,7 @@ public class FacilityProfileService {
         log.info("시설 프로필 생성 완료 - ID: {}, 시설명: {}, 등급: {}", 
                 saved.getId(), saved.getFacilityName(), saved.getFacilityGrade());
 
-        return saved;
+        return convertToResponse(saved);
     }
 
     /**
@@ -187,14 +210,14 @@ public class FacilityProfileService {
      */
     @Transactional
     @CachePut(value = "facility-profiles", key = "#facilityId")
-    public FacilityProfile updateFacility(Long facilityId, FacilityProfile updateData) {
+    public FacilityProfileResponse updateFacility(Long facilityId, FacilityProfileUpdateRequest request, String updatedBy) {
         log.info("시설 프로필 수정 시작 - ID: {}", facilityId);
 
         FacilityProfile facility = facilityProfileRepository.findById(facilityId)
                 .orElseThrow(() -> new CustomException.NotFound("시설을 찾을 수 없습니다: " + facilityId));
 
         // 수정 가능한 필드들 업데이트
-        updateFacilityFields(facility, updateData);
+        updateFacilityFields(facility, request);
 
         // 가용 침대 수 재계산
         facility.calculateAvailableBeds();
@@ -203,7 +226,7 @@ public class FacilityProfileService {
 
         log.info("시설 프로필 수정 완료 - ID: {}, 시설명: {}", facilityId, updated.getFacilityName());
 
-        return updated;
+        return convertToResponse(updated);
     }
 
     /**
@@ -385,7 +408,7 @@ public class FacilityProfileService {
     /**
      * 건강 상태 기반 시설 추천
      */
-    public List<FacilityRecommendation> recommendFacilities(HealthAssessment assessment, FacilityMatchingPreference preference) {
+    public List<com.globalcarelink.facility.dto.FacilityRecommendation> recommendFacilities(HealthAssessment assessment, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         log.info("시설 추천 시작 - 회원: {}, 케어등급: {}", assessment.getMemberId(), assessment.getOverallCareGrade());
 
         // 1. 기본 호환성 필터링
@@ -395,10 +418,16 @@ public class FacilityProfileService {
         List<FacilityProfile> filteredFacilities = applyUserPreferences(compatibleFacilities, preference);
         
         // 3. 매칭 점수 계산 및 정렬
-        List<FacilityRecommendation> recommendations = filteredFacilities.stream()
+        List<FacilityRecommendation> internalRecommendations = filteredFacilities.stream()
                 .map(facility -> calculateFacilityMatch(facility, assessment, preference))
                 .sorted(Comparator.comparing(FacilityRecommendation::getMatchScore).reversed())
-                .limit(preference.getMaxRecommendations() != null ? preference.getMaxRecommendations() : 10)
+                .limit(10) // 기본값 10개로 설정
+                .collect(Collectors.toList());
+
+        // 내부 클래스를 DTO로 변환
+        List<com.globalcarelink.facility.dto.FacilityRecommendation> recommendations = 
+                internalRecommendations.stream()
+                .map(this::convertToRecommendationDto)
                 .collect(Collectors.toList());
 
         log.info("시설 추천 완료 - 총 {}개 시설 추천", recommendations.size());
@@ -535,7 +564,7 @@ public class FacilityProfileService {
         }
     }
 
-    private void updateFacilityFields(FacilityProfile facility, FacilityProfile updateData) {
+    private void updateFacilityFields(FacilityProfile facility, FacilityProfileUpdateRequest updateData) {
         // 기본 정보 업데이트
         if (updateData.getFacilityName() != null) {
             facility.setFacilityName(updateData.getFacilityName());
@@ -600,29 +629,10 @@ public class FacilityProfileService {
         if (updateData.getHasNurse24h() != null) {
             facility.setHasNurse24h(updateData.getHasNurse24h());
         }
-        if (updateData.getNurseCount() != null) {
-            facility.setNurseCount(updateData.getNurseCount());
-        }
-        if (updateData.getCaregiverCount() != null) {
-            facility.setCaregiverCount(updateData.getCaregiverCount());
-        }
         
         // 비용 정보 업데이트
         if (updateData.getMonthlyBasicFee() != null) {
             facility.setMonthlyBasicFee(updateData.getMonthlyBasicFee());
-        }
-        if (updateData.getAdmissionFee() != null) {
-            facility.setAdmissionFee(updateData.getAdmissionFee());
-        }
-        
-        // 운영 정보 업데이트
-        if (updateData.getBusinessStatus() != null) {
-            facility.setBusinessStatus(updateData.getBusinessStatus());
-        }
-        
-        // 설명 업데이트
-        if (updateData.getDescription() != null) {
-            facility.setDescription(updateData.getDescription());
         }
     }
 
@@ -639,12 +649,12 @@ public class FacilityProfileService {
                 .collect(Collectors.toList());
     }
 
-    private List<FacilityProfile> applyUserPreferences(List<FacilityProfile> facilities, FacilityMatchingPreference preference) {
+    private List<FacilityProfile> applyUserPreferences(List<FacilityProfile> facilities, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         return facilities.stream()
                 .filter(facility -> {
                     // 지역 선호도
-                    if (preference.getPreferredRegions() != null && !preference.getPreferredRegions().isEmpty()) {
-                        if (!preference.getPreferredRegions().contains(facility.getRegion())) {
+                    if (preference.getPreferredRegion() != null && !preference.getPreferredRegion().isEmpty()) {
+                        if (!preference.getPreferredRegion().equals(facility.getRegion())) {
                             return false;
                         }
                     }
@@ -657,8 +667,8 @@ public class FacilityProfileService {
                     }
                     
                     // 예산 제한
-                    if (preference.getMaxMonthlyBudget() != null && facility.getMonthlyBasicFee() != null) {
-                        if (facility.getMonthlyBasicFee() > preference.getMaxMonthlyBudget()) {
+                    if (preference.getMaxMonthlyFee() != null && facility.getMonthlyBasicFee() != null) {
+                        if (facility.getMonthlyBasicFee() > preference.getMaxMonthlyFee()) {
                             return false;
                         }
                     }
@@ -679,7 +689,7 @@ public class FacilityProfileService {
                 .collect(Collectors.toList());
     }
 
-    private FacilityRecommendation calculateFacilityMatch(FacilityProfile facility, HealthAssessment assessment, FacilityMatchingPreference preference) {
+    private FacilityRecommendation calculateFacilityMatch(FacilityProfile facility, HealthAssessment assessment, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         double matchScore = 0.0;
         
         // 1. 시설 등급 점수 (30%)
@@ -789,7 +799,7 @@ public class FacilityProfileService {
         return Math.min(score, 5.0);
     }
 
-    private double calculateLocationScore(FacilityProfile facility, FacilityMatchingPreference preference) {
+    private double calculateLocationScore(FacilityProfile facility, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         double score = 2.5; // 기본 점수
         
         // 접근성 점수
@@ -806,14 +816,14 @@ public class FacilityProfileService {
         return Math.min(score, 5.0);
     }
 
-    private double calculateCostScore(FacilityProfile facility, FacilityMatchingPreference preference) {
+    private double calculateCostScore(FacilityProfile facility, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         double score = 2.5; // 기본 점수
         
-        if (facility.getMonthlyBasicFee() == null || preference.getMaxMonthlyBudget() == null) {
+        if (facility.getMonthlyBasicFee() == null || preference.getMaxMonthlyFee() == null) {
             return score;
         }
         
-        double costRatio = (double) facility.getMonthlyBasicFee() / preference.getMaxMonthlyBudget();
+        double costRatio = (double) facility.getMonthlyBasicFee() / preference.getMaxMonthlyFee();
         
         if (costRatio <= 0.7) {
             score = 5.0; // 예산의 70% 이하
@@ -925,19 +935,6 @@ public class FacilityProfileService {
         private final String estimatedMonthlyCost;
     }
 
-    @lombok.Builder
-    @lombok.Getter
-    @lombok.AllArgsConstructor
-    public static class FacilityMatchingPreference {
-        private final Set<String> preferredRegions;
-        private final Set<String> preferredFacilityTypes;
-        private final Integer maxMonthlyBudget;
-        private final String minFacilityGrade;
-        private final Integer maxRecommendations;
-        private final Double maxDistanceKm;
-        private final BigDecimal preferredLatitude;
-        private final BigDecimal preferredLongitude;
-    }
 
     @lombok.Builder
     @lombok.Getter
@@ -987,17 +984,17 @@ public class FacilityProfileService {
      * 매칭 추천 결과를 이력에 저장
      */
     @Transactional
-    public void recordMatchingRecommendations(String userId, String coordinatorId, 
+    public void recordMatchingRecommendations(Long userId, String coordinatorId, 
                                             List<FacilityRecommendation> recommendations,
                                             HealthAssessment assessment, 
-                                            FacilityMatchingPreference preference) {
+                                            com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         log.info("매칭 추천 이력 저장 - 사용자: {}, 추천 수: {}", userId, recommendations.size());
         
         for (int i = 0; i < recommendations.size(); i++) {
             FacilityRecommendation recommendation = recommendations.get(i);
             
             FacilityMatchingHistory history = FacilityMatchingHistory.builder()
-                .userId(userId)
+                .userId(String.valueOf(userId))
                 .facilityId(recommendation.getFacility().getId())
                 .coordinatorId(coordinatorId)
                 .initialMatchScore(BigDecimal.valueOf(recommendation.getMatchScore()).setScale(2, java.math.RoundingMode.HALF_UP))
@@ -1017,9 +1014,9 @@ public class FacilityProfileService {
      * 사용자 행동 추적 - 시설 조회
      */
     @Transactional
-    public void trackFacilityView(String userId, Long facilityId) {
+    public void trackFacilityView(Long userId, Long facilityId) {
         Optional<FacilityMatchingHistory> historyOpt = 
-            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(userId, facilityId);
+            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(String.valueOf(userId), facilityId);
             
         if (historyOpt.isPresent()) {
             FacilityMatchingHistory history = historyOpt.get();
@@ -1034,9 +1031,9 @@ public class FacilityProfileService {
      * 사용자 행동 추적 - 시설 연락
      */
     @Transactional
-    public void trackFacilityContact(String userId, Long facilityId) {
+    public void trackFacilityContact(Long userId, Long facilityId) {
         Optional<FacilityMatchingHistory> historyOpt = 
-            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(userId, facilityId);
+            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(String.valueOf(userId), facilityId);
             
         if (historyOpt.isPresent()) {
             FacilityMatchingHistory history = historyOpt.get();
@@ -1051,9 +1048,9 @@ public class FacilityProfileService {
      * 사용자 행동 추적 - 시설 방문
      */
     @Transactional
-    public void trackFacilityVisit(String userId, Long facilityId) {
+    public void trackFacilityVisit(Long userId, Long facilityId) {
         Optional<FacilityMatchingHistory> historyOpt = 
-            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(userId, facilityId);
+            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(String.valueOf(userId), facilityId);
             
         if (historyOpt.isPresent()) {
             FacilityMatchingHistory history = historyOpt.get();
@@ -1068,11 +1065,11 @@ public class FacilityProfileService {
      * 매칭 완료 처리
      */
     @Transactional
-    public void completeMatching(String userId, Long facilityId, 
+    public void completeMatching(Long userId, Long facilityId, 
                                FacilityMatchingHistory.MatchingOutcome outcome,
                                BigDecimal actualCost, BigDecimal satisfactionScore, String feedback) {
         Optional<FacilityMatchingHistory> historyOpt = 
-            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(userId, facilityId);
+            matchingHistoryRepository.findTopByUserIdAndFacilityIdOrderByCreatedAtDesc(String.valueOf(userId), facilityId);
             
         if (historyOpt.isPresent()) {
             FacilityMatchingHistory history = historyOpt.get();
@@ -1095,11 +1092,11 @@ public class FacilityProfileService {
     /**
      * 학습 기반 매칭 점수 조정
      */
-    public List<FacilityRecommendation> adjustMatchingScoresWithLearning(List<FacilityRecommendation> recommendations, 
-                                                                        String userId) {
+    public List<com.globalcarelink.facility.dto.FacilityRecommendation> adjustMatchingScoresWithLearning(List<com.globalcarelink.facility.dto.FacilityRecommendation> recommendations, 
+                                                                        Long userId) {
         // 사용자의 과거 매칭 이력을 기반으로 점수 조정
         List<FacilityMatchingHistory> userHistory = 
-            matchingHistoryRepository.findByUserIdOrderByCreatedAtDesc(userId);
+            matchingHistoryRepository.findByUserIdOrderByCreatedAtDesc(String.valueOf(userId));
             
         if (userHistory.isEmpty()) {
             return recommendations; // 이력이 없으면 원본 그대로 반환
@@ -1122,16 +1119,17 @@ public class FacilityProfileService {
         // 추천 점수 조정
         return recommendations.stream()
             .map(rec -> adjustRecommendationScore(rec, facilityTypePreference, facilityGradePreference, avgSuccessfulCost))
-            .sorted(Comparator.comparing(FacilityRecommendation::getMatchScore).reversed())
+            .sorted(Comparator.comparing(com.globalcarelink.facility.dto.FacilityRecommendation::getMatchingScore).reversed())
             .collect(Collectors.toList());
     }
 
     // ===== 학습 기반 유틸리티 메서드 =====
 
-    private String serializeMatchingCriteria(HealthAssessment assessment, FacilityMatchingPreference preference) {
+    private String serializeMatchingCriteria(HealthAssessment assessment, com.globalcarelink.facility.dto.FacilityMatchingPreference preference) {
         return String.format("{\"careGrade\":%d,\"regions\":%s,\"maxFee\":%d}", 
             assessment.getCareGradeLevel(),
-            preference.getPreferredRegions().toString(),
+            preference.getPreferredRegion() != null && !preference.getPreferredRegion().isEmpty() ? 
+                preference.getPreferredRegion() : "전국",
             preference.getMaxMonthlyFee() != null ? preference.getMaxMonthlyFee() : 0);
     }
 
@@ -1209,36 +1207,177 @@ public class FacilityProfileService {
             .orElse(0.0);
     }
 
-    private FacilityRecommendation adjustRecommendationScore(FacilityRecommendation recommendation,
-                                                           Map<String, Double> typePreference,
-                                                           Map<String, Double> gradePreference,
-                                                           double avgSuccessfulCost) {
-        double currentScore = recommendation.getMatchScore();
+    private com.globalcarelink.facility.dto.FacilityRecommendation adjustRecommendationScore(
+            com.globalcarelink.facility.dto.FacilityRecommendation recommendation,
+            Map<String, Double> typePreference,
+            Map<String, Double> gradePreference,
+            double avgSuccessfulCost) {
+        double currentScore = recommendation.getMatchingScore() != null ? recommendation.getMatchingScore() : 0.0;
         double adjustmentFactor = 1.0;
         
-        FacilityProfile facility = recommendation.getFacility();
-        
         // 시설 타입 선호도 반영
-        Double typeBonus = typePreference.get(facility.getFacilityType());
+        Double typeBonus = typePreference.get(recommendation.getFacilityType());
         if (typeBonus != null) {
             adjustmentFactor += typeBonus * 0.2; // 최대 20% 가산
         }
         
         // 시설 등급 선호도 반영
-        Double gradeBonus = gradePreference.get(facility.getFacilityGrade());
+        Double gradeBonus = gradePreference.get(recommendation.getFacilityGrade());
         if (gradeBonus != null) {
             adjustmentFactor += gradeBonus * 0.15; // 최대 15% 가산
         }
         
         // 비용 유사성 반영
-        if (avgSuccessfulCost > 0 && facility.getMonthlyBasicFee() != null) {
-            double costSimilarity = 1.0 - Math.abs(facility.getMonthlyBasicFee() - avgSuccessfulCost) / avgSuccessfulCost;
+        if (avgSuccessfulCost > 0 && recommendation.getMonthlyBasicFee() != null) {
+            double costSimilarity = 1.0 - Math.abs(recommendation.getMonthlyBasicFee() - avgSuccessfulCost) / avgSuccessfulCost;
             adjustmentFactor += Math.max(0, costSimilarity) * 0.1; // 최대 10% 가산
         }
         
         double adjustedScore = Math.min(currentScore * adjustmentFactor, 100.0);
         
-        return new FacilityRecommendation(facility, adjustedScore, 
-            recommendation.getRecommendationReason() + " (학습 기반 조정 적용)");
+        // 조정된 점수로 새로운 추천 객체 생성
+        return com.globalcarelink.facility.dto.FacilityRecommendation.builder()
+                .facilityId(recommendation.getFacilityId())
+                .facilityName(recommendation.getFacilityName())
+                .facilityType(recommendation.getFacilityType())
+                .facilityGrade(recommendation.getFacilityGrade())
+                .address(recommendation.getAddress())
+                .region(recommendation.getRegion())
+                .district(recommendation.getDistrict())
+                .matchingScore(adjustedScore)
+                .recommendationRank(recommendation.getRecommendationRank())
+                .totalCapacity(recommendation.getTotalCapacity())
+                .currentOccupancy(recommendation.getCurrentOccupancy())
+                .availableBeds(recommendation.getAvailableBeds())
+                .monthlyBasicFee(recommendation.getMonthlyBasicFee())
+                .mealCost(recommendation.getMealCost())
+                .hasDoctor(recommendation.getHasDoctor())
+                .hasNurse24h(recommendation.getHasNurse24h())
+                .recommendationReason(recommendation.getRecommendationReason() + " (학습 기반 조정 적용)")
+                .recommendedAt(recommendation.getRecommendedAt())
+                .recommendationAlgorithm(recommendation.getRecommendationAlgorithm())
+                .build();
+    }
+
+    /**
+     * 시설 전체 통계 조회
+     */
+    public FacilityStatistics getFacilityStatistics() {
+        log.info("시설 전체 통계 조회 시작");
+        
+        long totalFacilities = facilityProfileRepository.count();
+        long activeFacilities = facilityProfileRepository.findAll().stream()
+                .filter(facility -> facility.getIsActive() != null && facility.getIsActive())
+                .count();
+        
+        // 전체 사용 가능한 침대 수 계산
+        long totalAvailableBeds = facilityProfileRepository.findAll().stream()
+            .mapToLong(facility -> facility.getAvailableBeds() != null ? facility.getAvailableBeds() : 0)
+            .sum();
+            
+        // 평균 점유율 계산
+        double averageOccupancyRate = facilityProfileRepository.findAll().stream()
+            .filter(facility -> facility.getTotalCapacity() != null && facility.getTotalCapacity() > 0)
+            .mapToDouble(facility -> {
+                int totalCapacity = facility.getTotalCapacity();
+                int facilityAvailableBeds = facility.getAvailableBeds() != null ? facility.getAvailableBeds() : 0;
+                return ((double)(totalCapacity - facilityAvailableBeds) / totalCapacity) * 100;
+            })
+            .average()
+            .orElse(0.0);
+            
+        // 평균 월 비용 계산
+        int averageMonthlyFee = (int) facilityProfileRepository.findAll().stream()
+            .filter(facility -> facility.getMonthlyBasicFee() != null)
+            .mapToInt(facility -> facility.getMonthlyBasicFee())
+            .average()
+            .orElse(0.0);
+            
+        return new FacilityStatistics(
+            totalFacilities,
+            activeFacilities,
+            totalAvailableBeds,
+            Math.round(averageOccupancyRate * 100.0) / 100.0,
+            averageMonthlyFee,
+            getFacilityStatisticsByRegion(),
+            getFacilityStatisticsByType(),
+            getFacilityStatisticsByGrade(),
+            calculateAverageFeesByRegion(),
+            LocalDateTime.now()
+        );
+    }
+    
+    /**
+     * 지역별 평균 비용 계산
+     */
+    private Map<String, Double> calculateAverageFeesByRegion() {
+        return facilityProfileRepository.findAll().stream()
+            .filter(facility -> facility.getRegion() != null && facility.getMonthlyBasicFee() != null)
+            .collect(Collectors.groupingBy(
+                FacilityProfile::getRegion,
+                Collectors.averagingInt(FacilityProfile::getMonthlyBasicFee)
+            ));
+    }
+
+    /**
+     * FacilityProfile을 FacilityProfileResponse로 변환
+     */
+    private FacilityProfileResponse convertToResponse(FacilityProfile facility) {
+        return FacilityProfileResponse.builder()
+                .id(facility.getId())
+                .externalId(facility.getExternalId())
+                .facilityName(facility.getFacilityName())
+                .facilityType(facility.getFacilityType())
+                .facilityGrade(facility.getFacilityGrade())
+                .evaluationScore(facility.getEvaluationScore())
+                .phoneNumber(facility.getPhoneNumber())
+                .email(facility.getEmail())
+                .homepage(facility.getHomepage())
+                .websiteUrl(facility.getWebsiteUrl())
+                .address(facility.getAddress())
+                .region(facility.getRegion())
+                .district(facility.getDistrict())
+                .latitude(facility.getLatitude())
+                .longitude(facility.getLongitude())
+                .totalCapacity(facility.getTotalCapacity())
+                .currentOccupancy(facility.getCurrentOccupancy())
+                .availableBeds(facility.getAvailableBeds())
+                .acceptableCareGrades(facility.getAcceptableCareGrades())
+                .specializations(facility.getSpecializations())
+                .monthlyBasicFee(facility.getMonthlyBasicFee())
+                .mealCost(facility.getMealCost())
+                .hasDoctor(facility.getHasDoctor())
+                .hasNurse24h(facility.getHasNurse24h())
+                .createdAt(facility.getCreatedAt())
+                .updatedAt(facility.getUpdatedAt())
+                .build();
+    }
+
+    /**
+     * 내부 FacilityRecommendation을 DTO로 변환
+     */
+    private com.globalcarelink.facility.dto.FacilityRecommendation convertToRecommendationDto(FacilityRecommendation internal) {
+        FacilityProfile facility = internal.getFacility();
+        return com.globalcarelink.facility.dto.FacilityRecommendation.builder()
+                .facilityId(facility.getId())
+                .facilityName(facility.getFacilityName())
+                .facilityType(facility.getFacilityType())
+                .facilityGrade(facility.getFacilityGrade())
+                .address(facility.getAddress())
+                .region(facility.getRegion())
+                .district(facility.getDistrict())
+                .matchingScore(internal.getMatchScore())
+                .recommendationRank(1) // 순위는 별도 계산 필요
+                .totalCapacity(facility.getTotalCapacity())
+                .currentOccupancy(facility.getCurrentOccupancy())
+                .availableBeds(facility.getAvailableBeds())
+                .monthlyBasicFee(facility.getMonthlyBasicFee())
+                .mealCost(facility.getMealCost())
+                .hasDoctor(facility.getHasDoctor())
+                .hasNurse24h(facility.getHasNurse24h())
+                .recommendationReason(internal.getExplanation())
+                .recommendedAt(LocalDateTime.now())
+                .recommendationAlgorithm("기본 매칭")
+                .build();
     }
 }

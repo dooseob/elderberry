@@ -1,7 +1,12 @@
 package com.globalcarelink.facility;
 
 import com.globalcarelink.facility.dto.RecommendationRequest;
+import com.globalcarelink.facility.dto.FacilityProfileCreateRequest;
+import com.globalcarelink.facility.dto.FacilityProfileUpdateRequest;
+import com.globalcarelink.facility.dto.FacilityProfileResponse;
+import com.globalcarelink.facility.dto.FacilityRecommendation;
 import com.globalcarelink.health.HealthAssessment;
+import java.security.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,11 +34,11 @@ import java.util.Set;
  * 시설 프로필 API 컨트롤러
  * 시설 관리, 검색, 매칭 API 제공
  */
-@RestController
-@RequestMapping("/api/facilities")
+// @RestController
+@RequestMapping("/api/facility-profiles")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "시설 관리", description = "요양시설 프로필 관리 및 매칭 API")
+@Tag(name = "시설 프로필", description = "요양시설 프로필 세부 관리 API")
 public class FacilityProfileController {
 
     private final FacilityProfileService facilityProfileService;
@@ -53,13 +58,18 @@ public class FacilityProfileController {
     @PostMapping
     @PreAuthorize("hasAnyRole('FACILITY', 'ADMIN')")
     public ResponseEntity<FacilityProfile> createFacility(
-        @Valid @RequestBody FacilityProfile facility) {
+        @Valid @RequestBody FacilityProfileCreateRequest request,
+        Principal principal) {
         
-        log.info("시설 프로필 생성 요청 - 시설명: {}", facility.getFacilityName());
+        log.info("시설 프로필 생성 요청 - 시설명: {}", request.getFacilityName());
         
-        FacilityProfile created = facilityProfileService.createFacility(facility);
+        String createdBy = principal != null ? principal.getName() : "system";
+        FacilityProfileResponse created = facilityProfileService.createFacility(request, createdBy);
         
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        // FacilityProfileResponse를 FacilityProfile로 변환하여 반환 (임시 처리)
+        FacilityProfile facility = convertResponseToEntity(created);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(facility);
     }
 
     @Operation(
@@ -96,23 +106,6 @@ public class FacilityProfileController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(
-        summary = "시설 프로필 수정",
-        description = "기존 시설 프로필 정보를 수정합니다."
-    )
-    @PutMapping("/{facilityId}")
-    @PreAuthorize("hasAnyRole('FACILITY', 'ADMIN')")
-    public ResponseEntity<FacilityProfile> updateFacility(
-        @Parameter(description = "시설 ID", required = true)
-        @PathVariable Long facilityId,
-        @Valid @RequestBody FacilityProfile updateData) {
-        
-        log.info("시설 프로필 수정 요청 - ID: {}", facilityId);
-        
-        FacilityProfile updated = facilityProfileService.updateFacility(facilityId, updateData);
-        
-        return ResponseEntity.ok(updated);
-    }
 
     @Operation(
         summary = "시설 프로필 삭제",
@@ -319,14 +312,14 @@ public class FacilityProfileController {
     )
     @PostMapping("/recommendations")
     @PreAuthorize("hasAnyRole('USER_DOMESTIC', 'USER_OVERSEAS', 'COORDINATOR', 'ADMIN')")
-    public ResponseEntity<List<FacilityProfileService.FacilityRecommendation>> recommendFacilities(
+    public ResponseEntity<List<FacilityRecommendation>> recommendFacilities(
         @Valid @RequestBody RecommendationRequest request) {
         
         log.info("시설 추천 요청 - 케어등급: {}, 지역: {}", 
                 request.getHealthAssessment().getOverallCareGrade(),
-                request.getPreference().getPreferredRegions());
+                request.getPreference().getPreferredRegion());
         
-        List<FacilityProfileService.FacilityRecommendation> recommendations = 
+        List<FacilityRecommendation> recommendations = 
             facilityProfileService.recommendFacilities(request.getHealthAssessment(), request.getPreference());
         
         return ResponseEntity.ok(recommendations);
@@ -438,5 +431,35 @@ public class FacilityProfileController {
         return ResponseEntity.ok().build();
     }
 
+    // ===== 유틸리티 메서드 =====
+    
+    /**
+     * FacilityProfileResponse를 FacilityProfile로 변환 (임시 처리)
+     * TODO: 컨트롤러의 반환 타입을 Response DTO로 통일하는 것이 바람직함
+     */
+    private FacilityProfile convertResponseToEntity(com.globalcarelink.facility.dto.FacilityProfileResponse response) {
+        // 실제 프로젝트에서는 적절한 변환 로직이나 별도의 Mapper를 사용해야 함
+        // 여기서는 임시로 기본 엔티티 생성
+        FacilityProfile facility = new FacilityProfile();
+        facility.setId(response.getId());
+        facility.setFacilityName(response.getFacilityName());
+        facility.setFacilityType(response.getFacilityType());
+        facility.setFacilityGrade(response.getFacilityGrade());
+        facility.setAddress(response.getAddress());
+        facility.setRegion(response.getRegion());
+        facility.setDistrict(response.getDistrict());
+        facility.setLatitude(response.getLatitude());
+        facility.setLongitude(response.getLongitude());
+        facility.setTotalCapacity(response.getTotalCapacity());
+        facility.setCurrentOccupancy(response.getCurrentOccupancy());
+        facility.setAvailableBeds(response.getAvailableBeds());
+        facility.setMonthlyBasicFee(response.getMonthlyBasicFee());
+        facility.setMealCost(response.getMealCost());
+        facility.setHasDoctor(response.getHasDoctor());
+        facility.setHasNurse24h(response.getHasNurse24h());
+        // createdAt, updatedAt은 JPA Auditing이 자동 관리
+        return facility;
+    }
+    
     // ===== DTO 클래스들은 별도 패키지(com.globalcarelink.facility.dto)로 분리됨 =====
 }

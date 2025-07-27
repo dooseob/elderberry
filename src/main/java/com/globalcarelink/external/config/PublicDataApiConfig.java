@@ -133,7 +133,6 @@ public class PublicDataApiConfig {
     /**
      * 공공데이터 API 설정 정보를 로깅
      */
-    @Bean
     public void logPublicDataApiConfig() {
         log.info("=== 공공데이터 API 설정 ===");
         log.info("Base URL: {}", baseUrl);

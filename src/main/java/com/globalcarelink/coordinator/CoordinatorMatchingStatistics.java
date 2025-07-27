@@ -2,6 +2,8 @@ package com.globalcarelink.coordinator;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +16,8 @@ public class CoordinatorMatchingStatistics {
     private Long totalSuccessfulMatches;
     private Double overallMatchingSuccessRate;
     private Double averageResponseTime;
+    private List<Object[]> regionDistribution;
+    private List<Object[]> specialtyDistribution;
     
     public String getSatisfactionLevel() {
         if (averageCustomerSatisfaction == null) return "데이터 없음";

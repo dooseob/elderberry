@@ -6,7 +6,7 @@ import React, { lazy, Suspense, forwardRef, useMemo } from 'react';
 import { animationManager, withAnimation } from '../../utils/animationConfig';
 
 // Framer Motion 동적 import
-const FramerMotion = lazy(() => import('framer-motion'));
+import { motion, AnimatePresence } from 'framer-motion';
 
 // 기본 HTML 요소 래퍼
 const StaticElement = forwardRef<HTMLElement, any>(({ 
@@ -122,37 +122,23 @@ export const ConditionalMotion = forwardRef<HTMLElement, MotionProps>(({
   }
 
   // Framer Motion 사용
-  return (
-    <Suspense 
-      fallback={
-        <AnimationFallback 
-          className={className} 
-          fallbackClassName={fallbackClassName}
-        >
-          {children}
-        </AnimationFallback>
-      }
-    >
-      <FramerMotion>
-        {React.createElement(FramerMotion.motion[as], {
-          ref,
-          className,
-          style,
-          onClick,
-          onMouseEnter,
-          onMouseLeave,
-          initial: withAnimation(initial),
-          animate: withAnimation(animate),
-          exit: withAnimation(exit),
-          transition: withAnimation(transition),
-          variants: withAnimation(variants),
-          whileHover: withAnimation(whileHover),
-          whileTap: withAnimation(whileTap),
-          ...props
-        }, children)}
-      </FramerMotion>
-    </Suspense>
-  );
+  const MotionComponent = motion[as];
+  return React.createElement(MotionComponent, {
+    ref,
+    className,
+    style,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    initial: withAnimation(initial),
+    animate: withAnimation(animate),
+    exit: withAnimation(exit),
+    transition: withAnimation(transition),
+    variants: withAnimation(variants),
+    whileHover: withAnimation(whileHover),
+    whileTap: withAnimation(whileTap),
+    ...props
+  }, children);
 });
 
 ConditionalMotion.displayName = 'ConditionalMotion';
@@ -174,16 +160,10 @@ export const ConditionalAnimatePresence: React.FC<{
     return <>{children}</>;
   }
 
-  return (
-    <Suspense fallback={<>{children}</>}>
-      <FramerMotion>
-        {React.createElement(FramerMotion.AnimatePresence, {
-          mode,
-          initial: withAnimation(initial, false)
-        }, children)}
-      </FramerMotion>
-    </Suspense>
-  );
+  return React.createElement(AnimatePresence, {
+    mode,
+    initial: withAnimation(initial, false)
+  }, children);
 };
 
 /**

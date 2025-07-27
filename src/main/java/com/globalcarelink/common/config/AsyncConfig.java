@@ -5,6 +5,7 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -191,6 +192,96 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.initialize();
         
         log.info("알림 처리 실행자 설정 완료 - 코어: {}, 최대: {}", 
+                executor.getCorePoolSize(), executor.getMaxPoolSize());
+        
+        return executor;
+    }
+
+    /**
+     * 스케줄러 전용 비동기 실행자
+     * - PublicDataSyncScheduler용
+     * - 정기 작업 처리용
+     */
+    @Bean(name = "schedulerTaskExecutor")
+    public AsyncTaskExecutor schedulerTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        
+        // 스케줄러 작업에 최적화된 설정
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(25);
+        executor.setKeepAliveSeconds(120);
+        executor.setThreadNamePrefix("scheduler-");
+        
+        // 스케줄러 작업은 중요하므로 호출 스레드에서 실행
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        
+        executor.initialize();
+        
+        log.info("스케줄러 실행자 설정 완료 - 코어: {}, 최대: {}", 
+                executor.getCorePoolSize(), executor.getMaxPoolSize());
+        
+        return executor;
+    }
+
+    /**
+     * API 호출 전용 비동기 실행자
+     * - PublicDataSyncScheduler용
+     * - 외부 API 호출 처리용
+     */
+    @Bean(name = "apiTaskExecutor")
+    public AsyncTaskExecutor apiTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        
+        // API 호출에 최적화된 설정
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setKeepAliveSeconds(180);
+        executor.setThreadNamePrefix("api-");
+        
+        // API 호출 실패 시 재시도를 위해 호출 스레드에서 실행
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        
+        executor.initialize();
+        
+        log.info("API 실행자 설정 완료 - 코어: {}, 최대: {}", 
+                executor.getCorePoolSize(), executor.getMaxPoolSize());
+        
+        return executor;
+    }
+
+    /**
+     * 데이터베이스 작업 전용 비동기 실행자
+     * - PublicDataSyncScheduler용
+     * - 대량 데이터 처리용
+     */
+    @Bean(name = "dbTaskExecutor")
+    public AsyncTaskExecutor dbTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        
+        // DB 작업에 최적화된 설정
+        executor.setCorePoolSize(3);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(50);
+        executor.setKeepAliveSeconds(300);
+        executor.setThreadNamePrefix("db-");
+        
+        // DB 작업은 중요하므로 호출 스레드에서 실행
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        
+        executor.initialize();
+        
+        log.info("DB 실행자 설정 완료 - 코어: {}, 최대: {}", 
                 executor.getCorePoolSize(), executor.getMaxPoolSize());
         
         return executor;

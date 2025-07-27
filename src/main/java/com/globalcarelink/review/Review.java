@@ -425,4 +425,18 @@ public class Review extends BaseEntity {
         LocalDateTime cutoff = this.getCreatedDate().plusHours(24);
         return LocalDateTime.now().isBefore(cutoff);
     }
+    
+    /**
+     * BaseEntity의 createdAt을 getCreatedDate로 접근
+     */
+    public LocalDateTime getCreatedDate() {
+        return this.getCreatedAt();
+    }
+    
+    /**
+     * BaseEntity의 updatedAt을 getLastModifiedDate로 접근
+     */
+    public LocalDateTime getLastModifiedDate() {
+        return this.getUpdatedAt();
+    }
 }

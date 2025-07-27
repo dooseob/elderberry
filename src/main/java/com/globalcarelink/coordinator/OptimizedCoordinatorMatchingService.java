@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -235,7 +236,7 @@ public class OptimizedCoordinatorMatchingService {
         String matchReason = explanationGenerator.generateMatchReason(coordinator, assessment, matchScore);
 
         // 이미 @EntityGraph로 로드된 언어 스킬 정보 사용 (추가 쿼리 없음)
-        List<CoordinatorLanguageSkill> languageSkills = coordinator.getLanguageSkills();
+        List<CoordinatorLanguageSkill> languageSkills = new ArrayList<>(coordinator.getLanguageSkills());
 
         return CoordinatorMatch.builder()
                 .coordinatorId(coordinator.getCoordinatorId())

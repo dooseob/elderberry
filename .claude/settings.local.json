@@ -69,7 +69,9 @@
       "Bash(unset JAVA_HOME)",
       "Bash(unset PATH)",
       "Bash(unzip:*)",
-      "Bash(/home/human-08/java/bin/javac -version)"
+      "Bash(/home/human-08/java/bin/javac -version)",
+      "Bash(curl:*)",
+      "Bash(dpkg:*)"
     ],
     "deny": []
   }

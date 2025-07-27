@@ -302,6 +302,12 @@ public class FacilityProfile extends BaseEntity {
     @Column(name = "next_evaluation_date")
     private LocalDateTime nextEvaluationDate; // 다음 평가 예정일
 
+    // ===== 상태 정보 =====
+    
+    @Column(name = "is_active")
+    @Builder.Default
+    private Boolean isActive = true; // 활성 상태
+
     // ===== 추가 정보 =====
 
     @Column(name = "description", length = 1000)
@@ -475,5 +481,41 @@ public class FacilityProfile extends BaseEntity {
         }
         
         return summary.toString();
+    }
+    
+    /**
+     * 시설명 반환 (Review 엔티티와의 호환성을 위해)
+     */
+    public String getName() {
+        return this.facilityName;
+    }
+    
+    /**
+     * 시설 등급 조회 (호환성을 위해)
+     */
+    public String getGrade() {
+        return this.facilityGrade;
+    }
+    
+    /**
+     * 시설 등급 설정 (호환성을 위해)
+     */
+    public void setGrade(String grade) {
+        this.facilityGrade = grade;
+    }
+    
+    /**
+     * 마지막 업데이트 시간 설정 (호환성을 위해)
+     */
+    public void setLastUpdated(java.time.LocalDateTime lastUpdated) {
+        // JPA Auditing이 자동으로 관리하므로 별도 설정 불필요
+        // 필요시 리플렉션을 통해 설정 가능하지만 권장하지 않음
+    }
+    
+    /**
+     * 전체 주소 반환 (호환성을 위해)
+     */
+    public String getFullAddress() {
+        return this.address;
     }
 }

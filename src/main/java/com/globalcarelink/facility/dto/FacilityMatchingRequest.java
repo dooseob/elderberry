@@ -23,7 +23,7 @@ public class FacilityMatchingRequest {
      * 회원 ID (건강 평가 정보 조회용)
      */
     @NotNull(message = "회원 ID는 필수입니다")
-    private Long memberId;
+    private String memberId;
     
     /**
      * 담당 코디네이터 ID (선택사항)

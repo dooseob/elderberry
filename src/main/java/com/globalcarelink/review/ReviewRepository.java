@@ -23,13 +23,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 특정 시설의 활성 리뷰 조회 (평점 높은 순)
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.status = 'ACTIVE' ORDER BY r.overallRating DESC, r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.status = 'ACTIVE' ORDER BY r.overallRating DESC, r.createdAt DESC")
     Page<Review> findByFacilityIdAndStatusActive(@Param("facilityId") Long facilityId, Pageable pageable);
 
     /**
      * 특정 시설의 최신 리뷰 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findLatestReviewsByFacility(@Param("facilityId") Long facilityId, Pageable pageable);
 
     /**
@@ -41,13 +41,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 특정 작성자의 리뷰 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.reviewer.id = :reviewerId AND r.status != 'DELETED' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.reviewer.id = :reviewerId AND r.status != 'DELETED' ORDER BY r.createdAt DESC")
     Page<Review> findByReviewerId(@Param("reviewerId") Long reviewerId, Pageable pageable);
 
     /**
      * 평점 범위로 리뷰 검색
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.overallRating BETWEEN :minRating AND :maxRating AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.overallRating BETWEEN :minRating AND :maxRating AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findByFacilityAndRatingRange(
             @Param("facilityId") Long facilityId,
             @Param("minRating") BigDecimal minRating,
@@ -58,7 +58,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 리뷰 타입별 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.reviewType = :reviewType AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.reviewType = :reviewType AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findByFacilityAndReviewType(
             @Param("facilityId") Long facilityId,
             @Param("reviewType") Review.ReviewType reviewType,
@@ -68,19 +68,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 검증된 리뷰만 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.verified = true AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.verified = true AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findVerifiedReviewsByFacility(@Param("facilityId") Long facilityId, Pageable pageable);
 
     /**
      * 이미지가 포함된 리뷰 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND SIZE(r.imageUrls) > 0 AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND SIZE(r.imageUrls) > 0 AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findReviewsWithImagesByFacility(@Param("facilityId") Long facilityId, Pageable pageable);
 
     /**
      * 키워드로 리뷰 검색
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND (r.title LIKE %:keyword% OR r.content LIKE %:keyword%) AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND (r.title LIKE %:keyword% OR r.content LIKE %:keyword%) AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findByFacilityAndKeyword(
             @Param("facilityId") Long facilityId,
             @Param("keyword") String keyword,
@@ -96,7 +96,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 특정 기간 내 리뷰 조회
      */
-    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.createdDate BETWEEN :startDate AND :endDate AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.facility.id = :facilityId AND r.createdAt BETWEEN :startDate AND :endDate AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findReviewsByDateRange(
             @Param("facilityId") Long facilityId,
             @Param("startDate") LocalDateTime startDate,
@@ -107,13 +107,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 신고된 리뷰 조회 (관리자용)
      */
-    @Query("SELECT r FROM Review r WHERE r.reportCount > 0 ORDER BY r.reportCount DESC, r.modifiedDate DESC")
+    @Query("SELECT r FROM Review r WHERE r.reportCount > 0 ORDER BY r.reportCount DESC, r.updatedAt DESC")
     Page<Review> findReportedReviews(Pageable pageable);
 
     /**
      * 검토 대기 중인 리뷰 조회 (관리자용)
      */
-    @Query("SELECT r FROM Review r WHERE r.status = 'PENDING' ORDER BY r.createdDate ASC")
+    @Query("SELECT r FROM Review r WHERE r.status = 'PENDING' ORDER BY r.createdAt ASC")
     Page<Review> findPendingReviews(Pageable pageable);
 
     /**
@@ -156,13 +156,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 오늘 작성된 리뷰 수 조회
      */
-    @Query("SELECT COUNT(r) FROM Review r WHERE r.facility.id = :facilityId AND DATE(r.createdDate) = CURRENT_DATE AND r.status = 'ACTIVE'")
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.facility.id = :facilityId AND r.createdAt >= CURRENT_DATE AND r.createdAt < CURRENT_DATE + 1 DAY AND r.status = 'ACTIVE'")
     long countTodayReviewsByFacility(@Param("facilityId") Long facilityId);
 
     /**
      * 이번 달 작성된 리뷰 수 조회
      */
-    @Query("SELECT COUNT(r) FROM Review r WHERE r.facility.id = :facilityId AND YEAR(r.createdDate) = YEAR(CURRENT_DATE) AND MONTH(r.createdDate) = MONTH(CURRENT_DATE) AND r.status = 'ACTIVE'")
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.facility.id = :facilityId AND EXTRACT(YEAR FROM r.createdAt) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM r.createdAt) = EXTRACT(MONTH FROM CURRENT_DATE) AND r.status = 'ACTIVE'")
     long countThisMonthReviewsByFacility(@Param("facilityId") Long facilityId);
 
     /**
@@ -195,13 +195,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * 최근 인기 리뷰 조회 (전체 시설 대상)
      */
-    @Query("SELECT r FROM Review r WHERE r.status = 'ACTIVE' AND r.createdDate >= :sinceDate ORDER BY r.helpfulCount DESC, r.overallRating DESC")
+    @Query("SELECT r FROM Review r WHERE r.status = 'ACTIVE' AND r.createdAt >= :sinceDate ORDER BY r.helpfulCount DESC, r.overallRating DESC")
     Page<Review> findPopularRecentReviews(@Param("sinceDate") LocalDateTime sinceDate, Pageable pageable);
 
     /**
      * 태그별 리뷰 조회
      */
-    @Query("SELECT r FROM Review r JOIN r.tags t WHERE r.facility.id = :facilityId AND t = :tag AND r.status = 'ACTIVE' ORDER BY r.createdDate DESC")
+    @Query("SELECT r FROM Review r JOIN r.tags t WHERE r.facility.id = :facilityId AND t = :tag AND r.status = 'ACTIVE' ORDER BY r.createdAt DESC")
     Page<Review> findByFacilityAndTag(
             @Param("facilityId") Long facilityId,
             @Param("tag") String tag,

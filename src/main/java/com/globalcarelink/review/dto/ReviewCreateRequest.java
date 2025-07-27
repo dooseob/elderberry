@@ -3,7 +3,7 @@ package com.globalcarelink.review.dto;
 import com.globalcarelink.review.Review;
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

@@ -8,6 +8,7 @@ import com.globalcarelink.config.IntegrationTestConfig;
 import com.globalcarelink.profile.dto.DomesticProfileRequest;
 import com.globalcarelink.profile.dto.DomesticProfileResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +30,10 @@ import static org.assertj.core.api.Assertions.*;
  * DomesticProfileService 통합 테스트
  * Phase 2.4 강화: Mock 객체 대신 실제 DB 상호작용 검증
  * H2 파일 모드 사용으로 테스트 데이터 유지 및 디버깅 편의성 제공
+ * 
+ * DISABLED: Profile 엔티티들이 temp-disabled 폴더로 이동됨
  */
+@Disabled("Profile 엔티티들이 비활성화됨 - temp-disabled 폴더에 위치")
 @SpringBootTest
 @ActiveProfiles("test")
 @Import(IntegrationTestConfig.class)

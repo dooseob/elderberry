@@ -234,4 +234,18 @@ public class FacilityMatchingHistory extends BaseEntity {
         }
         return null;
     }
+    
+    /**
+     * 사용자 만족도 점수 조회 (호환성을 위해)
+     */
+    public BigDecimal getSatisfactionScore() {
+        return this.userSatisfactionScore;
+    }
+    
+    /**
+     * 사용자 피드백 조회 (호환성을 위해)
+     */
+    public String getFeedback() {
+        return this.userFeedback;
+    }
 }
