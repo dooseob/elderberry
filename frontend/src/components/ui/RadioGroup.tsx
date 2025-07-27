@@ -21,6 +21,8 @@ interface RadioGroupProps {
   required?: boolean;
   className?: string;
   direction?: 'vertical' | 'horizontal';
+  'aria-label'?: string;
+  'aria-describedby'?: string;
 }
 
 const RadioGroup: React.FC<RadioGroupProps> = ({
@@ -32,14 +34,26 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   required = false,
   className = '',
   direction = 'vertical',
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
 }) => {
   const containerClasses = direction === 'vertical' 
     ? 'space-y-3' 
     : 'space-x-4 flex flex-wrap';
 
+  const errorId = error ? `${name}-error` : undefined;
+  const describedBy = [ariaDescribedBy, errorId].filter(Boolean).join(' ') || undefined;
+
   return (
     <div className={className}>
-      <div className={containerClasses}>
+      <div 
+        className={containerClasses}
+        role="radiogroup"
+        aria-label={ariaLabel}
+        aria-describedby={describedBy}
+        aria-required={required}
+        aria-invalid={!!error}
+      >
         {options.map((option) => {
           const isSelected = value === option.value;
           const isDisabled = option.disabled;
@@ -71,6 +85,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
                 disabled={isDisabled}
                 required={required}
                 className="sr-only"
+                aria-describedby={option.description ? `${name}-${option.value}-desc` : undefined}
               />
               
               {/* 커스텀 라디오 버튼 */}
@@ -102,11 +117,14 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
                 </div>
                 
                 {option.description && (
-                  <div className={`
-                    text-xs mt-1
-                    ${isSelected ? 'text-elderberry-600' : 'text-elderberry-500'}
-                    ${isDisabled ? 'text-elderberry-300' : ''}
-                  `}>
+                  <div 
+                    id={`${name}-${option.value}-desc`}
+                    className={`
+                      text-xs mt-1
+                      ${isSelected ? 'text-elderberry-600' : 'text-elderberry-500'}
+                      ${isDisabled ? 'text-elderberry-300' : ''}
+                    `}
+                  >
                     {option.description}
                   </div>
                 )}
@@ -135,10 +153,13 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       {/* 에러 메시지 */}
       {error && (
         <motion.div
+          id={errorId}
           className="mt-2 text-sm text-red-600"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
+          role="alert"
+          aria-live="polite"
         >
           {error}
         </motion.div>

@@ -3,9 +3,11 @@
  * 돌봄상태, 식사형태, 질환정보 등
  */
 import React from 'react';
+import {
+  AlertTriangle,
+  FileText
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { FileText, AlertTriangle } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { CARE_TARGET_STATUS, MEAL_TYPES } from '@/types/health';
 import type { CareTargetStatus, MealType } from '@/types/health';

@@ -2,6 +2,10 @@
  * 타입 정의 통합 export 파일
  */
 
+// 공통 타입들
+export * from './api';
+export * from './errors';
+
 // 기존 타입들
 export * from './auth';
 export * from './health';

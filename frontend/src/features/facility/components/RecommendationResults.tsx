@@ -3,26 +3,25 @@
  * AI 기반 추천 시설들을 매칭 점수와 함께 표시하고, 추천 이유 설명
  */
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sparkles,
-  RefreshCw,
-  TrendingUp,
-  Heart,
-  Star,
-  Target,
-  Brain,
+  AlertCircle,
   Award,
-  Filter,
-  Settings,
-  Info,
+  Brain,
+  CheckCircle,
   ChevronDown,
   ChevronUp,
+  Filter,
+  Heart,
+  Info,
   Lightbulb,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
-
+  RefreshCw,
+  Settings,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp
+} from '../../../components/icons/LucideIcons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FacilityRecommendation, useFacilityStore } from '@/stores/facilityStore';
 import Button from '@/components/ui/Button';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';

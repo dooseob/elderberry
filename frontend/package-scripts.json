@@ -1,0 +1,83 @@
+{
+  "scripts": {
+    "arch": {
+      "description": "아키텍처 관련 스크립트들",
+      "analyze": {
+        "description": "의존성 분석 실행",
+        "script": "node dependency-analysis.js"
+      },
+      "lint": {
+        "description": "아키텍처 규칙 검증",
+        "script": "eslint src --config .eslintrc-architecture.js"
+      },
+      "lint:fix": {
+        "description": "아키텍처 규칙 자동 수정",
+        "script": "eslint src --config .eslintrc-architecture.js --fix"
+      },
+      "validate": {
+        "description": "전체 아키텍처 검증",
+        "script": "npm run arch:analyze && npm run arch:lint"
+      }
+    },
+    "quality": {
+      "description": "코드 품질 관련 스크립트들",
+      "type-check": {
+        "description": "TypeScript 타입 검사",
+        "script": "tsc --noEmit"
+      },
+      "test": {
+        "description": "테스트 실행",
+        "script": "vitest run"
+      },
+      "test:watch": {
+        "description": "테스트 감시 모드",
+        "script": "vitest"
+      },
+      "test:coverage": {
+        "description": "테스트 커버리지",
+        "script": "vitest run --coverage"
+      },
+      "audit": {
+        "description": "보안 취약점 검사",
+        "script": "npm audit --audit-level moderate"
+      }
+    },
+    "performance": {
+      "description": "성능 관련 스크립트들",
+      "analyze-bundle": {
+        "description": "번들 크기 분석",
+        "script": "npm run build && npx vite-bundle-analyzer dist"
+      },
+      "lighthouse": {
+        "description": "Lighthouse 성능 측정",
+        "script": "npm run build && npx lighthouse http://localhost:4173 --preset=desktop --output=html --output-path=./lighthouse-report.html"
+      }
+    },
+    "migration": {
+      "description": "아키텍처 마이그레이션 도구",
+      "migrate-components": {
+        "description": "기존 컴포넌트를 새 구조로 마이그레이션",
+        "script": "node scripts/migrate-components.js"
+      },
+      "migrate-stores": {
+        "description": "기존 스토어를 새 구조로 마이그레이션",
+        "script": "node scripts/migrate-stores.js"
+      },
+      "migrate-types": {
+        "description": "기존 타입을 새 구조로 마이그레이션",
+        "script": "node scripts/migrate-types.js"
+      }
+    },
+    "docs": {
+      "description": "문서화 관련 스크립트들",
+      "generate-api": {
+        "description": "API 문서 생성",
+        "script": "typedoc src --out docs/api"
+      },
+      "generate-architecture": {
+        "description": "아키텍처 문서 생성",
+        "script": "node scripts/generate-architecture-docs.js"
+      }
+    }
+  }
+}

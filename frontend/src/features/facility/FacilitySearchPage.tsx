@@ -3,21 +3,20 @@
  * 시설 검색, 필터링, 추천 결과 표시 등의 종합적인 시설 검색 UI
  */
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  Filter, 
-  MapPin, 
-  Star, 
-  Heart,
-  Settings,
-  RefreshCw,
+import {
   AlertCircle,
-  Sparkles,
+  Filter,
+  Grid,
+  Heart,
   List,
-  Grid
-} from 'lucide-react';
-
+  MapPin,
+  RefreshCw,
+  Search,
+  Settings,
+  Sparkles,
+  Star
+} from '../../components/icons/LucideIcons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useFacilitySearchResults, useFacilityLoadingStates, useFacilityErrors } from '@/stores/facilityStore';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';

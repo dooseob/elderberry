@@ -4,8 +4,12 @@
  * DRY 원칙 적용으로 코드 중복 제거
  */
 import React from 'react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Info
+} from '../icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';

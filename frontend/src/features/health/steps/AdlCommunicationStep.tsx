@@ -3,9 +3,13 @@
  * KB라이프생명 기반 인지 및 소통 능력 평가
  */
 import React from 'react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Info,
+  MessageCircle
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { MessageCircle, AlertCircle, CheckCircle2, Info } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { ADL_OPTIONS } from '@/types/health';
 import type { AdlLevel } from '@/types/health';

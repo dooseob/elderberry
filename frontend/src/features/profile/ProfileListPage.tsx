@@ -4,30 +4,30 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User,
-  Users,
-  Search,
-  Filter,
-  Globe,
-  MapPin,
-  Calendar,
-  Phone,
-  Mail,
   AlertTriangle,
+  BarChart3,
+  Calendar,
   CheckCircle,
   Clock,
-  BarChart3,
-  Plus,
-  Eye,
-  Edit,
-  Trash2,
   Download,
+  Edit,
+  Eye,
+  Filter,
+  Globe,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
   RefreshCw,
-  Loader2
-} from 'lucide-react';
+  Search,
+  Trash2,
+  User,
+  Users
+} from '../../components/icons/LucideIcons';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   useProfileStore,
   useSearchResults,
@@ -52,13 +52,13 @@ import {
   RESIDENCE_COUNTRY_OPTIONS,
   KOREA_REGION_OPTIONS
 } from '../../constants/profile';
-import { useAuth } from '../../stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 
 // ===== 메인 컴포넌트 =====
 
 const ProfileListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   
   // 스토어 상태
   const searchResults = useSearchResults();

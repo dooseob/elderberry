@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useHealthAssessmentStore } from '../stores/healthAssessmentStore';
 import { healthApi } from '../services/healthApi';
+import { devLogger, errorLogger } from '../utils/devLogger';
 import type { 
   HealthAssessmentCreateRequest, 
   AdlLevel,
@@ -167,7 +168,7 @@ export const useHealthAssessmentWizard = () => {
       try {
         await saveProgress();
       } catch (error) {
-        console.warn('자동 저장 실패:', error);
+        errorLogger.warn('자동 저장 실패', error);
         // 자동 저장 실패는 진행을 막지 않음
       }
     }
@@ -220,9 +221,9 @@ export const useHealthAssessmentWizard = () => {
       setLastSavedAt(new Date());
       setIsDirty(false);
       
-      console.log('진행상황 저장 완료');
+      devLogger.action('진행상황 저장 완료');
     } catch (error) {
-      console.error('진행상황 저장 실패:', error);
+      errorLogger.error('진행상황 저장 실패', error);
       throw error;
     }
   }, [formData, isDirty]);
@@ -251,10 +252,10 @@ export const useHealthAssessmentWizard = () => {
       setLastSavedAt(null);
       setValidationCache(new Map());
       
-      console.log('건강 평가 제출 완료:', formData);
+      devLogger.action('건강 평가 제출 완료', formData);
       return true;
     } catch (error) {
-      console.error('건강 평가 제출 실패:', error);
+      errorLogger.error('건강 평가 제출 실패', error);
       setError('submit', '제출 중 오류가 발생했습니다. 다시 시도해주세요.');
       return false;
     } finally {
@@ -322,7 +323,7 @@ export const useHealthAssessmentWizard = () => {
     if (!autoSaveEnabled || !isDirty) return;
 
     const autoSaveTimer = setTimeout(() => {
-      saveProgress().catch(console.error);
+      saveProgress().catch(errorLogger.error);
     }, 30000); // 30초 후 자동 저장
 
     return () => clearTimeout(autoSaveTimer);

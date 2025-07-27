@@ -3,21 +3,20 @@
  * 입력된 모든 정보 확인 및 평가 제출
  */
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  CheckCircle2, 
-  AlertCircle, 
-  User, 
-  Activity, 
-  Utensils, 
-  Bath, 
-  MessageCircle,
-  Shield,
+import {
+  Activity,
+  AlertCircle,
+  Bath,
+  CheckCircle2,
+  Download,
   FileText,
   Loader2,
-  Download
-} from 'lucide-react';
-
+  MessageCircle,
+  Shield,
+  User,
+  Utensils
+} from '../../../components/icons/LucideIcons';
+import { motion } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { HealthAssessmentApi } from '@/services/healthApi';
 import { ADL_OPTIONS, LTCI_GRADES, CARE_TARGET_STATUS, MEAL_TYPES } from '@/types/health';

@@ -52,7 +52,11 @@
       "WebFetch(domain:docs.spring.io)",
       "WebFetch(domain:spring.io)",
       "Bash(diff:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git clone:*)",
+      "Bash(sed:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": []
   }

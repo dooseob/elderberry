@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  Filter, 
-  BarChart3, 
-  Users, 
-  Star,
+import {
   AlertCircle,
+  BarChart3,
   CheckCircle2,
-  Loader2
-} from 'lucide-react';
+  Filter,
+  Loader2,
+  Search,
+  Star,
+  Users
+} from '../../components/icons/LucideIcons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
+import { devLogger } from '../../utils/devLogger';
 
 import { coordinatorMatchingApi, CoordinatorMatch, MatchingPreference, CoordinatorMatchingStatistics } from '@/services/coordinatorApi';
 import { HealthAssessment } from '@/types/health';
@@ -233,7 +234,7 @@ const CoordinatorMatchingWizard: React.FC<CoordinatorMatchingWizardProps> = ({
                       isSelected={selectedCoordinatorId === coordinator.coordinatorId}
                       onSelect={handleCoordinatorSelect}
                       onViewDetails={(id) => {
-                        console.log('코디네이터 상세 보기:', id);
+                        devLogger.action('코디네이터 상세 보기', { coordinatorId: id });
                       }}
                     />
                   ))}

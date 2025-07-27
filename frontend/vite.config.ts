@@ -33,15 +33,111 @@ export default defineConfig({
     outDir: '../src/main/resources/static',
     emptyOutDir: true,
     sourcemap: false, // 운영환경에서는 소스맵 제거
-    // 청크 최적화
+    target: 'es2015', // 최신 브라우저 지원
+    minify: 'terser', // 더 나은 압축
+    chunkSizeWarningLimit: 1000, // 청크 크기 경고 임계값 (KB)
+    
+    // 청크 최적화 - 지연 로딩과 연계한 번들 분리
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          query: ['@tanstack/react-query'],
-          utils: ['axios', 'zustand', 'zod']
+        // 수동 청크 분리 - 의존성별 그룹화
+        manualChunks: (id) => {
+          // 핵심 라이브러리 청크
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'react-vendor';
+          }
+          
+          // 라우팅 관련
+          if (id.includes('react-router')) {
+            return 'router';
+          }
+          
+          // 상태 관리 및 데이터 페칭
+          if (id.includes('@tanstack/react-query') || id.includes('zustand')) {
+            return 'state-management';
+          }
+          
+          // UI 라이브러리
+          if (id.includes('framer-motion') || id.includes('lucide-react')) {
+            return 'ui-libs';
+          }
+          
+          // 유틸리티 라이브러리
+          if (id.includes('axios') || id.includes('zod') || id.includes('clsx')) {
+            return 'utils';
+          }
+          
+          // 인증 관련 페이지
+          if (id.includes('/features/auth/')) {
+            return 'auth-pages';
+          }
+          
+          // 게시판 관련 페이지
+          if (id.includes('/features/boards/')) {
+            return 'board-pages';
+          }
+          
+          // 프로필 관련 페이지
+          if (id.includes('/features/profile/')) {
+            return 'profile-pages';
+          }
+          
+          // 구직/구인 관련 페이지
+          if (id.includes('/features/jobs/')) {
+            return 'job-pages';
+          }
+          
+          // 건강 평가 관련 페이지
+          if (id.includes('/features/health/')) {
+            return 'health-pages';
+          }
+          
+          // 시설 검색 관련 페이지
+          if (id.includes('/features/facility/')) {
+            return 'facility-pages';
+          }
+          
+          // 채팅 관련 페이지
+          if (id.includes('/features/chat/')) {
+            return 'chat-pages';
+          }
+          
+          // node_modules의 기타 라이브러리
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+        
+        // 파일명 패턴 최적화
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+          return `assets/[name]-[hash].js`;
+        },
+        
+        // 에셋 파일명 최적화
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1];
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext || '')) {
+            return `assets/images/[name]-[hash][extname]`;
+          }
+          if (/css/i.test(ext || '')) {
+            return `assets/css/[name]-[hash][extname]`;
+          }
+          return `assets/[name]-[hash][extname]`;
         }
+      }
+    },
+    
+    // Terser 압축 옵션
+    terserOptions: {
+      compress: {
+        drop_console: true, // console.log 제거
+        drop_debugger: true, // debugger 제거
+        pure_funcs: ['console.log', 'console.info'], // 특정 함수 제거
+      },
+      mangle: {
+        safari10: true // Safari 10 호환성
       }
     }
   },

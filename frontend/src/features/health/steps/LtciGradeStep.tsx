@@ -3,9 +3,11 @@
  * 선택사항 - 기존 등급이 있는 경우만
  */
 import React from 'react';
+import {
+  Info,
+  Shield
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { Shield, Info } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { LTCI_GRADES } from '@/types/health';
 import type { LtciGrade } from '@/types/health';

@@ -4,25 +4,24 @@
  * 만족도 평가와 피드백을 수집하여 추천 시스템 개선에 활용
  */
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X,
-  Star,
-  Heart,
-  CheckCircle,
   AlertTriangle,
-  DollarSign,
-  MessageSquare,
-  ThumbsUp,
-  ThumbsDown,
-  Send,
   Award,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Heart,
+  Lightbulb,
+  MessageSquare,
+  Send,
+  Star,
+  ThumbsDown,
+  ThumbsUp,
   TrendingUp,
   Users,
-  Clock,
-  Lightbulb,
-} from 'lucide-react';
-
+  X
+} from '../../../components/icons/LucideIcons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useSelectedFacility } from '@/stores/facilityStore';
 import Button from '@/components/ui/Button';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';

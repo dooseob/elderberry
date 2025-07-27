@@ -3,9 +3,11 @@
  * 리스트 뷰와 그리드 뷰를 지원하고, 로딩 상태와 빈 상태 처리
  */
 import React from 'react';
+import {
+  RefreshCw,
+  Search
+} from '../../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, RefreshCw } from 'lucide-react';
-
 import { FacilityProfile } from '@/stores/facilityStore';
 import FacilityCard from './FacilityCard';
 import Card, { CardContent } from '@/components/ui/Card';

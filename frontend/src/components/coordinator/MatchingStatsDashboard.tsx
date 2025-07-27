@@ -1,15 +1,15 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  X, 
-  BarChart3, 
-  Users, 
-  Star, 
-  Clock, 
-  TrendingUp,
+import {
+  Activity,
+  BarChart3,
   CheckCircle2,
-  Activity
-} from 'lucide-react';
+  Clock,
+  Star,
+  TrendingUp,
+  Users,
+  X
+} from '../icons/LucideIcons';
+import { motion } from 'framer-motion';
 import { CoordinatorMatchingStatistics } from '@/services/coordinatorApi';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';

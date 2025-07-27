@@ -3,9 +3,15 @@
  * 시설 타입, 등급, 지역, 케어 등급, 비용 등의 다양한 필터링 옵션 제공
  */
 import React, { useState } from 'react';
+import {
+  DollarSign,
+  Heart,
+  MapPin,
+  Star,
+  Users,
+  X
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { X, DollarSign, MapPin, Star, Users, Heart } from 'lucide-react';
-
 import Button from '@/components/ui/Button';
 import { FacilitySearchFilters as FilterType } from '@/stores/facilityStore';
 

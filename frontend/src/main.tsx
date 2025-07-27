@@ -8,6 +8,7 @@ import App from './App.tsx'
 
 // 전역 스타일 불러오기
 import './App.css'
+import './styles/animations.css'
 
 // React 18 루트 생성 및 렌더링
 ReactDOM.createRoot(document.getElementById('root')!).render(

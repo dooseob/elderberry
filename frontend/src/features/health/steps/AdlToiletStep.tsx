@@ -3,9 +3,13 @@
  * KB라이프생명 기반 화장실 이용 능력 평가
  */
 import React from 'react';
+import {
+  AlertCircle,
+  Bath,
+  CheckCircle2,
+  Info
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { Bath, AlertCircle, CheckCircle2, Info } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { ADL_OPTIONS } from '@/types/health';
 import type { AdlLevel } from '@/types/health';

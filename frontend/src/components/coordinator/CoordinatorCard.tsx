@@ -1,17 +1,17 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Star, 
-  MapPin, 
-  Globe, 
-  Award, 
-  Users, 
-  Clock, 
-  CheckCircle2,
+import {
   AlertCircle,
+  Award,
   Calendar,
-  Phone
-} from 'lucide-react';
+  CheckCircle2,
+  Clock,
+  Globe,
+  MapPin,
+  Phone,
+  Star,
+  Users
+} from '../icons/LucideIcons';
+import { motion } from 'framer-motion';
 import Card, { CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { CoordinatorMatch, CoordinatorLanguageSkill } from '@/services/coordinatorApi';

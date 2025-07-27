@@ -1,6 +1,13 @@
 import React from 'react';
+import {
+  Clock,
+  Globe,
+  MapPin,
+  Settings,
+  Shield,
+  X
+} from '../icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { X, Settings, Globe, MapPin, Clock, Shield } from 'lucide-react';
 import { MatchingPreference } from '@/services/coordinatorApi';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';

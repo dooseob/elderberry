@@ -3,35 +3,35 @@
  * 시설의 상세 정보, 이미지, 서비스, 위치 등을 표시하고 사용자 행동 추적 기능 포함
  */
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X,
-  MapPin,
-  Phone,
-  Users,
-  Star,
+  Activity,
+  AlertCircle,
+  Award,
+  Calendar,
+  Camera,
+  Car,
+  CheckCircle,
   Clock,
   DollarSign,
-  Award,
   Heart,
-  Calendar,
+  Home,
+  MapPin,
   MessageCircle,
   Navigation,
-  CheckCircle,
-  AlertCircle,
-  Camera,
-  Wifi,
-  Car,
-  Utensils,
+  Phone,
   Shield,
-  Activity,
-  Home,
+  Star,
   Stethoscope,
-} from 'lucide-react';
-
+  Users,
+  Utensils,
+  Wifi,
+  X
+} from '../../../components/icons/LucideIcons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useSelectedFacility } from '@/stores/facilityStore';
 import Button from '@/components/ui/Button';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 
 const FacilityDetailModal: React.FC = () => {
   const selectedFacility = useSelectedFacility();
@@ -47,6 +47,13 @@ const FacilityDetailModal: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'location' | 'reviews'>('overview');
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // 포커스 트랩 설정
+  const modalRef = useFocusTrap({
+    isActive: isDetailModalOpen,
+    initialFocus: 'button[data-close]',
+    returnFocus: true,
+  });
 
   // 모달 닫기
   const handleClose = () => {
@@ -177,12 +184,17 @@ const FacilityDetailModal: React.FC = () => {
 
         {/* 모달 콘텐츠 */}
         <motion.div
+          ref={modalRef}
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
         >
           {/* 모달 헤더 */}
           <div className="relative">
@@ -221,10 +233,12 @@ const FacilityDetailModal: React.FC = () => {
 
               {/* 닫기 버튼 */}
               <button
+                data-close
                 onClick={handleClose}
-                className="absolute top-4 right-4 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-70 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-70 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                aria-label="모달 닫기"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -232,9 +246,12 @@ const FacilityDetailModal: React.FC = () => {
             <div className="p-6 border-b">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h1 id="modal-title" className="text-2xl font-bold text-gray-900 mb-2">
                     {selectedFacility.facilityName}
                   </h1>
+                  <p id="modal-description" className="sr-only">
+                    {selectedFacility.facilityType} 시설의 상세 정보를 확인하고 연락, 방문 예약, 매칭 신청을 할 수 있습니다.
+                  </p>
                   <p className="text-gray-600 mb-2">{selectedFacility.facilityType}</p>
                   <div className="flex items-center text-gray-500">
                     <MapPin className="w-4 h-4 mr-1" />
@@ -332,7 +349,7 @@ const FacilityDetailModal: React.FC = () => {
 
           {/* 탭 네비게이션 */}
           <div className="border-b">
-            <nav className="flex px-6">
+            <nav className="flex px-6" role="tablist" aria-label="시설 정보 탭">
               {[
                 { key: 'overview', label: '개요', icon: Home },
                 { key: 'services', label: '서비스', icon: Stethoscope },
@@ -342,13 +359,17 @@ const FacilityDetailModal: React.FC = () => {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key as any)}
-                  className={`flex items-center px-4 py-3 border-b-2 font-medium text-sm ${
+                  className={`flex items-center px-4 py-3 border-b-2 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-elderberry-500 focus:ring-offset-2 ${
                     activeTab === key
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
+                  role="tab"
+                  aria-selected={activeTab === key}
+                  aria-controls={`tabpanel-${key}`}
+                  id={`tab-${key}`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
+                  <Icon className="w-4 h-4 mr-2" aria-hidden="true" />
                   {label}
                 </button>
               ))}
@@ -365,6 +386,9 @@ const FacilityDetailModal: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   className="p-6"
+                  role="tabpanel"
+                  id="tabpanel-overview"
+                  aria-labelledby="tab-overview"
                 >
                   {/* 시설 설명 */}
                   <div className="mb-6">

@@ -3,9 +3,12 @@
  * 평가 대상자의 기본 정보 수집
  */
 import React from 'react';
+import {
+  Calendar,
+  User,
+  UserCheck
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { User, Calendar, UserCheck } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import type { Gender } from '@/types/health';
 import RadioGroup from '@/components/ui/RadioGroup';

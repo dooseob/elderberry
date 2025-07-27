@@ -3,9 +3,13 @@
  * KB라이프생명 기반 단계별 돌봄지수 평가
  */
 import React, { useEffect } from 'react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight
+} from '../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react';
-
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';

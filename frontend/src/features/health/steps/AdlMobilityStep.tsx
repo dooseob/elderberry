@@ -4,9 +4,12 @@
  * AdlStepBase를 사용하여 리팩토링됨
  */
 import React from 'react';
+import {
+  Activity,
+  AlertCircle,
+  CheckCircle2
+} from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { Activity, AlertCircle, CheckCircle2 } from 'lucide-react';
-
 import AdlStepBase from '@/components/health/AdlStepBase';
 import type { AdlLevel } from '@/types/health';
 

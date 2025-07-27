@@ -4,35 +4,35 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Globe,
-  FileText,
+  AlertCircle,
   AlertTriangle,
+  ArrowLeft,
+  Calendar,
   CheckCircle,
   Clock,
-  Heart,
-  Shield,
   CreditCard,
-  Users,
-  Edit,
-  Trash2,
-  ArrowLeft,
   Download,
-  Share2,
-  Loader2,
+  Edit,
   Eye,
   EyeOff,
+  FileText,
+  Globe,
+  Heart,
+  Info,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
   RefreshCw,
-  AlertCircle,
-  Info
-} from 'lucide-react';
+  Share2,
+  Shield,
+  Trash2,
+  User,
+  Users
+} from '../../components/icons/LucideIcons';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   useProfileStore,
   useCurrentProfile,
@@ -49,7 +49,7 @@ import {
   LtciGradeInfo,
   LTCI_GRADE_INFO
 } from '../../types/profile';
-import { useAuth } from '../../stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 import { formatDate, calculateAge } from '../../utils/profileUtils';
 
 // ===== 메인 컴포넌트 =====
@@ -57,7 +57,7 @@ import { formatDate, calculateAge } from '../../utils/profileUtils';
 const ProfileDetailPage: React.FC = () => {
   const { profileType, profileId } = useParams<{ profileType: string; profileId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   
   // 스토어 상태
   const currentProfile = useCurrentProfile();

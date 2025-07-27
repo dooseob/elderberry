@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { devLogger, errorLogger } from '../utils/devLogger';
 import type { 
   HealthAssessmentCreateRequest, 
   AdlLevel,
@@ -292,7 +293,7 @@ export const persistFormData = () => {
   try {
     localStorage.setItem('health-assessment-draft', JSON.stringify(formData));
   } catch (error) {
-    console.warn('폼 데이터 저장 실패:', error);
+    errorLogger.warn('폼 데이터 저장 실패', error);
   }
 };
 
@@ -305,7 +306,7 @@ export const loadPersistedFormData = () => {
       return true;
           }
         } catch (error) {
-    console.warn('저장된 폼 데이터 로드 실패:', error);
+    errorLogger.warn('저장된 폼 데이터 로드 실패', error);
   }
   return false;
 };
@@ -314,7 +315,7 @@ export const clearPersistedFormData = () => {
   try {
     localStorage.removeItem('health-assessment-draft');
   } catch (error) {
-    console.warn('저장된 폼 데이터 삭제 실패:', error);
+    errorLogger.warn('저장된 폼 데이터 삭제 실패', error);
   }
 };
 
@@ -323,7 +324,7 @@ if (process.env.NODE_ENV === 'development') {
   useHealthAssessmentStore.subscribe(
     (state) => state.currentStep,
     (currentStep, previousStep) => {
-      console.log(`단계 변경: ${previousStep} → ${currentStep}`);
+      devLogger.log(`단계 변경: ${previousStep} → ${currentStep}`);
     }
   );
 
@@ -331,7 +332,7 @@ if (process.env.NODE_ENV === 'development') {
     (state) => Object.keys(state.errors).length,
     (errorCount) => {
       if (errorCount > 0) {
-        console.log(`에러 발생: ${errorCount}개`);
+        devLogger.log(`에러 발생: ${errorCount}개`);
       }
     }
   );
