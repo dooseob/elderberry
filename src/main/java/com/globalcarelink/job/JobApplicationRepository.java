@@ -36,6 +36,11 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     Optional<JobApplication> findByJobIdAndApplicantId(Long jobId, Long applicantId);
 
     /**
+     * ID와 지원자 ID로 지원서 조회 (수정/삭제 권한 확인용)
+     */
+    Optional<JobApplication> findByIdAndApplicantId(Long id, Long applicantId);
+
+    /**
      * 상태별 지원서 조회
      */
     @Query("SELECT ja FROM JobApplication ja WHERE ja.status = :status ORDER BY ja.createdDate DESC")

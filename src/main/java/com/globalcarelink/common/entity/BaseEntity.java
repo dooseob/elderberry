@@ -26,4 +26,13 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    // 컴파일 호환성을 위한 별칭 메서드들
+    public LocalDateTime getCreatedDate() {
+        return this.createdAt;
+    }
+    
+    public LocalDateTime getLastModifiedDate() {
+        return this.updatedAt;
+    }
 }

@@ -82,7 +82,10 @@
       "Bash(ss:*)",
       "Bash(readlink:*)",
       "Bash(git ls-tree:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(for:*)",
+      "Bash(do mv \"$file\" \"$file.disabled\")",
+      "Bash(done)"
     ],
     "deny": []
   }

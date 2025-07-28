@@ -34,9 +34,8 @@ import static org.awaitility.Awaitility.await;
  * 실제 데이터베이스와의 상호작용을 검증하여 구인구직 시스템의 신뢰성 확보
  * Mock 의존성을 최소화하고 실제 운영 환경과 유사한 조건에서 테스트
  * 
- * DISABLED: Job 엔티티가 temp-disabled 폴더로 이동됨
+ * UPDATED: Job 시스템이 복구되어 테스트 재활성화됨
  */
-@Disabled("Job 엔티티가 비활성화됨 - temp-disabled 폴더에 위치")
 @DataJpaTest
 @ActiveProfiles("test")
 @Import({JobService.class, JobApplicationService.class, IntegrationTestConfig.class})

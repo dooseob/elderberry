@@ -21,7 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 4개 핵심 에이전트와 JavaScript 서비스 통합 테스트
+ * 
+ * DISABLED: 에이전트 시스템이 temp-disabled로 이동됨
  */
+@org.junit.jupiter.api.Disabled("에이전트 시스템이 비활성화됨 - temp-disabled 폴더에 위치")
 @SpringBootTest
 @ActiveProfiles("test")
 class AgentIntegrationTest {

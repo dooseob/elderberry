@@ -76,4 +76,9 @@ public class Member extends BaseEntity {
     public boolean isStaff() {
         return this.role.isStaff();
     }
+    
+    // 컴파일 호환성을 위한 메서드들
+    public String getUsername() {
+        return this.email;  // email을 username으로 사용
+    }
 }

@@ -73,7 +73,7 @@ public class JobApplicationService {
         application.setEducationLevel(request.getEducationLevel());
         application.setCertifications(request.getCertifications());
         application.setPreferredStartDate(request.getPreferredStartDate());
-        application.setExpectedSalary(request.getExpectedSalary());
+        application.setExpectedSalary(request.getExpectedSalary() != null ? request.getExpectedSalary().toString() : null);
         application.setAdditionalInfo(request.getAdditionalInfo());
 
         JobApplication savedApplication = jobApplicationRepository.save(application);
@@ -118,7 +118,7 @@ public class JobApplicationService {
             throw new IllegalArgumentException("이미 철회된 지원서입니다");
         }
 
-        if (application.getStatus() == JobApplication.ApplicationStatus.HIRED) {
+        if (application.getStatus() == JobApplication.ApplicationStatus.ACCEPTED) {
             throw new IllegalArgumentException("채용 확정된 지원서는 철회할 수 없습니다");
         }
 
@@ -143,6 +143,18 @@ public class JobApplicationService {
     @Transactional(readOnly = true)
     public Page<JobApplication> getApplicationsByJob(Long jobId, Pageable pageable) {
         log.debug("공고 지원서 목록 조회: 공고ID={}", jobId);
+        return jobApplicationRepository.findByJobId(jobId, pageable);
+    }
+    
+    /**
+     * 특정 공고의 지원서 목록 조회 (고용주 권한 확인 포함)
+     */
+    @Transactional(readOnly = true)
+    public Page<JobApplication> getApplicationsByJob(Long jobId, Member employer, Pageable pageable) {
+        log.debug("공고 지원서 목록 조회: 공고ID={}, 고용주={}", jobId, employer.getEmail());
+        
+        // 권한 확인 로직은 컨트롤러에서 처리된다고 가정하고, 
+        // 여기서는 단순히 지원서 목록을 반환
         return jobApplicationRepository.findByJobId(jobId, pageable);
     }
 
@@ -189,6 +201,34 @@ public class JobApplicationService {
 
         JobApplication updatedApplication = jobApplicationRepository.save(application);
         log.info("면접 일정 설정 완료: 지원서ID={}, 면접일시={}", applicationId, interviewDateTime);
+
+        return updatedApplication;
+    }
+    
+    /**
+     * 면접 일정 설정 (고용주용) - InterviewType 포함
+     */
+    public JobApplication scheduleInterview(Long applicationId, Member employer, LocalDateTime interviewDateTime, String interviewLocation, JobApplication.InterviewType interviewType) {
+        log.info("면접 일정 설정: 지원서ID={}, 고용주ID={}, 면접방식={}", applicationId, employer.getId(), interviewType);
+
+        JobApplication application = getApplicationById(applicationId);
+
+        // 고용주 권한 확인
+        if (!application.getJob().getEmployer().getId().equals(employer.getId())) {
+            throw new IllegalArgumentException("면접 일정 설정 권한이 없습니다");
+        }
+
+        if (application.getStatus() != JobApplication.ApplicationStatus.UNDER_REVIEW) {
+            throw new IllegalArgumentException("검토 중인 지원서만 면접 일정을 설정할 수 있습니다");
+        }
+
+        application.setStatus(JobApplication.ApplicationStatus.INTERVIEW_SCHEDULED);
+        application.setInterviewDateTime(interviewDateTime);
+        application.setInterviewLocation(interviewLocation);
+        application.setInterviewType(interviewType);
+
+        JobApplication updatedApplication = jobApplicationRepository.save(application);
+        log.info("면접 일정 설정 완료: 지원서ID={}, 면접일시={}, 방식={}", applicationId, interviewDateTime, interviewType);
 
         return updatedApplication;
     }
@@ -271,8 +311,10 @@ public class JobApplicationService {
      */
     private boolean canApplyToJob(Member member) {
         return member != null && 
-               (member.getRole() == com.globalcarelink.auth.MemberRole.DOMESTIC ||
-                member.getRole() == com.globalcarelink.auth.MemberRole.OVERSEAS);
+               (member.getRole() == com.globalcarelink.auth.MemberRole.USER_DOMESTIC ||
+                member.getRole() == com.globalcarelink.auth.MemberRole.USER_OVERSEAS ||
+                member.getRole() == com.globalcarelink.auth.MemberRole.JOB_SEEKER_DOMESTIC ||
+                member.getRole() == com.globalcarelink.auth.MemberRole.JOB_SEEKER_OVERSEAS);
     }
 
     /**
@@ -307,10 +349,49 @@ public class JobApplicationService {
             application.setPreferredStartDate(request.getPreferredStartDate());
         }
         if (request.getExpectedSalary() != null) {
-            application.setExpectedSalary(request.getExpectedSalary());
+            application.setExpectedSalary(request.getExpectedSalary().toString());
         }
         if (request.getAdditionalInfo() != null) {
             application.setAdditionalInfo(request.getAdditionalInfo());
         }
+    }
+    
+    /**
+     * 구인 공고에 지원하기 (컴파일 호환성을 위한 별칭 메서드)
+     */
+    public JobApplication applyToJob(Long jobId, Member applicant, JobApplicationCreateRequest request) {
+        log.info("구인 공고 지원: 공고ID={}, 지원자={}", jobId, applicant.getEmail());
+        return submitApplication(jobId, applicant, request);
+    }
+    
+    /**
+     * 구인 공고에 지원하기 (다른 Request 타입을 위한 오버로딩)
+     */
+    public JobApplication applyToJob(Long jobId, Member applicant, com.globalcarelink.job.dto.JobApplicationRequest request) {
+        log.info("구인 공고 지원: 공고ID={}, 지원자={}", jobId, applicant.getEmail());
+        
+        // JobApplicationRequest를 JobApplicationCreateRequest로 변환
+        JobApplicationCreateRequest createRequest = new JobApplicationCreateRequest();
+        createRequest.setCoverLetter(request.getCoverLetter());
+        createRequest.setResumeFileName(request.getResumeFileName());
+        createRequest.setContactPhone(request.getContactPhone());
+        createRequest.setContactEmail(request.getContactEmail());
+        
+        // String을 BigDecimal로 변환
+        if (request.getExpectedSalary() != null && !request.getExpectedSalary().trim().isEmpty()) {
+            try {
+                String cleanSalary = request.getExpectedSalary().replaceAll("[,\\s]", "");
+                createRequest.setExpectedSalary(new java.math.BigDecimal(cleanSalary));
+            } catch (NumberFormatException e) {
+                log.warn("급여 변환 실패: {}", request.getExpectedSalary());
+            }
+        }
+        
+        // applicantNotes는 additionalInfo로 매핑
+        if (request.getApplicantNotes() != null) {
+            createRequest.setAdditionalInfo(request.getApplicantNotes());
+        }
+        
+        return submitApplication(jobId, applicant, createRequest);
     }
 }

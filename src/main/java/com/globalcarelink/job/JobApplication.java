@@ -126,6 +126,54 @@ public class JobApplication extends BaseEntity {
     private LocalDateTime processedAt;
 
     /**
+     * 면접 노트 (면접관 작성)
+     */
+    @Column(columnDefinition = "TEXT")
+    private String interviewNotes;
+
+    /**
+     * 상태 변경 노트
+     */
+    @Column(columnDefinition = "TEXT")
+    private String statusNote;
+
+    /**
+     * 이력서 파일 URL
+     */
+    @Column(length = 500)
+    private String resumeFileUrl;
+
+    /**
+     * 경력 연수
+     */
+    @Column
+    private Integer experienceYears;
+
+    /**
+     * 학력 수준
+     */
+    @Column(length = 100)
+    private String educationLevel;
+
+    /**
+     * 자격증
+     */
+    @Column(columnDefinition = "TEXT")
+    private String certifications;
+
+    /**
+     * 희망 시작일
+     */
+    @Column
+    private java.time.LocalDate preferredStartDate;
+
+    /**
+     * 추가 정보
+     */
+    @Column(columnDefinition = "TEXT")
+    private String additionalInfo;
+
+    /**
      * 지원서 상태 열거형
      */
     public enum ApplicationStatus {
@@ -273,5 +321,50 @@ public class JobApplication extends BaseEntity {
      */
     public boolean isActive() {
         return this.status != ApplicationStatus.WITHDRAWN;
+    }
+    
+    /**
+     * 지원서 수정 가능 여부 확인
+     */
+    public boolean isEditable() {
+        return this.status == ApplicationStatus.SUBMITTED || 
+               this.status == ApplicationStatus.UNDER_REVIEW;
+    }
+    
+    // 누락된 setter 메서드들 추가
+    public void setInterviewNotes(String interviewNotes) {
+        this.interviewNotes = interviewNotes;
+    }
+    
+    public void setStatusNote(String statusNote) {
+        this.statusNote = statusNote;
+    }
+    
+    public void setResumeFileUrl(String resumeFileUrl) {
+        this.resumeFileUrl = resumeFileUrl;
+    }
+    
+    public void setExperienceYears(Integer experienceYears) {
+        this.experienceYears = experienceYears;
+    }
+    
+    public void setEducationLevel(String educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+    
+    public void setCertifications(String certifications) {
+        this.certifications = certifications;
+    }
+    
+    public void setPreferredStartDate(java.time.LocalDate preferredStartDate) {
+        this.preferredStartDate = preferredStartDate;
+    }
+    
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+    
+    public void setInterviewType(InterviewType interviewType) {
+        this.interviewType = interviewType;
     }
 }

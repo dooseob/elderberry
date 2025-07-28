@@ -23,4 +23,9 @@ public class BoardUpdateRequest {
     @Min(value = 0, message = "정렬 순서는 0 이상이어야 합니다")
     @Max(value = 999, message = "정렬 순서는 999 이하여야 합니다")
     private Integer sortOrder;
+    
+    // 컴파일 호환성을 위한 메서드들
+    public boolean isAdminOnly() {
+        return adminOnly != null ? adminOnly : false;
+    }
 }

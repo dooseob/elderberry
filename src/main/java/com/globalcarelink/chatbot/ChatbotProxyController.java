@@ -71,8 +71,7 @@ public class ChatbotProxyController {
         WebClient.RequestBodySpec requestSpec = webClient
                 .method(org.springframework.http.HttpMethod.valueOf(method))
                 .uri(targetUrl)
-                .headers(httpHeaders -> httpHeaders.addAll(filteredHeaders))
-                .timeout(Duration.ofSeconds(timeoutSeconds));
+                .headers(httpHeaders -> httpHeaders.addAll(filteredHeaders));
 
         // POST/PUT 요청 시 바디 포함
         Mono<ResponseEntity<Object>> response;
@@ -80,11 +79,13 @@ public class ChatbotProxyController {
             response = requestSpec
                     .bodyValue(body)
                     .retrieve()
-                    .toEntity(Object.class);
+                    .toEntity(Object.class)
+                    .timeout(Duration.ofSeconds(timeoutSeconds));
         } else {
             response = requestSpec
                     .retrieve()
-                    .toEntity(Object.class);
+                    .toEntity(Object.class)
+                    .timeout(Duration.ofSeconds(timeoutSeconds));
         }
 
         // 에러 처리
@@ -103,23 +104,30 @@ public class ChatbotProxyController {
         return webClient
                 .get()
                 .uri(chatbotBaseUrl + "/health")
-                .timeout(Duration.ofSeconds(5))
                 .retrieve()
                 .toEntity(Object.class)
-                .map(response -> ResponseEntity.ok(Map.of(
-                        "status", "connected",
-                        "chatbot_service", "available",
-                        "url", chatbotBaseUrl,
-                        "timestamp", java.time.LocalDateTime.now()
-                )))
+                .timeout(Duration.ofSeconds(5))
+                .map(response -> {
+                    Map<String, Object> responseMap = new java.util.HashMap<>();
+                    responseMap.put("status", "connected");
+                    responseMap.put("chatbot_service", "available");
+                    responseMap.put("url", chatbotBaseUrl);
+                    responseMap.put("timestamp", java.time.LocalDateTime.now());
+                    return ResponseEntity.ok(responseMap);
+                })
+                .doOnError(throwable -> log.error("챗봇 상태 확인 실패: {}", throwable.getMessage()))
                 .onErrorReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                        .body(Map.of(
-                                "status", "disconnected",
-                                "chatbot_service", "unavailable",
-                                "url", chatbotBaseUrl,
-                                "error", "챗봇 서비스에 연결할 수 없습니다",
-                                "timestamp", java.time.LocalDateTime.now()
-                        )));
+                        .body(createErrorMap()));
+    }
+
+    private Map<String, Object> createErrorMap() {
+        Map<String, Object> errorMap = new java.util.HashMap<>();
+        errorMap.put("status", "disconnected");
+        errorMap.put("chatbot_service", "unavailable");
+        errorMap.put("url", chatbotBaseUrl);
+        errorMap.put("error", "챗봇 서비스에 연결할 수 없습니다");
+        errorMap.put("timestamp", java.time.LocalDateTime.now());
+        return errorMap;
     }
 
     /**

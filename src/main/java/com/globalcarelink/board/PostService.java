@@ -58,7 +58,7 @@ public class PostService {
     public Post getPostById(Long postId) {
         log.debug("게시글 조회: postId={}", postId);
         return postRepository.findByIdAndActiveTrue(postId)
-                .orElseThrow(() -> new CustomException("게시글을 찾을 수 없습니다: " + postId));
+                .orElseThrow(() -> new CustomException.NotFound("게시글을 찾을 수 없습니다: " + postId));
     }
 
     /**
@@ -66,7 +66,7 @@ public class PostService {
      */
     @Transactional
     public Post createPost(Long boardId, Member author, PostCreateRequest request) {
-        log.info("새 게시글 작성: boardId={}, author={}, title={}", boardId, author.getUsername(), request.getTitle());
+        log.info("새 게시글 작성: boardId={}, author={}, title={}", boardId, author.getEmail(), request.getTitle());
         
         // 게시판 존재 확인
         Board board = boardService.getBoardById(boardId);
@@ -88,13 +88,13 @@ public class PostService {
      */
     @Transactional
     public Post updatePost(Long postId, Member member, PostUpdateRequest request) {
-        log.info("게시글 수정: postId={}, member={}", postId, member.getUsername());
+        log.info("게시글 수정: postId={}, member={}", postId, member.getEmail());
         
         Post post = getPostById(postId);
         
         // 작성자 본인이거나 관리자만 수정 가능
         if (!post.getAuthor().getId().equals(member.getId()) && !isAdmin(member)) {
-            throw new CustomException("게시글 수정 권한이 없습니다");
+            throw new CustomException.Forbidden("게시글 수정 권한이 없습니다");
         }
         
         post.updateContent(request.getTitle(), request.getContent());
@@ -106,13 +106,13 @@ public class PostService {
      */
     @Transactional
     public void deletePost(Long postId, Member member) {
-        log.info("게시글 삭제: postId={}, member={}", postId, member.getUsername());
+        log.info("게시글 삭제: postId={}, member={}", postId, member.getEmail());
         
         Post post = getPostById(postId);
         
         // 작성자 본인이거나 관리자만 삭제 가능
         if (!post.getAuthor().getId().equals(member.getId()) && !isAdmin(member)) {
-            throw new CustomException("게시글 삭제 권한이 없습니다");
+            throw new CustomException.Forbidden("게시글 삭제 권한이 없습니다");
         }
         
         post.deactivate();

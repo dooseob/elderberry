@@ -155,6 +155,12 @@ public class MemberService {
     public long countByRole(MemberRole role) {
         return memberRepository.countByRole(role);
     }
+    
+    // 컴파일 호환성을 위한 메서드들
+    public Member findByUsername(String username) {
+        return memberRepository.findByEmail(username)
+                .orElseThrow(() -> new CustomException.NotFound("존재하지 않는 회원입니다"));
+    }
 
     private void validateRegisterRequest(MemberRegisterRequest request) {
         // 이메일 검증

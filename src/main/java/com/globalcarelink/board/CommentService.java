@@ -38,7 +38,7 @@ public class CommentService {
     public Comment getCommentById(Long commentId) {
         log.debug("댓글 조회: commentId={}", commentId);
         return commentRepository.findByIdAndActiveTrue(commentId)
-                .orElseThrow(() -> new CustomException("댓글을 찾을 수 없습니다: " + commentId));
+                .orElseThrow(() -> new CustomException.NotFound("댓글을 찾을 수 없습니다: " + commentId));
     }
 
     /**
@@ -46,7 +46,7 @@ public class CommentService {
      */
     @Transactional
     public Comment createComment(Long postId, Member author, CommentCreateRequest request) {
-        log.info("새 댓글 작성: postId={}, author={}", postId, author.getUsername());
+        log.info("새 댓글 작성: postId={}, author={}", postId, author.getEmail());
         
         // 게시글 존재 확인
         Post post = postService.getPostById(postId);
@@ -66,13 +66,13 @@ public class CommentService {
      */
     @Transactional
     public Comment updateComment(Long commentId, Member member, CommentUpdateRequest request) {
-        log.info("댓글 수정: commentId={}, member={}", commentId, member.getUsername());
+        log.info("댓글 수정: commentId={}, member={}", commentId, member.getEmail());
         
         Comment comment = getCommentById(commentId);
         
         // 작성자 본인이거나 관리자만 수정 가능
         if (!comment.getAuthor().getId().equals(member.getId()) && !isAdmin(member)) {
-            throw new CustomException("댓글 수정 권한이 없습니다");
+            throw new CustomException.Forbidden("댓글 수정 권한이 없습니다");
         }
         
         comment.updateContent(request.getContent());
@@ -84,13 +84,13 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(Long commentId, Member member) {
-        log.info("댓글 삭제: commentId={}, member={}", commentId, member.getUsername());
+        log.info("댓글 삭제: commentId={}, member={}", commentId, member.getEmail());
         
         Comment comment = getCommentById(commentId);
         
         // 작성자 본인이거나 관리자만 삭제 가능
         if (!comment.getAuthor().getId().equals(member.getId()) && !isAdmin(member)) {
-            throw new CustomException("댓글 삭제 권한이 없습니다");
+            throw new CustomException.Forbidden("댓글 삭제 권한이 없습니다");
         }
         
         comment.deactivate();

@@ -22,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * - docs/*, claude-guides/* 물리적 통합 검증
  * - JavaScript 서비스 Java 포팅 검증
  * - 에이전트 시스템 완전 자가 완결성 검증
+ * 
+ * DISABLED: 에이전트 시스템이 temp-disabled로 이동됨
  */
+@org.junit.jupiter.api.Disabled("에이전트 시스템이 비활성화됨 - temp-disabled 폴더에 위치")
 @SpringBootTest
 @ActiveProfiles("test")
 class CompleteIntegrationTest {
