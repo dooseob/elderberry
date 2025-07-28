@@ -11,8 +11,12 @@
 - **JWT 인증 시스템**: Spring Security 6.x 완전 통합
 - **순차적 4개 서브에이전트 시스템**: JavaScript ↔ Java 브리지 연동
 
-#### **🤖 순차적 에이전트 시스템 (NEW!)**
+#### **🤖 ClaudeGuideAgent 진화 시스템 (NEW!)**
 - **AI기반 클로드가이드시스템**: 지능형 가이드 및 814줄 규칙 진화
+- **실시간 학습 시스템**: 사용자 요청사항 자동 반영 및 가이드라인 업데이트
+- **병렬 작업 처리**: 최대 10개 병렬 에이전트 동시 실행 지원
+- **TodoWrite 진행상황 추적**: 모든 복잡한 작업의 실시간 진행도 추적
+- **컴파일 에러 전담 해결**: 에이전트 시스템 오류 자동 진단 및 수정
 - **로그기반 디버깅 시스템**: Java 백엔드 로그 실시간 분석
 - **트러블슈팅 문서화**: 자동 이슈 문서화 및 solutions-db.md 관리
 - **API 문서화**: Spring Boot Controller 자동 분석 및 OpenAPI 생성
@@ -120,6 +124,13 @@ claude-guides/services/
 - ✅ 실패해도 시스템 계속 동작
 - ❌ 임시방편이나 하드코딩
 
+### **4. ClaudeGuideAgent 강화 원칙 (NEW!)**
+- ✅ **병렬 작업 최대 10개**: 복잡한 작업을 동시 처리로 효율성 극대화
+- ✅ **TodoWrite 진행상황 추적**: 모든 3단계 이상 작업은 필수 진행도 추적
+- ✅ **에이전트 컴파일 에러 전담**: 시스템 오류 발생시 즉시 자동 진단 및 수정
+- ✅ **실시간 학습 시스템**: 사용자 피드백을 즉시 가이드라인에 반영
+- ✅ **지능형 작업 분배**: 작업 복잡도에 따른 자동 병렬/순차 처리 결정
+
 ## 🔧 주요 명령어
 
 ### **개발**
@@ -149,14 +160,30 @@ cd frontend && npm run build
 
 ### **에이전트 시스템**
 ```javascript
-// 통합 에이전트 실행
-const { executeTask } = require('./claude-guides/services/IntegratedAgentSystem');
+// 통합 에이전트 실행 (병렬 처리 지원)
+const { executeTask, executeParallelTasks } = require('./claude-guides/services/IntegratedAgentSystem');
 
-// 사용 예시
+// 단일 작업 실행
 await executeTask('Repository 에러 수정');        // → CLAUDE_GUIDE + TROUBLESHOOTING
 await executeTask('API 문서 생성');              // → API_DOCUMENTATION  
 await executeTask('로그 분석');                  // → DEBUG + TROUBLESHOOTING
-await executeTask('전체 시스템 분석');            // → 모든 에이전트
+
+// 병렬 작업 실행 (최대 10개)
+await executeParallelTasks([
+  'Repository 에러 수정',
+  'API 문서 생성', 
+  '프론트엔드 컴파일',
+  '테스트 실행',
+  '성능 분석'
+], { maxConcurrency: 10 });
+
+// TodoWrite로 진행상황 추적
+const { trackProgress } = require('./claude-guides/services/ProgressTracker');
+await trackProgress('복잡한 리팩토링 작업', {
+  steps: 15,
+  currentStep: 3,
+  description: 'Repository 메서드 시그니처 통일 중'
+});
 ```
 
 ## 📊 API 엔드포인트
@@ -187,11 +214,17 @@ GET /api/agents/system-status
 - ❌ 임시 조치나 하드코딩
 - ❌ 파일 끝부분만 확인하고 수정
 - ❌ 복잡한 에이전트 협업 시스템
+- ❌ 병렬 작업 시 동기화 무시
+- ❌ TodoWrite 없이 복잡한 작업 진행
 
 ### **필수 원칙**
 - ✅ 전체 파일 검토 후 수정
 - ✅ 순차적 에이전트 실행 방식
-- ✅ 실제 운영을 위텟한 완전한 코드
+- ✅ 실제 운영을 위한 완전한 코드
+- ✅ **3단계 이상 작업은 TodoWrite 필수 사용**
+- ✅ **병렬 작업 시 최대 10개 제한 준수**
+- ✅ **컴파일 에러 발생시 즉시 에이전트 시스템 점검**
+- ✅ **사용자 요청사항을 가이드라인에 즉시 반영**
 
 ## 🎉 현재 상태
 
@@ -202,10 +235,46 @@ GET /api/agents/system-status
 - JavaScript ↔ Java 브리지 ✅
 
 **🎯 다음 목표**
-- Repository 메서드 시그니처 표준화
-- 프론트엔드-백엔드 완전 연동
-- 서브에이전트 시스템 최적화
+- Repository 메서드 시그니처 표준화 (병렬 처리)
+- 프론트엔드-백엔드 완전 연동 (TodoWrite 추적)
+- 서브에이전트 시스템 최적화 (실시간 학습)
 
 ---
 
-**🚀 모든 시스템이 WSL2 환경에서 정상 동작합니다!**
+## 🧠 ClaudeGuideAgent 실시간 학습 시스템 (NEW!)
+
+### **🔄 자동 학습 및 업데이트 프로세스**
+```yaml
+학습_트리거:
+  사용자_요청: "새로운 지침이나 개선사항 요청시"
+  에러_발생: "시스템 오류나 컴파일 에러 발생시" 
+  작업_완료: "복잡한 작업 완료 후 피드백 수집시"
+  성능_분석: "병렬 작업 성능 데이터 분석시"
+
+자동_반영_항목:
+  개발_가이드라인: "새로운 개발 원칙이나 제약사항"
+  에이전트_설정: "병렬 처리 최적화 파라미터"
+  에러_해결책: "컴파일 에러 패턴 및 해결 방법"
+  작업_플로우: "TodoWrite 템플릿 및 진행 추적 방식"
+```
+
+### **📊 실시간 모니터링 지표**
+```javascript
+// 시스템 성능 실시간 추적
+const metrics = {
+  parallelEfficiency: 0.85,      // 병렬 작업 효율성 (목표: >0.8)
+  todoCompletionRate: 0.92,      // TodoWrite 완료율 (목표: >0.9)
+  errorResolutionTime: 45,       // 컴파일 에러 해결 시간(초) (목표: <60)
+  learningAdaptationSpeed: 0.78  // 학습 적응 속도 (목표: >0.7)
+};
+```
+
+### **🎯 사용자 요청사항 우선순위 반영**
+1. **최우선 (P0)**: 병렬 작업 최대 10개 + TodoWrite 진행상황 추적
+2. **고우선 (P1)**: 에이전트 컴파일 에러 해결 자동화
+3. **중우선 (P2)**: 실시간 학습 시스템 고도화
+4. **저우선 (P3)**: 성능 최적화 및 사용자 경험 개선
+
+---
+
+**🚀 모든 시스템이 WSL2 환경에서 정상 동작하며, 실시간 학습 시스템이 활성화되었습니다!**

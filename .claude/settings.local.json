@@ -75,7 +75,12 @@
       "Bash(journalctl:*)",
       "Bash(pkill:*)",
       "Bash(ssh:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(dos2unix:*)",
+      "Bash(unset:*)",
+      "Bash(unset org.gradle.java.home)",
+      "Bash(ss:*)",
+      "Bash(readlink:*)"
     ],
     "deny": []
   }
