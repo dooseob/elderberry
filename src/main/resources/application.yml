@@ -4,6 +4,27 @@ spring:
     name: elderberry
   profiles:
     active: dev
+    
+# 로깅 설정 (환경별 제어)
+logging:
+  level:
+    root: INFO
+    com.globalcarelink: INFO
+    com.globalcarelink.agents: DEBUG        # 개발시 에이전트 상세 로그
+    web: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 에이전트 시스템 설정
+agents:
+  debug:
+    enabled: true                           # 개발시 디버그 에이전트 활성화
+    log-level: DEBUG
+  sequential:
+    enabled: true
+    max-execution-time: 30000               # 30초 타임아웃
+  monitoring:
+    enabled: true                           # 에이전트 모니터링 활성화
   
   # 데이터베이스 설정
   datasource:

@@ -307,6 +307,76 @@ const agentConfigs = {
     dependencies: ["implementer"],
     priority: 70,
     critical: false
+  },
+
+  // ✨ 새로운 특화 서브에이전트들 ✨
+  
+  intelligent_guide: {
+    description: "AI기반 지능형 가이드 및 컨텍스트 분석",
+    input: ["query", "project_context"],
+    output: ["contextual_analysis", "pattern_recommendations", "best_practices", "code_examples"],
+    dependencies: [],
+    priority: 110,
+    critical: false,
+    execute: async (input) => {
+      try {
+        const { intelligentGuideAgent } = require('../../claude-guides/services/IntelligentGuideAgent');
+        return await intelligentGuideAgent.executeWithMCPIntegration(input);
+      } catch (error) {
+        return { success: false, error: error.message, agent: 'intelligent_guide' };
+      }
+    }
+  },
+
+  log_debugger: {
+    description: "로그기반 디버깅 및 자동 진단",
+    input: ["log_file_path", "analysis_options"],
+    output: ["log_analysis", "error_patterns", "performance_metrics", "recommendations"],
+    dependencies: [],
+    priority: 95,
+    critical: false,
+    execute: async (input) => {
+      try {
+        const { logBasedDebuggingAgent } = require('../../claude-guides/services/LogBasedDebuggingAgent');
+        return await logBasedDebuggingAgent.executeWithMCPIntegration(input);
+      } catch (error) {
+        return { success: false, error: error.message, agent: 'log_debugger' };
+      }
+    }
+  },
+
+  troubleshooting_doc: {
+    description: "트러블슈팅 및 이슈 자동 문서화",
+    input: ["issue_data", "documentation_type"],
+    output: ["documentation", "issue_patterns", "solution_recommendations", "knowledge_base_update"],
+    dependencies: ["log_debugger"],
+    priority: 75,
+    critical: false,
+    execute: async (input) => {
+      try {
+        const { troubleshootingDocumentationAgent } = require('../../claude-guides/services/TroubleshootingDocumentationAgent');
+        return await troubleshootingDocumentationAgent.executeWithMCPIntegration(input);
+      } catch (error) {
+        return { success: false, error: error.message, agent: 'troubleshooting_doc' };
+      }
+    }
+  },
+
+  api_documenter: {
+    description: "API 자동 문서화 및 OpenAPI 스펙 생성",
+    input: ["controller_files", "project_path"],
+    output: ["api_documentation", "openapi_spec", "test_cases", "security_analysis"],
+    dependencies: ["analyzer"],
+    priority: 65,
+    critical: false,
+    execute: async (input) => {
+      try {
+        const { apiDocumentationAgent } = require('../../claude-guides/services/ApiDocumentationAgent');
+        return await apiDocumentationAgent.executeWithMCPIntegration(input);
+      } catch (error) {
+        return { success: false, error: error.message, agent: 'api_documenter' };
+      }
+    }
   }
 };
 

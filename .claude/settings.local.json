@@ -73,7 +73,9 @@
       "Bash(curl:*)",
       "Bash(dpkg:*)",
       "Bash(journalctl:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(ssh:*)",
+      "Bash(git remote set-url:*)"
     ],
     "deny": []
   }
