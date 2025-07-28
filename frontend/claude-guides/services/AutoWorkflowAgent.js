@@ -18,7 +18,7 @@ class AutoWorkflowAgent {
   /**
    * 메인 워크플로우 실행
    * @param {string} taskRequest - 사용자 작업 요청
-   * @param {object} options - 실행 옵션
+   * @param {object} options - 실행 옵션 (complexity 포함)
    */
   async executeWorkflow(taskRequest, options = {}) {
     console.log('🚀 자동 워크플로우 시작:', taskRequest);
@@ -37,9 +37,9 @@ class AutoWorkflowAgent {
       const guidelines = await this.checkGuidelines();
       this.logStep('guidelines_check', { success: true, guidelines: guidelines.summary });
 
-      // 2단계: 작업 분석 및 계획
+      // 2단계: 작업 분석 및 계획 (외부 복잡도 사용)
       console.log('🔍 2단계: 작업 분석 및 계획');
-      const taskAnalysis = await this.analyzeTask(taskRequest, guidelines);
+      const taskAnalysis = await this.analyzeTask(taskRequest, guidelines, options.complexity);
       this.logStep('task_analysis', taskAnalysis);
 
       // 3단계: 순차적 서브에이전트 실행
@@ -101,10 +101,10 @@ class AutoWorkflowAgent {
   }
 
   /**
-   * 작업 분석 및 실행 계획 수립
+   * 작업 분석 및 실행 계획 수립 (외부에서 복잡도 제공)
    */
-  async analyzeTask(taskRequest, guidelines) {
-    const complexity = this.calculateComplexity(taskRequest);
+  async analyzeTask(taskRequest, guidelines, externalComplexity = null) {
+    const complexity = externalComplexity || this.calculateComplexity(taskRequest);
     const requiredMCPTools = this.determineMCPTools(taskRequest);
     const agentChain = this.planAgentChain(complexity, taskRequest);
 
