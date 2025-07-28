@@ -1,10 +1,44 @@
 /**
  * 실용적이고 즉시 적용 가능한 순차적 에이전트 솔루션
  * 복잡한 시스템 대신 간단하고 효과적인 접근법
+ * 자동 워크플로우 (작업요청 → 지침확인 → 에이전트실행 → 커밋/푸시) 통합
  */
 
+const { AutoWorkflowAgent } = require('../services/AutoWorkflowAgent');
+
+// 자동 워크플로우 에이전트 인스턴스
+const workflowAgent = new AutoWorkflowAgent();
+
 /**
- * 가장 간단한 순차적 에이전트 실행
+ * 자돐 워크플로우를 통한 순차적 에이전트 실행
+ * 작업요청 → CLAUDE.md 지침확인 → 순차적 에이전트 → 자동 커밋/푸시
+ */
+async function executeAutoWorkflow(taskDescription, options = {}) {
+  console.log(`🚀 자동 워크플로우 시작: ${taskDescription}`);
+  
+  try {
+    // 자동 워크플로우 실행
+    const result = await workflowAgent.executeWorkflow(taskDescription, {
+      autoCommit: options.autoCommit !== false, // 기본적으로 자동 커밋 활성화
+      autoPush: options.autoPush !== false,     // 기본적으로 자동 푸시 활성화
+      ...options
+    });
+    
+    console.log('✅ 자동 워크플로우 완료');
+    return result;
+    
+  } catch (error) {
+    console.error('❌ 자동 워크플로우 실패:', error);
+    return {
+      success: false,
+      error: error.message,
+      recommendation: '수동으로 작업을 진행하거나 에러를 확인해주세요'
+    };
+  }
+}
+
+/**
+ * 기존 간단한 순차적 에이전트 실행 (호환성 유지)
  * 복잡한 상호 호출 없이 단순한 체인 실행
  */
 async function executeSimpleAgentChain(taskDescription) {
@@ -297,8 +331,14 @@ async function demonstrateUsage() {
 }
 
 module.exports = {
-  executeSimpleAgentChain,
+  // 새로운 자동 워크플로우 기능
+  executeAutoWorkflow,
   handleMaxCommand,
+  getWorkflowStatus,
+  executeManualWorkflow,
+  
+  // 기존 호환성 유지
+  executeSimpleAgentChain,
   demonstrateUsage,
   runAnalysisAgent,
   runPlanningAgent,

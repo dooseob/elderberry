@@ -184,37 +184,37 @@ cd frontend && npm run build
 ./build-deploy.ps1
 ```
 
-### **순차적 에이전트 시스템 (정리된 실용 버전)**
+### **자동 워크플로우 순차적 에이전트 시스템 (NEW!)**
 ```javascript
-// 간단하고 실용적인 에이전트 사용법
-const { handleMaxCommand } = require('./frontend/claude-guides/migration/SimplePracticalSolution');
-const { executeSequentialAgents } = require('./frontend/claude-guides/services/SequentialAgentOrchestrator');
+// 자동 워크플로우: 작업요청 → CLAUDE.md 지침확인 → 순차적 에이전트 → 자동 커밋/푸시
+const { executeAutoWorkflow, handleMaxCommand } = require('./frontend/claude-guides/migration/SimplePracticalSolution');
 
-// /max 명령어로 순차적 에이전트 실행
-await handleMaxCommand('/max TypeScript 에러 수정해줘');     // → analyzer만 실행
-await handleMaxCommand('/max React 컴포넌트 성능 최적화');    // → analyzer → planner → implementer
-await handleMaxCommand('/max 전체 아키텍처 개선');           // → 전체 체인 실행
+// 1. 간단한 /max 명령어 사용 (전체 워크플로우 자동 실행)
+await handleMaxCommand('/max TypeScript 에러 수정해줘');     // → 지침확인 → analyzer → 자동커밋
+await handleMaxCommand('/max React 컴포넌트 성능 최적화');    // → 지침확인 → 전체체인 → 자동커밋
 
-// MCP 도구들을 활용한 고급 사용법
-const result = await executeSequentialAgents([
-  { name: 'analyzer', input: { target: 'src/components' }, tools: ['sequential-thinking', 'file-system'] },
-  { name: 'planner', input: { analysis: result.output }, tools: ['memory-bank', 'context7'] },
-  { name: 'implementer', input: { plan: result.output }, tools: ['file-system', 'github'] }
-]);
+// 2. 수동 워크플로우 제어 (고급 사용법)
+const result = await executeAutoWorkflow('전체 아키텍처 개선', {
+  autoCommit: true,      // 자동 커밋 활성화
+  autoPush: false,       // 수동 푸시
+  mcpTools: ['sequential-thinking', 'file-system', 'github']
+});
 
-// 가능한 MCP 도구들
-const mcpTools = {
-  'sequential-thinking': '단계별 논리적 사고 지원',
-  'file-system': '파일 시스템 접근 및 조작',
-  'github': 'GitHub API 연동 및 리포지토리 관리',
-  'memory-bank': '지식 저장소 및 컨텍스트 관리',
-  'context7': '장기 컨텍스트 유지 및 반영'
-};
+// 3. 워크플로우 단계별 상세 내용
+/*
+자동 워크플로우 실행 단계:
+1단계: CLAUDE.md 지침 확인 및 파싱
+2단계: 작업 분석 및 실행 계획 수립
+3단계: 순차제 에이전트 실행 (MCP 도구 활용)
+4단계: 자동 git add + commit + push
+5단계: 결과 요약 및 차후 추천사항 제공
+*/
 
 // 실행 결과 모니터링
-console.log(`성공: ${result.successful}, 실패: ${result.failed}`);
-console.log(`실행시간: ${result.totalTime}ms, 품질: ${result.quality}`);
-console.log(`사용된 MCP 도구: ${result.usedTools.join(', ')}`);
+console.log(`성공: ${result.agentResults.successful}, 실패: ${result.agentResults.failed}`);
+console.log(`실행시간: ${result.totalTime}ms`);
+console.log(`커밋 여부: ${result.workflow.committed}`);
+console.log(`추천사항: ${result.recommendations.join(', ')}`);
 ```
 
 ## 📊 API 엔드포인트
