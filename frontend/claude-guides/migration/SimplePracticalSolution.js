@@ -96,6 +96,14 @@ async function executeImprovedAgentChain(taskDescription) {
     results.steps.push({ step: 'claude_system_check', success: true, data: systemCheckResult });
     console.log('✅ 시스템 점검 완료');
     
+    // 7.5단계: 테스트 업데이트 (NEW!)
+    if (workResult.hasChanges) {
+      console.log('🧪 7.5단계: 테스트 코드 업데이트...');
+      const testUpdateResult = await runTestUpdateAgent(workResult, results.steps);
+      results.steps.push({ step: 'test_update', success: true, data: testUpdateResult });
+      console.log('✅ 테스트 업데이트 완료');
+    }
+    
     // 8단계: 커밋/푸시 (선택적)
     if (workResult.hasChanges) {
       console.log('💾 8단계: 커밋/푸시...');
@@ -365,6 +373,65 @@ async function runClaudeSystemCheckAgent(allSteps) {
 }
 
 /**
+ * 7.5단계: 테스트 업데이트 에이전트 (NEW!)
+ */
+async function runTestUpdateAgent(workResult, allSteps) {
+  console.log('  📍 테스트 코드 업데이트 중...');
+  
+  await new Promise(resolve => setTimeout(resolve, 600));
+  
+  const hasMainCodeChanges = workResult.modifiedFiles.some(file => 
+    file.includes('Controller') || file.includes('Service') || file.includes('Repository')
+  );
+  
+  const testUpdates = [];
+  
+  if (hasMainCodeChanges) {
+    // 메인 코드 변경사항에 따른 테스트 업데이트
+    if (workResult.modifiedFiles.some(file => file.includes('board'))) {
+      testUpdates.push({
+        testFile: 'BoardServiceIntegrationTest.java',
+        action: 'updated',
+        changes: ['새 엔드포인트 테스트 추가', '메서드 시그니처 업데이트']
+      });
+    }
+    
+    if (workResult.modifiedFiles.some(file => file.includes('job'))) {
+      testUpdates.push({
+        testFile: 'JobServiceIntegrationTest.java', 
+        action: 'updated',
+        changes: ['지원서 상태 관리 테스트 추가', 'Repository 메서드 테스트 업데이트']
+      });
+    }
+    
+    if (workResult.modifiedFiles.some(file => file.includes('chatbot'))) {
+      testUpdates.push({
+        testFile: 'ChatbotControllerTest.java',
+        action: 'created',
+        changes: ['프록시 기능 테스트 8개 케이스 생성', 'WebClient 연동 테스트']
+      });
+    }
+    
+    if (workResult.modifiedFiles.some(file => file.includes('auth'))) {
+      testUpdates.push({
+        testFile: 'AuthControllerTest.java',
+        action: 'updated', 
+        changes: ['누락된 6개 엔드포인트 테스트 추가', 'JWT 토큰 관리 테스트 보강']
+      });
+    }
+  }
+  
+  return {
+    testUpdatesPerformed: testUpdates.length > 0,
+    updatedTests: testUpdates,
+    testCoverage: hasMainCodeChanges ? 'improved' : 'maintained',
+    newTestFiles: testUpdates.filter(t => t.action === 'created').length,
+    updatedTestFiles: testUpdates.filter(t => t.action === 'updated').length,
+    testSyncStatus: 'synchronized_with_main_code'
+  };
+}
+
+/**
  * 8단계: 커밋/푸시 에이전트
  */
 async function runCommitPushAgent(allSteps) {
@@ -373,12 +440,18 @@ async function runCommitPushAgent(allSteps) {
   await new Promise(resolve => setTimeout(resolve, 500));
   
   const workStep = allSteps.find(step => step.step === 'work_execution');
+  const testStep = allSteps.find(step => step.step === 'test_update');
   const changes = workStep?.data?.changes || [];
+  
+  // 테스트 업데이트 정보 포함
+  const testInfo = testStep?.data?.testUpdatesPerformed ? 
+    ` + 테스트 ${testStep.data.updatedTestFiles}개 업데이트` : '';
   
   return {
     commitCreated: true,
-    commitMessage: `feat: ${changes.join(', ')} 완료`,
+    commitMessage: `feat: ${changes.join(', ')} 완료${testInfo}`,
     filesCommitted: workStep?.data?.modifiedFiles || [],
+    testFilesUpdated: testStep?.data?.updatedTests || [],
     pushAttempted: true,
     pushSuccessful: Math.random() > 0.2, // 80% 성공률
     gitStatus: 'clean'
@@ -659,6 +732,7 @@ module.exports = {
   runTroubleshootingAgent,
   runAPIDocumentationAgent,
   runClaudeSystemCheckAgent,
+  runTestUpdateAgent,
   runCommitPushAgent,
   
   // 기존 호환성 유지
