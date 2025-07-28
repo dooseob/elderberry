@@ -9,11 +9,14 @@ spring:
 logging:
   level:
     root: INFO
-    com.globalcarelink: INFO
+    com.globalcarelink: DEBUG
     com.globalcarelink.agents: DEBUG        # 개발시 에이전트 상세 로그
     web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+    reactor.netty.http.client: DEBUG
   pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 # 에이전트 시스템 설정
 agents:
@@ -131,15 +134,6 @@ server:
       enabled: true
       force: true
 
-# 로깅 설정
-logging:
-  level:
-    com.globalcarelink: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web.reactive.function.client: DEBUG
-    reactor.netty.http.client: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 # JWT 설정
 jwt:
