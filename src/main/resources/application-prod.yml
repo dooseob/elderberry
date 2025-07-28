@@ -1,0 +1,59 @@
+# 프로덕션 환경 설정
+# 사용법: java -jar app.jar --spring.profiles.active=prod
+
+spring:
+  # 프로덕션 데이터베이스 (예시)
+  datasource:
+    url: jdbc:h2:file:./data/elderberry-prod;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    username: ${PROD_DB_USERNAME:sa}
+    password: ${PROD_DB_PASSWORD:}
+  
+  # JPA 프로덕션 설정
+  jpa:
+    hibernate:
+      ddl-auto: validate              # 프로덕션에서는 스키마 변경 금지
+    show-sql: false                   # SQL 로그 비활성화
+
+# 프로덕션 로깅 설정 (최소화)
+logging:
+  level:
+    root: WARN                        # 경고 이상만 표시
+    com.globalcarelink: INFO          # 애플리케이션 정보 로그만
+    com.globalcarelink.agents: ERROR  # 에이전트는 에러만 표시
+    web: ERROR
+    org.springframework: ERROR
+    org.hibernate: ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ./logs/elderberry-prod.log  # 파일로만 로그 저장
+    max-size: 10MB
+    max-history: 30
+
+# 에이전트 시스템 프로덕션 설정
+agents:
+  debug:
+    enabled: false                    # 디버그 에이전트 비활성화
+    log-level: ERROR
+  sequential:
+    enabled: true
+    max-execution-time: 15000         # 프로덕션에서는 더 짧은 타임아웃
+  monitoring:
+    enabled: false                    # 상세 모니터링 비활성화
+
+# 보안 설정 강화
+server:
+  error:
+    include-stacktrace: never         # 스택트레이스 숨김
+    include-message: never            # 에러 메시지 숨김
+  shutdown: graceful
+
+management:
+  endpoints:
+    enabled-by-default: false        # 모든 actuator 엔드포인트 비활성화
+    web:
+      exposure:
+        include: health               # health 체크만 활성화
+  endpoint:
+    health:
+      show-details: never             # 상세 헬스 정보 숨김

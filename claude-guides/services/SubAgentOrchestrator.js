@@ -50,6 +50,40 @@ class SubAgentOrchestrator {
             priority: 4,
             handler: this.createDocumenterAgent()
         });
+
+        // ✨ 새로운 특화 서브에이전트들 ✨
+        
+        // AI기반 클로드가이드시스템 서브에이전트
+        this.registerAgent('intelligent_guide', {
+            name: 'AI기반 클로드가이드시스템',
+            capabilities: ['지능형 가이드', '컨텍스트 분석', '패턴 인식', '베스트 프랙티스'],
+            priority: 1,
+            handler: this.createIntelligentGuideAgent()
+        });
+
+        // 로그기반 디버깅 시스템 서브에이전트
+        this.registerAgent('log_debugger', {
+            name: '로그기반 디버깅 시스템',
+            capabilities: ['로그 분석', '에러 패턴 인식', '성능 모니터링', '자동 진단'],
+            priority: 2,
+            handler: this.createLogDebuggingAgent()
+        });
+
+        // 트러블슈팅과 중요한 이슈 문서화 서브에이전트
+        this.registerAgent('troubleshooting_doc', {
+            name: '트러블슈팅 문서화 시스템',
+            capabilities: ['자동 문서화', '이슈 패턴 인식', '솔루션 DB 관리', 'Java 서비스 연동'],
+            priority: 3,
+            handler: this.createTroubleshootingDocAgent()
+        });
+
+        // API 문서화 서브에이전트
+        this.registerAgent('api_documenter', {
+            name: 'API 문서화 시스템',
+            capabilities: ['Controller 분석', 'OpenAPI 생성', 'API 문서화', '테스트 케이스 생성'],
+            priority: 4,
+            handler: this.createApiDocumentationAgent()
+        });
     }
 
     /**
@@ -129,14 +163,18 @@ class SubAgentOrchestrator {
      */
     determineAgentChain(task) {
         const chains = {
-            'code-fix': ['analyzer', 'executor', 'validator'],
-            'feature-implementation': ['analyzer', 'executor', 'validator', 'documenter'],
-            'refactoring': ['analyzer', 'executor', 'validator'],
-            'bug-investigation': ['analyzer', 'executor', 'validator'],
-            'performance-optimization': ['analyzer', 'executor', 'validator'],
-            'security-audit': ['analyzer', 'executor', 'validator', 'documenter'],
-            'documentation': ['analyzer', 'documenter'],
-            'default': ['analyzer', 'executor', 'validator']
+            'code-fix': ['intelligent_guide', 'analyzer', 'executor', 'validator', 'troubleshooting_doc'],
+            'feature-implementation': ['intelligent_guide', 'analyzer', 'executor', 'validator', 'api_documenter', 'documenter'],
+            'refactoring': ['intelligent_guide', 'analyzer', 'executor', 'validator'],
+            'bug-investigation': ['log_debugger', 'analyzer', 'executor', 'validator', 'troubleshooting_doc'],
+            'performance-optimization': ['log_debugger', 'analyzer', 'executor', 'validator'],
+            'security-audit': ['intelligent_guide', 'analyzer', 'executor', 'validator', 'documenter'],
+            'documentation': ['intelligent_guide', 'analyzer', 'api_documenter', 'documenter'],
+            'api-analysis': ['intelligent_guide', 'api_documenter'],
+            'log-analysis': ['log_debugger', 'troubleshooting_doc'],
+            'troubleshooting': ['intelligent_guide', 'log_debugger', 'troubleshooting_doc'],
+            'full-analysis': ['intelligent_guide', 'log_debugger', 'analyzer', 'api_documenter', 'troubleshooting_doc'],
+            'default': ['intelligent_guide', 'analyzer', 'executor', 'validator']
         };
 
         const chainType = task.type || 'default';
@@ -435,6 +473,182 @@ class SubAgentOrchestrator {
      */
     generateWorkflowSummary(steps) {
         return `워크플로우 ${steps.length}단계 완료: ${steps.map(s => s.agentName).join(' → ')}`;
+    }
+
+    // ✨ 새로운 특화 서브에이전트 핸들러들 ✨
+
+    /**
+     * AI기반 클로드가이드시스템 에이전트 생성
+     */
+    createIntelligentGuideAgent() {
+        return async (input, context) => {
+            console.log('🧠 AI기반 클로드가이드시스템 에이전트 실행 중...');
+            
+            try {
+                // 실제 IntelligentGuideAgent 로드
+                const { intelligentGuideAgent } = require('./IntelligentGuideAgent');
+                
+                const result = await intelligentGuideAgent.executeWithMCPIntegration({
+                    query: input.description || input.task?.description || '코드 분석 및 가이드 제공',
+                    context: {
+                        projectPath: process.cwd(),
+                        ...context
+                    }
+                });
+
+                return {
+                    ...input,
+                    intelligentGuide: result.result,
+                    status: result.success ? 'guided' : 'guide_failed',
+                    agent: 'intelligent_guide'
+                };
+
+            } catch (error) {
+                console.error('❌ AI기반 클로드가이드시스템 에이전트 실패:', error);
+                return {
+                    ...input,
+                    status: 'guide_failed',
+                    error: error.message,
+                    agent: 'intelligent_guide'
+                };
+            }
+        };
+    }
+
+    /**
+     * 로그기반 디버깅 시스템 에이전트 생성
+     */
+    createLogDebuggingAgent() {
+        return async (input, context) => {
+            console.log('📊 로그기반 디버깅 시스템 에이전트 실행 중...');
+            
+            try {
+                // 실제 LogBasedDebuggingAgent 로드
+                const { logBasedDebuggingAgent } = require('./LogBasedDebuggingAgent');
+                
+                // 로그 파일 찾기 시도
+                const findLogsResult = await logBasedDebuggingAgent.executeWithMCPIntegration({
+                    action: 'find_logs',
+                    projectPath: process.cwd()
+                });
+
+                let analysisResult = null;
+                if (findLogsResult.success && findLogsResult.result.length > 0) {
+                    // 가장 최근 로그 파일 분석
+                    const logFile = findLogsResult.result[0];
+                    analysisResult = await logBasedDebuggingAgent.executeWithMCPIntegration({
+                        action: 'analyze',
+                        logFilePath: logFile
+                    });
+                }
+
+                return {
+                    ...input,
+                    logAnalysis: analysisResult?.result || { message: '분석할 로그 파일을 찾을 수 없습니다.' },
+                    status: analysisResult?.success ? 'log_analyzed' : 'log_analysis_failed',
+                    agent: 'log_debugger'
+                };
+
+            } catch (error) {
+                console.error('❌ 로그기반 디버깅 시스템 에이전트 실패:', error);
+                return {
+                    ...input,
+                    status: 'log_analysis_failed',
+                    error: error.message,
+                    agent: 'log_debugger'
+                };
+            }
+        };
+    }
+
+    /**
+     * 트러블슈팅 문서화 시스템 에이전트 생성
+     */
+    createTroubleshootingDocAgent() {
+        return async (input, context) => {
+            console.log('📝 트러블슈팅 문서화 시스템 에이전트 실행 중...');
+            
+            try {
+                // 실제 TroubleshootingDocumentationAgent 로드
+                const { troubleshootingDocumentationAgent } = require('./TroubleshootingDocumentationAgent');
+                
+                // solutions-db.md 분석
+                const analysisResult = await troubleshootingDocumentationAgent.executeWithMCPIntegration({
+                    action: 'analyze'
+                });
+
+                // 에러가 있다면 문서화 수행
+                let documentationResult = null;
+                if (input.errors && input.errors.length > 0) {
+                    const issueData = {
+                        eventId: `WORKFLOW_${Date.now()}`,
+                        eventType: 'ERROR',
+                        severity: 'HIGH',
+                        description: `워크플로우 실행 중 ${input.errors.length}개 에러 발생`,
+                        errors: input.errors,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    documentationResult = await troubleshootingDocumentationAgent.executeWithMCPIntegration({
+                        action: 'document',
+                        data: issueData
+                    });
+                }
+
+                return {
+                    ...input,
+                    troubleshootingAnalysis: analysisResult.result,
+                    documentation: documentationResult?.result || null,
+                    status: analysisResult.success ? 'documented' : 'documentation_failed',
+                    agent: 'troubleshooting_doc'
+                };
+
+            } catch (error) {
+                console.error('❌ 트러블슈팅 문서화 시스템 에이전트 실패:', error);
+                return {
+                    ...input,
+                    status: 'documentation_failed',
+                    error: error.message,
+                    agent: 'troubleshooting_doc'
+                };
+            }
+        };
+    }
+
+    /**
+     * API 문서화 시스템 에이전트 생성
+     */
+    createApiDocumentationAgent() {
+        return async (input, context) => {
+            console.log('📚 API 문서화 시스템 에이전트 실행 중...');
+            
+            try {
+                // 실제 ApiDocumentationAgent 로드
+                const { apiDocumentationAgent } = require('./ApiDocumentationAgent');
+                
+                // 프로젝트 전체 API 분석
+                const projectAnalysis = await apiDocumentationAgent.executeWithMCPIntegration({
+                    action: 'analyze_project',
+                    projectPath: process.cwd()
+                });
+
+                return {
+                    ...input,
+                    apiDocumentation: projectAnalysis.result,
+                    status: projectAnalysis.success ? 'api_documented' : 'api_documentation_failed',
+                    agent: 'api_documenter'
+                };
+
+            } catch (error) {
+                console.error('❌ API 문서화 시스템 에이전트 실패:', error);
+                return {
+                    ...input,
+                    status: 'api_documentation_failed',
+                    error: error.message,
+                    agent: 'api_documenter'
+                };
+            }
+        };
     }
 
     /**
