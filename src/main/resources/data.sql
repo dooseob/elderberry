@@ -1,14 +1,14 @@
 -- 개발 환경용 초기 데이터
 -- 애플리케이션 시작 시 자동으로 로드됨
 
--- 기본 테스트용 회원 데이터
+-- 기본 테스트용 회원 데이터 (Member Entity와 일치하도록 수정)
 -- 비밀번호: Password123!
-INSERT INTO members (id, email, password, name, phone_number, role, is_job_seeker, is_active, email_verified, language, region, created_at, updated_at) VALUES
-(1, 'test.domestic@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '김테스트', '010-1234-5678', 'USER_DOMESTIC', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'test.overseas@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', 'John Test', '010-2345-6789', 'USER_OVERSEAS', false, true, true, 'en', 'New York', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'test.coordinator@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '이코디', '010-3456-7890', 'COORDINATOR', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'test.facility@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '시설관리자', '010-4567-8901', 'FACILITY', false, true, true, 'ko', '부산광역시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'test.admin@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '관리자', '010-5678-9012', 'ADMIN', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO members (id, email, password, name, phone_number, role, is_job_seeker, is_active, language, region, created_at, updated_at) VALUES
+(1, 'test.domestic@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '김테스트', '010-1234-5678', 'USER_DOMESTIC', false, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'test.overseas@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', 'John Test', '010-2345-6789', 'USER_OVERSEAS', false, true, 'en', 'New York', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'test.coordinator@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '이코디', '010-3456-7890', 'COORDINATOR', false, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'test.facility@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '시설관리자', '010-4567-8901', 'FACILITY', false, true, 'ko', '부산광역시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'test.admin@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '관리자', '010-5678-9012', 'ADMIN', false, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 테스트용 시설 프로필 데이터
 INSERT INTO facility_profiles (id, name, type, address, capacity, current_occupancy, rating, is_active, created_at, updated_at) VALUES

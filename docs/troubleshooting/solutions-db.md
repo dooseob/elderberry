@@ -11,6 +11,61 @@
 
 ---
 
+## 🔄 Git 복구 작업 #RECOVERY-001
+
+**작업 일시**: 2025-07-28 14:30:00
+**작업자**: Claude Code Assistant
+**복구 대상**: board, job, chatbot 시스템
+**심각도**: HIGH (삭제된 핵심 기능 복구)
+
+### 📋 복구 작업 상세
+
+#### 🎯 복구 목표
+- **삭제된 시점**: 커밋 8b0430f에서 "미완성 기능"으로 분류되어 삭제
+- **복구 기준점**: 커밋 ea24a3e (삭제 직전 상태)
+- **복구 대상 시스템**:
+  - board 시스템: 16개 파일 (엔티티, 컨트롤러, 서비스, DTO)
+  - job 시스템: 15개 파일 (구인구직 관련 전체 기능)  
+  - chatbot 시스템: 1개 파일 (프록시 컨트롤러)
+
+#### 🔧 실행된 복구 명령어
+```bash
+# 삭제된 파일들 복구
+git checkout ea24a3e -- temp-disabled/board/
+git checkout ea24a3e -- temp-disabled/job/
+git checkout ea24a3e -- temp-disabled/chatbot/
+
+# 적절한 위치로 이동
+mv temp-disabled/board/*.java src/main/java/com/globalcarelink/board/
+mv temp-disabled/board/dto/*.java src/main/java/com/globalcarelink/board/dto/
+mv temp-disabled/job/*.java src/main/java/com/globalcarelink/job/
+mv temp-disabled/job/dto/*.java src/main/java/com/globalcarelink/job/dto/
+mv temp-disabled/chatbot/*.java src/main/java/com/globalcarelink/chatbot/
+```
+
+#### ✅ 복구 성공 사항
+1. **파일 복구 완료**: 총 32개 파일 성공적으로 복구
+2. **디렉토리 구조 정리**: src/main/java/com/globalcarelink/ 하위로 이동 완료
+3. **누락된 서비스 클래스 생성**: PostService, CommentService, CommentRepository 신규 생성
+4. **import 문제 해결**: JobController의 DTO import 추가
+5. **엔티티 메서드 추가**: Post, Comment 엔티티에 필요한 메서드들 구현
+
+#### 🚨 남은 이슈들 (63개 kompilation 오류)
+1. **ResponseEntity 메서드 이슈**: forbidden() → status(403) 변경 필요
+2. **Repository 메서드 불일치**: 서비스에서 기대하는 메서드명과 실제 Repository 메서드명 상이
+3. **엔티티 메서드 누락**: 다수의 엔티티에서 setter, builder 패턴 메서드 누락
+4. **@Builder 기본값 경고**: @Builder.Default 어노테이션 일부 적용 완료
+
+#### 🎯 향후 작업 권장사항
+1. **우선순위 1**: Repository 인터페이스와 Service 클래스 간 메서드 시그니처 통일
+2. **우선순위 2**: 모든 엔티티의 @Builder.Default 적용 완료
+3. **우선순위 3**: Spring Boot 버전 호환성 확인 (ResponseEntity 메서드)
+4. **우선순위 4**: 통합 테스트를 통한 전체 기능 검증
+
+### 🏷️ AI 학습 태그
+`git-recovery` `deleted-features` `compilation-errors` `entity-methods` `repository-service-mismatch`
+
+---
 
 ================================================================================
 ## 🚨 자동 감지된 에러 이슈 #ERR-326f9c5c

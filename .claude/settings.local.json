@@ -80,7 +80,9 @@
       "Bash(unset:*)",
       "Bash(unset org.gradle.java.home)",
       "Bash(ss:*)",
-      "Bash(readlink:*)"
+      "Bash(readlink:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

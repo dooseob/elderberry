@@ -261,6 +261,70 @@ GET /api/health/assessments/{id}
 PUT /api/health/assessments/{id}
 ```
 
+### **게시판 시스템 (복구됨!)**
+```http
+# 게시판 관리
+GET /api/boards                           # 모든 활성 게시판 조회
+GET /api/boards/{id}                       # 특정 게시판 조회
+POST /api/boards                           # 새 게시판 생성 (관리자)
+PUT /api/boards/{id}                       # 게시판 수정 (관리자)
+DELETE /api/boards/{id}                    # 게시판 비활성화 (관리자)
+
+# 게시글 관리
+GET /api/boards/{id}/posts                 # 게시판의 게시글 목록
+GET /api/boards/{id}/posts/search          # 게시글 검색
+POST /api/boards/{id}/posts                # 새 게시글 작성
+GET /api/boards/{boardId}/posts/{postId}   # 게시글 상세 조회
+PUT /api/boards/{boardId}/posts/{postId}   # 게시글 수정
+DELETE /api/boards/{boardId}/posts/{postId} # 게시글 삭제
+
+# 댓글 관리
+GET /api/boards/{boardId}/posts/{postId}/comments    # 댓글 목록 조회
+POST /api/boards/{boardId}/posts/{postId}/comments   # 새 댓글 작성
+PUT /api/boards/{boardId}/posts/{postId}/comments/{commentId}    # 댓글 수정
+DELETE /api/boards/{boardId}/posts/{postId}/comments/{commentId} # 댓글 삭제
+```
+
+### **구인구직 시스템 (복구됨!)**
+```http
+# 구인 공고 관리
+GET /api/jobs                              # 활성 구인 공고 목록
+GET /api/jobs/urgent                       # 긴급 구인 공고
+GET /api/jobs/featured                     # 추천 구인 공고
+GET /api/jobs/popular                      # 인기 구인 공고
+GET /api/jobs/latest                       # 최신 구인 공고
+GET /api/jobs/search                       # 구인 공고 검색
+GET /api/jobs/filter                       # 필터링 검색
+GET /api/jobs/category/{category}          # 카테고리별 조회
+GET /api/jobs/location                     # 지역별 조회
+GET /api/jobs/{id}                         # 구인 공고 상세
+POST /api/jobs                             # 새 구인 공고 등록
+PUT /api/jobs/{id}                         # 구인 공고 수정
+DELETE /api/jobs/{id}                      # 구인 공고 삭제
+GET /api/jobs/employer/{employerId}        # 특정 고용주의 공고
+GET /api/jobs/my                           # 내 구인 공고
+GET /api/jobs/deadline-approaching         # 마감 임박 공고
+
+# 지원서 관리
+POST /api/jobs/{jobId}/apply               # 구인 공고 지원
+GET /api/jobs/{jobId}/applications         # 특정 공고의 지원서 목록
+GET /api/jobs/applications/my              # 내 지원서 목록
+PUT /api/jobs/applications/{applicationId}/status    # 지원서 상태 업데이트
+PUT /api/jobs/applications/{applicationId}/interview # 면접 일정 관리
+DELETE /api/jobs/applications/{applicationId}        # 지원 철회
+
+# 통계
+GET /api/jobs/stats/category               # 카테고리별 통계
+GET /api/jobs/stats/today                  # 오늘 등록된 공고 수
+```
+
+### **챗봇 시스템 (복구됨!)**
+```http
+# 챗봇 프록시
+ALL /api/chatbot/**                        # 모든 챗봇 요청 프록시
+GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
+```
+
 ## 🚨 중요 주의사항
 
 ### **금지 사항**
@@ -287,16 +351,22 @@ PUT /api/health/assessments/{id}
 - 순차적 에이전트 시스템 ✅ (구조 정리 완료)
 - 프로젝트 구조 완전 정리 ✅
 
-**📋 정리 완료 사항**
-- temp-disabled 디렉토리 완전 정리 낼 불필요 시스템 제거
-- 중복된 claude-guides 디렉토리 통합 (실용적 버전만 유지)
-- 미완성 기능들 (board, chatbot, job) 완전 제거
-- 에이전트 시스템을 agents/ 디렉토리로 통합 보관
+**📋 정리 및 복구 완료 사항 (2025-07-28 업데이트)**
+- temp-disabled 디렉토리 완전 정리 및 불필요 시스템 제거 ✅
+- 중복된 claude-guides 디렉토리 통합 (실용적 버전만 유지) ✅
+- **핵심 기능들 성공적으로 복구 완료** ✅
+  - **board 시스템**: 16개 파일 복구 (게시판, 게시글, 댓글 전체 기능)
+  - **job 시스템**: 15개 파일 복구 (구인구직, 지원서 관리 전체 기능)  
+  - **chatbot 시스템**: 1개 파일 복구 (챗봇 프록시 컨트롤러)
+- 에이전트 시스템을 agents/ 디렉토리로 통합 보관 ✅
 
-**🎯 다음 목표**
-- Repository 메서드 시그니처 표준화
-- 프론트엔드-백엔드 완전 연동
-- MCP 도구 활용 순차적 에이전트 시스템 극대화
+**🎯 다음 목표 (복구 후 우선순위)**
+1. **컴파일 오류 해결**: 63개 컴파일 오류 해결 (Repository-Service 시그니처 통일)
+2. **엔티티 메서드 완성**: @Builder.Default 적용 및 누락 메서드 구현
+3. **Spring Boot 호환성**: ResponseEntity 메서드 업데이트
+4. **프론트엔드-백엔드 완전 연동**: 복구된 API 엔드포인트 연동
+5. **통합 테스트**: board, job, chatbot 시스템 기능 검증
+6. **MCP 도구 활용**: 순차적 에이전트 시스템 극대화
 
 ---
 
