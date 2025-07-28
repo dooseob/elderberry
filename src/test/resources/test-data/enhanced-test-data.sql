@@ -120,9 +120,9 @@ INSERT INTO test_facility_matching_histories (id, health_assessment_id, facility
 (6, 6, 1, 91.8, 'COORDINATOR_SPECIALIZED', '치매전문,코디네이터추천', '치매 전문 케어가 정말 좋습니다.', 'COMPLETED');
 
 -- 테스트 데이터 품질 검증을 위한 추가 샘플
--- 다양한 언어 스킬 조합 테스트용 추가 데이터
+-- 다양한 언어 스킬 조합 테스트용 추가 데이터 (비밀번호: password123)
 INSERT INTO test_members (id, email, password, name, role, is_active, email_verified) VALUES
-(200, 'multilang.coordinator@test.com', '$2a$12$test.hash', '다국어코디', 'COORDINATOR', true, true);
+(200, 'multilang.coordinator@test.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '다국어코디', 'COORDINATOR', true, true);
 
 INSERT INTO test_coordinator_care_settings (id, coordinator_id, base_care_level, max_care_level, experience_years, customer_satisfaction, performance_score, working_regions, specialty_areas, available_weekends, available_emergency) VALUES
 (4, 200, 1, 5, 10, 4.9, 5.0, '서울특별시,경기도,인천광역시', '해외동포전문,다국어지원,중증케어', true, true);

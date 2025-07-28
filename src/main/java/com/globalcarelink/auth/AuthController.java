@@ -48,7 +48,7 @@ public class AuthController {
         description = "이메일과 비밀번호로 로그인하여 JWT 토큰을 발급받습니다."
     )
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest request,
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request,
                                               HttpServletRequest httpRequest) {
         log.info("로그인 요청: {} - IP: {}", request.getEmail(), getClientIpAddress(httpRequest));
         TokenResponse response = memberService.login(request);

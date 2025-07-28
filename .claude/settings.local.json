@@ -71,7 +71,9 @@
       "Bash(unzip:*)",
       "Bash(/home/human-08/java/bin/javac -version)",
       "Bash(curl:*)",
-      "Bash(dpkg:*)"
+      "Bash(dpkg:*)",
+      "Bash(journalctl:*)",
+      "Bash(pkill:*)"
     ],
     "deny": []
   }

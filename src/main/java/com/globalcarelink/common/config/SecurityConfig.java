@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     // 기본 허용 경로
                     auth.requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/error").permitAll();
                     

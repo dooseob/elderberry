@@ -25,6 +25,13 @@ spring:
         order_inserts: true
         order_updates: true
   
+  # SQL 초기화 설정
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      continue-on-error: false
+  
   # H2 콘솔 설정
   h2:
     console:

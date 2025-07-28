@@ -2,14 +2,15 @@
 -- 모든 테스트에서 공통으로 사용하는 기본 데이터
 
 -- 테스트용 회원 데이터
+-- 모든 테스트 계정의 비밀번호: password123
 INSERT INTO test_members (id, email, password, name, role, is_active, email_verified) VALUES
-(1, 'test.domestic@example.com', '$2a$12$encrypted.password.hash', '김테스트', 'USER_DOMESTIC', true, true),
-(2, 'test.overseas@example.com', '$2a$12$encrypted.password.hash', 'John Test', 'USER_OVERSEAS', true, true),
-(3, 'test.coordinator@example.com', '$2a$12$encrypted.password.hash', '이코디', 'COORDINATOR', true, true),
-(4, 'test.facility@example.com', '$2a$12$encrypted.password.hash', '시설관리자', 'FACILITY', true, true),
-(5, 'test.admin@example.com', '$2a$12$encrypted.password.hash', '관리자', 'ADMIN', true, true),
-(6, 'inactive.user@example.com', '$2a$12$encrypted.password.hash', '비활성사용자', 'USER_DOMESTIC', false, true),
-(7, 'unverified.user@example.com', '$2a$12$encrypted.password.hash', '미인증사용자', 'USER_DOMESTIC', true, false);
+(1, 'test.domestic@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '김테스트', 'USER_DOMESTIC', true, true),
+(2, 'test.overseas@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', 'John Test', 'USER_OVERSEAS', true, true),
+(3, 'test.coordinator@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '이코디', 'COORDINATOR', true, true),
+(4, 'test.facility@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '시설관리자', 'FACILITY', true, true),
+(5, 'test.admin@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '관리자', 'ADMIN', true, true),
+(6, 'inactive.user@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '비활성사용자', 'USER_DOMESTIC', false, true),
+(7, 'unverified.user@example.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '미인증사용자', 'USER_DOMESTIC', true, false);
 
 -- 테스트용 시설 프로필 데이터
 INSERT INTO test_facility_profiles (id, name, type, address, capacity, current_occupancy, rating, is_active) VALUES
@@ -19,18 +20,18 @@ INSERT INTO test_facility_profiles (id, name, type, address, capacity, current_o
 (4, '인천노인복지관', 'COMMUNITY_CENTER', '인천시 남동구 구월로 101', 100, 80, 4.0, true),
 (5, '폐쇄된시설', 'NURSING_HOME', '서울시 종로구 폐쇄로 999', 40, 0, 2.5, false);
 
--- 테스트 시나리오별 기본 설정값
+-- 테스트 시나리오별 기본 설정값 (비밀번호: password123)
 INSERT INTO test_members (id, email, password, name, role, is_active, email_verified) VALUES
-(100, 'scenario.domestic.1@test.com', '$2a$12$test.hash', '시나리오국내1', 'USER_DOMESTIC', true, true),
-(101, 'scenario.overseas.1@test.com', '$2a$12$test.hash', 'Scenario User 1', 'USER_OVERSEAS', true, true),
-(102, 'scenario.employer.1@test.com', '$2a$12$test.hash', '시나리오고용주1', 'FACILITY', true, true);
+(100, 'scenario.domestic.1@test.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '시나리오국내1', 'USER_DOMESTIC', true, true),
+(101, 'scenario.overseas.1@test.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', 'Scenario User 1', 'USER_OVERSEAS', true, true),
+(102, 'scenario.employer.1@test.com', '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu', '시나리오고용주1', 'FACILITY', true, true);
 
--- 테스트 성능 검증용 대용량 데이터 샘플
+-- 테스트 성능 검증용 대용량 데이터 샘플 (비밀번호: password123)
 -- (실제 성능 테스트에서는 더 많은 데이터 생성)
 INSERT INTO test_members (email, password, name, role, is_active, email_verified)
 SELECT 
     'perf.test.' || CAST(ROW_NUMBER() OVER() AS VARCHAR) || '@example.com',
-    '$2a$12$performance.test.hash',
+    '$2a$12$9VPLf1/ZOhTfP8Qq0p6P.eiYjpHJp2qNs5xqKH6S5AJV6Oi1tF5Cu',
     'PerfUser' || CAST(ROW_NUMBER() OVER() AS VARCHAR),
     'USER_DOMESTIC',
     true,

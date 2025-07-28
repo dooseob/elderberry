@@ -122,23 +122,68 @@ export const ConditionalMotion = forwardRef<HTMLElement, MotionProps>(({
   }
 
   // Framer Motion 사용
-  const MotionComponent = motion[as];
-  return React.createElement(MotionComponent, {
-    ref,
-    className,
-    style,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    initial: withAnimation(initial),
-    animate: withAnimation(animate),
-    exit: withAnimation(exit),
-    transition: withAnimation(transition),
-    variants: withAnimation(variants),
-    whileHover: withAnimation(whileHover),
-    whileTap: withAnimation(whileTap),
-    ...props
-  }, children);
+  try {
+    const MotionComponent = motion[as as keyof typeof motion];
+    
+    // motion에서 해당 엘리먼트를 지원하지 않는 경우 motion.div 사용
+    if (!MotionComponent) {
+      console.warn(`Motion component for '${as}' not found, falling back to motion.div`);
+      return (
+        <motion.div
+          ref={ref}
+          className={className}
+          style={style}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          initial={withAnimation(initial)}
+          animate={withAnimation(animate)}
+          exit={withAnimation(exit)}
+          transition={withAnimation(transition)}
+          variants={withAnimation(variants)}
+          whileHover={withAnimation(whileHover)}
+          whileTap={withAnimation(whileTap)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      );
+    }
+    
+    return React.createElement(MotionComponent, {
+      ref,
+      className,
+      style,
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+      initial: withAnimation(initial),
+      animate: withAnimation(animate),
+      exit: withAnimation(exit),
+      transition: withAnimation(transition),
+      variants: withAnimation(variants),
+      whileHover: withAnimation(whileHover),
+      whileTap: withAnimation(whileTap),
+      ...props
+    }, children);
+  } catch (error) {
+    console.error('ConditionalMotion error:', error);
+    // 에러 발생 시 정적 엘리먼트로 폴백
+    return (
+      <StaticElement
+        ref={ref}
+        as={as}
+        className={className}
+        style={style}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        {...props}
+      >
+        {children}
+      </StaticElement>
+    );
+  }
 });
 
 ConditionalMotion.displayName = 'ConditionalMotion';
