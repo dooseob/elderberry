@@ -1,7 +1,6 @@
 package com.globalcarelink.agents.seo;
 
 import com.globalcarelink.agents.BaseAgent;
-import com.globalcarelink.agents.context.SharedContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +25,11 @@ public class GoogleSEOAgent extends BaseAgent {
     private final StructuredDataGenerator structuredDataGenerator;
     private final SitemapGenerator sitemapGenerator;
     
-    public GoogleSEOAgent(SharedContext sharedContext,
-                         SEOAnalysisService seoAnalysisService,
+    public GoogleSEOAgent(SEOAnalysisService seoAnalysisService,
                          MetaTagOptimizer metaTagOptimizer,
                          StructuredDataGenerator structuredDataGenerator,
                          SitemapGenerator sitemapGenerator) {
-        super("GoogleSEOAgent", "Google SEO 최적화 및 검색엔진 최적화", sharedContext);
+        super("GoogleSEOAgent", "Google SEO 최적화 및 검색엔진 최적화");
         this.seoAnalysisService = seoAnalysisService;
         this.metaTagOptimizer = metaTagOptimizer;
         this.structuredDataGenerator = structuredDataGenerator;

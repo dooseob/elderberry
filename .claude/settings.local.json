@@ -89,7 +89,12 @@
       "Bash(timeout:*)",
       "Bash(kill:*)",
       "Bash(git rm:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(./dev-start.sh:*)",
+      "Bash(./dev-status.sh:*)",
+      "Bash(./dev-stop.sh:*)",
+      "Bash(sudo fuser:*)",
+      "Bash(true)"
     ],
     "deny": []
   }
