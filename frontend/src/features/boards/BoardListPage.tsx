@@ -27,6 +27,7 @@ import { Board, Post, BoardType, PostSearchParams } from '../../types/board';
 import { MemberRole } from '../../types/auth';
 import Card, { CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import { useSEO, addStructuredData } from '../../hooks/useSEO';
 
 // 게시판 타입 한글 매핑
 const boardTypeLabels = {
@@ -204,6 +205,58 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 };
 
 export default function BoardListPage() {
+  // SEO 최적화
+  useSEO({
+    title: '게시판',
+    description: '요양원 관련 정보 공유, Q&A, 후기, 팁과 노하우를 나누는 커뮤니티 게시판',
+    keywords: '게시판, 커뮤니티, 요양원정보, Q&A, 후기, 팁과노하우',
+    ogTitle: '게시판 - 엘더베리',
+    canonicalUrl: 'https://elderberry.co.kr/boards'
+  });
+  
+  // 구조화된 데이터 추가
+  useEffect(() => {
+    const forumData = {
+      "@context": "https://schema.org",
+      "@type": "DiscussionForumPosting",
+      "name": "엘더베리 커뮤니티 게시판",
+      "description": "요양원 관련 정보 공유, Q&A, 후기, 팁과 노하우를 나누는 커뮤니티 포럼",
+      "about": {
+        "@type": "Thing",
+        "name": "요양원 서비스"
+      },
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "재외동포, 요양원 관련자"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "엘더베리"
+      }
+    };
+    
+    const breadcrumbData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": "https://elderberry.co.kr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "게시판",
+          "item": "https://elderberry.co.kr/boards"
+        }
+      ]
+    };
+    
+    addStructuredData(forumData, 'forum-data');
+    addStructuredData(breadcrumbData, 'board-breadcrumb');
+  }, []);
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuthStore();
   const {

@@ -21,7 +21,7 @@ import { LoginRequest } from '../../types/auth';
 import Button from '../../components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/Card';
 import { useToastContext } from '../../hooks/useToast';
-import { useSEO, SEOPresets } from '../../hooks/useSEO';
+import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
 
 // 폼 검증 스키마
 const loginSchema = z.object({
@@ -48,6 +48,30 @@ export default function LoginPage() {
 
   // SEO 설정
   useSEO(SEOPresets.login);
+  
+  // 구조화된 데이터 추가
+  useEffect(() => {
+    const loginPageData = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "로그인 - 엘더베리",
+      "description": "엘더베리 회원 로그인 페이지. 안전하고 편리한 로그인으로 맞춤 서비스를 이용하세요",
+      "url": "https://elderberry.co.kr/login",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "엘더베리",
+        "url": "https://elderberry.co.kr"
+      },
+      "mainEntity": {
+        "@type": "WebApplication",
+        "name": "로그인 시스템",
+        "applicationCategory": "WebApplication",
+        "operatingSystem": "Any"
+      }
+    };
+    
+    addStructuredData(loginPageData, 'login-page');
+  }, []);
 
   // 리다이렉트 처리
   const from = (location.state as any)?.from || '/dashboard';

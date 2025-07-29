@@ -37,6 +37,52 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
   onCancel,
   memberId,
 }) => {
+  // SEO 최적화
+  useSEO(SEOPresets.healthAssessment);
+  
+  // 구조화된 데이터 추가
+  useEffect(() => {
+    const healthAssessmentData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "건강 평가 시스템",
+      "description": "청장기요양보험 및 ADL 평가를 통한 전문적인 건강 상태 질단 서비스",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "엘더베리"
+      }
+    };
+    
+    const breadcrumbData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": "https://elderberry.co.kr"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "건강 평가",
+          "item": "https://elderberry.co.kr/health-assessment"
+        }
+      ]
+    };
+    
+    addStructuredData(healthAssessmentData, 'health-assessment');
+    addStructuredData(breadcrumbData, 'health-breadcrumb');
+  }, []);
+  
   const {
     currentStep,
     totalSteps,
