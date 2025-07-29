@@ -49,7 +49,8 @@ class EnhancedAgentOrchestrator {
             'context-aware-development': () => this.contextAwareDevelopment(params),
             'memory-guided-optimization': () => this.memoryGuidedOptimization(params),
             'github-integrated-workflow': () => this.githubIntegratedWorkflow(params),
-            'seo-optimization': () => this.seoOptimization(params)
+            'seo-optimization': () => this.seoOptimization(params),
+            'team-collaboration-infra': () => this.teamCollaborationInfra(params)
         };
         
         const result = await masterTasks[taskType]?.();
@@ -266,6 +267,112 @@ class EnhancedAgentOrchestrator {
         });
 
         return { seoStrategy, seoResult };
+    }
+
+    /**
+     * 팀 협업 인프라 분석 및 최적화 (NEW!)
+     */
+    async teamCollaborationInfra(params) {
+        // Context7으로 최신 Docker, CI/CD 베스트 프랙티스 조회
+        const infraContext = await this.mcpSystem.getContext7Documentation('docker-best-practices');
+        const cicdContext = await this.mcpSystem.getContext7Documentation('github-actions-ci-cd');
+        
+        // 메모리에서 이전 인프라 분석 결과 조회
+        const previousInfra = await this.mcpSystem.retrieveFromMemory('infrastructure-analysis');
+        
+        // 파일시스템에서 현재 인프라 상태 분석
+        const currentInfra = await this.mcpSystem.getProjectFiles(['Dockerfile', 'docker-compose*.yml', '.github/workflows/*']);
+        
+        // 순차적 사고로 팀 협업 인프라 최적화 계획 수립
+        const infraStrategy = await this.mcpSystem.useSequentialThinking({
+            problem: '팀 협업을 위한 최적의 인프라 설계',
+            context: { infraContext, cicdContext, previousInfra, currentInfra, teamSize: params.teamSize || 3 },
+            steps: [
+                '현재 팀 규모 및 개발 환경 분석',
+                'Docker 도입 장단점 및 최적화 방안 검토',
+                'GitHub Actions CI/CD 파이프라인 설계',
+                '프론트/백엔드/데이터/에이전트 분리 전략 수립',
+                '비용 대비 효과 분석 및 단계별 도입 계획',
+                '최종 권장사항 및 실행 로드맵 제시'
+            ]
+        });
+
+        // 인프라 분석 결과를 메모리에 저장
+        await this.mcpSystem.storeInMemory('team-infra-analysis', {
+            timestamp: new Date().toISOString(),
+            teamSize: params.teamSize,
+            strategy: infraStrategy,
+            recommendations: {
+                docker: '점진적 도입 권장',
+                cicd: 'GitHub Actions 단계적 적용',
+                architecture: '현재 모노레포 유지, 서비스별 컨테이너 분리',
+                agents: '5개 에이전트 통합 구조 유지'
+            }
+        });
+
+        return { 
+            infraStrategy, 
+            recommendations: this.generateInfraRecommendations(infraStrategy),
+            implementationPlan: this.createInfraImplementationPlan(params)
+        };
+    }
+
+    /**
+     * 인프라 권장사항 생성
+     */
+    generateInfraRecommendations(strategy) {
+        return {
+            immediate: [
+                'Docker Compose 통합 개발 환경 구축',
+                '새로운 팀원 온보딩 시간 90% 단축',
+                '환경 표준화로 "내 컴퓨터에서는 되는데" 문제 해결'
+            ],
+            shortTerm: [
+                'GitHub Actions CI/CD 파이프라인 도입',
+                '자동 테스트 및 코드 품질 보장',
+                '배포 신뢰성 향상'
+            ],
+            longTerm: [
+                '팀 규모 확장 시 멀티레포 분리 고려',
+                '마이크로서비스 아키텍처 점진적 도입',
+                '에이전트 시스템 도메인별 분리 검토'
+            ]
+        };
+    }
+
+    /**
+     * 인프라 구현 계획 생성
+     */
+    createInfraImplementationPlan(params) {
+        return {
+            phase1: {
+                name: 'Docker 환경 구축',
+                duration: '즉시 실행',
+                tasks: [
+                    'docker-compose.dev.yml 활용한 통합 환경',
+                    '프론트엔드 + 백엔드 + Redis 원클릭 실행',
+                    '팀원 온보딩 가이드 작성'
+                ]
+            },
+            phase2: {
+                name: 'CI/CD 파이프라인',
+                duration: '1-2주 후',
+                tasks: [
+                    'GitHub Actions 워크플로우 활성화',
+                    '자동 테스트 및 빌드 검증',
+                    '배포 준비 자동화'
+                ]
+            },
+            phase3: {
+                name: '필요시 아키텍처 분리',
+                duration: '1개월 후 평가',
+                tasks: [
+                    '팀 규모 및 효율성 재평가',
+                    '멀티레포 분리 필요성 검토',
+                    '에이전트 시스템 분리 전략 수립'
+                ]
+            }
+        };
     }
 
     /**

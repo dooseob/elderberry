@@ -1,0 +1,217 @@
+name: 엘더베리 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '22'
+
+jobs:
+  # ==========================================
+  # Phase 1: 백엔드 테스트 및 빌드
+  # ==========================================
+  backend-test:
+    runs-on: ubuntu-latest
+    name: 백엔드 테스트 (Spring Boot + Java 21)
+    
+    steps:
+    - name: 📥 소스코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: ☕ Java 21 설정
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        
+    - name: 🐘 Gradle 캐시 설정
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: 🔧 Gradle 권한 설정
+      run: chmod +x ./gradlew
+      
+    - name: 🧪 백엔드 테스트 실행
+      run: ./gradlew test --no-daemon
+      
+    - name: 📊 테스트 결과 업로드
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: backend-test-results
+        path: build/reports/tests/test/
+        
+    - name: 📈 코드 커버리지 체크
+      run: ./gradlew jacocoTestReport --no-daemon
+      
+    - name: 🏗️ 백엔드 빌드
+      run: ./gradlew build -x test --no-daemon
+
+  # ==========================================
+  # Phase 2: 프론트엔드 테스트 및 빌드
+  # ==========================================
+  frontend-test:
+    runs-on: ubuntu-latest
+    name: 프론트엔드 테스트 (React + TypeScript)
+    
+    steps:
+    - name: 📥 소스코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: 'frontend/package-lock.json'
+        
+    - name: 📦 프론트엔드 의존성 설치
+      working-directory: ./frontend
+      run: npm ci --legacy-peer-deps
+      
+    - name: 🔍 TypeScript 타입 체크
+      working-directory: ./frontend
+      run: npm run type-check
+      
+    - name: 🧹 ESLint 정적 분석
+      working-directory: ./frontend
+      run: npm run lint
+      
+    - name: 🧪 프론트엔드 테스트 실행
+      working-directory: ./frontend
+      run: npm run test:ci
+      env:
+        CI: true
+        
+    - name: 🏗️ 프론트엔드 빌드
+      working-directory: ./frontend
+      run: npm run build
+      
+    - name: 📊 빌드 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-build
+        path: frontend/dist/
+
+  # ==========================================
+  # Phase 3: 통합 테스트 및 Docker 빌드
+  # ==========================================
+  integration-test:
+    runs-on: ubuntu-latest
+    name: 통합 테스트 및 Docker 빌드
+    needs: [backend-test, frontend-test]
+    
+    steps:
+    - name: 📥 소스코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 🐳 Docker Buildx 설정
+      uses: docker/setup-buildx-action@v3
+      
+    - name: 🏗️ Docker Compose 테스트 환경 구성
+      run: |
+        cp docker-compose.dev.yml docker-compose.test.yml
+        docker-compose -f docker-compose.test.yml up -d redis
+        
+    - name: ⏳ 서비스 준비 대기
+      run: |
+        echo "Redis 서비스 준비 중..."
+        sleep 10
+        
+    - name: ☕ Java 21 설정 (통합 테스트용)
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        
+    - name: 🧪 통합 테스트 실행
+      run: |
+        chmod +x ./gradlew
+        ./gradlew integrationTest --no-daemon
+      env:
+        SPRING_PROFILES_ACTIVE: test
+        SPRING_REDIS_HOST: localhost
+        SPRING_REDIS_PORT: 6379
+        SPRING_REDIS_PASSWORD: elderberry123!
+        
+    - name: 🏗️ Docker 이미지 빌드 테스트
+      run: |
+        docker build -t elderberry-backend:test .
+        docker build -f frontend/Dockerfile.dev -t elderberry-frontend:test ./frontend
+        
+    - name: 🧹 테스트 환경 정리
+      if: always()
+      run: docker-compose -f docker-compose.test.yml down -v
+
+  # ==========================================
+  # Phase 4: 배포 준비 (master 브랜치만)
+  # ==========================================
+  deploy-prep:
+    runs-on: ubuntu-latest
+    name: 배포 준비
+    needs: [integration-test]
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: 📥 소스코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 🏷️ 버전 태그 생성
+      id: version
+      run: |
+        VERSION=$(date +%Y.%m.%d)-$(echo ${{ github.sha }} | cut -c1-7)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "🏷️ Version: $VERSION"
+        
+    - name: 📝 릴리즈 노트 준비
+      run: |
+        echo "## 🚀 배포 준비 완료 - v${{ steps.version.outputs.version }}" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "### ✅ 검증 완료 항목" >> RELEASE_NOTES.md
+        echo "- 백엔드 테스트 통과" >> RELEASE_NOTES.md
+        echo "- 프론트엔드 테스트 통과" >> RELEASE_NOTES.md
+        echo "- 통합 테스트 통과" >> RELEASE_NOTES.md
+        echo "- Docker 빌드 검증 완료" >> RELEASE_NOTES.md
+        
+    - name: 📊 배포 준비 상태 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: deployment-ready-v${{ steps.version.outputs.version }}
+        path: |
+          RELEASE_NOTES.md
+          docker-compose.dev.yml
+
+  # ==========================================
+  # Phase 5: 알림 및 결과 보고
+  # ==========================================
+  notify:
+    runs-on: ubuntu-latest
+    name: 결과 알림
+    needs: [backend-test, frontend-test, integration-test]
+    if: always()
+    
+    steps:
+    - name: 📊 전체 결과 요약
+      run: |
+        echo "## 🎯 CI/CD 파이프라인 실행 결과"
+        echo "- 백엔드 테스트: ${{ needs.backend-test.result }}"
+        echo "- 프론트엔드 테스트: ${{ needs.frontend-test.result }}"
+        echo "- 통합 테스트: ${{ needs.integration-test.result }}"
+        
+        if [[ "${{ needs.backend-test.result }}" == "success" && 
+              "${{ needs.frontend-test.result }}" == "success" && 
+              "${{ needs.integration-test.result }}" == "success" ]]; then
+          echo "🎉 모든 테스트 통과! 배포 준비 완료"
+        else
+          echo "❌ 일부 테스트 실패 - 코드 검토 필요"
+        fi

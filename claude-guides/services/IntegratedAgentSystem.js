@@ -35,11 +35,13 @@ class IntegratedAgentSystem {
             },
             TROUBLESHOOTING_DOCS: {
                 name: '트러블슈팅 문서화 에이전트',
-                description: '자동 이슈 문서화 및 solutions-db.md 관리 + 스마트 문서 동기화',
-                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management', 'smart-documentation'], // 🚀 NEW
+                description: '자동 이슈 문서화 및 solutions-db.md 관리 + 스마트 문서 동기화 + 자동 해결방안 생성',
+                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management', 'smart-documentation', 'auto-solution-generation'], // 🚀 NEW
                 priority: 'medium',
                 customCommandSupport: true, // 🚀 NEW
-                supportedCommands: ['/smart', '/sync', '/auto'] // 🚀 NEW
+                supportedCommands: ['/smart', '/sync', '/auto'], // 🚀 NEW
+                autoDocumentationEnabled: true, // 🚀 NEW: 자동 문서화 기능 활성화
+                completedAutoGeneration: '2025-07-29' // 🚀 NEW: 자동 해결방안 생성 완료 날짜
             },
             API_DOCUMENTATION: {
                 name: 'API 문서화 에이전트',

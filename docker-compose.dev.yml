@@ -1,0 +1,93 @@
+version: '3.8'
+
+# ==========================================
+# 엘더베리 개발환경 - 완전 통합 Docker Compose
+# 프론트엔드 + 백엔드 + Redis + H2 Database
+# ==========================================
+
+services:
+  # 백엔드 서비스 (Spring Boot)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: elderberry-backend-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/elderberry;AUTO_SERVER=TRUE
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_PASSWORD=elderberry123!
+      - JWT_SECRET=your-super-secret-jwt-key-for-development-only
+      - JWT_EXPIRATION=86400000
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    networks:
+      - elderberry-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 프론트엔드 서비스 (React + Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: elderberry-frontend-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+      - VITE_NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # anonymous volume for node_modules
+    depends_on:
+      - backend
+    networks:
+      - elderberry-network
+    restart: unless-stopped
+
+  # Redis 캐시 서비스
+  redis:
+    image: redis:7-alpine
+    container_name: elderberry-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass elderberry123!
+    restart: unless-stopped
+    networks:
+      - elderberry-network
+
+  # Redis 관리 도구 (선택사항)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: elderberry-redis-commander-dev
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:elderberry123!
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=elderberry123!
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - elderberry-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  elderberry-network:
+    driver: bridge

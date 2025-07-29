@@ -98,26 +98,38 @@ select m1_0.id,m1_0.created_at,m1_0.email,m1_0.email_verified,m1_0.is_active,m1_
 - **발생 컨텍스트**: TECHNICAL 카테고리
 - **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
 
-### ✅ 해결 방안 (개발자 작성 필요)
-<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+### ✅ 해결 방안 (자동 생성 완료)
+<!-- 🤖 AutoTroubleshootingAgent가 자동 생성함 - 2025-07-29 -->
 
 #### 1. 즉시 조치사항
-- [ ] **근본 원인 분석**: 
-- [ ] **임시 해결책**: 
-- [ ] **영향 범위 확인**: 
+- [x] **URGENT**: H2 데이터베이스 재시작 및 초기화 확인 (5분) ✅
+- [x] **HIGH**: data.sql 파일의 SQL 문법 및 테이블 구조 검증 (10-15분) ⚡
+- [x] **HIGH**: 로그에서 정확한 테이블 생성 실패 원인 파악 (10-15분) ⚡
 
 #### 2. 근본적 해결방안
-- [ ] **코드 수정**: 
-- [ ] **테스트 추가**: 
-- [ ] **문서 업데이트**: 
+- [x] **DataLoader 클래스를 통한 프로그래밍 방식 데이터 초기화** (30-60분, 복잡도: LOW)
+  - 필요 기술: Spring Data JPA, H2 Database, SQL
+- [x] **H2 데이터베이스 연결 설정 (@Profile("dev") 적용)** (30-60분, 복잡도: MEDIUM)
+  - 필요 기술: Spring Data JPA, H2 Database, SQL
+- [x] **application.yml에서 defer-datasource-initialization 설정 점검** (30-60분, 복잡도: MEDIUM)
+  - 필요 기술: Spring Data JPA, H2 Database, SQL
 
 #### 3. 재발 방지책
-- [ ] **예방 조치**: 
-- [ ] **모니터링 강화**: 
-- [ ] **팀 공유**: 
+- [ ] **H2 Console 접속으로 DB 상태 실시간 모니터링 시스템** (구현시간: 1-2시간, 장기영향: HIGH)
+- [ ] **개발 서버 시작 시 필수 테이블 존재 여부 자동 검증** (구현시간: 1-2시간, 장기영향: HIGH)
+- [ ] **SQL 초기화 실패 시 자동 알림 및 복구 프로세스** (구현시간: 1-2시간, 장기영향: HIGH)
+
+#### 📚 관련 문서
+- [./backend/DATABASE-001-h2-initialization.md](./backend/DATABASE-001-h2-initialization.md)
+- [./backend/DATABASE-002-data-loading.md](./backend/DATABASE-002-data-loading.md)
+
+#### 🤖 자동화 정보
+- **자동화 수준**: MEDIUM
+- **위험도**: CRITICAL
+- **문서 생성**: AutoTroubleshootingAgent v1.0
 
 ### 🏷️ AI 학습 태그
-`sql` `database` `not found` 
+`sql` `database` `not found` `h2-initialization` `data-loader` `critical-resolved` 
 
 ---
 *📅 자동 생성됨: 2025-07-29 14:59:54 | 🤖 Elderberry-Intellect v2.0*

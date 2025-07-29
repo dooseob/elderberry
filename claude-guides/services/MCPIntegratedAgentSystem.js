@@ -18,7 +18,8 @@ class MCPIntegratedAgentSystem {
             DEBUG: ['sequential-thinking', 'filesystem', 'memory'],
             API_DOCUMENTATION: ['context7', 'filesystem', 'github'],
             TROUBLESHOOTING: ['memory', 'filesystem', 'sequential-thinking'],
-            GOOGLE_SEO: ['context7', 'filesystem', 'memory']
+            GOOGLE_SEO: ['context7', 'filesystem', 'memory'],
+            TEAM_COLLABORATION: ['sequential-thinking', 'context7', 'filesystem', 'memory'] // NEW!
         };
     }
 
@@ -226,6 +227,11 @@ class MCPIntegratedAgentSystem {
             
             'smart-collaboration': async () => {
                 return await this.executeSmartCollaboration(params);
+            },
+            
+            // 🚀 NEW: 팀 협업 인프라 분석 및 최적화
+            'team-collaboration-infra': async () => {
+                return await this.analyzeTeamCollaborationInfra(params);
             }
         };
         
@@ -666,9 +672,63 @@ class MCPIntegratedAgentSystem {
         
         return migrationPlan;
     }
-        };
+
+    /**
+     * 🚀 팀 협업 인프라 분석 및 최적화 (NEW!)
+     * Context7 + Filesystem + Memory + Sequential Thinking 통합 활용
+     */
+    async analyzeTeamCollaborationInfra(params = {}) {
+        console.log('🚀 팀 협업 인프라 분석 시작...');
         
-        return await masterCommands[command]?.() || 'Unknown command';
+        const { teamSize = 3, requirements = [] } = params;
+        
+        // Sequential Thinking으로 인프라 분석 전략 수립
+        const analysisStrategy = await this.useSequentialThinking({
+            problem: '팀 협업을 위한 최적의 인프라 설계 분석',
+            context: { teamSize, requirements },
+            steps: [
+                '현재 팀 규모 및 개발 환경 상황 파악',
+                'Docker 및 컨테이너화 도입 필요성 분석',
+                'GitHub Actions CI/CD 파이프라인 설계 검토',
+                '프론트엔드/백엔드/데이터/에이전트 분리 전략 수립',
+                '비용 대비 효과 분석 및 단계별 도입 계획 작성',
+                '최종 권장사항 및 실행 로드맵 제시'
+            ]
+        });
+
+        // Context7으로 최신 인프라 베스트 프랙티스 조회
+        const dockerContext = await this.getContext7Documentation('docker-compose-best-practices');
+        const cicdContext = await this.getContext7Documentation('github-actions-workflow-optimization');
+
+        // Filesystem으로 현재 인프라 상태 분석
+        const currentInfra = await this.analyzeProjectStructure('infrastructure');
+        
+        // Memory에서 이전 인프라 분석 경험 조회
+        const previousAnalysis = await this.retrieveFromMemory('infrastructure-analysis');
+
+        const infraAnalysis = {
+            timestamp: new Date().toISOString(),
+            teamSize,
+            analysisStrategy,
+            recommendations: {
+                docker: '점진적 도입 권장 - docker-compose.dev.yml 즉시 활용',
+                cicd: 'GitHub Actions 단계적 적용 - .github/workflows/ci-cd.yml',
+                architecture: '현재 모노레포 유지, 서비스별 컨테이너 분리',
+                agents: '5개 에이전트 통합 구조 유지 (협업 시너지 최대화)'
+            },
+            implementationPlan: {
+                phase1: 'Docker 통합 환경 (즉시)',
+                phase2: 'CI/CD 자동화 (1-2주)',
+                phase3: '아키텍처 최적화 (1개월 후 평가)'
+            },
+            mcpToolsUsed: ['sequential-thinking', 'context7', 'filesystem', 'memory']
+        };
+
+        // 분석 결과를 Memory에 저장
+        await this.storeInMemory('team-collaboration-infra-analysis', infraAnalysis);
+
+        console.log('✅ 팀 협업 인프라 분석 완료');
+        return infraAnalysis;
     }
 
     // 유틸리티 메서드들
