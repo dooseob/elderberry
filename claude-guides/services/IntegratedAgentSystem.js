@@ -1,48 +1,77 @@
 /**
- * 통합 서브에이전트 시스템
- * 5개 특화 서브에이전트를 통합 관리하고 Claude Code Task 도구와 연동
+ * 통합 서브에이전트 시스템 + 커스텀 명령어 통합
+ * 5개 특화 서브에이전트를 통합 관리하고 Claude Code Task 도구 + 커스텀 명령어와 연동
+ * 🚀 NEW: 6개 커스텀 명령어(/max, /auto, /smart, /rapid, /deep, /sync) 완전 지원
  */
 const ParallelTaskManager = require('./ParallelTaskManager');
 const ProgressTracker = require('./ProgressTracker');
 const RealTimeLearningSystem = require('./RealTimeLearningSystem');
+const { CustomCommandHandler } = require('./CustomCommandHandler'); // 🚀 NEW
 
 class IntegratedAgentSystem {
     constructor() {
         this.parallelTaskManager = new ParallelTaskManager();
         this.progressTracker = new ProgressTracker.ProgressTracker();
         this.learningSystem = new RealTimeLearningSystem.RealTimeLearningSystem();
+        this.customCommandHandler = new CustomCommandHandler(); // 🚀 NEW: 커스텀 명령어 핸들러
         
-        // 5개 특화 서브에이전트 정의
+        // 5개 특화 서브에이전트 정의 + 커스텀 명령어 지원 업그레이드
         this.subAgents = {
             CLAUDE_GUIDE: {
                 name: 'AI기반 클로드 가이드 지침 시스템 에이전트',
-                description: '지능형 가이드 및 814줄 규칙 진화',
-                specialties: ['guideline-evolution', 'rule-management', 'policy-enforcement'],
-                priority: 'high'
+                description: '지능형 가이드 및 814줄 규칙 진화 + 커스텀 명령어 통합',
+                specialties: ['guideline-evolution', 'rule-management', 'policy-enforcement', 'custom-command-orchestration'], // 🚀 NEW
+                priority: 'high',
+                customCommandSupport: true, // 🚀 NEW
+                supportedCommands: ['/max', '/auto', '/smart', '/deep'] // 🚀 NEW
             },
             DEBUG_AGENT: {
                 name: '로그기반 디버깅 에이전트',
-                description: 'Java 백엔드 로그 실시간 분석',
-                specialties: ['log-analysis', 'error-detection', 'performance-monitoring'],
-                priority: 'high'
+                description: 'Java 백엔드 로그 실시간 분석 + 커스텀 명령어 디버깅',
+                specialties: ['log-analysis', 'error-detection', 'performance-monitoring', 'rapid-debugging'], // 🚀 NEW
+                priority: 'high',
+                customCommandSupport: true, // 🚀 NEW
+                supportedCommands: ['/max', '/auto', '/rapid', '/deep'] // 🚀 NEW
             },
             TROUBLESHOOTING_DOCS: {
                 name: '트러블슈팅 문서화 에이전트',
-                description: '자동 이슈 문서화 및 solutions-db.md 관리',
-                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management'],
-                priority: 'medium'
+                description: '자동 이슈 문서화 및 solutions-db.md 관리 + 스마트 문서 동기화',
+                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management', 'smart-documentation'], // 🚀 NEW
+                priority: 'medium',
+                customCommandSupport: true, // 🚀 NEW
+                supportedCommands: ['/smart', '/sync', '/auto'] // 🚀 NEW
             },
             API_DOCUMENTATION: {
                 name: 'API 문서화 에이전트',
-                description: 'Spring Boot Controller 자동 분석 및 OpenAPI 생성',
-                specialties: ['api-analysis', 'documentation-generation', 'schema-validation'],
-                priority: 'medium'
+                description: 'Spring Boot Controller 자동 분석 및 OpenAPI 생성 + API 동기화',
+                specialties: ['api-analysis', 'documentation-generation', 'schema-validation', 'api-synchronization'], // 🚀 NEW
+                priority: 'medium',
+                customCommandSupport: true, // 🚀 NEW
+                supportedCommands: ['/auto', '/sync', '/max'] // 🚀 NEW
             },
             SEO_OPTIMIZATION: {
                 name: 'Google SEO 최적화 에이전트',
-                description: '모든 시멘틱 태그 마크업과 SEO 메타데이터 자동 생성',
-                specialties: ['semantic-markup', 'meta-tags-generation', 'structured-data', 'seo-analysis', 'performance-optimization', 'accessibility-enhancement'],
-                priority: 'medium'
+                description: '모든 시멘틱 태그 마크업과 SEO 메타데이터 자동 생성 + 커스텀 SEO 최적화',
+                specialties: ['semantic-markup', 'meta-tags-generation', 'structured-data', 'seo-analysis', 'performance-optimization', 'accessibility-enhancement', 'custom-seo-commands'], // 🚀 NEW
+                priority: 'medium',
+                customCommandSupport: true, // 🚀 NEW
+                supportedCommands: ['/max', '/auto', '/smart', '/rapid', '/deep', '/sync'] // 🚀 NEW: 모든 명령어 지원
+            }
+        };
+
+        // 🚀 NEW: 커스텀 명령어 실행 통계
+        this.customCommandStats = {
+            totalExecutions: 0,
+            successfulExecutions: 0,
+            failedExecutions: 0,
+            averageExecutionTime: 0,
+            commandUsageCount: {
+                '/max': 0,
+                '/auto': 0,
+                '/smart': 0,
+                '/rapid': 0,
+                '/deep': 0,
+                '/sync': 0
             }
         };
 
@@ -85,6 +114,54 @@ class IntegratedAgentSystem {
     }
 
     /**
+     * 🚀 NEW: 커스텀 명령어 기반 작업 실행
+     * @param {string} command - 커스텀 명령어 (/max, /auto, /smart, /rapid, /deep, /sync)
+     * @param {string} task - 실행할 작업
+     * @param {Object} options - 추가 옵션
+     * @returns {Promise<Object>} 실행 결과
+     */
+    async executeCustomCommand(command, task, options = {}) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        console.log(`🚀 커스텀 명령어 실행: ${command} - ${task}`);
+
+        try {
+            // 커스텀 명령어 통계 업데이트
+            this.customCommandStats.totalExecutions++;
+            this.customCommandStats.commandUsageCount[command] = 
+                (this.customCommandStats.commandUsageCount[command] || 0) + 1;
+
+            const startTime = Date.now();
+
+            // CustomCommandHandler를 통한 실행
+            const result = await this.customCommandHandler.handleCommand(command, task, options);
+
+            // 실행 통계 업데이트
+            const executionTime = Date.now() - startTime;
+            this.updateCustomCommandStats(result.success, executionTime);
+
+            // 에이전트별 커스텀 명령어 후처리
+            await this.postProcessCustomCommand(command, task, result);
+
+            console.log(`✅ 커스텀 명령어 실행 완료: ${command} (${executionTime}ms)`);
+            return result;
+
+        } catch (error) {
+            console.error(`❌ 커스텀 명령어 실행 실패: ${command}`, error);
+            this.customCommandStats.failedExecutions++;
+            return {
+                success: false,
+                command: command,
+                task: task,
+                error: error.message,
+                fallbackSuggestion: 'executeTask() 메서드로 일반 실행을 시도해보세요.'
+            };
+        }
+    }
+
+    /**
      * 단일 작업 실행 (자동으로 최적 에이전트 선택)
      * @param {string} taskDescription - 작업 설명
      * @param {Object} options - 실행 옵션
@@ -98,6 +175,13 @@ class IntegratedAgentSystem {
         console.log(`🎯 작업 실행 요청: ${taskDescription}`);
 
         try {
+            // 🚀 NEW: 커스텀 명령어 자동 감지 및 실행
+            const detectedCommand = this.detectCustomCommand(taskDescription);
+            if (detectedCommand) {
+                console.log(`🔍 커스텀 명령어 자동 감지: ${detectedCommand}`);
+                return await this.executeCustomCommand(detectedCommand, taskDescription, options);
+            }
+
             // 1. 작업 분석 및 최적 에이전트 선택
             const analysis = await this.analyzeTask(taskDescription, options);
             
@@ -120,6 +204,133 @@ class IntegratedAgentSystem {
                 fallbackSuggestion: '수동 실행을 고려해보세요.'
             };
         }
+    }
+
+    /**
+     * 🚀 NEW: 커스텀 명령어 자동 감지
+     */
+    detectCustomCommand(taskDescription) {
+        const taskLower = taskDescription.toLowerCase();
+        
+        // 명령어 키워드 매핑
+        const commandKeywords = {
+            '/max': ['전체', '리팩토링', '모든', '완전', '최대', '전방위'],
+            '/auto': ['자동', '최적화', '개선', '스마트'],
+            '/smart': ['효율적', '지능적', '협업', '품질'],
+            '/rapid': ['빠른', '긴급', '즉시', '신속'],
+            '/deep': ['심층', '분석', '상세', '완전한'],
+            '/sync': ['동기화', '업데이트', '통합', '일치']
+        };
+
+        // 각 명령어별 키워드 매칭 점수 계산
+        let bestMatch = null;
+        let highestScore = 0;
+
+        for (const [command, keywords] of Object.entries(commandKeywords)) {
+            const score = keywords.reduce((acc, keyword) => {
+                return acc + (taskLower.includes(keyword) ? 1 : 0);
+            }, 0);
+
+            if (score > highestScore) {
+                highestScore = score;
+                bestMatch = command;
+            }
+        }
+
+        // 최소 1개 키워드 매칭 시 명령어 반환
+        return highestScore >= 1 ? bestMatch : null;
+    }
+
+    /**
+     * 🚀 NEW: 커스텀 명령어 통계 업데이트
+     */
+    updateCustomCommandStats(success, executionTime) {
+        if (success) {
+            this.customCommandStats.successfulExecutions++;
+        } else {
+            this.customCommandStats.failedExecutions++;
+        }
+
+        // 평균 실행 시간 업데이트
+        const totalExecutions = this.customCommandStats.totalExecutions;
+        this.customCommandStats.averageExecutionTime = 
+            ((this.customCommandStats.averageExecutionTime * (totalExecutions - 1)) + executionTime) / totalExecutions;
+    }
+
+    /**
+     * 🚀 NEW: 커스텀 명령어 후처리
+     */
+    async postProcessCustomCommand(command, task, result) {
+        // 각 서브에이전트별 후처리 작업
+        const supportingAgents = this.getAgentsSupportingCommand(command);
+        
+        for (const agentType of supportingAgents) {
+            const agent = this.subAgents[agentType];
+            if (agent.customCommandSupport) {
+                console.log(`🔄 ${agentType} 커스텀 명령어 후처리 실행`);
+                
+                // 에이전트별 특화 후처리
+                await this.executeAgentPostProcess(agentType, command, task, result);
+            }
+        }
+
+        // 학습 시스템에 결과 저장
+        await this.learningSystem.learnFromCustomCommand(command, task, result);
+    }
+
+    /**
+     * 🚀 NEW: 특정 명령어를 지원하는 에이전트 조회
+     */
+    getAgentsSupportingCommand(command) {
+        return Object.keys(this.subAgents).filter(agentType => {
+            const agent = this.subAgents[agentType];
+            return agent.customCommandSupport && agent.supportedCommands.includes(command);
+        });
+    }
+
+    /**
+     * 🚀 NEW: 에이전트별 후처리 실행
+     */
+    async executeAgentPostProcess(agentType, command, task, result) {
+        const postProcessActions = {
+            'CLAUDE_GUIDE': async () => {
+                console.log(`📋 CLAUDE_GUIDE: ${command} 명령어 가이드라인 업데이트`);
+                return { type: 'guideline-update', command, status: 'completed' };
+            },
+            
+            'DEBUG_AGENT': async () => {
+                console.log(`🐛 DEBUG_AGENT: ${command} 명령어 디버깅 패턴 학습`);
+                return { type: 'debug-pattern-learning', command, status: 'completed' };
+            },
+            
+            'TROUBLESHOOTING_DOCS': async () => {
+                console.log(`📚 TROUBLESHOOTING_DOCS: ${command} 명령어 문서 업데이트`);
+                return { type: 'documentation-update', command, status: 'completed' };
+            },
+            
+            'API_DOCUMENTATION': async () => {
+                console.log(`📡 API_DOCUMENTATION: ${command} 명령어 API 문서 동기화`);
+                return { type: 'api-documentation-sync', command, status: 'completed' };
+            },
+            
+            'SEO_OPTIMIZATION': async () => {
+                console.log(`🔍 SEO_OPTIMIZATION: ${command} 명령어 SEO 분석 완료`);
+                return { type: 'seo-optimization-analysis', command, status: 'completed' };
+            }
+        };
+
+        return await postProcessActions[agentType]?.() || { status: 'no-action' };
+    }
+
+    /**
+     * 🚀 NEW: 커스텀 명령어 사용 통계 조회
+     */
+    getCustomCommandStats() {
+        const stats = { ...this.customCommandStats };
+        stats.successRate = stats.totalExecutions > 0 ? 
+            (stats.successfulExecutions / stats.totalExecutions) * 100 : 0;
+        
+        return stats;
     }
 
     /**

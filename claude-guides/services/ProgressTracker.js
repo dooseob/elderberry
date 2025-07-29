@@ -1,470 +1,322 @@
 /**
- * TodoWrite 기반 실시간 진행상황 추적 시스템
- * 모든 복잡한 작업(3단계 이상)의 진행도를 실시간으로 추적
+ * 진행상황 추적 시스템
+ * TodoWrite 도구와 연동하여 실시간 진행상황 모니터링
+ * 
+ * @author Claude Code + MCP Integration
+ * @version 2.0.0
+ * @date 2025-07-29
  */
+
 class ProgressTracker {
-    constructor() {
-        this.activeTasks = new Map();
-        this.completedTasks = new Map();
-        this.todoList = [];
-        this.progressCallbacks = new Set();
+  constructor() {
+    this.activeSessions = new Map();
+    this.completedSessions = [];
+    this.metrics = {
+      totalSessions: 0,
+      averageCompletionTime: 0,
+      successRate: 0
+    };
+  }
+
+  /**
+   * 진행 추적 시작
+   * @param {string} command - 실행 명령어
+   * @param {string} task - 작업 설명
+   * @returns {string} 추적 ID
+   */
+  async start(command, task) {
+    const trackingId = `${command}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const session = {
+      id: trackingId,
+      command,
+      task,
+      startTime: Date.now(),
+      status: 'started',
+      todos: [],
+      progress: 0,
+      currentStep: '',
+      estimatedCompletion: null
+    };
+    
+    this.activeSessions.set(trackingId, session);
+    
+    // 초기 TODO 생성
+    await this.createInitialTodos(trackingId, command, task);
+    
+    console.log(`📊 진행 추적 시작: ${trackingId} (${command})`);
+    return trackingId;
+  }
+
+  /**
+   * 초기 TODO 생성
+   */
+  async createInitialTodos(trackingId, command, task) {
+    const session = this.activeSessions.get(trackingId);
+    if (!session) return;
+
+    // 명령어별 기본 TODO 템플릿
+    const todoTemplates = this.getTodoTemplates(command, task);
+    
+    try {
+      // TodoWrite 도구로 TODO 생성 (가상 호출 - 실제로는 Claude Code의 TodoWrite 도구 사용)
+      const todos = todoTemplates.map((template, index) => ({
+        id: `${trackingId}_${index + 1}`,
+        content: template.content,
+        status: index === 0 ? 'in_progress' : 'pending',
+        priority: template.priority || 'medium'
+      }));
+      
+      session.todos = todos;
+      session.totalSteps = todos.length;
+      session.currentStep = todos[0]?.content || '시작';
+      
+      console.log(`📝 TODO 생성 완료: ${todos.length}개 항목`);
+      
+    } catch (error) {
+      console.error('❌ TODO 생성 실패:', error);
+    }
+  }
+
+  /**
+   * 명령어별 TODO 템플릿 생성
+   */
+  getTodoTemplates(command, task) {
+    const baseTemplates = {
+      '/max': [
+        { content: `작업 복잡도 분석: ${task}`, priority: 'high' },
+        { content: '10개 병렬 작업 분할 및 계획', priority: 'high' },
+        { content: '5개 MCP 도구 초기화 및 준비', priority: 'high' },
+        { content: '5개 서브에이전트 활성화', priority: 'medium' },
+        { content: '병렬 작업 실행 및 모니터링', priority: 'high' },
+        { content: '결과 통합 및 검증', priority: 'medium' },
+        { content: '자동 커밋 및 문서화', priority: 'low' },
+        { content: '성능 메트릭 수집 및 학습', priority: 'low' }
+      ],
+      '/auto': [
+        { content: `작업 자동 분석: ${task}`, priority: 'high' },
+        { content: '최적화 전략 선택', priority: 'medium' },
+        { content: 'MCP 도구 자동 선택', priority: 'medium' },
+        { content: '적절한 서브에이전트 선택', priority: 'medium' },
+        { content: '5개 병렬 작업 실행', priority: 'high' },
+        { content: '결과 검증 및 최적화', priority: 'medium' }
+      ],
+      '/smart': [
+        { content: `지능형 작업 분석: ${task}`, priority: 'high' },
+        { content: '스마트 에이전트 선택', priority: 'medium' },
+        { content: '3개 협업 작업 실행', priority: 'high' },
+        { content: '품질 중심 결과 검증', priority: 'high' }
+      ],
+      '/rapid': [
+        { content: `긴급 작업 처리: ${task}`, priority: 'critical' },
+        { content: '빠른 실행 경로 선택', priority: 'high' },
+        { content: '1-2개 집중 작업 실행', priority: 'critical' }
+      ],
+      '/deep': [
+        { content: `심층 분석 시작: ${task}`, priority: 'high' },
+        { content: 'Sequential Thinking 단계별 분석', priority: 'high' },
+        { content: '문제 정의 및 요구사항 분석', priority: 'medium' },
+        { content: '해결책 설계 및 구현 계획', priority: 'medium' },
+        { content: '검증 방법 및 테스트 계획', priority: 'medium' },
+        { content: '상세 문서화 및 가이드 생성', priority: 'low' }
+      ],
+      '/sync': [
+        { content: `동기화 상태 확인: ${task}`, priority: 'high' },
+        { content: 'GitHub 저장소 상태 점검', priority: 'medium' },
+        { content: 'Memory Bank 동기화', priority: 'medium' },
+        { content: 'Filesystem 변경사항 추적', priority: 'medium' },
+        { content: '자동 커밋 및 푸시', priority: 'high' },
+        { content: '문서 업데이트 동기화', priority: 'low' }
+      ]
+    };
+
+    return baseTemplates[command] || [
+      { content: `작업 실행: ${task}`, priority: 'medium' },
+      { content: '결과 검증', priority: 'low' }
+    ];
+  }
+
+  /**
+   * 진행상황 업데이트
+   */
+  async updateProgress(trackingId, stepIndex, status = 'completed', details = '') {
+    const session = this.activeSessions.get(trackingId);
+    if (!session) {
+      console.warn(`⚠️ 존재하지 않는 추적 세션: ${trackingId}`);
+      return;
     }
 
-    /**
-     * 새로운 작업 추적 시작
-     * @param {string} taskId - 작업 고유 ID
-     * @param {Object} taskInfo - 작업 정보
-     * @returns {Promise<void>}
-     */
-    async startTracking(taskId, taskInfo) {
-        const {
-            title,
-            description,
-            totalSteps,
-            currentStep = 0,
-            priority = 'medium',
-            estimatedDuration = null
-        } = taskInfo;
-
-        console.log(`📊 진행상황 추적 시작: ${title}`);
-
-        // 작업 정보 저장
-        this.activeTasks.set(taskId, {
-            id: taskId,
-            title,
-            description,
-            totalSteps,
-            currentStep,
-            priority,
-            estimatedDuration,
-            startTime: Date.now(),
-            lastUpdate: Date.now(),
-            status: 'in_progress'
-        });
-
-        // TodoWrite로 초기 진행상황 기록
-        await this.updateTodoList(taskId);
-        
-        // 진행상황 콜백 실행
-        this.notifyProgressCallbacks(taskId, 'started');
+    // TODO 상태 업데이트
+    if (session.todos[stepIndex]) {
+      session.todos[stepIndex].status = status;
+      
+      if (details) {
+        session.todos[stepIndex].details = details;
+      }
     }
 
-    /**
-     * 작업 진행상황 업데이트
-     * @param {string} taskId - 작업 ID
-     * @param {Object} updateInfo - 업데이트 정보
-     * @returns {Promise<void>}
-     */
-    async updateProgress(taskId, updateInfo) {
-        const task = this.activeTasks.get(taskId);
-        if (!task) {
-            console.warn(`⚠️ 추적되지 않는 작업: ${taskId}`);
-            return;
-        }
-
-        const {
-            currentStep,
-            stepDescription,
-            status,
-            additionalInfo
-        } = updateInfo;
-
-        // 작업 정보 업데이트
-        if (currentStep !== undefined) {
-            task.currentStep = currentStep;
-        }
-        if (stepDescription) {
-            task.currentStepDescription = stepDescription;
-        }
-        if (status) {
-            task.status = status;
-        }
-        if (additionalInfo) {
-            task.additionalInfo = { ...task.additionalInfo, ...additionalInfo };
-        }
-
-        task.lastUpdate = Date.now();
-
-        console.log(`🔄 진행상황 업데이트: ${task.title} (${task.currentStep}/${task.totalSteps})`);
-
-        // TodoWrite 업데이트
-        await this.updateTodoList(taskId);
-
-        // 진행상황 콜백 실행
-        this.notifyProgressCallbacks(taskId, 'updated', updateInfo);
-
-        // 완료 체크
-        if (task.currentStep >= task.totalSteps || status === 'completed') {
-            await this.completeTask(taskId);
-        }
+    // 다음 단계 활성화
+    if (status === 'completed' && stepIndex + 1 < session.todos.length) {
+      session.todos[stepIndex + 1].status = 'in_progress';
+      session.currentStep = session.todos[stepIndex + 1].content;
     }
 
-    /**
-     * 작업 완료 처리
-     * @param {string} taskId - 작업 ID
-     * @param {Object} completionInfo - 완료 정보
-     * @returns {Promise<void>}
-     */
-    async completeTask(taskId, completionInfo = {}) {
-        const task = this.activeTasks.get(taskId);
-        if (!task) {
-            console.warn(`⚠️ 추적되지 않는 작업: ${taskId}`);
-            return;
-        }
+    // 전체 진행률 계산
+    const completedSteps = session.todos.filter(todo => todo.status === 'completed').length;
+    session.progress = Math.round((completedSteps / session.totalSteps) * 100);
 
-        // 완료 정보 업데이트
-        task.status = 'completed';
-        task.completedAt = Date.now();
-        task.totalDuration = task.completedAt - task.startTime;
-        task.completionInfo = completionInfo;
-
-        console.log(`✅ 작업 완료: ${task.title} (${this.formatDuration(task.totalDuration)})`);
-
-        // 활성 작업에서 완료된 작업으로 이동
-        this.activeTasks.delete(taskId);
-        this.completedTasks.set(taskId, task);
-
-        // TodoWrite 최종 업데이트
-        await this.updateTodoList(taskId, true);
-
-        // 진행상황 콜백 실행
-        this.notifyProgressCallbacks(taskId, 'completed', completionInfo);
-
-        // 작업 통계 업데이트
-        await this.updateTaskStatistics(task);
+    // 예상 완료 시간 계산
+    if (completedSteps > 0) {
+      const elapsedTime = Date.now() - session.startTime;
+      const avgTimePerStep = elapsedTime / completedSteps;
+      const remainingSteps = session.totalSteps - completedSteps;
+      session.estimatedCompletion = Date.now() + (avgTimePerStep * remainingSteps);
     }
 
-    /**
-     * TodoWrite를 통한 진행상황 실시간 업데이트
-     * @param {string} taskId - 작업 ID
-     * @param {boolean} isCompleted - 완료 여부
-     * @returns {Promise<void>}
-     */
-    async updateTodoList(taskId, isCompleted = false) {
-        const task = this.activeTasks.get(taskId) || this.completedTasks.get(taskId);
-        if (!task) return;
+    console.log(`📈 진행률 업데이트: ${session.progress}% (${completedSteps}/${session.totalSteps})`);
 
-        // 기존 TodoWrite 항목 찾기
-        const existingTodoIndex = this.todoList.findIndex(todo => todo.id === taskId);
-        
-        // 새로운 Todo 항목 생성
-        const newTodo = {
-            id: taskId,
-            content: this.generateTodoContent(task),
-            status: isCompleted ? 'completed' : 'in_progress',
-            priority: task.priority
-        };
+    // TodoWrite 도구 업데이트 (실제로는 Claude Code의 TodoWrite 도구 호출)
+    await this.updateTodoWrite(session);
+  }
 
-        // TodoWrite 목록 업데이트
-        if (existingTodoIndex >= 0) {
-            this.todoList[existingTodoIndex] = newTodo;
-        } else {
-            this.todoList.push(newTodo);
-        }
+  /**
+   * TodoWrite 도구 업데이트
+   */
+  async updateTodoWrite(session) {
+    try {
+      // 가상 TodoWrite 업데이트 (실제로는 Claude Code의 TodoWrite 도구 사용)
+      console.log(`📝 TodoWrite 업데이트: ${session.id}`);
+      
+      // 실제 구현에서는 다음과 같이 TodoWrite 도구 호출
+      /*
+      await claudeCode.callTool('TodoWrite', {
+        todos: session.todos
+      });
+      */
+      
+    } catch (error) {
+      console.error('❌ TodoWrite 업데이트 실패:', error);
+    }
+  }
 
-        // 서브 단계들 추가 (상세 진행상황)
-        if (!isCompleted && task.totalSteps > 1) {
-            await this.updateSubStepTodos(task);
-        }
-
-        // 실제 TodoWrite 도구 호출 (Claude Code API)
-        try {
-            // 실제 구현에서는 여기서 Claude Code의 TodoWrite 도구를 호출
-            console.log(`📝 TodoWrite 업데이트: ${task.title}`);
-            // await claudeCodeAPI.todoWrite({ todos: this.todoList });
-        } catch (error) {
-            console.error('TodoWrite 업데이트 실패:', error);
-        }
+  /**
+   * 진행 추적 완료
+   */
+  async complete(trackingId, result) {
+    const session = this.activeSessions.get(trackingId);
+    if (!session) {
+      console.warn(`⚠️ 존재하지 않는 추적 세션: ${trackingId}`);
+      return;
     }
 
-    /**
-     * 서브 단계 Todo 항목들 업데이트
-     * @param {Object} task - 작업 정보
-     * @returns {Promise<void>}
-     */
-    async updateSubStepTodos(task) {
-        // 서브 단계별 Todo 항목들 생성
-        for (let step = 1; step <= task.totalSteps; step++) {
-            const subStepId = `${task.id}-step-${step}`;
-            const isCurrentStep = step === task.currentStep;
-            const isCompletedStep = step < task.currentStep;
-            
-            let status = 'pending';
-            if (isCompletedStep) status = 'completed';
-            else if (isCurrentStep) status = 'in_progress';
+    const endTime = Date.now();
+    const totalTime = endTime - session.startTime;
 
-            const subTodo = {
-                id: subStepId,
-                content: `  └ 단계 ${step}: ${this.getStepDescription(task, step)}`,
-                status,
-                priority: 'low'
-            };
+    // 세션 완료 처리
+    session.status = result.success ? 'completed' : 'failed';
+    session.endTime = endTime;
+    session.totalTime = totalTime;
+    session.result = result;
+    session.progress = 100;
 
-            const existingIndex = this.todoList.findIndex(todo => todo.id === subStepId);
-            if (existingIndex >= 0) {
-                this.todoList[existingIndex] = subTodo;
-            } else {
-                this.todoList.push(subTodo);
-            }
-        }
+    // 모든 TODO를 완료 상태로 변경
+    session.todos.forEach(todo => {
+      if (todo.status !== 'completed') {
+        todo.status = result.success ? 'completed' : 'failed';
+      }
+    });
+
+    // 완료된 세션으로 이동
+    this.activeSessions.delete(trackingId);
+    this.completedSessions.push(session);
+
+    // 메트릭 업데이트
+    this.updateMetrics(session);
+
+    console.log(`✅ 진행 추적 완료: ${trackingId} (${totalTime}ms)`);
+
+    // 최종 TodoWrite 업데이트
+    await this.updateTodoWrite(session);
+
+    return session;
+  }
+
+  /**
+   * 메트릭 업데이트
+   */
+  updateMetrics(session) {
+    this.metrics.totalSessions++;
+    
+    // 평균 완료 시간 계산
+    const totalTime = this.completedSessions.reduce((sum, s) => sum + (s.totalTime || 0), 0);
+    this.metrics.averageCompletionTime = totalTime / this.completedSessions.length;
+    
+    // 성공률 계산
+    const successfulSessions = this.completedSessions.filter(s => s.status === 'completed').length;
+    this.metrics.successRate = (successfulSessions / this.completedSessions.length) * 100;
+  }
+
+  /**
+   * 현재 진행상황 조회
+   */
+  getProgress(trackingId) {
+    const session = this.activeSessions.get(trackingId);
+    if (!session) {
+      // 완료된 세션에서 찾기
+      const completedSession = this.completedSessions.find(s => s.id === trackingId);
+      return completedSession || null;
     }
 
-    /**
-     * Todo 내용 생성
-     * @param {Object} task - 작업 정보
-     * @returns {string} Todo 내용
-     */
-    generateTodoContent(task) {
-        const progress = task.totalSteps > 0 ? 
-            `(${task.currentStep}/${task.totalSteps})` : '';
-        
-        const percentage = task.totalSteps > 0 ? 
-            Math.round((task.currentStep / task.totalSteps) * 100) : 0;
+    return {
+      id: session.id,
+      command: session.command,
+      task: session.task,
+      progress: session.progress,
+      currentStep: session.currentStep,
+      status: session.status,
+      elapsedTime: Date.now() - session.startTime,
+      estimatedCompletion: session.estimatedCompletion,
+      todos: session.todos
+    };
+  }
 
-        const duration = task.startTime ? 
-            this.formatDuration(Date.now() - task.startTime) : '';
+  /**
+   * 모든 활성 세션 조회
+   */
+  getAllActiveSessions() {
+    return Array.from(this.activeSessions.values()).map(session => ({
+      id: session.id,
+      command: session.command,
+      task: session.task,
+      progress: session.progress,
+      currentStep: session.currentStep,
+      elapsedTime: Date.now() - session.startTime
+    }));
+  }
 
-        let content = `${task.title} ${progress}`;
-        
-        if (percentage > 0) {
-            content += ` [${percentage}%]`;
-        }
-        
-        if (task.currentStepDescription) {
-            content += ` - ${task.currentStepDescription}`;
-        }
-        
-        if (duration && task.status !== 'completed') {
-            content += ` (${duration})`;
-        }
+  /**
+   * 전체 메트릭 조회
+   */
+  getMetrics() {
+    return {
+      ...this.metrics,
+      activeSessions: this.activeSessions.size,
+      completedSessions: this.completedSessions.length
+    };
+  }
 
-        return content;
-    }
-
-    /**
-     * 단계별 설명 가져오기
-     * @param {Object} task - 작업 정보
-     * @param {number} step - 단계 번호
-     * @returns {string} 단계 설명
-     */
-    getStepDescription(task, step) {
-        // 작업 유형별 기본 단계 설명
-        const defaultSteps = {
-            1: '분석 및 계획 수립',
-            2: '핵심 기능 구현',
-            3: '테스트 및 검증',
-            4: '최적화 및 정리',
-            5: '문서화 및 완료'
-        };
-
-        // 작업별 커스텀 단계 설명이 있으면 우선 사용
-        if (task.stepDescriptions && task.stepDescriptions[step]) {
-            return task.stepDescriptions[step];
-        }
-
-        return defaultSteps[step] || `단계 ${step} 실행`;
-    }
-
-    /**
-     * 시간 포맷팅
-     * @param {number} milliseconds - 밀리초
-     * @returns {string} 포맷된 시간
-     */
-    formatDuration(milliseconds) {
-        const seconds = Math.floor(milliseconds / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-
-        if (hours > 0) {
-            return `${hours}시간 ${minutes % 60}분`;
-        } else if (minutes > 0) {
-            return `${minutes}분 ${seconds % 60}초`;
-        } else {
-            return `${seconds}초`;
-        }
-    }
-
-    /**
-     * 진행상황 콜백 추가
-     * @param {Function} callback - 콜백 함수
-     */
-    addProgressCallback(callback) {
-        this.progressCallbacks.add(callback);
-    }
-
-    /**
-     * 진행상황 콜백 제거
-     * @param {Function} callback - 콜백 함수
-     */
-    removeProgressCallback(callback) {
-        this.progressCallbacks.delete(callback);
-    }
-
-    /**
-     * 진행상황 콜백 실행
-     * @param {string} taskId - 작업 ID
-     * @param {string} event - 이벤트 타입
-     * @param {Object} data - 추가 데이터
-     */
-    notifyProgressCallbacks(taskId, event, data = {}) {
-        const task = this.activeTasks.get(taskId) || this.completedTasks.get(taskId);
-        
-        for (const callback of this.progressCallbacks) {
-            try {
-                callback({
-                    taskId,
-                    event,
-                    task,
-                    data,
-                    timestamp: Date.now()
-                });
-            } catch (error) {
-                console.error('진행상황 콜백 실행 오류:', error);
-            }
-        }
-    }
-
-    /**
-     * 현재 진행 중인 작업들 가져오기
-     * @returns {Array} 활성 작업 목록
-     */
-    getActiveTasks() {
-        return Array.from(this.activeTasks.values());
-    }
-
-    /**
-     * 완료된 작업들 가져오기
-     * @param {number} limit - 제한 개수
-     * @returns {Array} 완료된 작업 목록
-     */
-    getCompletedTasks(limit = 10) {
-        const completed = Array.from(this.completedTasks.values());
-        return completed
-            .sort((a, b) => b.completedAt - a.completedAt)
-            .slice(0, limit);
-    }
-
-    /**
-     * 작업 통계 업데이트
-     * @param {Object} task - 완료된 작업
-     * @returns {Promise<void>}
-     */
-    async updateTaskStatistics(task) {
-        // 작업 통계 수집 및 분석
-        const stats = {
-            taskType: this.identifyTaskType(task.title),
-            duration: task.totalDuration,
-            complexity: task.totalSteps,
-            efficiency: task.totalSteps / (task.totalDuration / 1000 / 60), // 단계/분
-            completedAt: task.completedAt
-        };
-
-        console.log(`📊 작업 통계: ${task.title} - 효율성: ${stats.efficiency.toFixed(2)} 단계/분`);
-
-        // 통계 데이터 저장 (로컬 스토리지 또는 데이터베이스)
-        try {
-            // 실제 구현에서는 통계 데이터를 저장
-        } catch (error) {
-            console.error('통계 업데이트 실패:', error);
-        }
-    }
-
-    /**
-     * 작업 유형 식별
-     * @param {string} title - 작업 제목
-     * @returns {string} 작업 유형
-     */
-    identifyTaskType(title) {
-        const patterns = {
-            'REFACTORING': ['리팩토링', 'refactor', '정리', 'cleanup'],
-            'IMPLEMENTATION': ['구현', 'implement', '개발', 'develop'],
-            'OPTIMIZATION': ['최적화', 'optimize', '성능', 'performance'],
-            'DEBUGGING': ['버그', 'bug', '오류', 'error', '수정', 'fix'],
-            'DOCUMENTATION': ['문서', 'document', '가이드', 'guide'],
-            'TESTING': ['테스트', 'test', '검증', 'validation']
-        };
-
-        for (const [type, keywords] of Object.entries(patterns)) {
-            if (keywords.some(keyword => title.toLowerCase().includes(keyword))) {
-                return type;
-            }
-        }
-
-        return 'GENERAL';
-    }
-
-    /**
-     * 전체 진행상황 요약
-     * @returns {Object} 진행상황 요약
-     */
-    getProgressSummary() {
-        const activeTasks = this.getActiveTasks();
-        const completedTasks = this.getCompletedTasks();
-
-        const totalProgress = activeTasks.reduce((sum, task) => {
-            return sum + (task.currentStep / task.totalSteps);
-        }, 0);
-
-        const averageProgress = activeTasks.length > 0 ? 
-            (totalProgress / activeTasks.length) * 100 : 0;
-
-        return {
-            activeTasks: activeTasks.length,
-            completedTasks: completedTasks.length,
-            averageProgress: Math.round(averageProgress),
-            totalTasks: activeTasks.length + completedTasks.length,
-            estimatedTimeRemaining: this.calculateEstimatedTimeRemaining(activeTasks)
-        };
-    }
-
-    /**
-     * 예상 남은 시간 계산
-     * @param {Array} activeTasks - 활성 작업들
-     * @returns {number} 예상 남은 시간 (밀리초)
-     */
-    calculateEstimatedTimeRemaining(activeTasks) {
-        return activeTasks.reduce((total, task) => {
-            const elapsed = Date.now() - task.startTime;
-            const progressRate = task.currentStep / task.totalSteps;
-            
-            if (progressRate > 0) {
-                const estimatedTotal = elapsed / progressRate;
-                const remaining = estimatedTotal - elapsed;
-                return total + Math.max(0, remaining);
-            }
-            
-            return total + (task.estimatedDuration || 300000); // 기본 5분
-        }, 0);
-    }
+  /**
+   * 세션 정리 (오래된 완료 세션 제거)
+   */
+  cleanup(maxAge = 24 * 60 * 60 * 1000) { // 24시간
+    const cutoffTime = Date.now() - maxAge;
+    
+    this.completedSessions = this.completedSessions.filter(session => {
+      return (session.endTime || session.startTime) > cutoffTime;
+    });
+    
+    console.log(`🧹 세션 정리 완료: ${this.completedSessions.length}개 세션 유지`);
+  }
 }
 
-// 전역 인스턴스
-const globalProgressTracker = new ProgressTracker();
-
-/**
- * 편의 함수들
- */
-async function trackProgress(taskId, taskInfo) {
-    return await globalProgressTracker.startTracking(taskId, taskInfo);
-}
-
-async function updateProgress(taskId, updateInfo) {
-    return await globalProgressTracker.updateProgress(taskId, updateInfo);
-}
-
-async function completeProgress(taskId, completionInfo = {}) {
-    return await globalProgressTracker.completeTask(taskId, completionInfo);
-}
-
-function getProgressSummary() {
-    return globalProgressTracker.getProgressSummary();
-}
-
-module.exports = {
-    ProgressTracker,
-    globalProgressTracker,
-    trackProgress,
-    updateProgress,
-    completeProgress,
-    getProgressSummary
-};
+module.exports = { ProgressTracker };

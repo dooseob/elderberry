@@ -35,6 +35,8 @@ spring:
         cache:
           use_second_level_cache: false
           use_query_cache: false
+          region:
+            factory_class: org.hibernate.cache.internal.NoCachingRegionFactory
         # N+1 문제 해결을 위한 배치 페칭
         default_batch_fetch_size: 100
     defer-datasource-initialization: true

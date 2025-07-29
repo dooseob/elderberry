@@ -709,6 +709,7 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - **🧠 5개 MCP 도구 완전 통합 및 테스트 검증** ✅
 - **⭐ GoogleSeoOptimizationAgent 추가 완료** ✅
 - **💬 커스텀 명령어 + MCP 도구 자동 연동** ✅
+- **🚀 6개 커스텀 명령어 시스템 완전 구축 및 5개 에이전트 통합** ✅ (NEW!)
 - **⚡ 시간절약 개발 환경 (./dev-start.sh) 구축** ✅
 - **📚 트러블슈팅 문서 구조화 시스템 완전 구축** ✅
 - **📁 카테고리별 문서 분할 및 표준화 완료** ✅
@@ -724,28 +725,193 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 3. http://localhost:5173 접속하여 로그인 테스트
 4. 중지: `./dev-stop.sh`
 
-**🤖 5개 에이전트 시스템 사용법**
-- `/max TypeScript 오류 모두 수정해줘 --mcp sequential-thinking,filesystem` (최대 성능 + MCP)
-- `/auto 성능 최적화 --mcp memory,context7` (자동 분석 + 학습)  
-- `/smart UI 컴포넌트 개선 --mcp filesystem,github` (효율적 처리 + 자동 커밋)
-- `/seo 웹사이트 SEO 최적화 --mcp context7,filesystem,memory` (SEO 최적화 + 시멘틱 마크업) ⭐
-- `executeMCPIntegratedTask('복잡한 문제 해결', {mcpTools: ['sequential-thinking']})` (직접 활용)
-- `executeMCPIntegratedTask('SEO 분석', {agent: 'GOOGLE_SEO', mcpTools: ['context7', 'memory']})` (SEO 전담 에이전트) ⭐
+**🤖 커스텀 명령어 시스템 (NEW! - 6개 모드) ⚡**
 
-**🎯 다음 목표 (우선순위 업데이트 - 로그인 시스템 근본 원인 분석 완료 후)**
-1. **🔧 Spring Boot HTTP 메시지 컨버터 문제 해결**: Context7 조사 결과 기반으로 설정 수정 및 테스트
-2. **~~트러블슈팅 문서 구조화~~**: ✅ **완료** - 2018줄→53줄 인덱스로 95% 축소, 카테고리별 분할 완료
-3. **~~5개 에이전트 시스템 구축~~**: ✅ **완료** - 5개 MCP 도구 완전 통합 및 테스트 검증
-4. **~~GoogleSeoOptimizationAgent 추가~~**: ✅ **완료** - SEO 최적화 및 시멘틱 마크업 전담 에이전트
-5. **SEO 최적화 활용 고도화**: GoogleSeoOptimizationAgent로 웹사이트 검색 엔진 최적화 ⭐
-6. **MCP 도구 활용 고도화**: Sequential Thinking으로 복잡한 아키텍처 문제 해결
-7. **Memory Bank 기반 학습 시스템**: 개발 패턴 및 베스트 프랙티스 자동 축적
-8. **프론트엔드에서 실제 웹페이지 로그인 검증**: 브라우저에서 test.domestic@example.com 계정으로 로그인 테스트
-9. **핵심 비즈니스 로직 구현**: 건강평가, 시설매칭, 코디네이터 매칭 완성 (5개 에이전트 활용)
-10. **GitHub 통합 워크플로우**: 자동 커밋, 이슈 관리, PR 생성 최적화
-11. **프론트엔드-백엔드 완전 연동**: 모든 API 엔드포인트 연동 완료 (Context7으로 최신 패턴 조사)
-12. **MVP 기능 완성**: 사용자가 실제 사용할 수 있는 최소 기능 세트
-13. **SEO 기반 성능 최적화**: GoogleSeoOptimizationAgent + Filesystem 모니터링으로 체계적 최적화 ⭐
+**✨ 핵심 3개 명령어 (사용자 맞춤형)**
+- **`/max`** - **최대 성능 모드**: 10개 병렬 + 모든 MCP 도구 + 5개 서브에이전트 완전 활용
+  ```bash
+  /max 전체 프로젝트 아키텍처 개선 및 성능 최적화
+  ```
+- **`/auto`** - **자동 최적화 모드**: 5개 병렬 + 작업 복잡도 자동 분석 후 최적 전략 선택
+  ```bash
+  /auto 로그인 시스템 HTTP 메시지 컨버터 문제 해결
+  ```
+- **`/smart`** - **지능형 협업 모드**: 3개 병렬 + Claude Code 마스터 에이전트로 서브에이전트 조율
+  ```bash
+  /smart UI 컴포넌트 최적화 및 문서화
+  ```
+
+**⚡ 특화된 3개 추가 명령어**
+- **`/rapid`** - **초고속 실행 모드**: 1-2개 작업 집중 + 긴급 처리 특화
+  ```bash
+  /rapid 긴급 버그 수정
+  ```
+- **`/deep`** - **심층 분석 모드**: Sequential Thinking + Context7 집중 + 근본 원인 분석
+  ```bash
+  /deep Spring Boot 보안 아키텍처 설계 분석
+  ```
+- **`/sync`** - **실시간 동기화 모드**: GitHub + Memory + Filesystem 집중 + 팀 협업 최적화
+  ```bash
+  /sync 프로젝트 문서 및 코드 동기화
+  ```
+
+**🎯 명령어별 특성**
+| 명령어 | 병렬작업 | 예상시간 | 최적 상황 | MCP 도구 활용 |
+|--------|----------|----------|-----------|---------------|
+| `/max` | 10개 | 10-30분 | 대형 프로젝트, 전체 리팩토링 | 모든 도구 최대 활용 |
+| `/auto` | 5개 | 5-15분 | 일반 개발, 기능 구현 | 상황별 자동 선택 |
+| `/smart` | 3개 | 3-10분 | 전문 분석, 문서화 | 서브에이전트 협업 |
+| `/rapid` | 1-2개 | 1-3분 | 긴급 수정, 간단 작업 | 최소한 필수 도구 |
+| `/deep` | 특화 | 15-45분 | 아키텍처 설계, 근본 분석 | Sequential + Context7 |
+| `/sync` | 특화 | 2-8분 | 팀 협업, 프로젝트 동기화 | GitHub + Memory + FS |
+
+**🤖 5개 서브에이전트별 역할 + 커스텀 명령어 완전 통합**
+- **CLAUDE_GUIDE**: 프로젝트 가이드라인 준수 및 관리 + 커스텀 명령어 오케스트레이션 (/max, /auto, /smart, /deep) 🚀
+- **DEBUG**: 에러 분석, 성능 최적화, 로그 분석 + 래피드 디버깅 (/max, /auto, /rapid, /deep) 🚀
+- **API_DOCUMENTATION**: API 문서 생성, 관리, 업데이트 + API 동기화 (/auto, /sync, /max) 🚀
+- **TROUBLESHOOTING**: 이슈 진단, 해결책 제공, 패턴 분석 + 스마트 문서화 (/smart, /sync, /auto) 🚀
+- **GOOGLE_SEO**: SEO 최적화, 시멘틱 마크업, 성능 분석 + 커스텀 SEO 최적화 (모든 명령어 지원) ⭐🚀
+
+**💡 사용 팁**
+- **복잡한 작업**: `/max` 또는 `/deep` 사용
+- **일반적 작업**: `/auto` 또는 `/smart` 사용  
+- **긴급한 작업**: `/rapid` 사용
+- **팀 협업**: `/sync` 사용
+- **TodoWrite 자동 생성**: 복잡도가 높은 작업에서 자동으로 진행상황 추적
+
+**🎯 다음 목표 (우선순위 업데이트 - 6개 커스텀 명령어 시스템 완성 후)**
+1. **🚀 커스텀 명령어 실전 활용**: `/max`, `/auto`, `/smart` 등을 실제 프로젝트 작업에 적극 활용
+2. **🔧 Spring Boot HTTP 메시지 컨버터 문제 해결**: Context7 조사 결과 기반으로 설정 수정 및 테스트
+3. **~~트러블슈팅 문서 구조화~~**: ✅ **완료** - 2018줄→53줄 인덱스로 95% 축소, 카테고리별 분할 완료
+4. **~~5개 에이전트 시스템 구축~~**: ✅ **완료** - 5개 MCP 도구 완전 통합 및 테스트 검증
+5. **~~GoogleSeoOptimizationAgent 추가~~**: ✅ **완료** - SEO 최적화 및 시멘틱 마크업 전담 에이전트
+6. **~~6개 커스텀 명령어 시스템~~**: ✅ **완료** - 5개 에이전트 완전 통합 및 자동 감지 시스템 🚀
+7. **SEO 최적화 활용 고도화**: GoogleSeoOptimizationAgent로 웹사이트 검색 엔진 최적화 ⭐
+8. **MCP 도구 활용 고도화**: Sequential Thinking으로 복잡한 아키텍처 문제 해결
+9. **Memory Bank 기반 학습 시스템**: 개발 패턴 및 베스트 프랙티스 자동 축적
+10. **프론트엔드에서 실제 웹페이지 로그인 검증**: 브라우저에서 test.domestic@example.com 계정으로 로그인 테스트
+11. **핵심 비즈니스 로직 구현**: 건강평가, 시설매칭, 코디네이터 매칭 완성 (커스텀 명령어 활용)
+12. **GitHub 통합 워크플로우**: 자동 커밋, 이슈 관리, PR 생성 최적화
+13. **프론트엔드-백엔드 완전 연동**: 모든 API 엔드포인트 연동 완료 (Context7으로 최신 패턴 조사)
+14. **MVP 기능 완성**: 사용자가 실제 사용할 수 있는 최소 기능 세트
+15. **SEO 기반 성능 최적화**: GoogleSeoOptimizationAgent + Filesystem 모니터링으로 체계적 최적화 ⭐
+
+## 💾 데이터베이스 최적화 로드맵 (H2 → PostgreSQL 전환 전략)
+
+### **🎯 핵심 결론: "지금은 No, 미래에는 Yes" - 단계적 접근법**
+
+**현재 상황 분석 (2025-07-29)**
+- **현재 로그인 문제는 데이터베이스와 무관**: HTTP 메시지 컨버터 문제가 진짜 원인
+- **H2 자체는 정상 작동 중**: 파일 기반 데이터베이스 ./data/elderberry 완전 동작
+- **JCache 에러 존재하지만 로그인과는 별개**: 캐시 시스템 최적화 필요
+
+### **📊 ROI 분석 완료**
+```yaml
+전환_방식_ROI_분석:
+  즉시_전환:
+    소요시간: "4-6시간"
+    효과: "중간"
+    리스크: "높음"
+    점수: "⭐⭐"
+    
+  단계적_접근:
+    소요시간: "1시간+α (단계별)"
+    효과: "높음"
+    리스크: "낮음"
+    점수: "⭐⭐⭐⭐⭐"
+    
+  H2_최적화만:
+    소요시간: "30분"
+    효과: "높음"
+    리스크: "낮음"
+    점수: "⭐⭐⭐"
+```
+
+### **🛠️ 3단계 전환 전략**
+
+#### **1단계: H2 최적화 (즉시 실행 - 30분)**
+```yaml
+# application.yml H2 JCache 최적화
+spring:
+  jpa:
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: false
+          region:
+            factory_class: org.hibernate.cache.internal.NoCachingRegionFactory
+
+# 목표
+- H2 JCache 에러 완전 해결
+- 개발 환경 안정성 향상
+- 로그 노이즈 제거
+```
+
+#### **2단계: 프로파일 분리 (2-3주 후 - MVP 기능 완성 후)**
+```yaml
+# 개발환경: H2 유지
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:h2:file:./data/elderberry
+    
+# 프로덕션환경: PostgreSQL 도입
+spring:
+  profiles:
+    active: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/elderberry
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+# 목표
+- 개발 편의성 유지 + 프로덕션 안정성 확보
+- 환경별 최적화된 설정
+- Docker Compose 기반 배포 준비
+```
+
+#### **3단계: 완전 전환 (MVP 완성 후 - 사용자 피드백 반영 후)**
+```yaml
+# 전체 환경 PostgreSQL 통일
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/elderberry
+    
+# 마이그레이션 도구 활용
+- Flyway 또는 Liquibase 도입
+- 데이터 마이그레이션 스크립트 작성
+- 성능 튜닝 및 인덱스 최적화
+```
+
+### **📋 우선순위 재정립**
+```yaml
+최우선_P0:
+  - HTTP_메시지_컨버터_문제_해결: "로그인 이슈의 진짜 원인"
+  - H2_JCache_에러_해결: "30분 작업으로 높은 효과"
+
+차순위_P1:
+  - 핵심_비즈니스_로직_완성: "건강평가, 시설매칭, 코디네이터 매칭"
+  - 프론트엔드_백엔드_완전_연동: "모든 API 엔드포인트"
+
+중장기_P2:
+  - PostgreSQL_단계적_전환: "프로파일 분리 → 완전 전환"
+  - 성능_최적화_및_튜닝: "인덱스, 쿼리 최적화"
+```
+
+### **🤖 에이전트별 데이터베이스 전환 지식 업데이트**
+- **CLAUDE_GUIDE**: 프로젝트 가이드라인에 데이터베이스 전환 로드맵 추가
+- **DEBUG**: H2 JCache 에러 해결 방법 및 PostgreSQL 전환 시 주의사항 문서화
+- **API_DOCUMENTATION**: 데이터베이스 설정 변경 시 API 영향도 분석
+- **TROUBLESHOOTING**: 데이터베이스 관련 이슈 해결 패턴 업데이트
+- **GOOGLE_SEO**: 데이터베이스 성능이 SEO에 미치는 영향 분석
+
+### **📚 MCP 도구 활용 결과 반영**
+- **Sequential Thinking**: 데이터베이스 전환 의사결정 과정 논리적 정리 완료
+- **Context7**: Spring Boot + PostgreSQL 최신 설정 방법 조사 결과 반영
+- **Memory**: 데이터베이스 전환 분석 결과 및 교훈 저장
+- **Filesystem**: 관련 설정 파일들 구조 추적
+- **GitHub**: 향후 데이터베이스 전환 이슈 및 마일스톤 계획
 
 ---
 

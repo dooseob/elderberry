@@ -42,6 +42,9 @@ React TypeScript 프론트엔드 관련 문제들
 - `git-recovery` - Git 복구 작업
 - `agent-system-completion` - 5개 에이전트 시스템 완성 ⭐
 - `seo-optimization` - SEO 최적화 및 시멘틱 마크업
+- `database-optimization` - H2→PostgreSQL 전환 및 데이터베이스 최적화 ⭐
+- `h2-jcache-errors` - H2 JCache 관련 에러 해결
+- `database-migration` - 데이터베이스 마이그레이션 전략
 
 ## 📋 이전 데이터 아카이브
 
