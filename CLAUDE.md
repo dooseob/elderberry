@@ -435,11 +435,154 @@ GET /api/facilities/search
 POST /api/facilities/recommend
 ```
 
+### **시설 검색 및 매칭 시스템 (NEW!)**
+```http
+# 통합 시설 검색
+GET /api/facilities/search                 # 다양한 조건으로 시설 검색
+GET /api/facilities/search/map             # 지도 기반 시설 검색
+GET /api/facilities/{facilityId}/detail    # 시설 상세 정보 조회
+GET /api/facilities/recommendations        # AI 기반 개인화 추천
+GET /api/facilities/favorites              # 즐겨찾기 시설 목록
+POST /api/facilities/{facilityId}/favorite # 즐겨찾기 추가/제거
+POST /api/facilities/compare               # 시설 비교하기 (최대 5개)
+
+# 공공데이터API 연동
+GET /api/public-data/facilities/elderly    # 보건복지부 노인복지시설 조회
+GET /api/public-data/facilities/ltci       # 건강보험공단 장기요양기관 조회
+GET /api/public-data/facilities/{facilityId}/detail # 시설 상세 정보
+GET /api/public-data/statistics/regional   # 지역별 시설 현황 통계
+POST /api/public-data/facilities/availability-check # 실시간 시설 가용성 체크
+GET /api/public-data/facilities/search     # 통합 시설 검색 (공공+자체 DB)
+POST /api/public-data/facilities/sync      # 시설 정보 동기화 (관리자)
+```
+
 ### **건강 평가**
 ```http
 POST /api/health/assessments
 GET /api/health/assessments/{id}
 PUT /api/health/assessments/{id}
+```
+
+### **Chat 시스템 (NEW!) - 실시간 채팅 및 상담**
+```http
+# 채팅방 관리
+GET /api/chat/rooms                        # 내 채팅방 목록 조회 (상태별 필터링 지원)
+POST /api/chat/rooms                       # 새 채팅방 생성 (1:1 상담, 그룹 채팅)
+GET /api/chat/rooms/{roomId}               # 채팅방 상세 정보 및 참여자 목록
+GET /api/chat/rooms/{roomId}/messages      # 채팅 메시지 목록 (페이징, 무한 스크롤)
+POST /api/chat/rooms/{roomId}/messages     # 메시지 발송 (텍스트, 파일, 음성)
+PUT /api/chat/messages/{messageId}/read    # 메시지 읽음 처리
+PUT /api/chat/rooms/{roomId}/participants  # 채팅방 참여자 관리 (추가/제거)
+GET /api/chat/statistics                   # 채팅 활동 통계 (응답시간, 활동패턴)
+
+# 파일 및 미디어 공유
+POST /api/chat/upload                      # 파일 업로드 (이미지, 문서, 음성 메시지)
+GET /api/chat/files/{fileId}               # 파일 다운로드
+GET /api/chat/files/{fileId}/thumbnail     # 파일 썸네일
+
+# 채팅방 유형
+- COORDINATOR_CONSULTATION: 코디네이터 1:1 상담
+- FACILITY_INQUIRY: 시설 문의 채팅
+- HEALTH_CONSULTATION: 건강 평가 결과 상담
+- SUPPORT: 시스템 지원 채팅
+- GROUP_DISCUSSION: 가족/회원 간 그룹 채팅
+```
+
+### **Notification 시스템 (NEW!) - 실시간 알림 및 푸시**
+```http
+# 알림 관리
+GET /api/notifications                     # 내 알림 목록 조회 (읽음상태, 유형별 필터)
+GET /api/notifications/unread-count        # 읽지 않은 알림 수 (유형별 카운트)
+PUT /api/notifications/{notificationId}/read # 특정 알림 읽음 처리
+PUT /api/notifications/read-all            # 모든 알림 일괄 읽음 처리
+DELETE /api/notifications/{notificationId} # 알림 삭제
+
+# 알림 설정 관리
+GET /api/notifications/settings            # 개인 알림 설정 조회
+PUT /api/notifications/settings            # 알림 설정 업데이트 (채널별, 유형별)
+                                          # - 푸시, 이메일, SMS 각각 설정 가능
+                                          # - 방해금지 시간 설정
+                                          # - 언어 및 타임존 설정
+
+# 관리자 알림 발송
+POST /api/notifications/send               # 개별 사용자 즉시 알림 발송
+POST /api/notifications/broadcast          # 대량 사용자 일괄 알림 발송
+
+# 알림 통계 및 분석
+GET /api/notifications/statistics          # 알림 수신 통계 (읽음율, 응답시간, 선호채널)
+
+# 알림 유형
+- MATCHING: 코디네이터/시설 매칭 알림
+- FACILITY_UPDATE: 시설 정보 업데이트
+- SYSTEM: 시스템 공지사항
+- CHAT: 새 메시지 도착
+- HEALTH: 건강평가 결과 완료
+- EMERGENCY: 긴급 상황 알림
+```
+
+### **Profile 시스템 (NEW!) - 사용자 및 시설 프로필 관리**
+```http
+# 회원 프로필 조회
+GET /api/profiles/domestic/member/{memberId}   # 국내 회원 프로필 상세
+                                              # - 기본정보, 경력, 스킬, 지역, 가능시작일
+                                              # - 프로필 완성도, 활동상태
+GET /api/profiles/overseas/member/{memberId}   # 해외 회원 프로필 상세
+                                              # - 언어능력, 비자상태, 해외경력
+                                              # - 현재 거주지, 한국 도착 예정일
+
+# 시설 프로필 조회
+GET /api/profiles/facility/{facilityId}        # 시설 프로필 상세
+                                              # - 시설정보, 등급, 수용인원, 입소현황
+                                              # - 제공서비스, 연락처, 평점
+
+# 프로필 검색 및 필터링
+GET /api/profiles/search                   # 통합 프로필 검색
+                                          # - 키워드, 유형별, 지역별, 스킬별 검색
+                                          # - 정렬: 업데이트순, 완료도순, 평점순
+                                          # - 필터: 활성상태, 가능시작일, 경력년수
+
+# 프로필 통계 및 분석
+GET /api/profiles/statistics               # 프로필 통계 대시보드
+                                          # - 전체/활성/완료 프로필 수
+                                          # - 국내/해외 회원 비율
+                                          # - 월별 신규 등록 현황
+                                          # - 인기 스킬 TOP5
+                                          # - 평균 프로필 완성도
+```
+
+### **Review 시스템 (NEW!) - 시설 및 서비스 리뷰**
+```http
+# 내 리뷰 관리
+GET /api/reviews/my                        # 내가 작성한 리뷰 목록
+                                          # - 시설별 리뷰, 평점, 작성일
+                                          # - 도움됨/안됨 수, 익명여부
+                                          # - 리뷰 상태 (활성/비활성)
+
+# 시설 리뷰 조회
+GET /api/reviews/facility/{facilityId}     # 특정 시설의 모든 리뷰
+                                          # - 평점별, 작성일별 정렬
+                                          # - 익명 처리된 작성자명
+                                          # - 리뷰 유용성 평가
+
+# 리뷰 작성 및 관리
+POST /api/reviews                          # 새 리뷰 작성
+                                          # - 전체평점, 세부평점 (청결도, 서비스, 시설)
+                                          # - 제목, 상세내용
+                                          # - 익명 작성 옵션
+                                          # - 사진 첨부 (선택사항)
+
+PUT /api/reviews/{reviewId}                # 내 리뷰 수정
+DELETE /api/reviews/{reviewId}             # 내 리뷰 삭제
+
+# 리뷰 상호작용
+POST /api/reviews/{reviewId}/helpful       # 리뷰 도움됨 표시
+POST /api/reviews/{reviewId}/report        # 부적절한 리뷰 신고
+
+# 리뷰 통계
+GET /api/reviews/statistics                # 전체 리뷰 통계
+                                          # - 평균 평점, 총 리뷰 수
+                                          # - 시설별 평점 분포
+                                          # - 월별 리뷰 작성 현황
 ```
 
 ### **게시판 시스템 (복구됨!)**

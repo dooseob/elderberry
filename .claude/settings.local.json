@@ -104,7 +104,11 @@
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
       "mcp__memory__create_entities",
-      "mcp__filesystem__edit_file"
+      "mcp__filesystem__edit_file",
+      "mcp__filesystem__write_file",
+      "mcp__filesystem__search_files",
+      "mcp__filesystem__read_multiple_files",
+      "mcp__memory__add_observations"
     ],
     "deny": []
   }

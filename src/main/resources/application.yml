@@ -1,339 +1,182 @@
-# 공통 설정
 spring:
-  application:
-    name: elderberry
   profiles:
-    active: dev
+    active: development
   
-  # 데이터베이스 설정
+  # 데이터베이스 설정 (H2 파일 모드)
   datasource:
-    url: jdbc:h2:file:./data/elderberry;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:file:./data/elderberry;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: password
     driver-class-name: org.h2.Driver
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
-  
-  # JPA 설정
+    hikari:
+      # 성능 최적화를 위한 커넥션 풀 설정
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      
+  # JPA/Hibernate 설정 
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: false
-    defer-datasource-initialization: true
+      ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false  # 운영환경에서 false로 설정
+        show_sql: false    # 운영환경에서 false로 설정
+        # 성능 최적화 설정
         jdbc:
-          batch_size: 20
-        order_inserts: true
-        order_updates: true
-  
+          batch_size: 50
+          order_inserts: true
+          order_updates: true
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        # N+1 문제 해결을 위한 배치 페칭
+        default_batch_fetch_size: 100
+    defer-datasource-initialization: true
+    
   # SQL 초기화 설정
   sql:
     init:
-      mode: never
+      mode: always
       data-locations: classpath:data.sql
-  
-  # H2 콘솔 설정
+      continue-on-error: true
+      
+  # H2 콘솔 설정 (개발환경에서만)
   h2:
     console:
       enabled: true
       path: /h2-console
       settings:
         web-allow-others: true
-  
-  # 캐시 설정
+        
+  # Redis 설정 (Docker 미설치 환경에서 비활성화)
+  # redis:
+  #   host: localhost
+  #   port: 6379
+  #   password: 
+  #   timeout: 3000ms
+  #   jedis:
+  #     pool:
+  #       max-active: 10
+  #       max-idle: 10
+  #       min-idle: 1
+  #       max-wait: 3000ms
+
+  # 캐시 설정 (Redis 없이 로컬 캐시 사용)
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=1000,expireAfterWrite=1h
-  
-  # Redis 설정 (Docker 없이 개발 시 비활성화)
-  #data:
-  #  redis:
-  #    host: ${REDIS_HOST:localhost}
-  #    port: ${REDIS_PORT:6379}
-  #    password: ${REDIS_PASSWORD:elderberry123!}
-  #    database: ${REDIS_DATABASE:0}
-  #    timeout: ${REDIS_TIMEOUT:2000ms}
-  #    lettuce:
-  #      pool:
-  #        max-active: 10
-  #        max-idle: 10
-  #        min-idle: 1
-  #        time-between-eviction-runs: 10s
-  
-  # 비동기 작업 설정
-  task:
-    execution:
-      pool:
-        core-size: 5
-        max-size: 15
-        queue-capacity: 100
-        keep-alive: "60s"
-      thread-name-prefix: "async-task-"
-    scheduling:
-      pool:
-        size: 3
-      thread-name-prefix: "scheduling-"
+      spec: maximumSize=1000,expireAfterWrite=10m
 
-  # JSON 설정
-  jackson:
-    property-naming-strategy: SNAKE_CASE
-    default-property-inclusion: NON_NULL
-  
-  # 웹 설정 (프론트엔드-백엔드 통합)
+  # 세션 설정 (Redis 없이 메모리 세션 사용)
+  session:
+    store-type: none
+
+  # 정적 리소스 캐싱 설정 (성능 최적화)
   web:
     resources:
-      static-locations: classpath:/static/
       cache:
-        period: 86400 # 24시간 캐시 (개발환경에서는 0으로 설정)
-      add-mappings: true
-      chain:
-        strategy:
-          content:
-            enabled: true
-            paths: /**
-    mvc:
-      # SPA 라우팅 지원 (React Router)
-      throw-exception-if-no-handler-found: true
+        cachecontrol:
+          max-age: 31536000  # 1년
+          cache-public: true
+      static-locations: classpath:/static/
+
+# JWT 설정
+jwt:
+  secret: your-256-bit-secret-key-here-make-sure-it-is-long-enough-for-HS256-algorithm-security
+  expiration: 86400000  # 24시간 (밀리초)
+  refresh-expiration: 604800000  # 7일 (밀리초)
 
 # 서버 설정
 server:
   port: 8080
   servlet:
     context-path: /
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
+  # 압축 설정 (성능 최적화)
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+  # HTTP/2 지원
+  http2:
+    enabled: true
 
-# 로깅 설정
+# 로깅 설정 (성능 최적화)
 logging:
   level:
-    root: INFO
-    com.globalcarelink: DEBUG
-    com.globalcarelink.agents: DEBUG
-    web: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web.reactive.function.client: DEBUG
-    reactor.netty.http.client: DEBUG
+    com.globalcarelink: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.springframework.web: WARN
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# 에이전트 시스템 설정
-agents:
-  debug:
-    enabled: true
-    log-level: DEBUG
-  sequential:
-    enabled: true
-    max-execution-time: 30000
-  monitoring:
-    enabled: true
-
-# JWT 설정
-jwt:
-  secret: ${JWT_SECRET:elderberry-default-dev-key-change-immediately}
-  access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600000}  # 1시간
-  refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:86400000} # 24시간
-
-# 애플리케이션 설정
-app:
-  # 보안 설정
-  security:
-    production-mode: ${SECURITY_PRODUCTION_MODE:false}
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
+  file:
+    name: logs/elderberry.log
+    max-size: 50MB
+    max-history: 30
     
-  # CORS 설정
-  cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
-    
-  # 챗봇 서비스 설정
-  chatbot:
-    base-url: ${CHATBOT_BASE_URL:http://localhost:8000}
-    connect-timeout: ${CHATBOT_CONNECT_TIMEOUT:10000}
-    read-timeout: ${CHATBOT_READ_TIMEOUT:30000}
-    enabled: ${CHATBOT_ENABLED:true}
-    service:
-      url: ${CHATBOT_SERVICE_URL:http://localhost:8000}
-      timeout: ${CHATBOT_TIMEOUT:10}
-
-  # 공공데이터 API 설정
-  public-data:
-    api-key: ${PUBLIC_DATA_API_KEY:}
-    base-url: ${PUBLIC_DATA_BASE_URL:https://apis.data.go.kr}
-    connect-timeout: 10000
-    read-timeout: 30000
-    write-timeout: 10000
-    max-memory-size: 1048576
-    
-    # API 호출 제한 설정
-    rate-limit:
-      requests-per-minute: 1000
-      requests-per-hour: 10000
-      requests-per-day: 100000
-    
-    # 재시도 설정
-    retry:
-      max-attempts: 3
-      backoff-delay: 1000
-      backoff-multiplier: 2
-    
-    # 캐시 설정
-    cache:
-      ltci-search-ttl: 3600
-      ltci-detail-ttl: 7200
-      hospital-search-ttl: 3600
-      pharmacy-search-ttl: 3600
-      facility-status-ttl: 1800
-      entrance-visa-ttl: 7200
-      custom-visa-ttl: 3600
-  
-  # 스케줄러 설정
-  scheduler:
-    facility-sync-cron: "0 0 2 * * ?"
-    health-check-cron: "0 */10 * * * ?"
-    statistics-update-cron: "0 0 * * * ?"
-  
-  # 비동기 처리 설정
-  async:
-    core-pool-size: 5
-    max-pool-size: 20
-    queue-capacity: 100
-    thread-name-prefix: "elderberry-async-"
-    
-    # 공공데이터 전용 스레드 풀
-    public-data:
-      core-pool-size: 3
-      max-pool-size: 10
-      queue-capacity: 50
-      thread-name-prefix: "public-data-"
-    
-    # 스케줄러 전용 스레드 풀
-    scheduler:
-      core-pool-size: 3
-      max-pool-size: 8
-      queue-capacity: 50
-      keep-alive-seconds: 60
-      thread-name-prefix: "scheduler-"
-      
-    # DB 작업 전용 스레드 풀
-    database:
-      core-pool-size: 4
-      max-pool-size: 10
-      queue-capacity: 200
-      keep-alive-seconds: 120
-      thread-name-prefix: "db-task-"
-      
-    # 외부 API 호출 전용 스레드 풀
-    api:
-      core-pool-size: 6
-      max-pool-size: 20
-      queue-capacity: 100
-      keep-alive-seconds: 30
-      thread-name-prefix: "api-task-"
-      
-    # 통계 및 분석 전용 스레드 풀
-    statistics:
-      core-pool-size: 2
-      max-pool-size: 6
-      queue-capacity: 300
-      keep-alive-seconds: 180
-      thread-name-prefix: "stats-"
-
-# 관리 및 모니터링 설정
+# 액추에이터 설정 (최소한으로 제한)
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,env,caches,scheduledtasks
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: always
-  metrics:
-    export:
-      simple:
-        enabled: true
+      show-details: when-authorized
 
+# 프로파일별 설정
 ---
-# 개발 환경 설정
+# 개발 환경
 spring:
   config:
     activate:
-      on-profile: dev
-  
-  # 개발 환경 정적 파일 설정 (캐시 비활성화)
-  web:
-    resources:
-      cache:
-        period: 0 # 개발환경에서는 캐시 비활성화
-
-# 개발 환경 공공데이터 API 설정
-app:
-  public-data:
-    # 개발 환경에서는 더 관대한 설정
-    connect-timeout: 15000
-    read-timeout: 45000
-    
-    # 개발 환경 API 호출 제한
-    rate-limit:
-      requests-per-minute: 100
-      requests-per-hour: 1000
-      requests-per-day: 10000
-
----
-# 운영 환경 설정
-spring:
-  config:
-    activate:
-      on-profile: prod
-  
-  # 운영 환경 데이터베이스 (SQLite)
-  datasource:
-    url: jdbc:sqlite:./data/elderberry.db
-    driver-class-name: org.sqlite.JDBC
-  
-  # 운영 환경에서 H2 콘솔 완전 비활성화
-  h2:
-    console:
-      enabled: false
-
-# 운영 환경 애플리케이션 설정
-app:
-  security:
-    production-mode: true
-  
-  cors:
-    allowed-origins: "${CORS_ALLOWED_ORIGINS:https://elderberry.app,https://globalcarelink.com}"
-  
-  # 운영 환경 공공데이터 API 설정
-  public-data:
-    connect-timeout: 8000
-    read-timeout: 20000
-    
-    # 운영 환경 API 호출 제한
-    rate-limit:
-      requests-per-minute: 500
-      requests-per-hour: 5000
-      requests-per-day: 50000
-
----
-# 테스트 환경 설정
-spring:
-  config:
-    activate:
-      on-profile: test
-  
-  # 테스트 환경 데이터베이스 (메모리)
-  datasource:
-    url: jdbc:h2:mem:testdb
-  
+      on-profile: development
+      
+  # 개발환경에서만 SQL 로깅 활성화
   jpa:
-    hibernate:
-      ddl-auto: create-drop
-
-# 테스트 환경 공공데이터 API 설정
-app:
-  public-data:
-    # 테스트 환경에서는 Mock 서버 사용
-    base-url: http://localhost:8081
-    connect-timeout: 5000
-    read-timeout: 10000
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        
+logging:
+  level:
+    com.globalcarelink: DEBUG
+    org.springframework.security: INFO
+    
+---
+# 운영 환경
+spring:
+  config:
+    activate:
+      on-profile: production
+      
+  # 운영환경 데이터베이스 최적화
+  datasource:
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      
+  # 운영환경에서 SQL 로깅 비활성화
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        
+# 운영환경 로깅 최적화
+logging:
+  level:
+    com.globalcarelink: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.hibernate: WARN

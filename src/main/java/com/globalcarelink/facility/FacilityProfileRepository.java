@@ -93,11 +93,11 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
                                                              Pageable pageable);
 
     /**
-     * 케어 등급 + 지역 조회 (페이징)
+     * 케어 등급 + 지역 조회 (페이징) - JOIN FETCH로 N+1 문제 해결
      */
     @Query("""
-        SELECT f FROM FacilityProfile f 
-        JOIN f.acceptableCareGrades g 
+        SELECT DISTINCT f FROM FacilityProfile f 
+        JOIN FETCH f.acceptableCareGrades g 
         WHERE g = :careGrade 
         AND (:region IS NULL OR f.region = :region)
         ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
@@ -163,33 +163,33 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
     // ===== 케어 등급 기반 검색 =====
 
     /**
-     * 특정 케어 등급 수용 가능 시설 조회
+     * 특정 케어 등급 수용 가능 시설 조회 - JOIN FETCH로 N+1 문제 해결
      * @param careGrade 케어 등급 (1-6)
      */
-    @Query("SELECT f FROM FacilityProfile f JOIN f.acceptableCareGrades g WHERE g = :careGrade")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.acceptableCareGrades g WHERE g = :careGrade")
     List<FacilityProfile> findByAcceptableCareGradesContaining(@Param("careGrade") Integer careGrade);
     
-    @Query("SELECT f FROM FacilityProfile f JOIN f.acceptableCareGrades g WHERE g = :careGrade")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.acceptableCareGrades g WHERE g = :careGrade")
     Page<FacilityProfile> findByAcceptableCareGradesContaining(@Param("careGrade") Integer careGrade, Pageable pageable);
 
     /**
-     * 복수 케어 등급 중 하나라도 수용 가능한 시설 조회
+     * 복수 케어 등급 중 하나라도 수용 가능한 시설 조회 - JOIN FETCH로 N+1 문제 해결
      */
-    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN f.acceptableCareGrades g WHERE g IN :careGrades")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.acceptableCareGrades g WHERE g IN :careGrades")
     List<FacilityProfile> findByAcceptableCareGradesContainingAny(@Param("careGrades") Set<Integer> careGrades);
     
-    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN f.acceptableCareGrades g WHERE g IN :careGrades")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.acceptableCareGrades g WHERE g IN :careGrades")
     Page<FacilityProfile> findByAcceptableCareGradesContainingAny(@Param("careGrades") Set<Integer> careGrades, Pageable pageable);
 
     // ===== 전문성 기반 검색 =====
 
     /**
-     * 특정 전문 분야 시설 조회
+     * 특정 전문 분야 시설 조회 - JOIN FETCH로 N+1 문제 해결
      */
-    @Query("SELECT f FROM FacilityProfile f JOIN f.specializations s WHERE s = :specialization")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.specializations s WHERE s = :specialization")
     List<FacilityProfile> findBySpecializationsContaining(@Param("specialization") String specialization);
     
-    @Query("SELECT f FROM FacilityProfile f JOIN f.specializations s WHERE s = :specialization")
+    @Query("SELECT DISTINCT f FROM FacilityProfile f JOIN FETCH f.specializations s WHERE s = :specialization")
     Page<FacilityProfile> findBySpecializationsContaining(@Param("specialization") String specialization, Pageable pageable);
 
     /**
@@ -397,12 +397,12 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
     Page<FacilityProfile> findOverseasKoreanFriendlyFacilities(Pageable pageable);
 
     /**
-     * 특정 케어 등급 + 전문성 맞춤 검색
+     * 특정 케어 등급 + 전문성 맞춤 검색 - JOIN FETCH로 N+1 문제 해결
      */
     @Query("""
         SELECT DISTINCT f FROM FacilityProfile f 
-        JOIN f.acceptableCareGrades g 
-        JOIN f.specializations s 
+        JOIN FETCH f.acceptableCareGrades g 
+        JOIN FETCH f.specializations s 
         WHERE g = :careGrade 
         AND s = :specialization 
         AND f.totalCapacity > f.currentOccupancy 
@@ -414,8 +414,8 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
                                                           
     @Query("""
         SELECT DISTINCT f FROM FacilityProfile f 
-        JOIN f.acceptableCareGrades g 
-        JOIN f.specializations s 
+        JOIN FETCH f.acceptableCareGrades g 
+        JOIN FETCH f.specializations s 
         WHERE g = :careGrade 
         AND s = :specialization 
         AND f.totalCapacity > f.currentOccupancy 
