@@ -40,6 +40,10 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Boolean isActive = true;
     
+    @Builder.Default
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
+    
     @Column(length = 10)
     private String language;
     
@@ -67,6 +71,14 @@ public class Member extends BaseEntity {
     
     public void activate() {
         this.isActive = true;
+    }
+    
+    public void verifyEmail() {
+        this.emailVerified = true;
+    }
+    
+    public void unverifyEmail() {
+        this.emailVerified = false;
     }
     
     public boolean isOverseasUser() {

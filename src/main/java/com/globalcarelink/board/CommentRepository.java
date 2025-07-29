@@ -39,11 +39,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     /**
      * 특정 작성자의 댓글 목록 조회
      */
-    Page<Comment> findByAuthorIdAndActiveTrueOrderByCreatedDateDesc(Long authorId, Pageable pageable);
+    Page<Comment> findByAuthorIdAndActiveTrueOrderByCreatedAtDesc(Long authorId, Pageable pageable);
 
     /**
      * 최근 댓글 조회
      */
-    @Query("SELECT c FROM Comment c WHERE c.active = true ORDER BY c.createdDate DESC")
+    @Query("SELECT c FROM Comment c WHERE c.active = true ORDER BY c.createdAt DESC")
     Page<Comment> findRecentComments(Pageable pageable);
 }

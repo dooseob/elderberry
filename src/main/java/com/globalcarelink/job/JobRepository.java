@@ -23,61 +23,61 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     /**
      * 활성 공고 조회 (마감일 기준 정렬)
      */
-    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.isFeatured DESC, j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.isFeatured DESC, j.createdAt DESC")
     Page<Job> findActiveJobs(Pageable pageable);
 
     /**
      * 긴급 채용 공고 조회
      */
-    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.isUrgent = true AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.isUrgent = true AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findUrgentJobs(Pageable pageable);
 
     /**
      * 추천 공고 조회 (상위 노출)
      */
-    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.isFeatured = true AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.isFeatured = true AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findFeaturedJobs(Pageable pageable);
 
     /**
      * 직종별 공고 조회
      */
-    @Query("SELECT j FROM Job j WHERE j.category = :category AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.category = :category AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.createdAt DESC")
     Page<Job> findByCategory(@Param("category") Job.JobCategory category, Pageable pageable);
 
     /**
      * 근무 형태별 공고 조회
      */
-    @Query("SELECT j FROM Job j WHERE j.workType = :workType AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.workType = :workType AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findByWorkType(@Param("workType") Job.WorkType workType, Pageable pageable);
 
     /**
      * 경력별 공고 조회
      */
-    @Query("SELECT j FROM Job j WHERE j.experienceLevel = :experienceLevel AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.experienceLevel = :experienceLevel AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findByExperienceLevel(@Param("experienceLevel") Job.ExperienceLevel experienceLevel, Pageable pageable);
 
     /**
      * 지역별 공고 조회 (주소 기반)
      */
-    @Query("SELECT j FROM Job j WHERE j.workLocation LIKE %:location% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.workLocation LIKE %:location% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findByLocationContaining(@Param("location") String location, Pageable pageable);
 
     /**
      * 회사명으로 공고 검색
      */
-    @Query("SELECT j FROM Job j WHERE j.companyName LIKE %:companyName% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.companyName LIKE %:companyName% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findByCompanyNameContaining(@Param("companyName") String companyName, Pageable pageable);
 
     /**
      * 제목으로 공고 검색
      */
-    @Query("SELECT j FROM Job j WHERE j.title LIKE %:keyword% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.title LIKE %:keyword% AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findByTitleContaining(@Param("keyword") String keyword, Pageable pageable);
 
     /**
      * 통합 검색 (제목 + 회사명 + 내용)
      */
-    @Query("SELECT j FROM Job j WHERE (j.title LIKE %:keyword% OR j.companyName LIKE %:keyword% OR j.description LIKE %:keyword%) AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE (j.title LIKE %:keyword% OR j.companyName LIKE %:keyword% OR j.description LIKE %:keyword%) AND j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.isUrgent DESC, j.createdAt DESC")
     Page<Job> findByKeywordSearch(@Param("keyword") String keyword, Pageable pageable);
 
     /**
@@ -95,7 +95,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
            "(:experienceLevel IS NULL OR j.experienceLevel = :experienceLevel) AND " +
            "(:workType IS NULL OR j.workType = :workType) AND " +
            "j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE " +
-           "ORDER BY j.isUrgent DESC, j.isFeatured DESC, j.createdDate DESC")
+           "ORDER BY j.isUrgent DESC, j.isFeatured DESC, j.createdAt DESC")
     Page<Job> findByMultipleConditions(
             @Param("category") Job.JobCategory category,
             @Param("location") String location,
@@ -107,7 +107,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     /**
      * 특정 고용주의 공고 조회
      */
-    @Query("SELECT j FROM Job j WHERE j.employer.id = :employerId ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.employer.id = :employerId ORDER BY j.createdAt DESC")
     Page<Job> findByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 
     /**
@@ -119,13 +119,13 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     /**
      * 인기 공고 조회 (조회수 기준)
      */
-    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.viewCount DESC, j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.viewCount DESC, j.createdAt DESC")
     Page<Job> findPopularJobs(Pageable pageable);
 
     /**
      * 최신 공고 조회 (등록일 기준)
      */
-    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdDate DESC")
+    @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE ORDER BY j.createdAt DESC")
     Page<Job> findLatestJobs(Pageable pageable);
 
     /**
@@ -150,7 +150,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     /**
      * 오늘 등록된 공고 수 조회
      */
-    @Query("SELECT COUNT(j) FROM Job j WHERE DATE(j.createdDate) = CURRENT_DATE AND j.status = 'ACTIVE'")
+    @Query("SELECT COUNT(j) FROM Job j WHERE CAST(j.createdAt AS date) = CURRENT_DATE AND j.status = 'ACTIVE'")
     long countTodayJobs();
 
     /**
@@ -190,8 +190,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     List<Object[]> getJobStatsByCategory();
 
     /**
-     * 통계용: 지역별 공고 수
+     * 통계용: 지역별 공고 수 (H2 호환)
      */
-    @Query("SELECT SUBSTRING(j.workLocation, 1, LOCATE(' ', j.workLocation + ' ') - 1), COUNT(j) FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE GROUP BY SUBSTRING(j.workLocation, 1, LOCATE(' ', j.workLocation + ' ') - 1)")
+    @Query("SELECT j.workLocation, COUNT(j) FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline >= CURRENT_DATE GROUP BY j.workLocation")
     List<Object[]> getJobStatsByLocation();
 }

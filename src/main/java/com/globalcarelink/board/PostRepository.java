@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 특정 게시판의 활성 게시글 조회 (페이징, 공지글 우선)
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdAt DESC")
     Page<Post> findByBoardIdAndIsDeletedFalse(@Param("boardId") Long boardId, Pageable pageable);
 
     /**
@@ -38,25 +38,25 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 특정 게시판의 공지글만 조회
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isPinned = true AND p.isDeleted = false ORDER BY p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isPinned = true AND p.isDeleted = false ORDER BY p.createdAt DESC")
     List<Post> findPinnedPostsByBoardId(@Param("boardId") Long boardId);
 
     /**
      * 제목으로 게시글 검색 (특정 게시판)
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.title LIKE %:keyword% AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.title LIKE %:keyword% AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdAt DESC")
     Page<Post> findByBoardIdAndTitleContaining(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
 
     /**
      * 내용으로 게시글 검색 (특정 게시판)
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.content LIKE %:keyword% AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.content LIKE %:keyword% AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdAt DESC")
     Page<Post> findByBoardIdAndContentContaining(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
 
     /**
      * 제목 + 내용으로 게시글 검색 (특정 게시판)
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%) AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%) AND p.isDeleted = false ORDER BY p.isPinned DESC, p.createdAt DESC")
     Page<Post> findByBoardIdAndTitleOrContentContaining(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
 
     /**
@@ -83,31 +83,31 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 작성자별 게시글 조회
      */
-    @Query("SELECT p FROM Post p WHERE p.author.id = :authorId AND p.isDeleted = false ORDER BY p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.author.id = :authorId AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<Post> findByAuthorIdAndIsDeletedFalse(@Param("authorId") Long authorId, Pageable pageable);
 
     /**
      * 특정 기간 내 게시글 조회
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.createdDate BETWEEN :startDate AND :endDate AND p.isDeleted = false ORDER BY p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.createdAt BETWEEN :startDate AND :endDate AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<Post> findByBoardIdAndDateRange(@Param("boardId") Long boardId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
     /**
      * 인기 게시글 조회 (조회수 기준)
      */
-    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isDeleted = false ORDER BY p.viewCount DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.board.id = :boardId AND p.isDeleted = false ORDER BY p.viewCount DESC, p.createdAt DESC")
     Page<Post> findPopularPostsByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 
     /**
      * 전체 게시판에서 최신 게시글 조회 (메인페이지용)
      */
-    @Query("SELECT p FROM Post p WHERE p.isDeleted = false AND p.status = 'ACTIVE' ORDER BY p.createdDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.isDeleted = false AND p.status = 'ACTIVE' ORDER BY p.createdAt DESC")
     Page<Post> findLatestPosts(Pageable pageable);
 
     /**
      * 신고된 게시글 조회 (관리자용)
      */
-    @Query("SELECT p FROM Post p WHERE p.status = 'REPORTED' ORDER BY p.modifiedDate DESC")
+    @Query("SELECT p FROM Post p WHERE p.status = 'REPORTED' ORDER BY p.updatedAt DESC")
     Page<Post> findReportedPosts(Pageable pageable);
 
     /**
@@ -141,12 +141,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 오늘 작성된 게시글 수 조회
      */
-    @Query("SELECT COUNT(p) FROM Post p WHERE p.board.id = :boardId AND DATE(p.createdDate) = CURRENT_DATE AND p.isDeleted = false")
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.board.id = :boardId AND CAST(p.createdAt AS date) = CURRENT_DATE AND p.isDeleted = false")
     long countTodayPostsByBoardId(@Param("boardId") Long boardId);
 
     /**
      * 베스트 게시글 조회 (조회수 + 댓글 수 기준)
      */
-    @Query("SELECT p FROM Post p LEFT JOIN p.comments c WHERE p.board.id = :boardId AND p.isDeleted = false GROUP BY p ORDER BY (p.viewCount + COUNT(c)) DESC, p.createdDate DESC")
+    @Query("SELECT p FROM Post p LEFT JOIN p.comments c WHERE p.board.id = :boardId AND p.isDeleted = false GROUP BY p ORDER BY (p.viewCount + COUNT(c)) DESC, p.createdAt DESC")
     Page<Post> findBestPostsByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 }

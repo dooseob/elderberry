@@ -1,24 +1,28 @@
 -- 테스트용 스키마 정의 (Phase 2.4 강화)
 -- H2 파일 모드에서 실제 DB 상호작용 테스트를 위한 스키마
 
--- 회원 테이블 (간소화된 버전)
-CREATE TABLE IF NOT EXISTS test_members (
+-- 회원 테이블 (BaseEntity와 일치)
+CREATE TABLE IF NOT EXISTS members (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(20),
     role VARCHAR(20) NOT NULL DEFAULT 'USER_DOMESTIC',
+    is_job_seeker BOOLEAN NOT NULL DEFAULT FALSE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    language VARCHAR(10),
+    region VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 비활성화된 엔티티들은 temp-disabled 폴더에 있으므로 테스트 스키마에서 제거
 -- test_domestic_profiles, test_overseas_profiles, test_jobs, test_job_applications
 
 -- 건강 평가 테이블 (현재 활성 엔티티)
-CREATE TABLE IF NOT EXISTS test_health_assessments (
+CREATE TABLE IF NOT EXISTS health_assessments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL,
     mobility_level INTEGER NOT NULL,
@@ -32,29 +36,11 @@ CREATE TABLE IF NOT EXISTS test_health_assessments (
     assessment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES test_members(id)
-);
-
--- 코디네이터 케어 설정 테이블 (현재 활성 엔티티)
-CREATE TABLE IF NOT EXISTS test_coordinator_care_settings (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    coordinator_id BIGINT NOT NULL,
-    base_care_level INTEGER DEFAULT 1,
-    max_care_level INTEGER DEFAULT 5,
-    experience_years INTEGER DEFAULT 0,
-    customer_satisfaction DECIMAL(3,2) DEFAULT 0.0,
-    performance_score DECIMAL(3,2) DEFAULT 0.0,
-    working_regions VARCHAR(500),
-    specialty_areas VARCHAR(500),
-    available_weekends BOOLEAN DEFAULT FALSE,
-    available_emergency BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (coordinator_id) REFERENCES test_members(id)
+    FOREIGN KEY (member_id) REFERENCES members(id)
 );
 
 -- 코디네이터 언어 스킬 테이블 (현재 활성 엔티티)
-CREATE TABLE IF NOT EXISTS test_coordinator_language_skills (
+CREATE TABLE IF NOT EXISTS coordinator_language_skills (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     coordinator_id BIGINT NOT NULL,
     language_code VARCHAR(10) NOT NULL,
@@ -63,12 +49,12 @@ CREATE TABLE IF NOT EXISTS test_coordinator_language_skills (
     certification_level VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (coordinator_id) REFERENCES test_members(id),
+    FOREIGN KEY (coordinator_id) REFERENCES members(id),
     UNIQUE KEY unique_coordinator_language (coordinator_id, language_code)
 );
 
 -- 시설 프로필 테이블
-CREATE TABLE IF NOT EXISTS test_facility_profiles (
+CREATE TABLE IF NOT EXISTS facility_profiles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     type VARCHAR(50) NOT NULL,
@@ -77,9 +63,10 @@ CREATE TABLE IF NOT EXISTS test_facility_profiles (
     current_occupancy INTEGER DEFAULT 0,
     rating DECIMAL(2,1) DEFAULT 0.0,
     is_active BOOLEAN DEFAULT TRUE,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- 리뷰 테이블
 CREATE TABLE IF NOT EXISTS test_reviews (

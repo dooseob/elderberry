@@ -29,13 +29,8 @@ public class IntegrationTestConfig {
         return new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.H2)
             .setName("file:./test-data/testdb;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE")
-            // 초기 스키마 및 테스트 데이터 자동 로딩
-            .addScript("classpath:test-schema.sql")
-            .addScript("classpath:test-data/base-test-data.sql")
-            // 다양한 시나리오별 테스트 데이터
-            .addScript("classpath:test-data/profile-test-data.sql")
-            .addScript("classpath:test-data/facility-test-data.sql")
-            .addScript("classpath:test-data/job-test-data.sql")
+            // JPA가 스키마를 생성하도록 스크립트 로딩 제거
+            // Hibernate ddl-auto: create-drop이 스키마 생성 담당
             .build();
     }
 

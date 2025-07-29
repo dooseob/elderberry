@@ -21,13 +21,13 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     /**
      * 특정 공고의 지원서 목록 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.id = :jobId ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.id = :jobId ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByJobId(@Param("jobId") Long jobId, Pageable pageable);
 
     /**
      * 특정 지원자의 지원서 목록 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.applicant.id = :applicantId ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.applicant.id = :applicantId ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByApplicantId(@Param("applicantId") Long applicantId, Pageable pageable);
 
     /**
@@ -43,13 +43,13 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     /**
      * 상태별 지원서 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.status = :status ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.status = :status ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByStatus(@Param("status") JobApplication.ApplicationStatus status, Pageable pageable);
 
     /**
      * 특정 공고의 상태별 지원서 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.id = :jobId AND ja.status = :status ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.id = :jobId AND ja.status = :status ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByJobIdAndStatus(
             @Param("jobId") Long jobId, 
             @Param("status") JobApplication.ApplicationStatus status, 
@@ -86,13 +86,13 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     /**
      * 오늘 접수된 지원서 수 조회
      */
-    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE DATE(ja.createdDate) = CURRENT_DATE")
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE CAST(ja.createdAt AS date) = CURRENT_DATE")
     long countTodayApplications();
 
     /**
      * 특정 기간 내 지원서 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.createdDate BETWEEN :startDate AND :endDate ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.createdAt BETWEEN :startDate AND :endDate ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByDateRange(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
@@ -107,18 +107,18 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     /**
      * 특정 고용주의 공고에 대한 지원서 조회 (고용주용)
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.employer.id = :employerId ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.job.employer.id = :employerId ORDER BY ja.createdAt DESC")
     Page<JobApplication> findByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 
     /**
      * 이력서 파일이 있는 지원서 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.resumeFileName IS NOT NULL ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.resumeFileName IS NOT NULL ORDER BY ja.createdAt DESC")
     Page<JobApplication> findApplicationsWithResume(Pageable pageable);
 
     /**
      * 연락처 정보가 있는 지원서 조회
      */
-    @Query("SELECT ja FROM JobApplication ja WHERE ja.contactPhone IS NOT NULL OR ja.contactEmail IS NOT NULL ORDER BY ja.createdDate DESC")
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.contactPhone IS NOT NULL OR ja.contactEmail IS NOT NULL ORDER BY ja.createdAt DESC")
     Page<JobApplication> findApplicationsWithContact(Pageable pageable);
 }

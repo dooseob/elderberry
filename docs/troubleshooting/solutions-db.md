@@ -1072,3 +1072,287 @@ com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또�
 ---
 *📅 자동 생성됨: 2025-07-28 10:50:53 | 🤖 Elderberry-Intellect v2.0*
 
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-abc7f70d
+
+**생성 시간**: 2025-07-29 02:57:44
+**이벤트 ID**: `ERR-abc7f70d`
+**추적 ID**: `951d3959`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 02:57:44 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-9029c805
+
+**생성 시간**: 2025-07-29 02:57:56
+**이벤트 ID**: `ERR-9029c805`
+**추적 ID**: `f23e5b10`
+**심각도**: MEDIUM (VALIDATION)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `MethodArgumentNotValidException`
+- **에러 메시지**: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.globalcarelink.auth.dto.MemberResponse> com.globalcarelink.auth.AuthController.register(com.globalcarelink.auth.dto.MemberRegisterRequest,jakarta.servlet.http.HttpServletRequest): [Field error in object 'memberRegisterRequest' on field 'password': rejected value [test123]; codes [Size.memberRegisterRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [memberRegisterRequest.password,password]; arguments []; default message [password],20,8]; default message [비밀번호는 8-20자여야 합니다]] 
+- **발생 위치**: `RequestResponseBodyMethodProcessor.resolveArgument`
+- **요청 URL**: `POST /api/auth/register`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.globalcarelink.auth.dto.MemberResponse> com.globalcarelink.auth.AuthController.register(com.globalcarelink.auth.dto.MemberRegisterRequest,jakarta.servlet.http.HttpServletRequest): [Field error in object 'memberRegisterRequest' on field 'password': rejected value [test123]; codes [Size.memberRegisterRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [memberRegisterRequest.password,password]; arguments []; default message [password],20,8]; default message [비밀번호는 8-20자여야 합니다]] 
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:159)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: 입력값 유효성 검증 실패
+- **일반적 원인**: @Valid 어노테이션 누락, 잘못된 입력 데이터, 제약 조건 위반
+- **권장 해결**: DTO 유효성 검증 강화, 프론트엔드 입력 검증 추가
+
+- **발생 컨텍스트**: VALIDATION 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`validation` `controller` `entity` `dto` 
+
+---
+*📅 자동 생성됨: 2025-07-29 02:57:56 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-1e744113
+
+**생성 시간**: 2025-07-29 02:58:00
+**이벤트 ID**: `ERR-1e744113`
+**추적 ID**: `fe5298da`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `BadRequest`
+- **에러 메시지**: 비밀번호는 8-20자이며, 대소문자, 숫자, 특수문자(@$!%*?&)를 각각 하나 이상 포함해야 합니다.
+- **발생 위치**: `MemberService.validateRegisterRequest`
+- **요청 URL**: `POST /api/auth/register`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$BadRequest: 비밀번호는 8-20자이며, 대소문자, 숫자, 특수문자(@$!%*?&)를 각각 하나 이상 포함해야 합니다.
+	at com.globalcarelink.auth.MemberService.validateRegisterRequest(MemberService.java:189)
+	at com.globalcarelink.auth.MemberService.register(MemberService.java:37)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: BadRequest 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 02:58:00 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-053c31a3
+
+**생성 시간**: 2025-07-29 03:00:47
+**이벤트 ID**: `ERR-053c31a3`
+**추적 ID**: `2c37bf70`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 03:00:47 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-57c3f2b1
+
+**생성 시간**: 2025-07-29 03:06:24
+**이벤트 ID**: `ERR-57c3f2b1`
+**추적 ID**: `10ac8b98`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 03:06:24 | 🤖 Elderberry-Intellect v2.0*
+

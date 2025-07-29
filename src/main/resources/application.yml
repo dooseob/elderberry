@@ -4,30 +4,6 @@ spring:
     name: elderberry
   profiles:
     active: dev
-    
-# 로깅 설정 (환경별 제어)
-logging:
-  level:
-    root: INFO
-    com.globalcarelink: DEBUG
-    com.globalcarelink.agents: DEBUG        # 개발시 에이전트 상세 로그
-    web: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web.reactive.function.client: DEBUG
-    reactor.netty.http.client: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# 에이전트 시스템 설정
-agents:
-  debug:
-    enabled: true                           # 개발시 디버그 에이전트 활성화
-    log-level: DEBUG
-  sequential:
-    enabled: true
-    max-execution-time: 30000               # 30초 타임아웃
-  monitoring:
-    enabled: true                           # 에이전트 모니터링 활성화
   
   # 데이터베이스 설정
   datasource:
@@ -39,8 +15,9 @@ agents:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: false
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
@@ -49,14 +26,10 @@ agents:
         order_inserts: true
         order_updates: true
   
-  # SQL 초기화 설정 (Entity와 동기화 완료)
+  # SQL 초기화 설정 (완전 비활성화)
   sql:
     init:
-      mode: always
-      data-locations: classpath:data.sql
-      continue-on-error: false
-      # JPA가 먼저 테이블을 생성한 후 데이터 삽입
-      defer-datasource-initialization: true
+      mode: never
   
   # H2 콘솔 설정
   h2:
@@ -87,7 +60,7 @@ agents:
           min-idle: 1
           time-between-eviction-runs: 10s
   
-  # 비동기 작업 설정 (Context7 모범사례 적용)
+  # 비동기 작업 설정
   task:
     execution:
       pool:
@@ -112,19 +85,15 @@ agents:
       static-locations: classpath:/static/
       cache:
         period: 86400 # 24시간 캐시 (개발환경에서는 0으로 설정)
+      add-mappings: true
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
     mvc:
       # SPA 라우팅 지원 (React Router)
       throw-exception-if-no-handler-found: true
-  
-  # 정적 리소스 처리 추가 설정
-  resources:
-    add-mappings: true
-    chain:
-      strategy:
-        content:
-          enabled: true
-          paths: /**
-    static-locations: classpath:/static/
 
 # 서버 설정
 server:
@@ -136,6 +105,29 @@ server:
       enabled: true
       force: true
 
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.globalcarelink: DEBUG
+    com.globalcarelink.agents: DEBUG
+    web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+    reactor.netty.http.client: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 에이전트 시스템 설정
+agents:
+  debug:
+    enabled: true
+    log-level: DEBUG
+  sequential:
+    enabled: true
+    max-execution-time: 30000
+  monitoring:
+    enabled: true
 
 # JWT 설정
 jwt:
@@ -162,14 +154,15 @@ app:
     service:
       url: ${CHATBOT_SERVICE_URL:http://localhost:8000}
       timeout: ${CHATBOT_TIMEOUT:10}
+
   # 공공데이터 API 설정
   public-data:
     api-key: ${PUBLIC_DATA_API_KEY:}
     base-url: ${PUBLIC_DATA_BASE_URL:https://apis.data.go.kr}
-    connect-timeout: 10000    # 10초
-    read-timeout: 30000       # 30초
-    write-timeout: 10000      # 10초
-    max-memory-size: 1048576  # 1MB
+    connect-timeout: 10000
+    read-timeout: 30000
+    write-timeout: 10000
+    max-memory-size: 1048576
     
     # API 호출 제한 설정
     rate-limit:
@@ -180,31 +173,26 @@ app:
     # 재시도 설정
     retry:
       max-attempts: 3
-      backoff-delay: 1000     # 1초
+      backoff-delay: 1000
       backoff-multiplier: 2
     
     # 캐시 설정
     cache:
-      ltci-search-ttl: 3600   # 1시간
-      ltci-detail-ttl: 7200   # 2시간
+      ltci-search-ttl: 3600
+      ltci-detail-ttl: 7200
       hospital-search-ttl: 3600
       pharmacy-search-ttl: 3600
-      facility-status-ttl: 1800  # 30분
-      entrance-visa-ttl: 7200    # 2시간 (입국허가요건은 자주 변경되지 않음)
-      custom-visa-ttl: 3600      # 1시간 (맞춤형 정보는 좀 더 짧게)
+      facility-status-ttl: 1800
+      entrance-visa-ttl: 7200
+      custom-visa-ttl: 3600
   
   # 스케줄러 설정
   scheduler:
-    # 시설 정보 동기화 스케줄 (매일 새벽 2시)
     facility-sync-cron: "0 0 2 * * ?"
-    
-    # API 상태 체크 스케줄 (매 10분)
     health-check-cron: "0 */10 * * * ?"
-    
-    # 통계 업데이트 스케줄 (매 시간)
     statistics-update-cron: "0 0 * * * ?"
   
-  # 비동기 처리 설정 (기존 + 새로운 스레드 풀 설정 추가)
+  # 비동기 처리 설정
   async:
     core-pool-size: 5
     max-pool-size: 20
@@ -218,8 +206,7 @@ app:
       queue-capacity: 50
       thread-name-prefix: "public-data-"
     
-    # 새로 추가된 전용 스레드 풀들 (AsyncConfig Bean과 연동)
-    # 스케줄러 전용 (schedulerTaskExecutor)
+    # 스케줄러 전용 스레드 풀
     scheduler:
       core-pool-size: 3
       max-pool-size: 8
@@ -227,7 +214,7 @@ app:
       keep-alive-seconds: 60
       thread-name-prefix: "scheduler-"
       
-    # DB 작업 전용 (dbTaskExecutor) 
+    # DB 작업 전용 스레드 풀
     database:
       core-pool-size: 4
       max-pool-size: 10
@@ -235,7 +222,7 @@ app:
       keep-alive-seconds: 120
       thread-name-prefix: "db-task-"
       
-    # 외부 API 호출 전용 (apiTaskExecutor)
+    # 외부 API 호출 전용 스레드 풀
     api:
       core-pool-size: 6
       max-pool-size: 20
@@ -243,7 +230,7 @@ app:
       keep-alive-seconds: 30
       thread-name-prefix: "api-task-"
       
-    # 통계 및 분석 전용 (statisticsExecutor)
+    # 통계 및 분석 전용 스레드 풀
     statistics:
       core-pool-size: 2
       max-pool-size: 6
@@ -271,12 +258,6 @@ spring:
   config:
     activate:
       on-profile: dev
-  
-  # 개발 환경 로깅
-  logging:
-    level:
-      com.globalcarelink: DEBUG
-      org.springframework.web.reactive.function.client: DEBUG
   
   # 개발 환경 정적 파일 설정 (캐시 비활성화)
   web:
@@ -313,13 +294,6 @@ spring:
   h2:
     console:
       enabled: false
-  
-  # 운영 환경 로깅
-  logging:
-    level:
-      com.globalcarelink: INFO
-      org.springframework.web.reactive.function.client: WARN
-      org.springframework.security: WARN
 
 # 운영 환경 애플리케이션 설정
 app:
@@ -331,7 +305,6 @@ app:
   
   # 운영 환경 공공데이터 API 설정
   public-data:
-    # 운영 환경에서는 더 엄격한 설정
     connect-timeout: 8000
     read-timeout: 20000
     
@@ -340,20 +313,6 @@ app:
       requests-per-minute: 500
       requests-per-hour: 5000
       requests-per-day: 50000
-  
-    # HTTP Strict Transport Security 강화
-    hsts:
-      max-age: 31536000
-      include-subdomains: true
-      preload: true
-    # Content Security Policy 설정
-    csp:
-      enabled: true
-      policy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
-    # X-Frame-Options 강화
-    frame-options: DENY
-    # X-Content-Type-Options 설정
-    content-type-options: nosniff
 
 ---
 # 테스트 환경 설정

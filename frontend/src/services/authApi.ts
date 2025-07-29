@@ -84,7 +84,7 @@ export const authService = {
 
   // 회원가입
   async register(request: RegisterRequest): Promise<TokenResponse> {
-    const response: AxiosResponse<TokenResponse> = await authApi.post('/signup', request);
+    const response: AxiosResponse<TokenResponse> = await authApi.post('/register', request);
     return response.data;
   },
 
