@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 인증 컨트롤러 (보안 강화 버전)
@@ -48,12 +50,56 @@ public class AuthController {
         description = "이메일과 비밀번호로 로그인하여 JWT 토큰을 발급받습니다."
     )
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request,
+    public ResponseEntity<TokenResponse> login(@RequestBody String rawBody,
                                               HttpServletRequest httpRequest) {
-        log.info("로그인 요청: {} - IP: {}", request.getEmail(), getClientIpAddress(httpRequest));
-        TokenResponse response = memberService.login(request);
-        log.info("로그인 성공: {}", request.getEmail());
-        return ResponseEntity.ok(response);
+        log.info("로그인 요청 (임시 raw 처리) - IP: {}", getClientIpAddress(httpRequest));
+        
+        try {
+            // Temporary workaround: Parse JSON manually due to message converter issue
+            ObjectMapper mapper = new ObjectMapper();
+            LoginRequest request = mapper.readValue(rawBody, LoginRequest.class);
+            
+            log.info("로그인 요청: {} - IP: {}", request.getEmail(), getClientIpAddress(httpRequest));
+            TokenResponse response = memberService.login(request);
+            log.info("로그인 성공: {}", request.getEmail());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("로그인 요청 파싱 실패: {}", e.getMessage());
+            throw new IllegalArgumentException("잘못된 요청 형식입니다", e);
+        }
+    }
+    
+    @PostMapping("/login-test")
+    public ResponseEntity<String> loginTest(@RequestBody String rawBody) {
+        log.info("로그인 테스트 - Raw Body: {}", rawBody);
+        return ResponseEntity.ok("Raw body received: " + rawBody);
+    }
+    
+    @PostMapping("/login-dto-test")
+    public ResponseEntity<String> loginDtoTest(@RequestBody LoginRequest request) {
+        log.info("로그인 DTO 테스트 - Email: {}, Password: {}, RememberMe: {}", 
+                 request.getEmail(), request.getPassword(), request.getRememberMe());
+        return ResponseEntity.ok("DTO parsed successfully: " + request.getEmail());
+    }
+    
+    @PostMapping("/login-simple-test")
+    public ResponseEntity<String> loginSimpleTest(@RequestBody SimpleLoginTest request) {
+        log.info("간단한 로그인 테스트 - Email: {}, Password: {}", 
+                 request.email, request.password);
+        return ResponseEntity.ok("Simple DTO parsed: " + request.email);
+    }
+    
+    @PostMapping("/login-map-test")
+    public ResponseEntity<String> loginMapTest(@RequestBody Map<String, Object> request) {
+        log.info("맵 로그인 테스트 - Data: {}", request);
+        return ResponseEntity.ok("Map parsed: " + request.get("email"));
+    }
+    
+    public static class SimpleLoginTest {
+        public String email;
+        public String password;
+        public Boolean rememberMe;
     }
 
     @Operation(

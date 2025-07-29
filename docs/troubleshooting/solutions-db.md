@@ -1070,3 +1070,231 @@ com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또�
 ---
 *📅 자동 생성됨: 2025-07-29 16:40:33 | 🤖 Elderberry-Intellect v2.0*
 
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-0c674c28
+
+**생성 시간**: 2025-07-29 22:50:38
+**이벤트 ID**: `ERR-0c674c28`
+**추적 ID**: `ccab0381`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 22:50:38 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-ded61a8f
+
+**생성 시간**: 2025-07-29 23:05:15
+**이벤트 ID**: `ERR-ded61a8f`
+**추적 ID**: `e3cc44df`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 23:05:15 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-3f1c3d67
+
+**생성 시간**: 2025-07-29 23:05:44
+**이벤트 ID**: `ERR-3f1c3d67`
+**추적 ID**: `7d0e5d04`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 23:05:44 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-f6f51e47
+
+**생성 시간**: 2025-07-29 23:05:47
+**이벤트 ID**: `ERR-f6f51e47`
+**추적 ID**: `bd49f7d1`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 23:05:47 | 🤖 Elderberry-Intellect v2.0*
+

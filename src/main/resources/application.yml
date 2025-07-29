@@ -4,7 +4,7 @@ spring:
   
   # 데이터베이스 설정 (H2 파일 모드)
   datasource:
-    url: jdbc:h2:file:./data/elderberry;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:./data/elderberry;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: password
     driver-class-name: org.h2.Driver
@@ -31,11 +31,10 @@ spring:
           batch_size: 50
           order_inserts: true
           order_updates: true
+        # 캐시 설정 비활성화 (JCache 의존성 미포함)
         cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+          use_second_level_cache: false
+          use_query_cache: false
         # N+1 문제 해결을 위한 배치 페칭
         default_batch_fetch_size: 100
     defer-datasource-initialization: true
@@ -55,18 +54,11 @@ spring:
       settings:
         web-allow-others: true
         
-  # Redis 설정 (Docker 미설치 환경에서 비활성화)
-  # redis:
-  #   host: localhost
-  #   port: 6379
-  #   password: 
-  #   timeout: 3000ms
-  #   jedis:
-  #     pool:
-  #       max-active: 10
-  #       max-idle: 10
-  #       min-idle: 1
-  #       max-wait: 3000ms
+  # Redis 설정 (Docker 미설치 환경에서 완전 비활성화)
+  data:
+    redis:
+      repositories:
+        enabled: false
 
   # 캐시 설정 (Redis 없이 로컬 캐시 사용)
   cache:
@@ -132,6 +124,37 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    redis:
+      enabled: false
+
+# 외부 API 설정
+external:
+  api:
+    # 카카오맵 API
+    kakao:
+      javascript-key: b97b58672807a40c122a5deed8a98ea4
+      rest-api-key: 172a1fe2580f6038c6a3951ee63fd963
+    
+    # 공공데이터 API
+    public-data:
+      service-key: CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==
+      service-key-encoded: CCXHQiSSQ0J%2BRRaadSjmmS7ltxG%2FtlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog%3D%3D
+      endpoints:
+        # 국민건강보험공단 장기요양기관 평가
+        ltc-evaluation: https://api.odcloud.kr/api
+        # 외교부 국가·지역별 입국허가요건
+        entrance-visa: https://apis.data.go.kr/1262000/EntranceVisaService2
+        # 국립중앙의료원 전국 약국 정보
+        pharmacy: https://apis.data.go.kr/B552657/ErmctInsttInfoInqireService
+        # 건강보험심사평가원 병원정보
+        hospital: https://apis.data.go.kr/B551182/hospInfoServicev2
+        # 건강보험심사평가원 요양기관개폐업정보
+        facility-closure: https://apis.data.go.kr/B551182/yadmOpCloInfoService2
+        # 국민건강보험공단 장기요양기관 검색
+        ltc-search: https://apis.data.go.kr/B550928/searchLtcInsttService01
+        # 국민건강보험공단 장기요양기관 상세조회
+        ltc-detail: https://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02
 
 # 프로파일별 설정
 ---
