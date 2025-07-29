@@ -26,6 +26,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { MemberRole } from '../../types/auth';
 import Card, { CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import { useSEO, addStructuredData } from '../../hooks/useSEO';
 
 // 통계 카드 컴포넌트
 interface StatCardProps {
@@ -97,6 +98,41 @@ interface QuickAction {
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
+  
+  // SEO 최적화
+  useSEO({
+    title: '대시보드',
+    description: `${user?.name}님의 개인 대시보드. 맞춤형 통계, 최근 활동, 빠른 작업을 한눈에 확인하세요.`,
+    keywords: '대시보드, 개인화, 통계, 활동, 요양원, 구인구직',
+    ogTitle: '개인 대시보드 - 엘더베리',
+    canonicalUrl: 'https://elderberry.co.kr/dashboard',
+    noIndex: true // 개인 대시보드는 검색 노출 안함
+  });
+  
+  // 구조화된 데이터 추가
+  useEffect(() => {
+    if (user) {
+      const breadcrumbData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "홈",
+            "item": "https://elderberry.co.kr"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "대시보드",
+            "item": "https://elderberry.co.kr/dashboard"
+          }
+        ]
+      };
+      addStructuredData(breadcrumbData, 'dashboard-breadcrumb');
+    }
+  }, [user]);
   const [activities] = useState<Activity[]>([
     {
       id: '1',
