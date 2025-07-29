@@ -1,153 +1,34 @@
-# ==========================================
-# 엘더베리 프로젝트 - Docker Compose 통합 개발환경
-# Java Backend + React Frontend + Redis + PostgreSQL
-# ==========================================
-
-# Docker Compose 버전 3.8은 deprecated - 최신 버전에서는 version 필드 생략
-# 환경변수는 .env 파일에서 자동으로 로드됩니다
+version: '3.8'
 
 services:
-  # PostgreSQL 데이터베이스
-  postgres:
-    image: ${DOCKER_POSTGRES_IMAGE:-postgres:17-alpine}
-    container_name: elderberry-postgres
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    environment:
-      POSTGRES_DB: ${DB_NAME:-elderberry}
-      POSTGRES_USER: ${DB_USERNAME:-elderberry}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-elderberry123!}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - elderberry-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U elderberry"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis 캐시 서버
   redis:
-    image: ${DOCKER_REDIS_IMAGE:-redis:8-alpine}
+    image: redis:7-alpine
     container_name: elderberry-redis
     ports:
-      - "${REDIS_PORT:-6379}:6379"
-    command: redis-server --appendonly yes
+      - "6379:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --appendonly yes --requirepass elderberry123!
+    restart: unless-stopped
     networks:
       - elderberry-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  # Java Spring Boot 백엔드
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - BUILD_ENV=development
-    container_name: elderberry-backend
-    ports:
-      - "${SERVER_PORT:-8080}:8080"
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: elderberry-redis-commander
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME:-elderberry}
-      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME:-elderberry}
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-elderberry123!}
-      - SPRING_REDIS_HOST=${REDIS_HOST:-redis}
-      - SPRING_REDIS_PORT=${REDIS_PORT:-6379}
-      - JWT_SECRET=${JWT_SECRET:-elderberry-jwt-secret-key-2025}
-      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
-      - JWT_REFRESH_EXPIRATION=${JWT_REFRESH_EXPIRATION:-604800000}
-      - PUBLIC_DATA_API_KEY=${PUBLIC_DATA_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - LOG_LEVEL=${LOG_LEVEL:-info}
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-    networks:
-      - elderberry-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # React 프론트엔드 (개발 환경)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: elderberry-frontend
+      - REDIS_HOSTS=local:redis:6379:0:elderberry123!
     ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8080/api}
-      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:8080/ws}
-      - VITE_APP_TITLE=${VITE_APP_TITLE:-엘더베리 케어링크}
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/package.json:/app/package.json
-      - ./frontend/vite.config.ts:/app/vite.config.ts
-      - /app/node_modules
-    networks:
-      - elderberry-network
+      - "8081:8081"
     depends_on:
-      - backend
-
-  # Plain Java Server (임시 서버)
-  plain-java:
-    build:
-      context: .
-      dockerfile: Dockerfile.plain
-    container_name: elderberry-plain-java
-    ports:
-      - "8081:8080"
-    volumes:
-      - ./build/classes:/app/classes
+      - redis
     networks:
       - elderberry-network
-    profiles:
-      - plain
-
-  # Nginx 리버스 프록시 (프로덕션용)
-  nginx:
-    image: nginx:alpine
-    container_name: elderberry-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - ./frontend/dist:/usr/share/nginx/html:ro
-    depends_on:
-      - backend
-    networks:
-      - elderberry-network
-    profiles:
-      - production
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
   redis_data:
 
 networks:
   elderberry-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.25.0.0/16

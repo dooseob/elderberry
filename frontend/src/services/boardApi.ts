@@ -21,7 +21,7 @@ import {
 
 // API 인스턴스 생성
 const boardApi = axios.create({
-  baseURL: '/api/boards',
+  baseURL: 'http://localhost:8080/api/boards',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ const boardApi = axios.create({
 });
 
 const postApi = axios.create({
-  baseURL: '/api/posts',
+  baseURL: 'http://localhost:8080/api/posts',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ const postApi = axios.create({
 });
 
 const commentApi = axios.create({
-  baseURL: '/api/comments',
+  baseURL: 'http://localhost:8080/api/comments',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ const commentApi = axios.create({
 });
 
 const fileApi = axios.create({
-  baseURL: '/api/files',
+  baseURL: 'http://localhost:8080/api/files',
   timeout: 30000, // 파일 업로드는 더 긴 타임아웃
   headers: {
     'Content-Type': 'multipart/form-data'

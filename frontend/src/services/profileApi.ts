@@ -29,7 +29,7 @@ import {
 // ===== API 인스턴스 생성 =====
 
 const profileApi = axios.create({
-  baseURL: '/api/profiles',
+  baseURL: 'http://localhost:8080/api/profiles',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

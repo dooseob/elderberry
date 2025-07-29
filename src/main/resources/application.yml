@@ -15,7 +15,7 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: false
     defer-datasource-initialization: true
     properties:
@@ -26,10 +26,11 @@ spring:
         order_inserts: true
         order_updates: true
   
-  # SQL 초기화 설정 (완전 비활성화)
+  # SQL 초기화 설정
   sql:
     init:
-      mode: never
+      mode: always
+      data-locations: classpath:data.sql
   
   # H2 콘솔 설정
   h2:
@@ -45,20 +46,20 @@ spring:
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=1h
   
-  # Redis 설정
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      database: ${REDIS_DATABASE:0}
-      timeout: ${REDIS_TIMEOUT:2000ms}
-      lettuce:
-        pool:
-          max-active: 10
-          max-idle: 10
-          min-idle: 1
-          time-between-eviction-runs: 10s
+  # Redis 설정 (Docker 없이 개발 시 비활성화)
+  #data:
+  #  redis:
+  #    host: ${REDIS_HOST:localhost}
+  #    port: ${REDIS_PORT:6379}
+  #    password: ${REDIS_PASSWORD:elderberry123!}
+  #    database: ${REDIS_DATABASE:0}
+  #    timeout: ${REDIS_TIMEOUT:2000ms}
+  #    lettuce:
+  #      pool:
+  #        max-active: 10
+  #        max-idle: 10
+  #        min-idle: 1
+  #        time-between-eviction-runs: 10s
   
   # 비동기 작업 설정
   task:

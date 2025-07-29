@@ -1356,3 +1356,512 @@ com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또�
 ---
 *📅 자동 생성됨: 2025-07-29 03:06:24 | 🤖 Elderberry-Intellect v2.0*
 
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-9d40ca52
+
+**생성 시간**: 2025-07-29 11:06:01
+**이벤트 ID**: `ERR-9d40ca52`
+**추적 ID**: `ac659300`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:06:01 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-1bce051a
+
+**생성 시간**: 2025-07-29 11:25:49
+**이벤트 ID**: `ERR-1bce051a`
+**추적 ID**: `a27ebeaf`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:25:49 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-a8b64a40
+
+**생성 시간**: 2025-07-29 11:31:45
+**이벤트 ID**: `ERR-a8b64a40`
+**추적 ID**: `50956c25`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:31:45 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-ff81b878
+
+**생성 시간**: 2025-07-29 11:35:00
+**이벤트 ID**: `ERR-ff81b878`
+**추적 ID**: `cc4e2a73`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/auth/signup.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `POST /api/auth/signup`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/auth/signup.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-29 11:35:00 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-a76da25e
+
+**생성 시간**: 2025-07-29 11:35:46
+**이벤트 ID**: `ERR-a76da25e`
+**추적 ID**: `af9aa80f`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/auth/signup.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `POST /api/auth/signup`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/auth/signup.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-29 11:35:46 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-1e72219c
+
+**생성 시간**: 2025-07-29 11:35:56
+**이벤트 ID**: `ERR-1e72219c`
+**추적 ID**: `e2c03f35`
+**심각도**: MEDIUM (VALIDATION)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `MethodArgumentNotValidException`
+- **에러 메시지**: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.globalcarelink.auth.dto.MemberResponse> com.globalcarelink.auth.AuthController.register(com.globalcarelink.auth.dto.MemberRegisterRequest,jakarta.servlet.http.HttpServletRequest): [Field error in object 'memberRegisterRequest' on field 'role': rejected value [null]; codes [NotNull.memberRegisterRequest.role,NotNull.role,NotNull.com.globalcarelink.auth.MemberRole,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [memberRegisterRequest.role,role]; arguments []; default message [role]]; default message [사용자 역할은 필수입니다]] 
+- **발생 위치**: `RequestResponseBodyMethodProcessor.resolveArgument`
+- **요청 URL**: `POST /api/auth/register`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.globalcarelink.auth.dto.MemberResponse> com.globalcarelink.auth.AuthController.register(com.globalcarelink.auth.dto.MemberRegisterRequest,jakarta.servlet.http.HttpServletRequest): [Field error in object 'memberRegisterRequest' on field 'role': rejected value [null]; codes [NotNull.memberRegisterRequest.role,NotNull.role,NotNull.com.globalcarelink.auth.MemberRole,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [memberRegisterRequest.role,role]; arguments []; default message [role]]; default message [사용자 역할은 필수입니다]] 
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:159)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: 입력값 유효성 검증 실패
+- **일반적 원인**: @Valid 어노테이션 누락, 잘못된 입력 데이터, 제약 조건 위반
+- **권장 해결**: DTO 유효성 검증 강화, 프론트엔드 입력 검증 추가
+
+- **발생 컨텍스트**: VALIDATION 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`validation` `controller` `entity` `dto` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:35:56 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-337e8074
+
+**생성 시간**: 2025-07-29 11:36:17
+**이벤트 ID**: `ERR-337e8074`
+**추적 ID**: `369b8da4`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `BadRequest`
+- **에러 메시지**: 비밀번호는 8-20자이며, 대소문자, 숫자, 특수문자(@$!%*?&)를 각각 하나 이상 포함해야 합니다.
+- **발생 위치**: `MemberService.validateRegisterRequest`
+- **요청 URL**: `POST /api/auth/register`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$BadRequest: 비밀번호는 8-20자이며, 대소문자, 숫자, 특수문자(@$!%*?&)를 각각 하나 이상 포함해야 합니다.
+	at com.globalcarelink.auth.MemberService.validateRegisterRequest(MemberService.java:189)
+	at com.globalcarelink.auth.MemberService.register(MemberService.java:37)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: BadRequest 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:36:17 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-03a8db86
+
+**생성 시간**: 2025-07-29 11:36:31
+**이벤트 ID**: `ERR-03a8db86`
+**추적 ID**: `172f6f86`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/test/hello.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `POST /api/test/hello`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/test/hello.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-29 11:36:31 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-75db5fb4
+
+**생성 시간**: 2025-07-29 11:37:01
+**이벤트 ID**: `ERR-75db5fb4`
+**추적 ID**: `bef4bef8`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.lambda$login$0`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.lambda$login$0(MemberService.java:74)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:74)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-29 11:37:01 | 🤖 Elderberry-Intellect v2.0*
+

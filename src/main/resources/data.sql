@@ -38,6 +38,6 @@ INSERT INTO reviews (id, reviewer_id, facility_id, title, content, overall_ratin
 (2, 2, 2, '부산실버케어 주간보호', '주간보호 서비스가 정말 좋습니다. 프로그램도 다양하고요.', 4.8, 'ACTIVE', false, 15, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 시설 매칭 히스토리
-INSERT INTO facility_matching_histories (id, health_assessment_id, facility_id, matching_score, matching_type, matching_factors, user_feedback, completion_status, created_at, updated_at) VALUES
+INSERT INTO facility_matching_history (id, health_assessment_id, facility_id, matching_score, matching_type, matching_factors, user_feedback, completion_status, created_at, updated_at) VALUES
 (1, 1, 1, 95.5, 'AUTOMATIC', '케어등급일치,지역근접,전문성', '매우 만족합니다. 추천해주신 시설이 완벽해요.', 'COMPLETED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (2, 2, 2, 87.3, 'MANUAL', '전문성,비용적정성', '코디네이터님 추천으로 방문했는데 좋네요.', 'COMPLETED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

@@ -20,7 +20,7 @@ import {
 
 // API 인스턴스 생성
 const jobApi = axios.create({
-  baseURL: '/api/jobs',
+  baseURL: 'http://localhost:8080/api/jobs',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ const jobApi = axios.create({
 });
 
 const applicationApi = axios.create({
-  baseURL: '/api/job-applications',
+  baseURL: 'http://localhost:8080/api/job-applications',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

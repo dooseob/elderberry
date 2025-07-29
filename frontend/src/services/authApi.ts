@@ -20,7 +20,7 @@ import type { AppError } from '../types/errors';
 
 // API 인스턴스 생성
 const authApi = axios.create({
-  baseURL: '/api/auth',
+  baseURL: 'http://localhost:8080/api/auth',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ const authApi = axios.create({
 });
 
 const memberApi = axios.create({
-  baseURL: '/api/members',
+  baseURL: 'http://localhost:8080/api/members',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

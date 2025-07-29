@@ -19,7 +19,7 @@ import type { AppError } from '../types/errors';
 
 // API 인스턴스 생성
 const notificationApi = axios.create({
-  baseURL: '/api/notifications',
+  baseURL: 'http://localhost:8080/api/notifications',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

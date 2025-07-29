@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final Environment environment;
     
-    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173,http://localhost:5174}")
     private List<String> allowedOrigins;
     
     @Value("${app.security.production-mode:false}")
@@ -63,7 +63,7 @@ public class SecurityConfig {
                 
                 .authorizeHttpRequests(auth -> {
                     // 기본 허용 경로
-                    auth.requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                    auth.requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/signup").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/error").permitAll();
@@ -127,6 +127,7 @@ public class SecurityConfig {
             configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:5173", 
+                "http://localhost:5174",
                 "http://localhost:8080",
                 "https://*.elderberry.app",
                 "https://*.globalcarelink.com"

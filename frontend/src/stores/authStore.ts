@@ -113,23 +113,25 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authService.login(request);
           
           const user: AuthUser = {
-            id: response.memberInfo.id,
-            email: response.memberInfo.email,
-            name: response.memberInfo.name,
-            role: response.memberInfo.role,
-            profileCompletionRate: response.memberInfo.profileCompletionRate,
-            isActive: response.memberInfo.isActive
+            id: response.member.id,
+            email: response.member.email,
+            name: response.member.name,
+            role: response.member.role,
+            profileCompletionRate: response.member.profileCompletionRate || 0,
+            isActive: response.member.isActive
           };
 
           // 토큰 및 사용자 정보 저장
           setStoredToken('ACCESS_TOKEN', response.accessToken);
-          setStoredToken('REFRESH_TOKEN', response.refreshToken);
+          if (response.refreshToken) {
+            setStoredToken('REFRESH_TOKEN', response.refreshToken);
+          }
           setStoredUser(user);
 
           set({
             user,
             accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
+            refreshToken: response.refreshToken || null,
             isAuthenticated: true,
             isLoading: false,
             error: null
@@ -160,12 +162,12 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authService.register(request);
           
           const user: AuthUser = {
-            id: response.memberInfo.id,
-            email: response.memberInfo.email,
-            name: response.memberInfo.name,
-            role: response.memberInfo.role,
-            profileCompletionRate: response.memberInfo.profileCompletionRate,
-            isActive: response.memberInfo.isActive
+            id: response.member.id,
+            email: response.member.email,
+            name: response.member.name,
+            role: response.member.role,
+            profileCompletionRate: response.member.profileCompletionRate || 0,
+            isActive: response.member.isActive
           };
 
           // 토큰 및 사용자 정보 저장
@@ -242,12 +244,12 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authService.refreshToken({ refreshToken });
           
           const user: AuthUser = {
-            id: response.memberInfo.id,
-            email: response.memberInfo.email,
-            name: response.memberInfo.name,
-            role: response.memberInfo.role,
-            profileCompletionRate: response.memberInfo.profileCompletionRate,
-            isActive: response.memberInfo.isActive
+            id: response.member.id,
+            email: response.member.email,
+            name: response.member.name,
+            role: response.member.role,
+            profileCompletionRate: response.member.profileCompletionRate || 0,
+            isActive: response.member.isActive
           };
 
           // 새 토큰 저장

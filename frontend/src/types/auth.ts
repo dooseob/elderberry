@@ -17,10 +17,10 @@ export interface RegisterRequest {
 
 export interface TokenResponse {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
   tokenType: string;
   expiresIn: number;
-  memberInfo: MemberResponse;
+  member: MemberResponse;
 }
 
 export interface EnhancedTokenResponse extends TokenResponse {
@@ -52,22 +52,28 @@ export interface TokenValidationResponse {
 }
 
 export enum MemberRole {
-  CAREGIVER = 'CAREGIVER',
-  COORDINATOR = 'COORDINATOR', 
-  EMPLOYER = 'EMPLOYER',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  FACILITY = 'FACILITY',
+  COORDINATOR = 'COORDINATOR',
+  USER_DOMESTIC = 'USER_DOMESTIC',
+  USER_OVERSEAS = 'USER_OVERSEAS',
+  JOB_SEEKER_DOMESTIC = 'JOB_SEEKER_DOMESTIC',
+  JOB_SEEKER_OVERSEAS = 'JOB_SEEKER_OVERSEAS'
 }
 
 export interface MemberResponse {
   id: number;
   email: string;
   name: string;
-  phone?: string;
+  phoneNumber?: string;
   role: MemberRole;
-  profileCompletionRate: number;
+  profileCompletionRate?: number;
   isActive: boolean;
+  isJobSeeker?: boolean;
+  language?: string;
+  region?: string;
   createdAt: string;
-  lastLoginAt?: string;
+  updatedAt: string;
 }
 
 export interface MemberUpdateRequest {
