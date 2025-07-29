@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 인증 컨트롤러 (보안 강화 버전)
@@ -50,24 +49,13 @@ public class AuthController {
         description = "이메일과 비밀번호로 로그인하여 JWT 토큰을 발급받습니다."
     )
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody String rawBody,
+    public ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest request,
                                               HttpServletRequest httpRequest) {
-        log.info("로그인 요청 (임시 raw 처리) - IP: {}", getClientIpAddress(httpRequest));
+        log.info("로그인 요청: {} - IP: {}", request.getEmail(), getClientIpAddress(httpRequest));
         
-        try {
-            // Temporary workaround: Parse JSON manually due to message converter issue
-            ObjectMapper mapper = new ObjectMapper();
-            LoginRequest request = mapper.readValue(rawBody, LoginRequest.class);
-            
-            log.info("로그인 요청: {} - IP: {}", request.getEmail(), getClientIpAddress(httpRequest));
-            TokenResponse response = memberService.login(request);
-            log.info("로그인 성공: {}", request.getEmail());
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            log.error("로그인 요청 파싱 실패: {}", e.getMessage());
-            throw new IllegalArgumentException("잘못된 요청 형식입니다", e);
-        }
+        TokenResponse response = memberService.login(request);
+        log.info("로그인 성공: {}", request.getEmail());
+        return ResponseEntity.ok(response);
     }
     
     @PostMapping("/login-test")
@@ -94,6 +82,22 @@ public class AuthController {
     public ResponseEntity<String> loginMapTest(@RequestBody Map<String, Object> request) {
         log.info("맵 로그인 테스트 - Data: {}", request);
         return ResponseEntity.ok("Map parsed: " + request.get("email"));
+    }
+    
+    @PostMapping("/password-hash-test")
+    public ResponseEntity<String> passwordHashTest(@RequestBody Map<String, String> request) {
+        String password = request.get("password");
+        
+        // BCrypt encoder 주입 필요
+        org.springframework.security.crypto.password.PasswordEncoder encoder = 
+            new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+        
+        // 새로운 해시 생성
+        String newHash = encoder.encode(password);
+        
+        log.info("새로운 비밀번호 해시 생성 - Input: {}, NewHash: {}", password, newHash);
+        
+        return ResponseEntity.ok("Password: " + password + ", NewHash: " + newHash);
     }
     
     public static class SimpleLoginTest {

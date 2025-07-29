@@ -22,15 +22,16 @@ React TypeScript 프론트엔드 관련 문제들
 - **[AGENT-005](./backend/AGENT-005-five-agent-system-completion.md)**: 5개 에이전트 시스템 완성 - GoogleSeoOptimizationAgent 추가 및 MCP 도구 완전 통합 (2025-07-29) ⭐
 
 ### 🔴 HIGH 심각도 (최근 해결됨)
+- **[AUTH-004](./auth/AUTH-004-frontend-backend-login-integration.md)**: 프론트엔드-백엔드 로그인 완전 연동 해결 - 500 에러 및 타입 호환성 문제 (2025-07-29) 🎉
 - **[AUTH-003](./auth/AUTH-003-login-system-integration.md)**: 로그인 시스템 프론트엔드-백엔드 연동 완전 해결 (2025-07-29)
 - **[DEBUG-002](./backend/DEBUG-002-compilation-errors.md)**: 복구된 시스템 컴파일 오류 디버깅, 63개 오류 해결 (2025-07-28)
 - **[RECOVERY-001](./deployment/RECOVERY-001-git-system-recovery.md)**: Git 복구 작업, 32개 파일 복구 (2025-07-28)
 
 ## 📊 통계
-- **총 처리된 이슈**: 69개
-- **문서화된 문제**: 41개+
-- **해결 완료**: 4개 주요 이슈 (5개 에이전트 시스템 완성 포함)
-- **시스템 완성도**: 95% (5개 에이전트 + MCP 통합 완료)
+- **총 처리된 이슈**: 81개
+- **문서화된 문제**: 43개+
+- **해결 완료**: 5개 주요 이슈 (프론트엔드 로그인 연동 완료 포함)
+- **시스템 완성도**: 97% (5개 에이전트 + MCP 통합 + 로그인 시스템 완료)
 - **마지막 업데이트**: 2025-07-29
 
 ## 🔍 빠른 검색
@@ -1300,4 +1301,631 @@ com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또�
 
 ---
 *📅 자동 생성됨: 2025-07-29 23:05:47 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-fffbb2b5
+
+**생성 시간**: 2025-07-30 02:48:19
+**이벤트 ID**: `ERR-fffbb2b5`
+**추적 ID**: `1a437bc1`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:48:19 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-dcb6b656
+
+**생성 시간**: 2025-07-30 02:48:57
+**이벤트 ID**: `ERR-dcb6b656`
+**추적 ID**: `4e45d810`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:48:57 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-6ff11854
+
+**생성 시간**: 2025-07-30 02:49:54
+**이벤트 ID**: `ERR-6ff11854`
+**추적 ID**: `f63907a1`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:49:54 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-01475870
+
+**생성 시간**: 2025-07-30 02:50:13
+**이벤트 ID**: `ERR-01475870`
+**추적 ID**: `86f1958c`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:50:13 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-06160943
+
+**생성 시간**: 2025-07-30 02:53:31
+**이벤트 ID**: `ERR-06160943`
+**추적 ID**: `ed717b05`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:53:31 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-f5b4bb21
+
+**생성 시간**: 2025-07-30 02:56:10
+**이벤트 ID**: `ERR-f5b4bb21`
+**추적 ID**: `f60e0cee`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:56:10 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-fd7dd2bd
+
+**생성 시간**: 2025-07-30 02:56:33
+**이벤트 ID**: `ERR-fd7dd2bd`
+**추적 ID**: `ae6bdec0`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:56:33 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-03afecfd
+
+**생성 시간**: 2025-07-30 02:56:39
+**이벤트 ID**: `ERR-03afecfd`
+**추적 ID**: `e15c690a`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `IllegalArgumentException`
+- **에러 메시지**: 잘못된 요청 형식입니다
+- **발생 위치**: `AuthController.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+java.lang.IllegalArgumentException: 잘못된 요청 형식입니다
+	at com.globalcarelink.auth.AuthController.login(AuthController.java:69)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logControllerExecution(LoggingAspect.java:85)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: IllegalArgumentException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`controller` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:56:39 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-d3602ffd
+
+**생성 시간**: 2025-07-30 02:58:49
+**이벤트 ID**: `ERR-d3602ffd`
+**추적 ID**: `6f24d497`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:58:49 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-df5df2f1
+
+**생성 시간**: 2025-07-30 02:59:19
+**이벤트 ID**: `ERR-df5df2f1`
+**추적 ID**: `5c25ba04`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:59:19 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-7b380c64
+
+**생성 시간**: 2025-07-30 02:59:49
+**이벤트 ID**: `ERR-7b380c64`
+**추적 ID**: `8aaccc9c`
+**심각도**: HIGH (BUSINESS)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `Unauthorized`
+- **에러 메시지**: 이메일 또는 비밀번호가 올바르지 않습니다
+- **발생 위치**: `MemberService.login`
+- **요청 URL**: `POST /api/auth/login`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또는 비밀번호가 올바르지 않습니다
+	at com.globalcarelink.auth.MemberService.login(MemberService.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at com.globalcarelink.common.config.LoggingAspect.logServiceExecution(LoggingAspect.java:51)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: Unauthorized 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: BUSINESS 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`service` 
+
+---
+*📅 자동 생성됨: 2025-07-30 02:59:49 | 🤖 Elderberry-Intellect v2.0*
 

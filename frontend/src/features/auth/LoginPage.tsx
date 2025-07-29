@@ -98,7 +98,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data);
+      await login({
+        ...data,
+        rememberMe
+      });
       toast.success('로그인 성공', {
         description: '엘더베리에 오신 것을 환영합니다!'
       });

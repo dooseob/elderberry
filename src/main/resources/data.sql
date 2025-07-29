@@ -4,11 +4,11 @@
 -- 기본 테스트용 회원 데이터
 -- 비밀번호: Password123!
 INSERT INTO members (id, email, password, name, phone_number, role, is_job_seeker, is_active, email_verified, language, region, created_at, updated_at) VALUES
-(1, 'test.domestic@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '김테스트', '010-1234-5678', 'USER_DOMESTIC', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'test.overseas@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', 'John Test', '010-2345-6789', 'USER_OVERSEAS', false, true, true, 'en', 'New York', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'test.coordinator@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '이코디', '010-3456-7890', 'COORDINATOR', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'test.facility@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '시설관리자', '010-4567-8901', 'FACILITY', false, true, true, 'ko', '부산광역시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'test.admin@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '관리자', '010-5678-9012', 'ADMIN', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'test.domestic@example.com', '$2a$10$01tIqW1tvIA62J5KnPx1eOUcuFQgb0TOWWYMbbx7/9T.A3vvxKg7O', '김테스트', '010-1234-5678', 'USER_DOMESTIC', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'test.overseas@example.com', '$2a$10$01tIqW1tvIA62J5KnPx1eOUcuFQgb0TOWWYMbbx7/9T.A3vvxKg7O', 'John Test', '010-2345-6789', 'USER_OVERSEAS', false, true, true, 'en', 'New York', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'test.coordinator@example.com', '$2a$10$01tIqW1tvIA62J5KnPx1eOUcuFQgb0TOWWYMbbx7/9T.A3vvxKg7O', '이코디', '010-3456-7890', 'COORDINATOR', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'test.facility@example.com', '$2a$10$01tIqW1tvIA62J5KnPx1eOUcuFQgb0TOWWYMbbx7/9T.A3vvxKg7O', '시설관리자', '010-4567-8901', 'FACILITY', false, true, true, 'ko', '부산광역시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'test.admin@example.com', '$2a$10$01tIqW1tvIA62J5KnPx1eOUcuFQgb0TOWWYMbbx7/9T.A3vvxKg7O', '관리자', '010-5678-9012', 'ADMIN', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 테스트용 시설 프로필 데이터 (필수 컬럼 포함)
 INSERT INTO facility_profiles (id, facility_name, facility_type, address, region, district, total_capacity, current_occupancy, facility_grade, is_active, created_at, updated_at) VALUES

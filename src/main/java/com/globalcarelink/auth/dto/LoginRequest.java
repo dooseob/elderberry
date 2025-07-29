@@ -1,5 +1,6 @@
 package com.globalcarelink.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginRequest {
     
     @JsonProperty("email")
@@ -23,6 +25,6 @@ public class LoginRequest {
     @NotBlank(message = "비밀번호는 필수입니다")
     private String password;
     
-    @JsonProperty("rememberMe")
+    @JsonProperty(value = "rememberMe", defaultValue = "false")
     private Boolean rememberMe = false;
 }
