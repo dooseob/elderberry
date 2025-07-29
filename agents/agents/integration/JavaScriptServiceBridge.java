@@ -26,7 +26,7 @@ public class JavaScriptServiceBridge {
     
     public JavaScriptServiceBridge() {
         this.objectMapper = new ObjectMapper();
-        this.claudeGuidesPath = System.getProperty("user.dir") + "/src/main/resources/agents";
+        this.claudeGuidesPath = System.getProperty("user.dir") + "/claude-guides";
         this.consolidationConfig = new ServiceConsolidationConfig();
     }
     

@@ -88,7 +88,8 @@
       "Bash(done)",
       "Bash(timeout:*)",
       "Bash(kill:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npx vite:*)"
     ],
     "deny": []
   }

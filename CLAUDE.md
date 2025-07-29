@@ -30,28 +30,41 @@ java -version  # openjdk version "21.0.x"
 cd /mnt/c/Users/human-10/elderberry
 ```
 
-#### **2. 프론트엔드 시작**
+#### **2. 🚀 시간절약 개발 환경 (권장)**
 ```bash
-cd frontend
-npm install
-npm run dev  # http://localhost:5173
+# 프론트엔드 + 백엔드 동시 백그라운드 실행
+./dev-start.sh
+
+# 서버 상태 확인
+./dev-status.sh
+
+# 서버 중지
+./dev-stop.sh
+
+# 로그 확인
+tail -f logs/backend.log
+tail -f logs/frontend.log
 ```
 
-#### **3. 백엔드 시작**
+#### **3. 개별 서버 실행 (필요시)**
 ```bash
-# 개발 환경에서 바로 실행
-./gradlew bootRun
+# 프론트엔드만
+cd frontend && npm run dev  # http://localhost:5173
 
-# 또는 빌드 후 실행
-./gradlew clean build -x test
-java -jar build/libs/elderberry-*.jar  # http://localhost:8080
+# 백엔드만
+./gradlew bootRun  # http://localhost:8080
 ```
 
-#### **4. 순차적 에이전트 시스템 사용**
+#### **4. 🤖 커스텀 명령어 시스템 사용 (권장)**
 ```javascript
-// 간단하고 실용적인 사용법
-const { handleMaxCommand } = require('./frontend/claude-guides/migration/SimplePracticalSolution');
-await handleMaxCommand('/max Spring Boot Repository 에러 수정해줘');
+// Claude Code 세션에서 바로 사용
+/max TypeScript 오류 모두 수정해줘        // 모든 리소스 최대 활용
+/auto 성능 최적화                      // 자동 분석 및 최적 실행  
+/smart UI 컴포넌트 개선                 // 지능형 효율적 처리
+
+// 프로그래밍 방식 사용
+const { handleCustomCommand } = require('./claude-guides/services/CustomCommandHandler');
+await handleCustomCommand('/max 전체 리팩토링 작업');
 ```
 
 ## 🏗️ 프로젝트 구조
@@ -75,21 +88,28 @@ frontend/src/
 └── components/      # UI 컴포넌트
 ```
 
-### **에이전트 시스템 (정리 완료)**
+### **🤖 5개 서브에이전트 + 커스텀 명령어 시스템**
 ```
-# 활성 시스템 (실용적, 단순)
-frontend/claude-guides/
-├── README.md                    # 순차적 에이전트 가이드
-├── examples/UsageExamples.js    # 사용 예시
-├── migration/SimplePracticalSolution.js  # 실용적 솔루션
-└── services/
-    ├── ClaudeGuideIntegration.js      # /max 명령어 처리
-    └── SequentialAgentOrchestrator.js # 순차 실행
+claude-guides/services/
+├── IntegratedAgentSystem.js        # 5개 서브에이전트 통합 관리
+├── CustomCommandHandler.js         # /max, /auto, /smart 명령어 핸들러
+├── CommandIntegration.js           # Claude Code 통합 시스템
+├── ParallelTaskManager.js          # 최대 10개 병렬 작업 관리
+├── ProgressTracker.js              # TodoWrite 기반 진행상황 추적
+├── RealTimeLearningSystem.js       # 실시간 학습 및 가이드라인 진화
+└── GoogleSeoOptimizationAgent.js   # SEO 최적화 전담 에이전트
 
-# 보관 시스템 (완전한 기능, 필요시 활성화)
-agents/agents/                   # Java 기반 완전한 에이전트 (40+ 파일)
-src/test/java/.../agents/        # 통합 테스트
-archive-profile/                 # 프로필 시스템 보관
+# 5개 특화 서브에이전트
+1. AI기반 클로드 가이드 지침 시스템 에이전트 (CLAUDE_GUIDE)
+2. 로그기반 디버깅 에이전트 (DEBUG_AGENT)  
+3. 트러블슈팅 문서화 에이전트 (TROUBLESHOOTING_DOCS)
+4. API 문서화 에이전트 (API_DOCUMENTATION)
+5. Google SEO 최적화 에이전트 (SEO_OPTIMIZATION)
+
+# 커스텀 명령어
+/max    - 모든 리소스 최대 활용 (10개 병렬)
+/auto   - 자동 분석 및 최적 실행 (5개 병렬)
+/smart  - 지능형 효율적 처리 (3개 병렬)
 ```
 
 ## 📚 기술 스택
@@ -109,8 +129,11 @@ archive-profile/                 # 프로필 시스템 보관
 - **Tailwind CSS**
 
 ### **AI/Agent**
-- **순차적 에이전트 시스템**
-- **JavaScript ↔ Java 브리지**
+- **5개 특화 서브에이전트 시스템**
+- **커스텀 명령어**: /max, /auto, /smart
+- **병렬 작업 처리**: 최대 10개 동시 실행
+- **실시간 학습 시스템**: 사용자 피드백 자동 반영
+- **TodoWrite 진행상황 추적**: 모든 복잡한 작업 실시간 모니터링
 - **MCP 도구 연동**: Task, Sequential Thinking, File System, GitHub, Memory Bank, Context7
 
 ## 🎯 개발 원칙
@@ -130,14 +153,15 @@ archive-profile/                 # 프로필 시스템 보관
 - ✅ 실패해도 시스템 계속 동작
 - ❌ 임시방편이나 하드코딩
 
-### **4. ClaudeGuideAgent 강화 원칙 (NEW!)**
-- ✅ **병렬 작업 최대 10개**: 복잡한 작업을 동시 처리로 효율성 극대화
-- ✅ **TodoWrite 진행상황 추적**: 모든 3단계 이상 작업은 필수 진행도 추적
-- ✅ **에이전트 컴파일 에러 전담**: 시스템 오류 발생시 즉시 자동 진단 및 수정
-- ✅ **실시간 학습 시스템**: 사용자 피드백을 즉시 가이드라인에 반영
-- ✅ **지능형 작업 분배**: 작업 복잡도에 따른 자동 병렬/순차 처리 결정
-- ✅ **완전 통합 웹사이트**: 백엔드(8080) + 프론트엔드(5173) 동시 가동 달성!
-- ✅ **내부 클로드코드 실행**: 복잡한 작업 시 Claude Code Task 도구로 최대 10개 병렬 처리
+### **4. 🤖 커스텀 명령어 시스템 원칙 (NEW!)**
+- ✅ **3종 커스텀 명령어**: /max (최대성능), /auto (자동최적), /smart (효율우선)
+- ✅ **병렬 작업 최대 10개**: /max 명령어로 복잡한 작업을 동시 처리로 효율성 극대화
+- ✅ **작업 자동 분석**: /auto 명령어로 작업 유형 자동 분류 및 최적 전략 선택
+- ✅ **지능형 효율 처리**: /smart 명령어로 리소스 최적화 및 시간 절약
+- ✅ **TodoWrite 진행상황 추적**: 모든 커스텀 명령어에서 실시간 진행도 추적
+- ✅ **실시간 학습 연동**: 명령어 실행 결과가 자동으로 학습 시스템에 반영
+- ✅ **Claude Code 완전 통합**: 세션에서 바로 사용 가능한 커스텀 명령어
+- ✅ **5개 서브에이전트 연동**: 모든 특화 에이전트와 자동 연동
 
 ## 🔧 주요 명령어
 
@@ -163,17 +187,15 @@ npm test
 /file-system read "./src/components/App.tsx"
 /file-system write "./temp/output.json" "{data: 'example'}"
 
-# GitHub 연동
+# 🤖 커스텀 명령어 (권장)
+/max TypeScript 오류 모두 수정해줘       # 모든 리소스 최대 활용
+/auto 성능 최적화                     # 자동 분석 및 최적 실행
+/smart UI 컴포넌트 개선                # 지능형 효율적 처리
+
+# MCP 도구 연동 (필요시)
 /github create-issue "버그 리포트"
-/github create-pr "기능 추가"
-
-# 메모리 뱅크 활용
 /memory-bank store "project-context" "주요 기능 목록"
-/memory-bank recall "project-context"
-
-# 장기 컨텍스트 유지
 /context7 save "현재 작업 상황"
-/context7 load "이전 작업 상황"
 ```
 
 ### **빌드**
@@ -188,18 +210,24 @@ cd frontend && npm run build
 ./build-deploy.ps1
 ```
 
-### **자동 워크플로우 순차적 에이전트 시스템 (NEW!)**
+### **🤖 커스텀 명령어 시스템 (NEW!)**
 ```javascript
-// 자동 워크플로우: 작업요청 → CLAUDE.md 지침확인 → 순차적 에이전트 → 자동 커밋/푸시
-const { executeAutoWorkflow, handleMaxCommand } = require('./frontend/claude-guides/migration/SimplePracticalSolution');
+// Claude Code 세션에서 바로 사용
+/max 전체 프로젝트 리팩토링           // 최대 10개 병렬, 모든 에이전트 활용
+/auto 버그 수정                    // 작업 자동 분석, 최적 전략 선택
+/smart 문서 업데이트               // 효율적 리소스 사용, 빠른 처리
 
-// 1. 간단한 /max 명령어 사용 (전체 워크플로우 자동 실행)
-await handleMaxCommand('/max TypeScript 에러 수정해줘');     // → 지침확인 → analyzer → 자동커밋
-await handleMaxCommand('/max React 컴포넌트 성능 최적화');    // → 지침확인 → 전체체인 → 자동커밋
+// 프로그래밍 방식 사용
+const { handleCustomCommand } = require('./claude-guides/services/CustomCommandHandler');
 
-// 2. 수동 워크플로우 제어 (고급 사용법)
-const result = await executeAutoWorkflow('전체 아키텍처 개선', {
-  autoCommit: true,      // 자동 커밋 활성화
+// 커스텀 명령어 실행 예시
+await handleCustomCommand('/max TypeScript 에러 수정해줘');     // → 10개 병렬 → 자동 진행추적
+await handleCustomCommand('/auto React 성능 최적화');        // → 자동 분석 → 최적 전략
+await handleCustomCommand('/smart 문서 개선');              // → 효율적 처리
+
+// 고급 사용법 - 상세 옵션 제어
+const result = await handleCustomCommand('/max 전체 아키텍처 개선', {
+  maxConcurrency: 10,    // 최대 병렬 처리 수
   autoPush: false,       // 수동 푸시
   mcpTools: ['sequential-thinking', 'file-system', 'github']
 });
@@ -337,6 +365,8 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - ❌ API 엔드포인트 불일치 (프론트-백엔드)  
 - ❌ H2 비호환 JPQL 쿼리 사용
 - ❌ **테스트 디렉토리 재생성** (2025-07-29 완전삭제 - 백업: backup/test-removed-20250729)
+- ❌ **불필요한 스크립트 파일 중복 생성** (삭제 전 사용자 승인 필수)
+- ❌ **모든 파일 삭제는 삭제 전 사용자에게 알리고 이유 설명 필수**
 
 ### **필수 원칙**
 - ✅ 전체 파일 검토 후 수정
@@ -347,6 +377,8 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - ✅ **중복된 시스템 및 디렉토리 정리 완료**
 - ✅ **프로젝트 구조 단순화 및 유지보수 향상**
 - ✅ **사용자 요청사항을 가이드라인에 즉시 반영**
+- ✅ **시간절약 개발 환경: ./dev-start.sh 사용 권장**
+- ✅ **Docker/CI-CD는 MVP 완성 후 도입 (너무 이른 최적화 금지)**
 
 ## 🎉 현재 상태
 
@@ -357,24 +389,32 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - JWT 인증 시스템 완전 구현 ✅
 - 데이터베이스 초기화 문제 해결 ✅
 - 로그인/회원가입 API 연동 완료 ✅
+- **🤖 5개 서브에이전트 시스템 완전 구축** ✅
+- **💬 커스텀 명령어 (/max, /auto, /smart) 완전 구현** ✅
+- **⚡ 시간절약 개발 환경 (./dev-start.sh) 구축** ✅
 
 **🎯 테스트 계정 정보**
 - **이메일**: test.domestic@example.com
 - **비밀번호**: Password123!
 
-**🚀 서버 실행 순서**
-1. `export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64`
-2. `./gradlew clean bootRun` (백엔드 서버)
-3. `cd frontend && npm run dev` (프론트엔드 서버)
-4. http://localhost:5173 접속하여 로그인 테스트
+**🚀 서버 실행 순서 (시간절약 방법)**
+1. `./dev-start.sh` (프론트엔드 + 백엔드 자동 백그라운드 실행)
+2. `./dev-status.sh` (서버 상태 확인)
+3. http://localhost:5173 접속하여 로그인 테스트
+4. 중지: `./dev-stop.sh`
 
-**🎯 다음 목표 (복구 후 우선순위)**
-1. **컴파일 오류 해결**: 63개 컴파일 오류 해결 (Repository-Service 시그니처 통일)
-2. **엔티티 메서드 완성**: @Builder.Default 적용 및 누락 메서드 구현
-3. **Spring Boot 호환성**: ResponseEntity 메서드 업데이트
-4. **프론트엔드-백엔드 완전 연동**: 복구된 API 엔드포인트 연동
-5. **통합 테스트**: board, job, chatbot 시스템 기능 검증
-6. **MCP 도구 활용**: 순차적 에이전트 시스템 극대화
+**📋 커스텀 명령어 사용법**
+- `/max TypeScript 오류 모두 수정해줘` (최대 성능)
+- `/auto 성능 최적화` (자동 분석)  
+- `/smart UI 컴포넌트 개선` (효율적 처리)
+
+**🎯 다음 목표 (우선순위 업데이트)**
+1. **로그인 기능 최종 검증**: 401 오류 해결 및 완전한 인증 플로우 확립
+2. **핵심 비즈니스 로직 구현**: 건강평가, 시설매칭, 코디네이터 매칭 완성
+3. **커스텀 명령어 활용**: `/max`, `/auto`, `/smart`로 개발 효율성 극대화
+4. **프론트엔드-백엔드 완전 연동**: 모든 API 엔드포인트 연동 완료
+5. **MVP 기능 완성**: 사용자가 실제 사용할 수 있는 최소 기능 세트
+6. **성능 최적화**: 커스텀 명령어를 활용한 체계적 최적화
 
 ---
 
