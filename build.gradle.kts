@@ -64,15 +64,16 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     
-    // Testing
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // Testing - 테스트 디렉토리 제거로 인해 주석 처리 (2025-07-29)
+    // testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // testImplementation("org.springframework.security:spring-security-test")
+    // testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+// 테스트 태스크 비활성화 - 테스트 디렉토리가 제거됨
+// tasks.withType<Test> {
+//     useJUnitPlatform()
+// }
 
 // ==========================================
 // 프론트엔드-백엔드 통합 빌드 설정
