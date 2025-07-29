@@ -29,7 +29,7 @@ spring:
   # SQL 초기화 설정
   sql:
     init:
-      mode: always
+      mode: never
       data-locations: classpath:data.sql
   
   # H2 콘솔 설정

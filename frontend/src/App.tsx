@@ -11,6 +11,7 @@ import { devLogger } from './utils/devLogger';
 
 // 인증 관련 컴포넌트 (즉시 로딩 - 보안상 중요)
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { useAuthStore } from './stores/authStore';
 
 // 레이아웃 컴포넌트 (즉시 로딩 - 모든 페이지에서 사용)
 import MainLayout from './components/layout/MainLayout';
@@ -42,6 +43,12 @@ import {
 } from './utils/lazyImports';
 
 import './App.css';
+
+// 루트 리다이렉트 컴포넌트
+const RootRedirect = () => {
+  const { isAuthenticated } = useAuthStore();
+  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
+};
 
 function App() {
   return (
@@ -219,8 +226,8 @@ function App() {
               } 
             />
 
-            {/* 기본 경로 - 로그인 페이지로 리다이렉트 */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* 기본 경로 - 인증 상태에 따라 리다이렉트 */}
+            <Route path="/" element={<RootRedirect />} />
             
             {/* 404 페이지 - 대시보드로 리다이렉트 */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

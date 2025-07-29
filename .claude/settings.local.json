@@ -94,7 +94,17 @@
       "Bash(./dev-status.sh:*)",
       "Bash(./dev-stop.sh:*)",
       "Bash(sudo fuser:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(make:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__filesystem__list_directory",
+      "mcp__memory__search_nodes",
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__read_file",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__memory__create_entities",
+      "mcp__filesystem__edit_file"
     ],
     "deny": []
   }

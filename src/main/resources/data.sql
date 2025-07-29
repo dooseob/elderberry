@@ -10,12 +10,12 @@ INSERT INTO members (id, email, password, name, phone_number, role, is_job_seeke
 (4, 'test.facility@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '시설관리자', '010-4567-8901', 'FACILITY', false, true, true, 'ko', '부산광역시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (5, 'test.admin@example.com', '$2a$12$LQv3c1yqBaTVfGduKTK9F.K3h3G7r1wSBxthPiDuqNWGOZT/dw41q', '관리자', '010-5678-9012', 'ADMIN', false, true, true, 'ko', '서울특별시', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- 테스트용 시설 프로필 데이터
-INSERT INTO facility_profiles (id, name, type, address, capacity, current_occupancy, rating, is_active, created_at, updated_at) VALUES
-(1, '서울요양원', 'NURSING_HOME', '서울시 강남구 테스트로 123', 50, 35, 4.2, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, '부산실버케어', 'DAY_CARE', '부산시 해운대구 해변로 456', 30, 25, 4.5, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, '대구케어센터', 'HOME_CARE', '대구시 중구 중앙로 789', 20, 15, 3.8, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, '인천노인복지관', 'COMMUNITY_CENTER', '인천시 남동구 구월로 101', 100, 80, 4.0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+-- 테스트용 시설 프로필 데이터 (필수 컬럼 포함)
+INSERT INTO facility_profiles (id, facility_name, facility_type, address, region, district, total_capacity, current_occupancy, facility_grade, is_active, created_at, updated_at) VALUES
+(1, '서울요양원', '노인요양시설', '서울시 강남구 테스트로 123', '서울특별시', '강남구', 50, 35, 'A', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, '부산실버케어', '주야간보호시설', '부산시 해운대구 해변로 456', '부산광역시', '해운대구', 30, 25, 'B', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, '대구케어센터', '노인요양공동생활가정', '대구시 중구 중앙로 789', '대구광역시', '중구', 20, 15, 'B', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, '인천노인복지관', '주야간보호시설', '인천시 남동구 구월로 101', '인천광역시', '남동구', 100, 80, 'A', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 건강 평가 테스트 데이터
 INSERT INTO health_assessments (id, member_id, mobility_level, eating_level, toilet_level, communication_level, ltci_grade, care_target_status, meal_type, final_care_grade, created_at, updated_at) VALUES
