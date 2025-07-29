@@ -23,6 +23,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { RegisterRequest, MemberRole } from '../../types/auth';
 import Button from '../../components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/Card';
+import { useSEO, SEOPresets } from '../../hooks/useSEO';
 
 // 폼 검증 스키마
 const registerSchema = z.object({
@@ -85,6 +86,9 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1); // 단계별 회원가입
+
+  // SEO 설정
+  useSEO(SEOPresets.register);
 
   // 이미 로그인된 경우 리다이렉트
   useEffect(() => {

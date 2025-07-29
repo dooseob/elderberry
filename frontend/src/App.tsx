@@ -48,7 +48,7 @@ function App() {
     <LazyLoadErrorBoundary>
       <ToastProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50">
+          <main className="min-h-screen bg-gray-50" role="main">
           <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
           <Routes>
             {/* 공개 라우트 */}
@@ -226,7 +226,7 @@ function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
           </Suspense>
-          </div>
+          </main>
         </Router>
       </ToastProvider>
     </LazyLoadErrorBoundary>

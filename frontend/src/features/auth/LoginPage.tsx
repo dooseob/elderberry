@@ -21,6 +21,7 @@ import { LoginRequest } from '../../types/auth';
 import Button from '../../components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/Card';
 import { useToastContext } from '../../hooks/useToast';
+import { useSEO, SEOPresets } from '../../hooks/useSEO';
 
 // 폼 검증 스키마
 const loginSchema = z.object({
@@ -44,6 +45,9 @@ export default function LoginPage() {
   
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // SEO 설정
+  useSEO(SEOPresets.login);
 
   // 리다이렉트 처리
   const from = (location.state as any)?.from || '/dashboard';

@@ -24,6 +24,7 @@ import FacilityList from './components/FacilityList';
 import FacilitySearchFilters from './components/FacilitySearchFilters';
 import RecommendationResults from './components/RecommendationResults';
 import FacilityDetailModal from './components/FacilityDetailModal';
+import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
 
 interface FacilitySearchPageProps {
   memberId?: number;
@@ -36,6 +37,27 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
   coordinatorId,
   showRecommendations = true,
 }) => {
+  // SEO 설정
+  useSEO(SEOPresets.facilitySearch);
+
+  // 구조화 데이터 추가
+  useEffect(() => {
+    const facilitySearchData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "요양원 시설 검색",
+      "description": "재외동포를 위한 한국 요양원 검색 및 매칭 서비스",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    };
+    addStructuredData(facilitySearchData, 'facility-search-data');
+  }, []);
+
   // Zustand 스토어 상태 및 액션들
   const searchResults = useFacilitySearchResults();
   const { isSearching, isLoadingRecommendations } = useFacilityLoadingStates();

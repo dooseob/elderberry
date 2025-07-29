@@ -3,6 +3,7 @@
  * KB라이프생명 기반 단계별 돌봄지수 평가
  */
 import React, { useEffect } from 'react';
+import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
 import {
   AlertCircle,
   CheckCircle2,
@@ -51,6 +52,30 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
     loadFromLocalStorage,
     resetForm,
   } = useHealthAssessmentStore();
+
+  // SEO 설정
+  useSEO(SEOPresets.healthAssessment);
+
+  // 구조화 데이터 추가
+  useEffect(() => {
+    const healthAssessmentData = {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "name": "건강 평가 서비스",
+      "description": "재외동포를 위한 전문 건강 평가 및 ADL 측정 서비스",
+      "publisher": {
+        "@type": "Organization",
+        "name": "엘더베리"
+      },
+      "mainEntity": {
+        "@type": "MedicalProcedure",
+        "name": "건강 상태 평가",
+        "description": "일상생활 수행능력(ADL) 평가 및 장기요양등급 진단",
+        "procedureType": "건강평가"
+      }
+    };
+    addStructuredData(healthAssessmentData, 'health-assessment-data');
+  }, []);
 
   // 초기화 시 로컬 스토리지에서 데이터 복원
   useEffect(() => {
