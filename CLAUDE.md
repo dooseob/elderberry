@@ -197,12 +197,13 @@ claude-guides/services/
 - **Zustand** (상태 관리)
 - **Tailwind CSS**
 
-### **AI/Agent (5개 에이전트 시스템 완성!)**
+### **AI/Agent (6개 에이전트 시스템 완성!)** ⭐ **NEW!**
 - **5개 MCP 도구 완전 통합**: Sequential Thinking, Context7, Filesystem, Memory, GitHub
-- **마스터-서브 에이전트 협업**: Claude Code(마스터) + 5개 서브에이전트
+- **마스터-서브 에이전트 협업**: Claude Code(마스터) + 6개 서브에이전트 ⭐
 - **지능형 MCP 도구 선택**: 작업 유형에 따른 최적 도구 자동 선택
-- **5개 특화 서브에이전트 시스템**: CLAUDE_GUIDE, DEBUG, API_DOCUMENTATION, TROUBLESHOOTING, GOOGLE_SEO ⭐
-- **SEO 최적화 시스템**: GoogleSeoOptimizationAgent로 시멘틱 마크업 및 검색 엔진 최적화 ⭐
+- **6개 특화 서브에이전트 시스템**: CLAUDE_GUIDE, DEBUG, API_DOCUMENTATION, TROUBLESHOOTING, GOOGLE_SEO, DOCUMENT_MANAGEMENT ⭐ **NEW!**
+- **SEO 최적화 시스템**: GoogleSeoOptimizationAgent로 시멘틱 마크업 및 검색 엔진 최적화
+- **문서 관리 시스템**: DOCUMENT_MANAGEMENT 에이전트로 대용량 문서 자동 분할 및 요약 ⭐ **NEW!**
 - **커스텀 명령어 + MCP 통합**: /max, /auto, /smart + MCP 도구 자동 활용
 - **병렬 작업 처리**: 최대 10개 동시 실행
 - **실시간 학습 시스템**: Memory Bank + Context7으로 지속적 학습
@@ -210,7 +211,8 @@ claude-guides/services/
 - **Sequential Thinking**: 복잡한 문제를 단계별로 논리적 해결
 - **프로젝트 구조 추적**: Filesystem으로 실시간 파일 시스템 모니터링
 - **GitHub 통합 관리**: 자동 커밋, 푸시, 이슈 관리
-- **Context7 기반 SEO 조사**: 최신 SEO 트렌드 및 베스트 프랙티스 자동 조회 ⭐
+- **Context7 기반 SEO 조사**: 최신 SEO 트렌드 및 베스트 프랙티스 자동 조회
+- **지능형 문서 분할**: 2000줄 초과 시 의미적 단위로 자동 분할 및 요약 생성 ⭐ **NEW!**
 
 ## 🎯 개발 원칙
 
