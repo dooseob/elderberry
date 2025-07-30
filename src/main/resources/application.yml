@@ -92,11 +92,11 @@ spring:
           cache-public: true
       static-locations: classpath:/static/
 
-# JWT 설정
+# JWT 설정 (환경변수 사용 필수)
 jwt:
-  secret: your-256-bit-secret-key-here-make-sure-it-is-long-enough-for-HS256-algorithm-security
-  expiration: 86400000  # 24시간 (밀리초)
-  refresh-expiration: 604800000  # 7일 (밀리초)
+  secret: ${JWT_SECRET:CHANGE-THIS-SECRET-KEY-IMMEDIATELY-FOR-SECURITY}
+  expiration: ${JWT_ACCESS_EXPIRATION:86400000}  # 24시간 (밀리초)
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7일 (밀리초)
 
 # 서버 설정
 server:

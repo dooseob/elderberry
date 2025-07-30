@@ -19,8 +19,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/elderberry;AUTO_SERVER=TRUE
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
-      - SPRING_REDIS_PASSWORD=elderberry123!
-      - JWT_SECRET=your-super-secret-jwt-key-for-development-only
+      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD:-dev-redis-password}
+      - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-immediately}
       - JWT_EXPIRATION=86400000
     volumes:
       - ./data:/app/data
@@ -74,9 +74,9 @@ services:
     image: rediscommander/redis-commander:latest
     container_name: elderberry-redis-commander-dev
     environment:
-      - REDIS_HOSTS=local:redis:6379:0:elderberry123!
-      - HTTP_USER=admin
-      - HTTP_PASSWORD=elderberry123!
+      - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD:-dev-redis-password}
+      - HTTP_USER=${REDIS_ADMIN_USER:-admin}
+      - HTTP_PASSWORD=${REDIS_ADMIN_PASSWORD:-dev-admin-password}
     ports:
       - "8081:8081"
     depends_on:
