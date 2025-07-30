@@ -1,16 +1,16 @@
 package com.globalcarelink.logging;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.sqlite.SQLiteDataSource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 /**
  * SQLite 설정 클래스
  * 에이전트 로그 및 통계 데이터 저장용 SQLite 데이터베이스 설정
+ * JPA와 분리된 순수 JDBC 전용 설정 (로깅 전용)
  */
 @Configuration
 @ConfigurationProperties(prefix = "sqlite")
@@ -37,51 +38,54 @@ public class SQLiteConfig {
     private boolean initializeSchema;
 
     /**
-     * SQLite 데이터소스 설정
+     * SQLite 데이터소스 설정 (로깅 전용, JPA 제외)
      */
     @Bean(name = "sqliteDataSource")
+    @Qualifier("sqliteDataSource")
     public DataSource sqliteDataSource() {
         // 데이터 디렉토리 생성
         createDataDirectoryIfNotExists();
         
-        SQLiteDataSource dataSource = new SQLiteDataSource();
-        dataSource.setUrl(agentLogsUrl);
-        
-        // SQLite 성능 최적화 설정
-        dataSource.getConfig().enforceForeignKeys(true);
-        dataSource.getConfig().enableSharedCache(true);
-        dataSource.getConfig().setBusyTimeout(30000);
+        // SQLite 드라이버매니저 데이터소스 (Spring 표준 방식)
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl(agentLogsUrl + "?foreign_keys=true");
         
         return dataSource;
     }
 
     /**
-     * SQLite용 JdbcTemplate
+     * SQLite용 JdbcTemplate (로깅 전용)
      */
     @Bean(name = "sqliteJdbcTemplate")
-    public JdbcTemplate sqliteJdbcTemplate() {
-        return new JdbcTemplate(sqliteDataSource());
+    @Qualifier("sqliteJdbcTemplate")
+    public JdbcTemplate sqliteJdbcTemplate(@Qualifier("sqliteDataSource") DataSource sqliteDataSource) {
+        return new JdbcTemplate(sqliteDataSource);
     }
 
     /**
-     * SQLite용 Transaction Manager
+     * SQLite용 Transaction Manager (로깅 전용)
      */
     @Bean(name = "sqliteTransactionManager")
-    public PlatformTransactionManager sqliteTransactionManager() {
-        return new DataSourceTransactionManager(sqliteDataSource());
+    @Qualifier("sqliteTransactionManager")
+    public PlatformTransactionManager sqliteTransactionManager(
+            @Qualifier("sqliteDataSource") DataSource sqliteDataSource) {
+        return new DataSourceTransactionManager(sqliteDataSource);
     }
 
     /**
-     * SQLite 데이터베이스 초기화
+     * SQLite 데이터베이스 초기화 (로깅 전용)
      */  
     @Bean(name = "sqliteDataSourceInitializer")
-    public DataSourceInitializer sqliteDataSourceInitializer() {
+    @Qualifier("sqliteDataSourceInitializer")
+    public DataSourceInitializer sqliteDataSourceInitializer(
+            @Qualifier("sqliteDataSource") DataSource sqliteDataSource) {
         if (!initializeSchema) {
             return null;
         }
 
         DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(sqliteDataSource());
+        initializer.setDataSource(sqliteDataSource);
         
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("sqlite/init-agent-logs.sql"));

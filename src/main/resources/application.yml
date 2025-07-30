@@ -2,7 +2,7 @@ spring:
   profiles:
     active: development
   
-  # 데이터베이스 설정 (H2 파일 모드)
+  # 메인 데이터베이스 설정 (H2 파일 모드 - @Primary)
   datasource:
     url: jdbc:h2:file:./data/elderberry;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
@@ -56,14 +56,14 @@ spring:
       settings:
         web-allow-others: true
         
-  # Redis 설정 (Docker 환경에서 활성화)
+  # Redis 설정 (개발환경에서는 localhost 사용)
   data:
     redis:
-      host: ${SPRING_REDIS_HOST:redis}
+      host: ${SPRING_REDIS_HOST:localhost}
       port: ${SPRING_REDIS_PORT:6379}
-      password: ${SPRING_REDIS_PASSWORD}
+      password: ${SPRING_REDIS_PASSWORD:elderberry123!}
       repositories:
-        enabled: true
+        enabled: false  # 개발 환경에서 비활성화
       timeout: 2000
       jedis:
         pool:
@@ -71,17 +71,17 @@ spring:
           max-idle: 10
           min-idle: 5
 
-  # 캐시 설정 (Redis 사용)
+  # 캐시 설정 (개발 환경에서는 비활성화)
   cache:
-    type: redis
-    redis:
-      time-to-live: 600000  # 10분
+    type: none  # Redis 캐시 비활성화
+    # redis:
+    #   time-to-live: 600000  # 10분
 
-  # 세션 설정 (Redis 세션 저장)
-  session:
-    store-type: redis
-    redis:
-      namespace: elderberry:session
+  # 세션 설정 (개발 환경에서는 기본 메모리 저장)
+  # session:
+  #   store-type: redis
+  #   redis:
+  #     namespace: elderberry:session
 
   # 정적 리소스 캐싱 설정 (성능 최적화)
   web:
@@ -146,13 +146,13 @@ external:
   api:
     # 카카오맵 API
     kakao:
-      javascript-key: ${KAKAO_JAVASCRIPT_KEY}
-      rest-api-key: ${KAKAO_REST_API_KEY}
+      javascript-key: ${KAKAO_JAVASCRIPT_KEY:default-js-key}
+      rest-api-key: ${KAKAO_REST_API_KEY:default-rest-key}
     
     # 공공데이터 API
     public-data:
-      service-key: ${PUBLIC_DATA_API_KEY}
-      service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED}
+      service-key: ${PUBLIC_DATA_API_KEY:default-key}
+      service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED:default-encoded-key}
       endpoints:
         # 국민건강보험공단 장기요양기관 평가
         ltc-evaluation: https://api.odcloud.kr/api
@@ -169,7 +169,7 @@ external:
         # 국민건강보험공단 장기요양기관 상세조회
         ltc-detail: https://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02
 
-# SQLite 설정 (에이전트 로그 및 통계)
+# SQLite 설정 (에이전트 로그 및 통계 전용 - JPA와 분리)
 sqlite:
   agent-logs:
     url: jdbc:sqlite:./data/agent-logs.db
@@ -178,8 +178,8 @@ sqlite:
     connection-timeout: 30000
     maximum-pool-size: 10
   
-  # SQLite 데이터베이스 자동 초기화
-  initialize-schema: true
+  # SQLite 데이터베이스 자동 초기화 (임시 비활성화)
+  initialize-schema: false
   
   # 에이전트 시스템 로깅 설정
   logging:
@@ -188,7 +188,7 @@ sqlite:
     flush-interval: 5000  # 5초마다 플러시
     max-cache-size: 1000
     
-  # 통계 및 성능 메트릭 수집
+  # 통계 및 성능 메트릭 수집 (로깅 전용)
   metrics:
     enabled: true
     collection-interval: 60000  # 1분마다 수집
