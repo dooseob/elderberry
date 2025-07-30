@@ -4,19 +4,21 @@
  * 🚀 NEW: 6개 커스텀 명령어(/max, /auto, /smart, /rapid, /deep, /sync) 완전 지원
  * 🗄️ NEW: SQLite 하이브리드 로깅 시스템 완전 통합
  */
-const ParallelTaskManager = require('./ParallelTaskManager');
-const ProgressTracker = require('./ProgressTracker');
-const RealTimeLearningSystem = require('./RealTimeLearningSystem');
+const { ParallelTaskManager } = require('./ParallelTaskManager');
+const { ProgressTracker } = require('./ProgressTracker');
+const { RealTimeLearningSystem } = require('./RealTimeLearningSystem');
 const { CustomCommandHandler } = require('./CustomCommandHandler'); // 🚀 NEW
 const SQLiteAgentLogger = require('./SQLiteAgentLogger'); // 🗄️ NEW: SQLite 로깅
+const { DocumentCommandHandler } = require('./DocumentCommandHandler'); // 📝 NEW: IMRAD + 육하원칙 문서 처리
 
 class IntegratedAgentSystem {
     constructor() {
         this.parallelTaskManager = new ParallelTaskManager();
-        this.progressTracker = new ProgressTracker.ProgressTracker();
-        this.learningSystem = new RealTimeLearningSystem.RealTimeLearningSystem();
+        this.progressTracker = new ProgressTracker();
+        this.learningSystem = new RealTimeLearningSystem();
         this.customCommandHandler = new CustomCommandHandler(); // 🚀 NEW: 커스텀 명령어 핸들러
         this.sqliteLogger = new SQLiteAgentLogger(); // 🗄️ NEW: SQLite 로깅 시스템
+        this.documentCommandHandler = new DocumentCommandHandler(); // 📝 NEW: IMRAD + 육하원칙 문서 처리
         
         // 5개 특화 서브에이전트 정의 + 커스텀 명령어 지원 업그레이드
         this.subAgents = {
@@ -110,11 +112,11 @@ class IntegratedAgentSystem {
             },
             TROUBLESHOOTING_DOCS: {
                 name: '트러블슈팅 문서화 에이전트',
-                description: '자동 이슈 문서화 및 solutions-db.md 관리 + 스마트 문서 동기화 + 자동 해결방안 생성 + 보안 문제 해결 패턴',
-                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management', 'smart-documentation', 'auto-solution-generation', 'security-troubleshooting-patterns'], // 🚀 NEW: 보안 트러블슈팅 추가
+                description: '자동 이슈 문서화 및 solutions-db.md 관리 + 스마트 문서 동기화 + 자동 해결방안 생성 + 보안 문제 해결 패턴 + IMRAD 구조화 문서 처리',
+                specialties: ['issue-documentation', 'solution-tracking', 'knowledge-management', 'smart-documentation', 'auto-solution-generation', 'security-troubleshooting-patterns', 'imrad-documentation', 'academic-formatting'], // 📝 NEW: IMRAD 문서화 추가
                 priority: 'medium',
                 customCommandSupport: true, // 🚀 NEW
-                supportedCommands: ['/smart', '/sync', '/auto'], // 🚀 NEW
+                supportedCommands: ['/smart', '/sync', '/auto', '/imrad', '/6w1h', '/academic'], // 📝 NEW: 문서 명령어 추가
                 autoDocumentationEnabled: true, // 🚀 NEW: 자동 문서화 기능 활성화
                 completedAutoGeneration: '2025-07-29', // 🚀 NEW: 자동 해결방안 생성 완료 날짜
                 securityTroubleshooting: {
@@ -126,7 +128,30 @@ class IntegratedAgentSystem {
                     dockerSecuritySolutions: true, // 🛡️ NEW: Docker 보안 솔루션
                     envFileSecurityPatterns: true, // 🛡️ NEW: .env 파일 보안 패턴
                     securityIncidentResponse: true // 🛡️ NEW: 보안 인시던트 대응
-                } // 🚀 NEW: 보안 트러블슈팅 기능 + 2025-07-30 보안 강화
+                }, // 🚀 NEW: 보안 트러블슈팅 기능 + 2025-07-30 보안 강화
+                documentProcessingCapabilities: {
+                    // 📝 NEW: IMRAD + 육하원칙 문서 처리 기능 (2025-07-30)
+                    imradStructureApplication: true,
+                    sixWOneHPrincipleExtraction: true,
+                    academicDocumentFormatting: true,
+                    patentDocumentProcessing: true,
+                    reportStructuring: true,
+                    proposalFormatting: true,
+                    supportedCommands: {
+                        '/imrad': 'IMRAD 구조 적용 (Introduction-Methods-Results-Discussion)',
+                        '/6w1h': '육하원칙 적용 (Who-What-When-Where-Why-How)',
+                        '/academic': 'IMRAD + 육하원칙 통합 학술 문서',
+                        '/patent': '특허 명세서 형식 적용',
+                        '/report': '업무 보고서 형식 적용',
+                        '/proposal': '제안서/기획서 형식 적용',
+                        '/structure': '문서 체계적 구조화',
+                        '/format': '마크다운 포맷 정리'
+                    },
+                    defaultAuthor: '김두섭',
+                    dateFormat: 'YY/MM/DD',
+                    outputPathGeneration: 'automatic',
+                    metadataExtraction: 'intelligent'
+                } // 📝 NEW: 문서 처리 능력 상세 정의
             },
             API_DOCUMENTATION: {
                 name: 'API 문서화 에이전트',
@@ -401,6 +426,84 @@ class IntegratedAgentSystem {
     }
 
     /**
+     * 📝 NEW: 문서 처리 명령어 실행
+     * @param {string} command - 문서 명령어 (/imrad, /6w1h, /academic, /patent, /report, /proposal, /structure, /format)
+     * @param {string} filePath - 처리할 파일 경로
+     * @param {Object} options - 추가 옵션 (author, date, type 등)
+     * @returns {Promise<Object>} 처리 결과
+     */
+    async executeDocumentCommand(command, filePath, options = {}) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+
+        console.log(`📝 문서 처리 명령어 실행: ${command} - ${filePath}`);
+
+        try {
+            const startTime = Date.now();
+
+            // 문서 명령어 유효성 검사
+            const supportedCommands = ['/imrad', '/6w1h', '/academic', '/patent', '/report', '/proposal', '/structure', '/format'];
+            if (!supportedCommands.includes(command)) {
+                throw new Error(`지원하지 않는 문서 명령어: ${command}`);
+            }
+
+            // 파일 존재 여부 확인
+            const fs = require('fs');
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`파일을 찾을 수 없습니다: ${filePath}`);
+            }
+
+            // TROUBLESHOOTING_DOCS 에이전트를 통한 문서 처리
+            const agent = this.subAgents.TROUBLESHOOTING_DOCS;
+            if (agent.documentProcessingCapabilities && agent.documentProcessingCapabilities.supportedCommands[command]) {
+                console.log(`🤖 ${agent.name}을 통한 ${command} 명령어 실행`);
+
+                // DocumentCommandHandler를 통한 실제 처리
+                const result = await this.documentCommandHandler.processDocumentCommand(command, filePath, options);
+
+                const executionTime = Date.now() - startTime;
+
+                // 🗄️ SQLite 로깅: 문서 처리 명령어 실행
+                await this.sqliteLogger.logCustomCommandUsage(
+                    command,
+                    'document-processing',
+                    executionTime,
+                    1, // 단일 작업
+                    result.success,
+                    ['TROUBLESHOOTING_DOCS'],
+                    ['filesystem', 'memory'], // 문서 처리에 사용되는 MCP 도구
+                    result.success ? 5 : 1 // 성공 시 높은 만족도
+                );
+
+                // 학습 시스템에 결과 저장
+                await this.learningSystem.learnFromCustomCommand(command, `문서 처리: ${filePath}`, result);
+
+                console.log(`✅ 문서 처리 완료: ${command} (${executionTime}ms)`);
+                return {
+                    ...result,
+                    executionTime,
+                    agentUsed: agent.name,
+                    mcpToolsUsed: ['filesystem', 'memory']
+                };
+
+            } else {
+                throw new Error(`${command} 명령어는 현재 지원되지 않습니다.`);
+            }
+
+        } catch (error) {
+            console.error(`❌ 문서 처리 명령어 실행 실패: ${command}`, error);
+            return {
+                success: false,
+                command: command,
+                filePath: filePath,
+                error: error.message,
+                suggestion: '파일 경로와 명령어를 확인해주세요.'
+            };
+        }
+    }
+
+    /**
      * 🚀 NEW: 커스텀 명령어 기반 작업 실행
      * @param {string} command - 커스텀 명령어 (/max, /auto, /smart, /rapid, /deep, /sync)
      * @param {string} task - 실행할 작업
@@ -479,6 +582,20 @@ class IntegratedAgentSystem {
         console.log(`🎯 작업 실행 요청: ${taskDescription}`);
 
         try {
+            // 📝 NEW: 문서 명령어 자동 감지 및 실행 (파일 경로 포함된 경우)
+            if (options.filePath || taskDescription.includes('.md') || taskDescription.includes('파일')) {
+                const detectedDocumentCommand = this.detectDocumentCommand(taskDescription);
+                if (detectedDocumentCommand) {
+                    console.log(`📝 문서 명령어 자동 감지: ${detectedDocumentCommand}`);
+                    
+                    // 파일 경로 추출
+                    const filePath = options.filePath || this.extractFilePathFromDescription(taskDescription);
+                    if (filePath) {
+                        return await this.executeDocumentCommand(detectedDocumentCommand, filePath, options);
+                    }
+                }
+            }
+
             // 🚀 NEW: 커스텀 명령어 자동 감지 및 실행
             const detectedCommand = this.detectCustomCommand(taskDescription);
             if (detectedCommand) {
@@ -508,6 +625,43 @@ class IntegratedAgentSystem {
                 fallbackSuggestion: '수동 실행을 고려해보세요.'
             };
         }
+    }
+
+    /**
+     * 📝 NEW: 문서 명령어 자동 감지
+     */
+    detectDocumentCommand(taskDescription) {
+        const taskLower = taskDescription.toLowerCase();
+        
+        // 문서 명령어 키워드 매핑
+        const documentCommandKeywords = {
+            '/imrad': ['imrad', '논문', '학술', 'introduction', 'methods', 'results', 'discussion'],
+            '/6w1h': ['육하원칙', '6w1h', 'who', 'what', 'when', 'where', 'why', 'how'],
+            '/academic': ['학술', '논문', '연구', 'academic', 'research', 'study'],
+            '/patent': ['특허', 'patent', '청구항', 'claim', '발명'],
+            '/report': ['보고서', 'report', '현황', '결과'],
+            '/proposal': ['제안서', '기획서', 'proposal', '계획'],
+            '/structure': ['구조화', '정리', 'structure', '체계'],
+            '/format': ['포맷', 'format', '마크다운', 'markdown']
+        };
+
+        // 각 문서 명령어별 키워드 매칭 점수 계산
+        let bestMatch = null;
+        let highestScore = 0;
+
+        for (const [command, keywords] of Object.entries(documentCommandKeywords)) {
+            const score = keywords.reduce((acc, keyword) => {
+                return acc + (taskLower.includes(keyword) ? 1 : 0);
+            }, 0);
+
+            if (score > highestScore) {
+                highestScore = score;
+                bestMatch = command;
+            }
+        }
+
+        // 최소 1개 키워드 매칭 시 명령어 반환
+        return highestScore >= 1 ? bestMatch : null;
     }
 
     /**
@@ -580,6 +734,36 @@ class IntegratedAgentSystem {
 
         // 학습 시스템에 결과 저장
         await this.learningSystem.learnFromCustomCommand(command, task, result);
+    }
+
+    /**
+     * 📝 NEW: 작업 설명에서 파일 경로 추출
+     */
+    extractFilePathFromDescription(taskDescription) {
+        // 파일 경로 패턴 매칭 (절대경로, 상대경로 모두 지원)
+        const filePathPatterns = [
+            // 절대 경로 패턴
+            /['"]['"]?([\/\\][\w\/-]+\.[\w]+)['"]['"]?/g,
+            // 상대 경로 패턴
+            /['"]['"]?([\w\/-]+\.[\w]+)['"]['"]?/g,
+            // 단순 파일명 패턴
+            /([\w-]+\.(?:md|txt|doc|docx))/gi
+        ];
+
+        for (const pattern of filePathPatterns) {
+            const matches = taskDescription.match(pattern);
+            if (matches && matches.length > 0) {
+                // 따옴표 제거 및 경로 정리
+                const filePath = matches[0].replace(/['"]/g, '').trim();
+                
+                // 파일 확장자 확인
+                if (filePath.match(/\.(md|txt|doc|docx)$/i)) {
+                    return filePath;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -1360,6 +1544,11 @@ async function executeCustomCommand(command, task, options = {}) {
     return await globalAgentSystem.executeCustomCommand(command, task, options);
 }
 
+// 📝 NEW: 문서 처리 명령어 실행 편의 함수
+async function executeDocumentCommand(command, filePath, options = {}) {
+    return await globalAgentSystem.executeDocumentCommand(command, filePath, options);
+}
+
 async function executeParallelTasks(tasks, options = {}) {
     const results = [];
     
@@ -1399,6 +1588,7 @@ module.exports = {
     globalAgentSystem,
     executeTask,
     executeCustomCommand, // 🚀 NEW
+    executeDocumentCommand, // 📝 NEW: 문서 처리 명령어
     executeParallelTasks,
     getSystemStats,
     getSqliteLoggingStatus, // 🗄️ NEW
