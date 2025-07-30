@@ -111,7 +111,8 @@
       "mcp__memory__add_observations",
       "mcp__memory__create_relations",
       "mcp__filesystem__create_directory",
-      "Bash(wsl:*)"
+      "Bash(wsl:*)",
+      "Bash(DOCKER_BUILDKIT=0 docker build -t elderberry-backend:latest . --no-cache)"
     ],
     "deny": []
   }

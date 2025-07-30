@@ -19,17 +19,35 @@ Infrastructure: Docker + WSL2 + 환경변수 관리
 ## 🚀 **빠른 시작**
 
 ### **1. 서버 실행 (30초)**
+
+#### **🐳 Docker 환경 (권장) - 2025-07-30 완전 해결!**
+```bash
+# Docker Compose로 전체 스택 실행 (백엔드 + 프론트엔드 + Redis)
+docker-compose -f docker-compose.dev.yml up -d
+
+# 서비스 상태 확인
+docker ps
+
+# 로그 확인
+docker logs -f elderberry-backend-dev
+docker logs -f elderberry-frontend-dev
+
+# 접속 확인
+# 프론트엔드: http://localhost:5173
+# 백엔드: http://localhost:8080
+# Redis 관리: http://localhost:8081
+
+# 중지
+docker-compose -f docker-compose.dev.yml down
+```
+
+#### **로컬 개발 환경 (대안)**
 ```bash
 # 전체 서버 시작 (Docker Redis + 프론트엔드 + 백엔드)
 ./dev-start.sh
 
 # 상태 확인
 ./dev-status.sh
-
-# 접속 확인
-# 프론트엔드: http://localhost:5173
-# 백엔드: http://localhost:8080
-# Redis 관리: http://localhost:8081
 
 # 서버 중지
 ./dev-stop.sh
@@ -100,15 +118,27 @@ ls -la ./data/agent-logs.db
 
 ### **🐳 Docker vs 하이브리드 환경 전략 (실무 경험 기반)**
 
-#### **배경 (Why) - Docker 완전 환경 구축 시도 및 실패 분석**
+#### **배경 (Why) - Docker 환경 구축 완료 (2025-07-30 해결!)**
 
-**문제 상황**: 2025년 7월 Docker 완전 컨테이너화 환경 구축을 시도했으나 다음과 같은 심각한 호환성 문제로 실패
+**문제 상황**: 2025년 7월 Docker 완전 컨테이너화 환경 구축 시도
 
-**주요 실패 원인**:
-1. **Node.js/Vite 호환성 문제**: Docker 컨테이너 내 Vite 개발 서버의 HMR(Hot Module Replacement) WSL2 환경에서 작동 불안정
-2. **포트 바인딩 복잡성**: WSL2 ↔ Docker ↔ Windows 간 3계층 네트워크 매핑으로 디버깅 복잡도 급증
-3. **볼륨 마운트 성능**: Windows 파일시스템 ↔ WSL2 ↔ Docker 간 I/O 성능 저하 (개발 속도 30% 감소)
-4. **메모리 관리**: Docker Desktop WSL2 백엔드에서 메모리 사용량 과다 (8GB → 12GB+)
+**초기 문제점들**:
+1. **백엔드 Docker 이미지 누락**: buildx 설정 문제로 빌드 실패
+2. **프론트엔드 컨테이너 종료**: Vite 실행 후 바로 종료되는 문제
+3. **Node.js 설치 오류**: Ubuntu 패키지 저장소 Hash Sum mismatch
+4. **Gradle 빌드 실패**: 프론트엔드 의존성 미설치로 vite 명령어 찾을 수 없음
+
+**해결 과정**:
+1. **Dockerfile 개선**: Node.js 안정적 설치 방법 적용 (GPG 키 활용)
+2. **프론트엔드 의존성 명시적 설치**: `RUN npm install --legacy-peer-deps` 추가
+3. **Docker Compose 통합 빌드**: 전체 스택 자동화 구성
+4. **buildx 문제 우회**: 표준 docker build 명령 사용
+
+**최종 성공 결과 (2025-07-30 23:28)**:
+- ✅ elderberry-backend:latest 이미지 생성 (659MB)
+- ✅ elderberry-frontend:latest 이미지 업데이트 (949MB)
+- ✅ 4개 서비스 모두 정상 실행 (backend, frontend, redis, redis-commander)
+- ✅ Docker Compose 환경에서 완전한 개발 가능
 
 #### **하이브리드 환경의 장점 (What) - 현재 채택 전략**
 

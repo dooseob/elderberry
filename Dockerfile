@@ -6,11 +6,18 @@
 # Build Stage - Gradle Build (Ubuntu 기반으로 변경)
 FROM eclipse-temurin:21-jdk AS builder
 
-# Node.js 설치 (Ubuntu 기반)
-RUN apt-get update && apt-get install -y \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y nodejs \
+# Node.js 설치 (Ubuntu 기반) - 안정적인 방법
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && apt-get update --fix-missing \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        ca-certificates \
+        gnupg \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # 빌드 환경변수 설정
@@ -33,6 +40,13 @@ RUN ./gradlew dependencies --no-daemon
 # 소스 코드 복사
 COPY src/ src/
 COPY frontend/ frontend/
+
+# 프론트엔드 의존성 명시적 설치
+WORKDIR /app/frontend
+RUN npm install --legacy-peer-deps
+
+# 작업 디렉토리를 다시 루트로 변경
+WORKDIR /app
 
 # 애플리케이션 빌드 (프론트엔드 포함)
 RUN ./gradlew clean buildForDeploy --no-daemon
