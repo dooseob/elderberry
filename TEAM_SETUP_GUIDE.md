@@ -16,7 +16,7 @@ docker-compose -f docker-compose.dev.yml up -d
 # 3단계: 접속 확인
 # 프론트엔드: http://localhost:5173
 # 백엔드: http://localhost:8080
-# Redis 관리: http://localhost:8081 (admin/elderberry123!)
+# Redis 관리: http://localhost:8081 (admin/[비밀번호는 .env.example 참고])
 
 # 4단계: 테스트 로그인
 # 이메일: test.domestic@example.com

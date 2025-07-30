@@ -61,7 +61,7 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST:redis}
       port: ${SPRING_REDIS_PORT:6379}
-      password: ${SPRING_REDIS_PASSWORD:elderberry123!}
+      password: ${SPRING_REDIS_PASSWORD}
       repositories:
         enabled: true
       timeout: 2000
@@ -146,13 +146,13 @@ external:
   api:
     # 카카오맵 API
     kakao:
-      javascript-key: ${KAKAO_JAVASCRIPT_KEY:b97b58672807a40c122a5deed8a98ea4}
-      rest-api-key: ${KAKAO_REST_API_KEY:172a1fe2580f6038c6a3951ee63fd963}
+      javascript-key: ${KAKAO_JAVASCRIPT_KEY}
+      rest-api-key: ${KAKAO_REST_API_KEY}
     
     # 공공데이터 API
     public-data:
-      service-key: ${PUBLIC_DATA_API_KEY:CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==}
-      service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED:CCXHQiSSQ0J%2BRRaadSjmmS7ltxG%2FtlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog%3D%3D}
+      service-key: ${PUBLIC_DATA_API_KEY}
+      service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED}
       endpoints:
         # 국민건강보험공단 장기요양기관 평가
         ltc-evaluation: https://api.odcloud.kr/api

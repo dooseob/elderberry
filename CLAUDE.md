@@ -58,13 +58,13 @@
   - **에이전트 시스템 업데이트**: EnhancedAgentOrchestrator에 팀 협업 인프라 분석 기능 추가
 - **🐳 Docker Desktop 완전 통합 완료**: Redis 컨테이너화 및 개발 환경 자동화 ✅ **NEW! (2025-07-30)**
   - **Docker Desktop 28.3.2 정상 설치**: WSL2 환경에서 완전 작동 확인
-  - **Redis Docker 컨테이너**: 포트 6379, 패스워드 elderberry123! 설정
-  - **Redis Commander UI**: 포트 8081, admin/elderberry123! 웹 관리 도구
+  - **Redis Docker 컨테이너**: 포트 6379, 환경변수로 패스워드 관리
+  - **Redis Commander UI**: 포트 8081, 환경변수로 인증 정보 관리
   - **docker-compose.simple.yml**: Redis 전용 경량 구성 파일 생성
   - **개발 스크립트 Docker 통합**: dev-start.sh, dev-stop.sh, dev-status.sh에 Redis 자동 관리
   - **Spring Boot Redis 설정**: application.yml에서 Docker Redis 연동 활성화
 - **🔑 외부 API 키 완전 설정 완료**: 카카오맵 + 공공데이터 API 환경변수 구성 ✅ **NEW! (2025-07-30)**
-  - **카카오 API 키 설정**: REST API (172a1fe2580f6038c6a3951ee63fd963), JavaScript (b97b58672807a40c122a5deed8a98ea4)
+  - **카카오 API 키 설정**: 환경변수로 안전하게 구성 (KAKAO_REST_API_KEY, KAKAO_JAVASCRIPT_KEY)
   - **공공데이터 API 키**: 국민건강보험공단 장기요양기관 평가 API 설정 완료
   - **환경변수 파일 구성**: /.env (백엔드), /frontend/.env (프론트엔드) 완전 분리
   - **application.yml 환경변수 참조**: 하드코딩에서 ${ENV_VAR:default} 패턴으로 변경
@@ -99,8 +99,8 @@ tail -f logs/frontend.log
 ```
 
 **✅ 자동으로 시작되는 서비스:**
-- **Redis Docker 컨테이너** (포트 6379, 패스워드: elderberry123!)
-- **Redis Commander UI** (포트 8081, admin/elderberry123!)
+- **Redis Docker 컨테이너** (포트 6379, 환경변수로 보안 관리)
+- **Redis Commander UI** (포트 8081, 환경변수로 인증 관리)
 - **Spring Boot 백엔드** (포트 8080)
 - **React 프론트엔드** (포트 5173)
 
@@ -227,11 +227,11 @@ claude-guides/services/
 
 ### **External APIs** 🔑 **NEW! (2025-07-30)**
 - **카카오맵 API** (지도 서비스, 시설 검색)
-  - REST API Key: 172a1fe2580f6038c6a3951ee63fd963
-  - JavaScript Key: b97b58672807a40c122a5deed8a98ea4
+  - 환경변수: KAKAO_REST_API_KEY, KAKAO_JAVASCRIPT_KEY
+  - 보안: .env 파일에서 안전하게 관리
 - **공공데이터 API** (국민건강보험공단)
   - 장기요양기관 평가 결과 API
-  - Service Key: CCXHQiSSQ0J+...
+  - 환경변수: PUBLIC_DATA_API_KEY, PUBLIC_DATA_API_KEY_ENCODED
 - **환경변수 관리** (.env 파일 분리, 보안 강화)
 
 ### **AI/Agent (6개 에이전트 시스템 완성!)** ⭐ **NEW!**
@@ -771,7 +771,7 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 1. `./dev-start.sh` (Redis Docker + 프론트엔드 + 백엔드 자동 백그라운드 실행)
 2. `./dev-status.sh` (서버 상태 확인 - Redis 포함)
 3. http://localhost:5173 접속하여 로그인 테스트
-4. http://localhost:8081 Redis Commander 접속 (admin/elderberry123!)
+4. http://localhost:8081 Redis Commander 접속 (환경변수 인증)
 5. 중지: `./dev-stop.sh` (모든 서비스 + Redis Docker 중지)
 
 **🔗 서비스 접속 정보**
