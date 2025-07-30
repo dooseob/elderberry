@@ -77,7 +77,7 @@ redis:
   password: "redis123!"
 
 # ❌ 문서에도 실제 값 작성 금지
-# 우리 API 키: sk-abc123xyz (실제 키 예시)
+# 예시: API_KEY=your-actual-api-key-here (설명용 텍스트만 사용)
 ```
 
 ### **2. .env 파일 커밋 금지**

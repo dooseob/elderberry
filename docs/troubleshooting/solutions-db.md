@@ -2054,3 +2054,423 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 ---
 *📅 자동 생성됨: 2025-07-30 16:23:48 | 🤖 Elderberry-Intellect v2.0*
 
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-88c6eae5
+
+**생성 시간**: 2025-07-31 00:21:24
+**이벤트 ID**: `ERR-88c6eae5`
+**추적 ID**: `9048d42d`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/health/assessments.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/health/assessments`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/health/assessments.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 00:21:24 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-96c8df00
+
+**생성 시간**: 2025-07-31 00:21:31
+**이벤트 ID**: `ERR-96c8df00`
+**추적 ID**: `9f18dbb5`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/coordinators.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/coordinators`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/coordinators.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 00:21:31 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-17a9f8a7
+
+**생성 시간**: 2025-07-31 00:22:56
+**이벤트 ID**: `ERR-17a9f8a7`
+**추적 ID**: `7964966e`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `InvalidDataAccessApiUsageException`
+- **에러 메시지**: Unable to locate Attribute with the given name [languageSkills] on this ManagedType [com.globalcarelink.coordinator.CoordinatorCareSettings]
+- **발생 위치**: `EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible`
+- **요청 URL**: `GET /api/coordinator-matching/language/KO`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.dao.InvalidDataAccessApiUsageException: Unable to locate Attribute with the given name [languageSkills] on this ManagedType [com.globalcarelink.coordinator.CoordinatorCareSettings]
+	at org.springframework.orm.jpa.EntityManagerFactoryUtils.convertJpaAccessExceptionIfPossible(EntityManagerFactoryUtils.java:371)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:246)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:560)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:160)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: InvalidDataAccessApiUsageException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+`entity` 
+
+---
+*📅 자동 생성됨: 2025-07-31 00:22:56 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-683ad5a0
+
+**생성 시간**: 2025-07-31 01:33:36
+**이벤트 ID**: `ERR-683ad5a0`
+**추적 ID**: `eab1e096`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/posts/popular.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/posts/popular`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/posts/popular.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 📝 요청 파라미터
+- **limit**: 10
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 01:33:36 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-c51d89ad
+
+**생성 시간**: 2025-07-31 01:33:36
+**이벤트 ID**: `ERR-c51d89ad`
+**추적 ID**: `20efe7e3`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/posts.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/posts`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/posts.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 📝 요청 파라미터
+- **sortDirection**: desc
+- **size**: 20
+- **sortBy**: createdAt
+- **page**: 0
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 01:33:36 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-adb05848
+
+**생성 시간**: 2025-07-31 01:33:36
+**이벤트 ID**: `ERR-adb05848`
+**추적 ID**: `412f2997`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/posts.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/posts`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/posts.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 📝 요청 파라미터
+- **sortDirection**: desc
+- **size**: 20
+- **sortBy**: createdAt
+- **page**: 0
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 01:33:36 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-c056320d
+
+**생성 시간**: 2025-07-31 01:33:36
+**이벤트 ID**: `ERR-c056320d`
+**추적 ID**: `667fd887`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/posts/popular.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/posts/popular`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/posts/popular.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 📝 요청 파라미터
+- **limit**: 10
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-31 01:33:36 | 🤖 Elderberry-Intellect v2.0*
+

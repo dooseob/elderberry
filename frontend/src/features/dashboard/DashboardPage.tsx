@@ -159,10 +159,27 @@ export default function DashboardPage() {
     }
   ]);
 
-  // 역할별 대시보드 설정
+  // 역할별 대시보드 설정 - 실제 백엔드 역할에 맞춤
   const getDashboardConfig = () => {
     switch (user?.role) {
-      case MemberRole.CAREGIVER:
+      case MemberRole.USER_DOMESTIC:
+      case MemberRole.USER_OVERSEAS:
+        return {
+          stats: [
+            { title: '건강평가', value: '1', icon: Heart, change: '최근 완료', changeType: 'neutral' as const, color: 'green' as const },
+            { title: '시설 검색', value: '3', icon: Building2, change: '기록된 시설', changeType: 'neutral' as const, color: 'blue' as const },
+            { title: '프로필 완성도', value: `${user?.profileCompletionRate || 0}%`, icon: Users, color: 'purple' as const },
+            { title: '매칭 요청', value: '0', icon: Star, change: '대기중', changeType: 'neutral' as const, color: 'orange' as const }
+          ],
+          quickActions: [
+            { label: '건강평가 시작', path: '/health-assessment', icon: Heart, color: 'primary' as const },
+            { label: '시설 찾기', path: '/facility-search', icon: Building2, color: 'secondary' as const },
+            { label: '프로필 완성', path: '/mypage', icon: Users, color: 'success' as const }
+          ]
+        };
+
+      case MemberRole.JOB_SEEKER_DOMESTIC:
+      case MemberRole.JOB_SEEKER_OVERSEAS:
         return {
           stats: [
             { title: '지원한 공고', value: '12', icon: Briefcase, change: '+2 이번 주', changeType: 'increase' as const, color: 'blue' as const },
@@ -172,12 +189,12 @@ export default function DashboardPage() {
           ],
           quickActions: [
             { label: '구인정보 찾기', path: '/jobs', icon: Briefcase, color: 'primary' as const },
-            { label: '프로필 완성', path: '/profile', icon: Users, color: 'secondary' as const },
+            { label: '프로필 완성', path: '/mypage', icon: Users, color: 'secondary' as const },
             { label: '건강평가 하기', path: '/health-assessment', icon: Heart, color: 'success' as const }
           ]
         };
 
-      case MemberRole.EMPLOYER:
+      case MemberRole.FACILITY:
         return {
           stats: [
             { title: '등록한 공고', value: '5', icon: Briefcase, change: '+1 이번 주', changeType: 'increase' as const, color: 'blue' as const },
@@ -201,9 +218,9 @@ export default function DashboardPage() {
             { title: '대기 중인 요청', value: '12', icon: Clock, color: 'orange' as const }
           ],
           quickActions: [
-            { label: '매칭 관리', path: '/matching', icon: Users, color: 'primary' as const },
-            { label: '회원 관리', path: '/members', icon: Users, color: 'secondary' as const },
-            { label: '통계 보기', path: '/statistics', icon: BarChart3, color: 'success' as const }
+            { label: '매칭 관리', path: '/coordinator/matching', icon: Users, color: 'primary' as const },
+            { label: '회원 관리', path: '/coordinator/members', icon: Users, color: 'secondary' as const },
+            { label: '통계 보기', path: '/coordinator/statistics', icon: BarChart3, color: 'success' as const }
           ]
         };
 
@@ -217,15 +234,20 @@ export default function DashboardPage() {
           ],
           quickActions: [
             { label: '회원 관리', path: '/admin/members', icon: Users, color: 'primary' as const },
-            { label: '시스템 설정', path: '/admin/settings', icon: Users, color: 'secondary' as const },
+            { label: '시스템 설정', path: '/admin/settings', icon: Settings, color: 'secondary' as const },
             { label: '통계 대시보드', path: '/admin/statistics', icon: BarChart3, color: 'success' as const }
           ]
         };
 
       default:
         return {
-          stats: [],
-          quickActions: []
+          stats: [
+            { title: '프로필 완성도', value: `${user?.profileCompletionRate || 0}%`, icon: Users, color: 'purple' as const }
+          ],
+          quickActions: [
+            { label: '프로필 완성', path: '/mypage', icon: Users, color: 'primary' as const },
+            { label: 'AI 챗봇 문의', path: '/chat-home', icon: MessageSquare, color: 'secondary' as const }
+          ]
         };
     }
   };
@@ -269,11 +291,11 @@ export default function DashboardPage() {
                 프로필 완성도가 {user.profileCompletionRate}%입니다. 
                 완전한 프로필은 더 많은 기회를 제공합니다.
               </p>
-              <Link 
-                to="/profile" 
-                className="text-sm text-yellow-800 font-medium hover:text-yellow-900 mt-2 inline-flex items-center"
+              <Link
+              to="/mypage" 
+              className="text-sm text-yellow-800 font-medium hover:text-yellow-900 mt-2 inline-flex items-center"
               >
-                프로필 완성하기 <ArrowRight className="w-4 h-4 ml-1" />
+              프로필 완성하기 <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
           </div>

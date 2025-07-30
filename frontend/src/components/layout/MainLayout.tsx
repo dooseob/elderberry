@@ -39,9 +39,25 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-// 네비게이션 메뉴 구조
+// 네비게이션 메뉴 구조 - 실제 백엔드 역할에 맞춤
 const navigationMenus = {
-  [MemberRole.CAREGIVER]: [
+  [MemberRole.USER_DOMESTIC]: [
+    { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
+    { icon: Heart, label: '건강평가', path: '/health-assessment', badge: null },
+    { icon: Building2, label: '시설검색', path: '/facility-search', badge: null },
+    { icon: Briefcase, label: '구인정보', path: '/jobs', badge: null },
+    { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
+    { icon: Users, label: '프로필 관리', path: '/profiles', badge: null }
+  ],
+  [MemberRole.USER_OVERSEAS]: [
+    { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
+    { icon: Heart, label: '건강평가', path: '/health-assessment', badge: null },
+    { icon: Building2, label: '시설검색', path: '/facility-search', badge: null },
+    { icon: Briefcase, label: '구인정보', path: '/jobs', badge: null },
+    { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
+    { icon: Users, label: '프로필 관리', path: '/profiles', badge: null }
+  ],
+  [MemberRole.JOB_SEEKER_DOMESTIC]: [
     { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
     { icon: Briefcase, label: '구인정보', path: '/jobs', badge: null },
     { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
@@ -49,29 +65,39 @@ const navigationMenus = {
     { icon: Heart, label: '건강평가', path: '/health-assessment', badge: null },
     { icon: Building2, label: '시설검색', path: '/facility-search', badge: null }
   ],
-  [MemberRole.EMPLOYER]: [
+  [MemberRole.JOB_SEEKER_OVERSEAS]: [
     { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
-    { icon: Briefcase, label: '구인관리', path: '/jobs/manage', badge: null },
-    { icon: Users, label: '간병인 찾기', path: '/caregivers', badge: null },
+    { icon: Briefcase, label: '구인정보', path: '/jobs', badge: null },
     { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
-    { icon: FileText, label: '프로필 관리', path: '/profiles', badge: null },
-    { icon: Building2, label: '시설정보', path: '/facilities', badge: null }
+    { icon: Users, label: '프로필 관리', path: '/profiles', badge: null },
+    { icon: Heart, label: '건강평가', path: '/health-assessment', badge: null },
+    { icon: Building2, label: '시설검색', path: '/facility-search', badge: null }
+  ],
+  [MemberRole.FACILITY]: [
+    { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
+    { icon: Building2, label: '시설관리', path: '/facilities/manage', badge: null },
+    { icon: Users, label: '간병인 찾기', path: '/caregivers', badge: null },
+    { icon: Briefcase, label: '구인관리', path: '/jobs/manage', badge: null },
+    { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
+    { icon: FileText, label: '프로필 관리', path: '/profiles', badge: null }
   ],
   [MemberRole.COORDINATOR]: [
     { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
-    { icon: Users, label: '프로필 관리', path: '/profiles', badge: null },
-    { icon: Briefcase, label: '매칭관리', path: '/matching', badge: null },
-    { icon: BarChart3, label: '통계', path: '/statistics', badge: null },
+    { icon: Users, label: '회원 관리', path: '/coordinator/members', badge: null },
+    { icon: Briefcase, label: '매칭관리', path: '/coordinator/matching', badge: null },
+    { icon: BarChart3, label: '통계', path: '/coordinator/statistics', badge: null },
     { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
-    { icon: Building2, label: '시설관리', path: '/facilities/manage', badge: null }
+    { icon: Building2, label: '시설관리', path: '/coordinator/facilities', badge: null }
   ],
   [MemberRole.ADMIN]: [
     { icon: Home, label: '대시보드', path: '/dashboard', badge: null },
-    { icon: Users, label: '프로필 관리', path: '/profiles', badge: null },
-    { icon: Briefcase, label: '구인관리', path: '/admin/jobs', badge: null },
+    { icon: Users, label: '회원 관리', path: '/admin/members', badge: null },
     { icon: Building2, label: '시설관리', path: '/admin/facilities', badge: null },
+    { icon: Briefcase, label: '구인관리', path: '/admin/jobs', badge: null },
     { icon: BarChart3, label: '시스템 통계', path: '/admin/statistics', badge: null },
-    { icon: Settings, label: '시스템 설정', path: '/admin/settings', badge: null }
+    { icon: Settings, label: '시스템 설정', path: '/admin/settings', badge: null },
+    { icon: MessageSquare, label: '게시판', path: '/boards', badge: null },
+    { icon: FileText, label: '프로필 관리', path: '/profiles', badge: null }
   ]
 };
 
@@ -99,7 +125,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   
   // 프리로딩 훅
   const preloadOnHover = usePreloadOnHover();
-  useRoleBasedPreload(user?.role as keyof typeof import('../../utils/preloadRoutes')['ROLE_BASED_PRELOAD']);
+  // useRoleBasedPreload(user?.role as keyof typeof import('../../utils/preloadRoutes')['ROLE_BASED_PRELOAD']);
 
   // 현재 사용자 역할에 따른 메뉴
   const currentMenus = user ? navigationMenus[user.role] || [] : [];
@@ -355,7 +381,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     </Link>
                     
                     <Link
-                      to="/profile"
+                      to="/profiles"
                       onClick={() => setIsProfileMenuOpen(false)}
                       className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                       role="menuitem"

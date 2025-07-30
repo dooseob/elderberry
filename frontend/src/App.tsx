@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { devLogger } from './utils/devLogger';
 
 // 인증 관련 컴포넌트 (즉시 로딩 - 보안상 중요)
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/ProtectedRoute';
 import { useAuthStore } from './stores/authStore';
 
 // 레이아웃 컴포넌트 (즉시 로딩 - 모든 페이지에서 사용)
@@ -223,6 +223,112 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
+              } 
+            />
+
+            {/* 관리자 전용 라우트 */}
+            <Route 
+              path="/admin/members" 
+              element={
+                <AdminRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">회원 관리</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/facilities" 
+              element={
+                <AdminRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">시설 관리</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/statistics" 
+              element={
+                <AdminRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">시스템 통계</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 통계 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </AdminRoute>
+              } 
+            />
+            
+            <Route 
+              path="/admin/settings" 
+              element={
+                <AdminRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">시스템 설정</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 설정 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </AdminRoute>
+              } 
+            />
+
+            {/* 코디네이터 전용 라우트 */}
+            <Route 
+              path="/coordinator/members" 
+              element={
+                <CoordinatorRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">회원 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </CoordinatorRoute>
+              } 
+            />
+            
+            <Route 
+              path="/coordinator/matching" 
+              element={
+                <CoordinatorRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">매칭 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 매칭 관리 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </CoordinatorRoute>
+              } 
+            />
+            
+            <Route 
+              path="/coordinator/statistics" 
+              element={
+                <CoordinatorRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">통계</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 통계 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </CoordinatorRoute>
+              } 
+            />
+            
+            <Route 
+              path="/coordinator/facilities" 
+              element={
+                <CoordinatorRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <div className="p-6"><h1 className="text-2xl font-bold">시설 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접규 가능한 시설 관리 페이지입니다.</p></div>
+                    </Suspense>
+                  </MainLayout>
+                </CoordinatorRoute>
               } 
             />
 

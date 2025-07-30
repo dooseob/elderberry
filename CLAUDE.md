@@ -100,19 +100,61 @@ ls -la ./data/agent-logs.db
 
 ### **커스텀 명령어 (권장)**
 ```bash
-/max 전체 프로젝트 리팩토링     # 최대 성능 (10개 병렬)
-/auto UI 컴포넌트 최적화       # 자동 분석 (5개 병렬)  
-/smart API 문서화             # 효율적 처리 (3개 병렬)
+/max 전체 프로젝트 리팩토링     # 최대 성능 (10개 병렬) + Playwright/Super-Shell 활용
+/auto UI 컴포넌트 최적화       # 자동 분석 (5개 병렬) + 웹 테스팅 자동화  
+/smart API 문서화             # 효율적 처리 (3개 병렬) + 크로스 플랫폼 지원
 ```
 
-### **6개 서브에이전트 + SQLite 로깅**
-- **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크
-- **DEBUG**: 에러 분석 + 성능 최적화  
-- **API_DOCUMENTATION**: API 문서 자동 생성
-- **TROUBLESHOOTING**: 이슈 진단 + 해결책 제공
-- **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업
-- **보안 감사**: API 키 관리 + 취약점 검사
-- **🗄️ SQLite 로깅**: 모든 에이전트 실행 기록 자동 저장
+### **🎭 새로운 자동화 기능 (2025-07-30 추가)**
+```bash
+# Playwright 웹 자동화
+/max "프론트엔드 E2E 테스트 자동화"    # 브라우저 테스팅 + 리포트 생성
+/auto "로그인/회원가입 플로우 테스트"   # UI 자동화 테스팅
+/smart "반응형 디자인 검증"           # 다중 브라우저 테스팅
+
+# Super-Shell 크로스 플랫폼 작업
+/max "개발환경 자동 설정"             # Windows/Linux 환경 설정
+/auto "빌드 자동화"                  # 크로스 플랫폼 빌드
+/smart "시스템 상태 모니터링"         # 실시간 시스템 체크
+```
+
+### **6개 서브에이전트 + 7개 MCP 도구 통합 (2025-07-30 업데이트)**
+- **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크 + **Playwright 웹 검증**
+- **DEBUG**: 에러 분석 + 성능 최적화 + **Super-Shell 크로스 플랫폼 디버깅**
+- **API_DOCUMENTATION**: API 문서 자동 생성 + **웹 API 테스팅 자동화**
+- **TROUBLESHOOTING**: 이슈 진단 + 해결책 제공 + **환경별 자동 복구**
+- **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업 + **웹 성능 자동 검증**
+- **보안 감사**: API 키 관리 + 취약점 검사 + **브라우저 보안 테스팅**
+- **🗄️ SQLite 로깅**: 모든 에이전트 실행 기록 자동 저장 + **MCP 도구 활동 추적**
+
+### **🚀 MCP 도구 - 에이전트 매핑 (최적화된 조합)**
+```yaml
+에이전트별_최적_MCP_조합:
+  CLAUDE_GUIDE: 
+    - sequential-thinking  # 단계별 가이드라인 검증
+    - playwright          # 웹 UI 가이드라인 준수 확인
+    - memory              # 가이드라인 학습 및 개선
+    
+  DEBUG:
+    - super-shell         # 크로스 플랫폼 디버깅 명령
+    - filesystem          # 로그 파일 분석
+    - sequential-thinking # 체계적 문제 해결
+    
+  API_DOCUMENTATION:
+    - context7            # 최신 API 문서 표준 조회
+    - github              # API 문서 자동 커밋
+    - playwright          # API 엔드포인트 테스팅
+    
+  TROUBLESHOOTING:
+    - memory              # 이슈 패턴 학습
+    - super-shell         # 환경별 복구 명령
+    - filesystem          # 시스템 상태 분석
+    
+  GOOGLE_SEO:
+    - playwright          # SEO 성능 자동 검증
+    - context7            # 최신 SEO 가이드라인
+    - filesystem          # 메타 태그 분석
+```
 
 ## 🎯 **핵심 개발원칙**
 
@@ -285,15 +327,16 @@ GET /api/health/assessments/{id}    # 평가 조회
 
 ## 📚 **상세 문서 링크**
 
-### **시스템 이해**
+### **시스템 이해**  
 - [개발 현황 상세](./docs/guides/development-status.md) - 완료된 시스템 및 해결된 문제
 - [기술스택 상세](./docs/guides/technical-stack.md) - 버전, 설정, 최적화 방법
 - [프로젝트 구조](./docs/guides/project-structure.md) - 디렉토리 구조 및 파일 역할
 
-### **에이전트 시스템**  
-- [MCP 통합 가이드](./docs/guides/mcp-integration-guide.md) - 5개 MCP 도구 상세 사용법
-- [커스텀 명령어 가이드](./docs/guides/custom-commands-guide.md) - 6개 명령어 고급 활용
-- [에이전트 시스템 가이드](./docs/guides/agent-system-guide.md) - 6개 서브에이전트 상세
+### **에이전트 시스템** ⭐ **2025-07-30 완전 업그레이드**
+- [MCP 통합 가이드](./docs/guides/mcp-integration-guide.md) - **7개 MCP 도구** 상세 사용법 (Playwright, Super-Shell 신규 추가)
+- **새로운 자동화 기능**: 웹 테스팅 자동화, 크로스 플랫폼 빌드, E2E 테스트
+- **에이전트-MCP 최적 조합**: 각 서브에이전트별 최적화된 MCP 도구 매핑
+- **실시간 성능 모니터링**: SQLite 로깅 + MCP 도구 활동 추적
 
 ### **문제 해결**
 - [트러블슈팅 인덱스](./docs/troubleshooting/solutions-db.md) - 53줄 간결 인덱스
@@ -316,7 +359,7 @@ GET /api/health/assessments/{id}    # 평가 조회
 ✅ Redis 연결: localhost 설정으로 로컬 Docker 최적화
 ✅ JWT 인증: 완전 작동 + 토큰 블랙리스트 Redis 저장
 ✅ API 통합 테스트: 로그인 200 OK, 전체 플로우 검증
-✅ 5개 MCP 도구: Sequential Thinking, Context7, Memory, Filesystem, GitHub
+✅ 7개 MCP 도구: Sequential Thinking, Context7, Memory, Filesystem, GitHub, Playwright, Super-Shell
 ✅ 6개 서브에이전트: CLAUDE_GUIDE, DEBUG, API_DOCUMENTATION, TROUBLESHOOTING, GOOGLE_SEO + 보안감사
 ✅ 커스텀 명령어: /max, /auto, /smart 완전 작동
 ✅ 개발환경 전략: DEV_ENVIRONMENT_STRATEGY.md 완성 (600줄)
