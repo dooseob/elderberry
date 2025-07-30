@@ -1,12 +1,14 @@
 /**
- * 통합 서브에이전트 시스템 + 커스텀 명령어 통합
+ * 통합 서브에이전트 시스템 + 커스텀 명령어 통합 + SQLite 로깅
  * 5개 특화 서브에이전트를 통합 관리하고 Claude Code Task 도구 + 커스텀 명령어와 연동
  * 🚀 NEW: 6개 커스텀 명령어(/max, /auto, /smart, /rapid, /deep, /sync) 완전 지원
+ * 🗄️ NEW: SQLite 하이브리드 로깅 시스템 완전 통합
  */
 const ParallelTaskManager = require('./ParallelTaskManager');
 const ProgressTracker = require('./ProgressTracker');
 const RealTimeLearningSystem = require('./RealTimeLearningSystem');
 const { CustomCommandHandler } = require('./CustomCommandHandler'); // 🚀 NEW
+const SQLiteAgentLogger = require('./SQLiteAgentLogger'); // 🗄️ NEW: SQLite 로깅
 
 class IntegratedAgentSystem {
     constructor() {
@@ -14,6 +16,7 @@ class IntegratedAgentSystem {
         this.progressTracker = new ProgressTracker.ProgressTracker();
         this.learningSystem = new RealTimeLearningSystem.RealTimeLearningSystem();
         this.customCommandHandler = new CustomCommandHandler(); // 🚀 NEW: 커스텀 명령어 핸들러
+        this.sqliteLogger = new SQLiteAgentLogger(); // 🗄️ NEW: SQLite 로깅 시스템
         
         // 5개 특화 서브에이전트 정의 + 커스텀 명령어 지원 업그레이드
         this.subAgents = {
@@ -263,12 +266,29 @@ class IntegratedAgentSystem {
 
             const startTime = Date.now();
 
+            // 🗄️ SQLite 로깅: 커스텀 명령어 실행 시작
+            const taskCategory = this.determineTaskCategory(task);
+            const expectedAgents = this.getExpectedAgentsForCommand(command);
+            const expectedMcpTools = this.getExpectedMcpToolsForTask(task);
+
             // CustomCommandHandler를 통한 실행
             const result = await this.customCommandHandler.handleCommand(command, task, options);
 
             // 실행 통계 업데이트
             const executionTime = Date.now() - startTime;
             this.updateCustomCommandStats(result.success, executionTime);
+
+            // 🗄️ SQLite 로깅: 커스텀 명령어 사용 통계
+            await this.sqliteLogger.logCustomCommandUsage(
+                command,
+                taskCategory,
+                executionTime,
+                result.parallelTasks || 1,
+                result.success,
+                result.agentsInvolved || expectedAgents,
+                result.mcpToolsUsed || expectedMcpTools,
+                result.userSatisfaction || null
+            );
 
             // 에이전트별 커스텀 명령어 후처리
             await this.postProcessCustomCommand(command, task, result);
@@ -470,6 +490,14 @@ class IntegratedAgentSystem {
      */
     async executeParallelTask(taskDescription, analysis, options) {
         console.log('🔄 병렬 작업 모드로 실행');
+        const startTime = Date.now();
+
+        // 🗄️ SQLite 로깅: 병렬 작업 시작
+        const mcpToolsUsed = this.getMcpToolsForTask(taskDescription, analysis);
+        const mcpExecutionId = await this.sqliteLogger.logMCPExecutionStart(
+            'parallel-task-manager',
+            `병렬 작업 실행: ${taskDescription}`
+        );
 
         // 진행상황 추적 시작
         const taskId = `parallel-${Date.now()}`;
@@ -527,6 +555,23 @@ class IntegratedAgentSystem {
                 parallelEfficiency: parallelResults.parallelEfficiency
             });
 
+            // 🗄️ SQLite 로깅: 병렬 작업 완료
+            const executionTime = Date.now() - startTime;
+            await this.sqliteLogger.logMCPExecutionEnd(
+                mcpExecutionId,
+                parallelResults.success,
+                `병렬 작업 완료: ${subtasks.length}개 서브태스크, 효율성: ${parallelResults.parallelEfficiency}`,
+                null
+            );
+
+            // 🗄️ SQLite 로깅: 성능 메트릭
+            await this.sqliteLogger.logPerformanceMetric(
+                'parallel-execution-efficiency',
+                parallelResults.parallelEfficiency,
+                'ratio',
+                `병렬 작업 ${subtasks.length}개 처리`
+            );
+
             return {
                 success: parallelResults.success,
                 mode: 'parallel',
@@ -544,6 +589,15 @@ class IntegratedAgentSystem {
                 status: 'failed',
                 stepDescription: `병렬 실행 실패: ${error.message}`
             });
+
+            // 🗄️ SQLite 로깅: 병렬 작업 실패
+            await this.sqliteLogger.logMCPExecutionEnd(
+                mcpExecutionId,
+                false,
+                '',
+                error.message
+            );
+            
             throw error;
         }
     }
@@ -557,6 +611,7 @@ class IntegratedAgentSystem {
      */
     async executeSequentialTask(taskDescription, analysis, options) {
         console.log('🔗 순차 작업 모드로 실행');
+        const startTime = Date.now();
 
         const taskId = `sequential-${Date.now()}`;
         await this.progressTracker.startTracking(taskId, {
@@ -598,6 +653,20 @@ class IntegratedAgentSystem {
                 validationPassed: validationResult.passed
             });
 
+            // 🗄️ SQLite 로깅: 순차 작업 완료 - 에이전트 실행 로깅
+            const totalExecutionTime = Date.now() - startTime;
+            await this.sqliteLogger.logAgentExecution(
+                selectedAgent.name,
+                analysis.taskType || 'GENERAL',
+                taskDescription,
+                null, // 커스텀 명령어 없음
+                this.getMcpToolsForTask(taskDescription, analysis),
+                false, // 순차 실행
+                executionResult.success && validationResult.passed,
+                `순차 실행 완료: ${selectedAgent.name}`,
+                totalExecutionTime
+            );
+
             return {
                 success: executionResult.success && validationResult.passed,
                 mode: 'sequential',
@@ -614,6 +683,21 @@ class IntegratedAgentSystem {
                 status: 'failed',
                 stepDescription: `순차 실행 실패: ${error.message}`
             });
+
+            // 🗄️ SQLite 로깅: 순차 작업 실패
+            const totalExecutionTime = Date.now() - startTime;
+            await this.sqliteLogger.logAgentExecution(
+                'UNKNOWN_AGENT',
+                analysis.taskType || 'GENERAL',
+                taskDescription,
+                null,
+                [],
+                false,
+                false,
+                `순차 실행 실패: ${error.message}`,
+                totalExecutionTime
+            );
+            
             throw error;
         }
     }
@@ -780,12 +864,26 @@ class IntegratedAgentSystem {
         
         console.log(`🤖 ${agent.name} 실행 중: ${taskDescription}`);
 
+        // 🗄️ SQLite 로깅: 에이전트 실행 시작 (MCP 도구로 시뮬레이션)
+        const mcpExecutionId = await this.sqliteLogger.logMCPExecutionStart(
+            agent.name.toLowerCase().replace(/\s+/g, '-'),
+            taskDescription
+        );
+
         try {
             // 실제 Claude Code Task 도구를 통한 서브에이전트 호출
             // 여기서는 시뮬레이션으로 구현
             const result = await this.simulateAgentExecution(agent, taskDescription, options);
             
             const executionTime = Date.now() - startTime;
+
+            // 🗄️ SQLite 로깅: 에이전트 실행 완료
+            await this.sqliteLogger.logMCPExecutionEnd(
+                mcpExecutionId,
+                true,
+                `${agent.name} 실행 성공: ${result.status}`,
+                null
+            );
             
             return {
                 success: true,
@@ -796,6 +894,14 @@ class IntegratedAgentSystem {
 
         } catch (error) {
             const executionTime = Date.now() - startTime;
+
+            // 🗄️ SQLite 로깅: 에이전트 실행 실패
+            await this.sqliteLogger.logMCPExecutionEnd(
+                mcpExecutionId,
+                false,
+                '',
+                error.message
+            );
             
             return {
                 success: false,
@@ -980,6 +1086,92 @@ class IntegratedAgentSystem {
     }
 
     /**
+     * 🗄️ NEW: 작업 카테고리 결정 (SQLite 로깅용)
+     */
+    determineTaskCategory(taskDescription) {
+        const taskType = this.identifyTaskType(taskDescription);
+        const categoryMap = {
+            'DEBUGGING': 'debugging',
+            'REFACTORING': 'refactoring',
+            'DOCUMENTATION': 'documentation',
+            'IMPLEMENTATION': 'implementation',
+            'ANALYSIS': 'analysis',
+            'OPTIMIZATION': 'optimization',
+            'SEO': 'seo-optimization',
+            'FRONTEND': 'frontend-development',
+            'MARKUP': 'markup-enhancement'
+        };
+        return categoryMap[taskType] || 'general';
+    }
+
+    /**
+     * 🗄️ NEW: 커스텀 명령어별 예상 에이전트 목록
+     */
+    getExpectedAgentsForCommand(command) {
+        const commandAgentMap = {
+            '/max': ['CLAUDE_GUIDE', 'DEBUG_AGENT', 'API_DOCUMENTATION', 'TROUBLESHOOTING_DOCS', 'SEO_OPTIMIZATION'],
+            '/auto': ['CLAUDE_GUIDE', 'DEBUG_AGENT', 'API_DOCUMENTATION'],
+            '/smart': ['CLAUDE_GUIDE', 'API_DOCUMENTATION', 'SEO_OPTIMIZATION'],
+            '/rapid': ['DEBUG_AGENT', 'TROUBLESHOOTING_DOCS'],
+            '/deep': ['CLAUDE_GUIDE', 'DEBUG_AGENT', 'TROUBLESHOOTING_DOCS'],
+            '/sync': ['API_DOCUMENTATION', 'TROUBLESHOOTING_DOCS', 'SEO_OPTIMIZATION']
+        };
+        return commandAgentMap[command] || ['CLAUDE_GUIDE'];
+    }
+
+    /**
+     * 🗄️ NEW: 작업별 예상 MCP 도구 목록
+     */
+    getExpectedMcpToolsForTask(taskDescription) {
+        const taskType = this.identifyTaskType(taskDescription);
+        const mcpToolMap = {
+            'DEBUGGING': ['sequential-thinking', 'filesystem'],
+            'REFACTORING': ['sequential-thinking', 'filesystem', 'github'],
+            'DOCUMENTATION': ['context7', 'filesystem', 'memory'],
+            'IMPLEMENTATION': ['sequential-thinking', 'filesystem', 'github'],
+            'ANALYSIS': ['sequential-thinking', 'context7', 'memory'],
+            'OPTIMIZATION': ['sequential-thinking', 'filesystem', 'memory'],
+            'SEO': ['context7', 'filesystem', 'memory'],
+            'FRONTEND': ['filesystem', 'context7'],
+            'MARKUP': ['filesystem', 'memory']
+        };
+        return mcpToolMap[taskType] || ['sequential-thinking'];
+    }
+
+    /**
+     * 🗄️ NEW: 작업 및 분석 기반 MCP 도구 결정
+     */
+    getMcpToolsForTask(taskDescription, analysis) {
+        const baseTools = this.getExpectedMcpToolsForTask(taskDescription);
+        
+        // 복잡도에 따른 추가 도구
+        if (analysis && analysis.complexity && analysis.complexity.level === 'HIGH') {
+            if (!baseTools.includes('sequential-thinking')) {
+                baseTools.unshift('sequential-thinking');
+            }
+            if (!baseTools.includes('memory')) {
+                baseTools.push('memory');
+            }
+        }
+        
+        return baseTools;
+    }
+
+    /**
+     * 🗄️ NEW: 시스템 상태 SQLite 로깅
+     */
+    async logSystemStatus() {
+        const stats = this.getCustomCommandStats();
+        await this.sqliteLogger.logSystemStatus(
+            stats.totalExecutions,
+            stats.successfulExecutions,
+            stats.averageExecutionTime,
+            Object.keys(this.subAgents),
+            this.isInitialized ? 'healthy' : 'initializing'
+        );
+    }
+
+    /**
      * 시스템 통계 조회
      * @returns {Object} 시스템 통계
      */
@@ -990,7 +1182,9 @@ class IntegratedAgentSystem {
             availableAgents: Object.keys(this.subAgents).length,
             isInitialized: this.isInitialized,
             learningStats: this.learningSystem.getLearningStatistics(),
-            progressSummary: this.progressTracker.getProgressSummary()
+            progressSummary: this.progressTracker.getProgressSummary(),
+            sqliteLoggingStatus: this.sqliteLogger.getLoggingStatus(), // 🗄️ NEW
+            customCommandStats: this.getCustomCommandStats() // 🚀 NEW
         };
     }
 }
@@ -1003,6 +1197,11 @@ const globalAgentSystem = new IntegratedAgentSystem();
  */
 async function executeTask(taskDescription, options = {}) {
     return await globalAgentSystem.executeTask(taskDescription, options);
+}
+
+// 🚀 NEW: 커스텀 명령어 실행 편의 함수
+async function executeCustomCommand(command, task, options = {}) {
+    return await globalAgentSystem.executeCustomCommand(command, task, options);
 }
 
 async function executeParallelTasks(tasks, options = {}) {
@@ -1020,6 +1219,21 @@ function getSystemStats() {
     return globalAgentSystem.getSystemStatistics();
 }
 
+// 🗄️ NEW: SQLite 로깅 상태 조회
+function getSqliteLoggingStatus() {
+    return globalAgentSystem.sqliteLogger.getLoggingStatus();
+}
+
+// 🚀 NEW: 커스텀 명령어 통계 조회
+function getCustomCommandStats() {
+    return globalAgentSystem.getCustomCommandStats();
+}
+
+// 🗄️ NEW: 시스템 상태 로깅
+async function logSystemStatus() {
+    return await globalAgentSystem.logSystemStatus();
+}
+
 async function initializeSystem() {
     return await globalAgentSystem.initialize();
 }
@@ -1028,7 +1242,11 @@ module.exports = {
     IntegratedAgentSystem,
     globalAgentSystem,
     executeTask,
+    executeCustomCommand, // 🚀 NEW
     executeParallelTasks,
     getSystemStats,
+    getSqliteLoggingStatus, // 🗄️ NEW
+    getCustomCommandStats, // 🚀 NEW
+    logSystemStatus, // 🗄️ NEW
     initializeSystem
 };

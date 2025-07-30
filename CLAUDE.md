@@ -10,8 +10,9 @@ Frontend: React 18 + TypeScript + Zustand + Tailwind CSS
 AI/Agent: 5개 MCP 도구 + 6개 서브에이전트 시스템
 Infrastructure: Docker + WSL2 + 환경변수 관리
 
-# 데이터베이스 상세
+# 데이터베이스 상세 (3-Tier 하이브리드 구성)
 메인DB: H2 파일 모드 (./data/elderberry - 영구저장)
+로그DB: SQLite (./data/agent-logs.db - 에이전트 실행 로그)
 캐시: Redis Docker 컨테이너 (세션 + 캐시)
 ```
 
@@ -40,6 +41,16 @@ Infrastructure: Docker + WSL2 + 환경변수 관리
 비밀번호: Password123!
 ```
 
+### **3. 🗄️ SQLite 로깅 시스템 테스트**
+```bash
+# SQLite 로깅 통합 테스트 실행
+cd claude-guides/services
+node test-sqlite-logging-integration.js
+
+# SQLite 데이터베이스 확인
+ls -la ./data/agent-logs.db
+```
+
 ## 🤖 **에이전트 시스템** (핵심 사용법)
 
 ### **커스텀 명령어 (권장)**
@@ -49,13 +60,14 @@ Infrastructure: Docker + WSL2 + 환경변수 관리
 /smart API 문서화             # 효율적 처리 (3개 병렬)
 ```
 
-### **6개 서브에이전트**
+### **6개 서브에이전트 + SQLite 로깅**
 - **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크
 - **DEBUG**: 에러 분석 + 성능 최적화  
 - **API_DOCUMENTATION**: API 문서 자동 생성
 - **TROUBLESHOOTING**: 이슈 진단 + 해결책 제공
 - **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업
 - **보안 감사**: API 키 관리 + 취약점 검사
+- **🗄️ SQLite 로깅**: 모든 에이전트 실행 기록 자동 저장
 
 ## 🎯 **핵심 개발원칙**
 

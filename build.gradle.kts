@@ -45,6 +45,8 @@ dependencies {
     
     // Database
     runtimeOnly("com.h2database:h2")
+    // SQLite for logging and statistics
+    runtimeOnly("org.xerial:sqlite-jdbc:3.44.1.0")
     
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")

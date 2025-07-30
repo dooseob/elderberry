@@ -169,6 +169,31 @@ external:
         # 국민건강보험공단 장기요양기관 상세조회
         ltc-detail: https://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02
 
+# SQLite 설정 (에이전트 로그 및 통계)
+sqlite:
+  agent-logs:
+    url: jdbc:sqlite:./data/agent-logs.db
+    driver-class-name: org.sqlite.JDBC
+    init-script: classpath:sqlite/init-agent-logs.sql
+    connection-timeout: 30000
+    maximum-pool-size: 10
+  
+  # SQLite 데이터베이스 자동 초기화
+  initialize-schema: true
+  
+  # 에이전트 시스템 로깅 설정
+  logging:
+    enabled: true
+    batch-size: 100
+    flush-interval: 5000  # 5초마다 플러시
+    max-cache-size: 1000
+    
+  # 통계 및 성능 메트릭 수집
+  metrics:
+    enabled: true
+    collection-interval: 60000  # 1분마다 수집
+    retention-days: 30  # 30일간 보관
+
 # 프로파일별 설정
 ---
 # 개발 환경
