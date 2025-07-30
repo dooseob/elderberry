@@ -1941,3 +1941,116 @@ com.globalcarelink.common.exception.CustomException$Unauthorized: 이메일 또�
 ---
 *📅 자동 생성됨: 2025-07-30 02:59:49 | 🤖 Elderberry-Intellect v2.0*
 
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-0b31c1f4
+
+**생성 시간**: 2025-07-30 16:20:01
+**이벤트 ID**: `ERR-0b31c1f4`
+**추적 ID**: `4c54e08b`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/test/hello.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/test/hello`
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/test/hello.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-30 16:20:01 | 🤖 Elderberry-Intellect v2.0*
+
+
+================================================================================
+## 🚨 자동 감지된 에러 이슈 #ERR-fac00154
+
+**생성 시간**: 2025-07-30 16:23:48
+**이벤트 ID**: `ERR-fac00154`
+**추적 ID**: `3f0e5c85`
+**심각도**: HIGH (TECHNICAL)
+**자동 생성**: Elderberry-Intellect 시스템
+
+### 🔍 에러 상세 정보
+- **에러 타입**: `NoResourceFoundException`
+- **에러 메시지**: No static resource api/health/assessments.
+- **발생 위치**: `ResourceHttpRequestHandler.handleRequest`
+- **요청 URL**: `GET /api/health/assessments`
+- **발생 사용자**: test.domestic@example.com
+- **클라이언트 IP**: 127.0.0.1
+
+### 📋 스택 트레이스 (핵심 부분)
+```
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/health/assessments.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+
+```
+
+### 🤖 자동 분석 결과
+- **분석**: NoResourceFoundException 에러 발생
+- **추가 분석 필요**: 에러 메시지와 스택 트레이스를 통한 상세 원인 분석 권장
+
+- **발생 컨텍스트**: TECHNICAL 카테고리
+- **모니터링 권장**: 유사한 에러의 재발 패턴 추적 필요
+
+### ✅ 해결 방안 (개발자 작성 필요)
+<!-- 🔧 아래 항목들을 개발자가 직접 작성해주세요 -->
+
+#### 1. 즉시 조치사항
+- [ ] **근본 원인 분석**: 
+- [ ] **임시 해결책**: 
+- [ ] **영향 범위 확인**: 
+
+#### 2. 근본적 해결방안
+- [ ] **코드 수정**: 
+- [ ] **테스트 추가**: 
+- [ ] **문서 업데이트**: 
+
+#### 3. 재발 방지책
+- [ ] **예방 조치**: 
+- [ ] **모니터링 강화**: 
+- [ ] **팀 공유**: 
+
+### 🏷️ AI 학습 태그
+
+
+---
+*📅 자동 생성됨: 2025-07-30 16:23:48 | 🤖 Elderberry-Intellect v2.0*
+

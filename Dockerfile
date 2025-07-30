@@ -3,8 +3,15 @@
 # Multi-stage build with Java 21 LTS
 # ==========================================
 
-# Build Stage - Gradle Build
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# Build Stage - Gradle Build (Ubuntu 기반으로 변경)
+FROM eclipse-temurin:21-jdk AS builder
+
+# Node.js 설치 (Ubuntu 기반)
+RUN apt-get update && apt-get install -y \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # 빌드 환경변수 설정
 ARG BUILD_ENV=production
