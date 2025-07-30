@@ -45,7 +45,7 @@ jobs:
       run: ./gradlew test --no-daemon
       
     - name: 📊 테스트 결과 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: backend-test-results
@@ -98,7 +98,7 @@ jobs:
       run: npm run build
       
     - name: 📊 빌드 결과 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-build
         path: frontend/dist/
@@ -184,7 +184,7 @@ jobs:
         echo "- Docker 빌드 검증 완료" >> RELEASE_NOTES.md
         
     - name: 📊 배포 준비 상태 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deployment-ready-v${{ steps.version.outputs.version }}
         path: |
