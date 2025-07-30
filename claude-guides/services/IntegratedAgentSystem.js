@@ -22,8 +22,8 @@ class IntegratedAgentSystem {
         this.subAgents = {
             CLAUDE_GUIDE: {
                 name: 'AI기반 클로드 가이드 지침 시스템 에이전트',
-                description: '지능형 가이드 및 814줄 규칙 진화 + 커스텀 명령어 통합 + 보안 가이드라인 관리',
-                specialties: ['guideline-evolution', 'rule-management', 'policy-enforcement', 'custom-command-orchestration', 'security-guidelines', 'environment-variable-management'], // 🚀 NEW: 보안 관리 추가
+                description: '지능형 가이드 및 814줄 규칙 진화 + 커스텀 명령어 통합 + 보안 가이드라인 관리 + 공공데이터API 활용 가이드',
+                specialties: ['guideline-evolution', 'rule-management', 'policy-enforcement', 'custom-command-orchestration', 'security-guidelines', 'environment-variable-management', 'public-data-api-guidelines'], // 🚀 NEW: 공공데이터API 가이드라인 추가
                 priority: 'high',
                 customCommandSupport: true, // 🚀 NEW
                 supportedCommands: ['/max', '/auto', '/smart', '/deep'], // 🚀 NEW
@@ -36,7 +36,59 @@ class IntegratedAgentSystem {
                     envFileManagement: true, // 🛡️ NEW: .env 파일 관리
                     dockerSecurityCheck: true, // 🛡️ NEW: Docker 보안 검사
                     securityGuideGeneration: true // 🛡️ NEW: 보안 가이드 생성
-                } // 🚀 NEW: 보안 기능 추가 + 2025-07-30 보안 강화
+                }, // 🚀 NEW: 보안 기능 추가 + 2025-07-30 보안 강화
+                publicDataApiGuidelines: {
+                    // 📊 2025-07-30 승인된 공공데이터API 활용 가이드라인 (docs/analysis/933.md 기반)
+                    approvedApiCount: 7,
+                    lastUpdated: '2025-07-30',
+                    implementationPrinciples: {
+                        securityFirst: '공공데이터API 키는 반드시 환경변수로 관리',
+                        rateLimit: '일일 할당량 기반 요청 제한 준수',
+                        errorHandling: '공공데이터 서비스 장애 시 대체 로직 필수',
+                        dataValidation: '공공데이터 응답 검증 및 필터링 필수',
+                        caching: '불필요한 API 호출 방지를 위한 캐싱 전략 적용'
+                    },
+                    integrationStrategy: {
+                        phase1_high_priority: [
+                            '국민건강보험공단_장기요양기관 검색',
+                            '국민건강보험공단_장기요양기관 상세조회',
+                            '국민건강보험공단_장기요양기관 평가결과'
+                        ],
+                        phase2_medium_priority: [
+                            '건강보험심사평가원_병원정보서비스',
+                            '국립중앙의료원_약국정보조회',
+                            '건강보험심사평가원_요양기관개폐업정보'
+                        ],
+                        phase3_low_priority: [
+                            '외교부_국가지역별입국허가요건'
+                        ]
+                    },
+                    developmentGuidelines: {
+                        apiKeyStorage: 'PUBLIC_DATA_API_KEY 환경변수 사용',
+                        apiKeyEncoded: 'PUBLIC_DATA_API_KEY_ENCODED 추가 보안',
+                        baseUrl: 'http://openapi.data.go.kr/openapi/service/',
+                        authentication: 'serviceKey 파라미터 방식',
+                        responseFormat: 'JSON 응답 우선 처리',
+                        errorCodes: {
+                            '00': 'NORMAL_SERVICE',
+                            '01': 'APPLICATION_ERROR',
+                            '02': 'DB_ERROR',
+                            '03': 'NODATA_ERROR',
+                            '04': 'HTTP_ERROR',
+                            '05': 'SERVICETIMEOUT_ERROR',
+                            '10': 'INVALID_REQUEST_PARAMETER_ERROR',
+                            '11': 'NO_MANDATORY_REQUEST_PARAMETERS_ERROR',
+                            '12': 'NO_OPENAPI_SERVICE_ERROR',
+                            '20': 'SERVICE_ACCESS_DENIED_ERROR',
+                            '21': 'TEMPORARILY_DISABLE_THE_SERVICEKEY_ERROR',
+                            '22': 'LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR',
+                            '30': 'SERVICE_KEY_IS_NOT_REGISTERED_ERROR',
+                            '31': 'DEADLINE_HAS_EXPIRED_ERROR',
+                            '32': 'UNREGISTERED_IP_ERROR',
+                            '33': 'UNSIGNED_CALL_ERROR'
+                        }
+                    }
+                } // 📊 NEW: 공공데이터API 활용 가이드라인 (2025-07-30)
             },
             DEBUG_AGENT: {
                 name: '로그기반 디버깅 에이전트',
@@ -78,8 +130,8 @@ class IntegratedAgentSystem {
             },
             API_DOCUMENTATION: {
                 name: 'API 문서화 에이전트',
-                description: 'Spring Boot Controller 자동 분석 및 OpenAPI 생성 + API 동기화 + 환경변수 기반 API 설정 문서화',
-                specialties: ['api-analysis', 'documentation-generation', 'schema-validation', 'api-synchronization', 'environment-variable-api-documentation'], // 🚀 NEW: 환경변수 API 문서화 추가
+                description: 'Spring Boot Controller 자동 분석 및 OpenAPI 생성 + API 동기화 + 환경변수 기반 API 설정 문서화 + 공공데이터API 통합',
+                specialties: ['api-analysis', 'documentation-generation', 'schema-validation', 'api-synchronization', 'environment-variable-api-documentation', 'public-data-api-integration'], // 🚀 NEW: 공공데이터API 통합 추가
                 priority: 'medium',
                 customCommandSupport: true, // 🚀 NEW
                 supportedCommands: ['/auto', '/sync', '/max'], // 🚀 NEW
@@ -88,7 +140,77 @@ class IntegratedAgentSystem {
                     apiKeyManagementDocs: true,
                     secureConfigurationGuides: true,
                     securityBestPractices: true
-                } // 🚀 NEW: API 보안 문서화 기능
+                }, // 🚀 NEW: API 보안 문서화 기능
+                publicDataApiIntegration: {
+                    // 📊 2025-07-30 승인된 공공데이터API 목록 (docs/analysis/933.md 기반)
+                    approvedApis: [
+                        {
+                            name: '국민건강보험공단_장기요양기관 평가 결과',
+                            provider: '국민건강보험공단',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'facility-matching'
+                        },
+                        {
+                            name: '외교부_국가·지역별 입국허가요건',
+                            provider: '외교부',
+                            category: 'immigration',
+                            status: 'approved',
+                            integration: 'overseas-member-verification'
+                        },
+                        {
+                            name: '국립중앙의료원_전국 약국 정보 조회 서비스',
+                            provider: '국립중앙의료원',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'healthcare-facility-search'
+                        },
+                        {
+                            name: '건강보험심사평가원_병원정보서비스',
+                            provider: '건강보험심사평가원',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'hospital-facility-search'
+                        },
+                        {
+                            name: '건강보험심사평가원_요양기관개폐업정보조회서비스',
+                            provider: '건강보험심사평가원',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'facility-status-monitoring'
+                        },
+                        {
+                            name: '국민건강보험공단_장기요양기관 검색 서비스',
+                            provider: '국민건강보험공단',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'ltci-facility-search'
+                        },
+                        {
+                            name: '국민건강보험공단_장기요양기관 시설별 상세조회 서비스',
+                            provider: '국민건강보험공단',
+                            category: 'healthcare',
+                            status: 'approved',
+                            integration: 'facility-detail-info'
+                        }
+                    ],
+                    integrationPriority: {
+                        'facility-matching': 'high',        // 시설 매칭 최우선
+                        'ltci-facility-search': 'high',     // 장기요양기관 검색 최우선
+                        'facility-detail-info': 'high',     // 시설 상세정보 최우선
+                        'healthcare-facility-search': 'medium', // 병원/약국 검색 중간
+                        'facility-status-monitoring': 'medium', // 시설 상태 모니터링 중간
+                        'overseas-member-verification': 'low'    // 해외회원 검증 낮음
+                    },
+                    implementationGuide: {
+                        apiKeyVariable: 'PUBLIC_DATA_API_KEY',
+                        encodedApiKeyVariable: 'PUBLIC_DATA_API_KEY_ENCODED',
+                        baseUrlPattern: 'http://openapi.data.go.kr/openapi/service',
+                        authenticationMethod: 'serviceKey',
+                        responseFormat: 'JSON',
+                        rateLimiting: 'per-day-quota-based'
+                    }
+                } // 📊 NEW: 공공데이터API 통합 정보 (2025-07-30)
             },
             SEO_OPTIMIZATION: {
                 name: 'Google SEO 최적화 에이전트',
