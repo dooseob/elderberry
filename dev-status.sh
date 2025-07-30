@@ -29,6 +29,25 @@ else
     echo "   ❌ 프론트엔드: 중지됨"
 fi
 
+if netstat -an 2>/dev/null | grep -q ":6379.*LISTEN"; then
+    echo "   ✅ Redis (6379): 실행중"
+    
+    # Redis 연결 테스트
+    if docker exec elderberry-redis-dev redis-cli -a elderberry123! ping >/dev/null 2>&1; then
+        echo "      └─ Redis Ping: PONG"
+    else
+        echo "      └─ Redis Ping: 연결 실패"
+    fi
+else
+    echo "   ❌ Redis (6379): 중지됨"
+fi
+
+if netstat -an 2>/dev/null | grep -q ":8081.*LISTEN"; then
+    echo "   ✅ Redis UI (8081): 실행중"
+else
+    echo "   ❌ Redis UI (8081): 중지됨"
+fi
+
 # PID 상태 확인
 echo ""
 echo "🔍 프로세스 상태:"

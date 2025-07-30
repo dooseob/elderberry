@@ -1,0 +1,44 @@
+version: '3.8'
+
+# ==========================================
+# 엘더베리 개발환경 - 간단 Redis 전용 구성
+# Redis + Redis Commander 만 실행
+# 백엔드/프론트엔드는 로컬에서 직접 실행
+# ==========================================
+
+services:
+  # Redis 캐시 서비스
+  redis:
+    image: redis:7-alpine
+    container_name: elderberry-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass elderberry123!
+    restart: unless-stopped
+    networks:
+      - elderberry-network
+
+  # Redis 관리 도구 (선택사항)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: elderberry-redis-commander-dev
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:elderberry123!
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=elderberry123!
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - elderberry-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  elderberry-network:
+    driver: bridge

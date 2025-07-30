@@ -29,6 +29,10 @@ pkill -f "vite" 2>/dev/null || true
 pkill -f "gradlew.*bootRun" 2>/dev/null || true
 pkill -f "npm.*dev" 2>/dev/null || true
 
+# Docker Redis 중지
+echo "🐳 Redis Docker 중지 중..."
+docker-compose -f docker-compose.simple.yml down > /dev/null 2>&1
+
 echo ""
 echo "✅ 개발 서버 중지 완료!"
 echo ""

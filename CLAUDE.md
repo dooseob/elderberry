@@ -12,6 +12,8 @@
 - **데이터베이스 초기화**: Java 기반 DataLoader로 안정적 구현
 - **로그인/회원가입 시스템**: 프론트엔드-백엔드 완전 연동
 - **트러블슈팅 문서 시스템**: 구조화된 카테고리별 문서 관리 (95% 축소 달성)
+- **🐳 Docker Desktop 통합**: Redis 컨테이너화 및 개발 스크립트 완전 연동 (NEW! 2025-07-30)
+- **🔑 외부 API 키 설정**: 카카오맵 + 공공데이터 API 환경변수 완전 구성 (NEW! 2025-07-30)
 
 #### **🤖 5개 에이전트 시스템 + MCP 통합 완성 (NEW!)**
 - **5개 MCP 도구 완전 통합**: Sequential Thinking, Context7, Filesystem, Memory, GitHub
@@ -54,6 +56,20 @@
   - **아키텍처 분리 전략**: docs/architecture/separation-strategy.md 완성
   - **팀원 온보딩 가이드**: TEAM_SETUP_GUIDE.md로 10분 온보딩 프로세스
   - **에이전트 시스템 업데이트**: EnhancedAgentOrchestrator에 팀 협업 인프라 분석 기능 추가
+- **🐳 Docker Desktop 완전 통합 완료**: Redis 컨테이너화 및 개발 환경 자동화 ✅ **NEW! (2025-07-30)**
+  - **Docker Desktop 28.3.2 정상 설치**: WSL2 환경에서 완전 작동 확인
+  - **Redis Docker 컨테이너**: 포트 6379, 패스워드 elderberry123! 설정
+  - **Redis Commander UI**: 포트 8081, admin/elderberry123! 웹 관리 도구
+  - **docker-compose.simple.yml**: Redis 전용 경량 구성 파일 생성
+  - **개발 스크립트 Docker 통합**: dev-start.sh, dev-stop.sh, dev-status.sh에 Redis 자동 관리
+  - **Spring Boot Redis 설정**: application.yml에서 Docker Redis 연동 활성화
+- **🔑 외부 API 키 완전 설정 완료**: 카카오맵 + 공공데이터 API 환경변수 구성 ✅ **NEW! (2025-07-30)**
+  - **카카오 API 키 설정**: REST API (172a1fe2580f6038c6a3951ee63fd963), JavaScript (b97b58672807a40c122a5deed8a98ea4)
+  - **공공데이터 API 키**: 국민건강보험공단 장기요양기관 평가 API 설정 완료
+  - **환경변수 파일 구성**: /.env (백엔드), /frontend/.env (프론트엔드) 완전 분리
+  - **application.yml 환경변수 참조**: 하드코딩에서 ${ENV_VAR:default} 패턴으로 변경
+  - **보안 강화**: API 키를 환경변수로 분리하여 소스코드에서 제거
+  - **🔒 .env.example 보안 처리**: 실제 API 키 값 대신 플레이스홀더로 보안 강화 ✅ **NEW! (2025-07-30)**
 
 ### 🚀 빠른 시작
 
@@ -66,21 +82,27 @@ java -version  # openjdk version "21.0.x"
 cd /mnt/c/Users/human-10/elderberry
 ```
 
-#### **2. 🚀 시간절약 개발 환경 (권장)**
+#### **2. 🚀 시간절약 개발 환경 (권장) - Docker Redis 자동 통합**
 ```bash
-# 프론트엔드 + 백엔드 동시 백그라운드 실행
+# Redis Docker + 프론트엔드 + 백엔드 동시 백그라운드 실행
 ./dev-start.sh
 
-# 서버 상태 확인
+# 서버 상태 확인 (Redis 포함)
 ./dev-status.sh
 
-# 서버 중지
+# 전체 서버 중지 (Redis Docker 포함)
 ./dev-stop.sh
 
 # 로그 확인
 tail -f logs/backend.log
 tail -f logs/frontend.log
 ```
+
+**✅ 자동으로 시작되는 서비스:**
+- **Redis Docker 컨테이너** (포트 6379, 패스워드: elderberry123!)
+- **Redis Commander UI** (포트 8081, admin/elderberry123!)
+- **Spring Boot 백엔드** (포트 8080)
+- **React 프론트엔드** (포트 5173)
 
 #### **3. 개별 서버 실행 (필요시)**
 ```bash
@@ -196,6 +218,21 @@ claude-guides/services/
 - **Vite** (빌드 도구)
 - **Zustand** (상태 관리)
 - **Tailwind CSS**
+
+### **Infrastructure/DevOps** ⭐ **NEW! (2025-07-30)**
+- **Docker Desktop 28.3.2** (컨테이너 환경)
+- **Redis 7-alpine** (캐싱 및 세션 저장)
+- **Redis Commander** (Redis 웹 관리 도구)
+- **Docker Compose** (서비스 오케스트레이션)
+
+### **External APIs** 🔑 **NEW! (2025-07-30)**
+- **카카오맵 API** (지도 서비스, 시설 검색)
+  - REST API Key: 172a1fe2580f6038c6a3951ee63fd963
+  - JavaScript Key: b97b58672807a40c122a5deed8a98ea4
+- **공공데이터 API** (국민건강보험공단)
+  - 장기요양기관 평가 결과 API
+  - Service Key: CCXHQiSSQ0J+...
+- **환경변수 관리** (.env 파일 분리, 보안 강화)
 
 ### **AI/Agent (6개 에이전트 시스템 완성!)** ⭐ **NEW!**
 - **5개 MCP 도구 완전 통합**: Sequential Thinking, Context7, Filesystem, Memory, GitHub
@@ -679,6 +716,7 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - ❌ **단일 문서 2000줄 초과** (반드시 카테고리별 분할 필요)
 - ❌ **비표준 문서 템플릿 사용** (문제 ID, 심각도, 해결 시간 누락)
 - ❌ **태그 분류 시스템 미적용** (CRITICAL/ERROR/WARNING/INFO 레벨 분류 필수)
+- ❌ **.env.example에 실제 API 키 값 노출** (반드시 플레이스홀더 사용) ✅ **NEW! (2025-07-30)**
 
 ### **필수 원칙**
 - ✅ 전체 파일 검토 후 수정
@@ -699,10 +737,11 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - ✅ **표준 문서 템플릿 사용**: 문제 ID, 심각도, 해결 시간, 핵심 해결책 통일 형식
 - ✅ **태그 기반 분류 적용**: [CRITICAL]/[ERROR]/[WARNING]/[INFO] 레벨 분류 의무화
 - ✅ **트러블슈팅 문서 구조화**: 간결한 인덱스 + 카테고리별 상세 분할 구조
+- ✅ **.env.example 보안 처리**: 실제 API 키 대신 플레이스홀더 사용, 브라우저 노출 주의사항 명시 ✅ **NEW! (2025-07-30)**
 
 ## 🎉 현재 상태
 
-**✅ WSL2 환경에서 완전 동작 (2025-07-29 최신화 - 5개 에이전트 시스템 완성 + SEO 최적화 추가!)**
+**✅ WSL2 환경에서 완전 동작 (2025-07-30 최신화 - Docker + API 키 설정 완료!)**
 - Java 21 + Spring Boot 3.x 백엔드 ✅
 - React 18 + TypeScript 프론트엔드 ✅
 - H2 Database 파일 모드 정상 동작 ✅
@@ -710,15 +749,16 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - **로그인/회원가입 프론트엔드-백엔드 완전 연동** ✅
 - **프론트엔드-백엔드 타입 호환성 문제 해결** ✅
 - **SQL 초기화 및 테스트 데이터 로드 활성화** ✅
-- **Redis Docker 설정 추가 (현재 비활성화 상태)** ✅
+- **🐳 Docker Desktop 28.3.2 완전 통합 및 Redis 활성화** ✅ **NEW! (2025-07-30)**
+- **🔑 외부 API 키 완전 설정 (카카오맵 + 공공데이터)** ✅ **NEW! (2025-07-30)**
 - 데이터베이스 초기화 문제 해결 ✅
 - **🤖 5개 에이전트 시스템 완전 구축** ✅
 - **🔗 마스터-서브 에이전트 협업 시스템 완성** ✅
 - **🧠 5개 MCP 도구 완전 통합 및 테스트 검증** ✅
 - **⭐ GoogleSeoOptimizationAgent 추가 완료** ✅
 - **💬 커스텀 명령어 + MCP 도구 자동 연동** ✅
-- **🚀 6개 커스텀 명령어 시스템 완전 구축 및 5개 에이전트 통합** ✅ (NEW!)
-- **⚡ 시간절약 개발 환경 (./dev-start.sh) 구축** ✅
+- **🚀 6개 커스텀 명령어 시스템 완전 구축 및 5개 에이전트 통합** ✅
+- **⚡ 시간절약 개발 환경 (./dev-start.sh) 구축 + Docker 자동 관리** ✅ **UPDATED! (2025-07-30)**
 - **📚 트러블슈팅 문서 구조화 시스템 완전 구축** ✅
 - **📁 카테고리별 문서 분할 및 표준화 완료** ✅
 - **🔍 태그 기반 검색 시스템 활성화** ✅
@@ -727,11 +767,19 @@ GET /api/chatbot/health                    # 챗봇 서비스 상태 확인
 - **이메일**: test.domestic@example.com
 - **비밀번호**: Password123!
 
-**🚀 서버 실행 순서 (시간절약 방법)**
-1. `./dev-start.sh` (프론트엔드 + 백엔드 자동 백그라운드 실행)
-2. `./dev-status.sh` (서버 상태 확인)
+**🚀 서버 실행 순서 (시간절약 방법) - Docker Redis 자동 통합**
+1. `./dev-start.sh` (Redis Docker + 프론트엔드 + 백엔드 자동 백그라운드 실행)
+2. `./dev-status.sh` (서버 상태 확인 - Redis 포함)
 3. http://localhost:5173 접속하여 로그인 테스트
-4. 중지: `./dev-stop.sh`
+4. http://localhost:8081 Redis Commander 접속 (admin/elderberry123!)
+5. 중지: `./dev-stop.sh` (모든 서비스 + Redis Docker 중지)
+
+**🔗 서비스 접속 정보**
+- **프론트엔드**: http://localhost:5173
+- **백엔드**: http://localhost:8080  
+- **H2 Console**: http://localhost:8080/h2-console
+- **Redis**: localhost:6379 (password: elderberry123!)
+- **Redis UI**: http://localhost:8081 (admin/elderberry123!)
 
 **🤖 커스텀 명령어 시스템 (NEW! - 6개 모드) ⚡**
 

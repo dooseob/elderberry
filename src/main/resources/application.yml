@@ -56,21 +56,32 @@ spring:
       settings:
         web-allow-others: true
         
-  # Redis 설정 (Docker 미설치 환경에서 완전 비활성화)
+  # Redis 설정 (Docker 환경에서 활성화)
   data:
     redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:elderberry123!}
       repositories:
-        enabled: false
+        enabled: true
+      timeout: 2000
+      jedis:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
 
-  # 캐시 설정 (Redis 없이 로컬 캐시 사용)
+  # 캐시 설정 (Redis 사용)
   cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=10m
+    type: redis
+    redis:
+      time-to-live: 600000  # 10분
 
-  # 세션 설정 (Redis 없이 메모리 세션 사용)
+  # 세션 설정 (Redis 세션 저장)
   session:
-    store-type: none
+    store-type: redis
+    redis:
+      namespace: elderberry:session
 
   # 정적 리소스 캐싱 설정 (성능 최적화)
   web:
@@ -128,20 +139,20 @@ management:
       show-details: when-authorized
   health:
     redis:
-      enabled: false
+      enabled: true
 
 # 외부 API 설정
 external:
   api:
     # 카카오맵 API
     kakao:
-      javascript-key: b97b58672807a40c122a5deed8a98ea4
-      rest-api-key: 172a1fe2580f6038c6a3951ee63fd963
+      javascript-key: ${KAKAO_JAVASCRIPT_KEY:b97b58672807a40c122a5deed8a98ea4}
+      rest-api-key: ${KAKAO_REST_API_KEY:172a1fe2580f6038c6a3951ee63fd963}
     
     # 공공데이터 API
     public-data:
-      service-key: CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==
-      service-key-encoded: CCXHQiSSQ0J%2BRRaadSjmmS7ltxG%2FtlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog%3D%3D
+      service-key: ${PUBLIC_DATA_API_KEY:CCXHQiSSQ0J+RRaadSjmmS7ltxG/tlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog==}
+      service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED:CCXHQiSSQ0J%2BRRaadSjmmS7ltxG%2FtlSVOYMjh45MmGne68ptgGAaAJVJti8nBazSjLemTAyb5gAuj43xq7fTog%3D%3D}
       endpoints:
         # 국민건강보험공단 장기요양기관 평가
         ltc-evaluation: https://api.odcloud.kr/api

@@ -4,7 +4,7 @@
 # ==========================================
 
 # Build Stage - Gradle Build
-FROM openjdk:21-jdk-slim AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 # 빌드 환경변수 설정
 ARG BUILD_ENV=production
@@ -31,16 +31,15 @@ COPY frontend/ frontend/
 RUN ./gradlew clean buildForDeploy --no-daemon
 
 # Runtime Stage - 최종 실행 이미지
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21-jre-alpine
 
-# 시스템 패키지 업데이트 및 필수 도구 설치
-RUN apt-get update && apt-get install -y \
+# 시스템 패키지 업데이트 및 필수 도구 설치 (Alpine)
+RUN apk update && apk add --no-cache \
     curl \
-    netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/*
+    netcat-openbsd
 
-# 애플리케이션 사용자 생성
-RUN groupadd -r elderberry && useradd -r -g elderberry elderberry
+# 애플리케이션 사용자 생성 (Alpine)
+RUN addgroup -S elderberry && adduser -S elderberry -G elderberry
 
 # 작업 디렉토리 설정
 WORKDIR /app

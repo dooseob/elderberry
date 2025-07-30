@@ -10,6 +10,11 @@ echo "🧹 기존 프로세스 정리 중..."
 pkill -f "vite" 2>/dev/null || true
 pkill -f "gradlew.*bootRun" 2>/dev/null || true
 
+# Docker Redis 시작
+echo "🐳 Redis Docker 시작 중..."
+docker-compose -f docker-compose.simple.yml up -d > /dev/null 2>&1
+sleep 3
+
 # 로그 디렉토리 생성
 mkdir -p logs
 
@@ -61,6 +66,8 @@ echo "========================================="
 echo "📱 프론트엔드: http://localhost:5173 (또는 5174)"
 echo "🔧 백엔드: http://localhost:8080"
 echo "📊 H2 Console: http://localhost:8080/h2-console"
+echo "🐳 Redis: localhost:6379 (password: elderberry123!)"
+echo "🔍 Redis UI: http://localhost:8081 (admin/elderberry123!)"
 echo ""
 echo "📋 유용한 명령어:"
 echo "   • 로그 확인: tail -f logs/backend.log"
