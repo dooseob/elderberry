@@ -115,7 +115,7 @@
       "Bash(DOCKER_BUILDKIT=0 docker build -t elderberry-backend:latest . --no-cache)",
       "Bash(sudo rm:*)",
       "mcp__playwright__*",
-      "mcp__super-shell__*"
+      "Bash(npm info:*)"
     ],
     "deny": []
   }

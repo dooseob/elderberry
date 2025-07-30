@@ -5,7 +5,7 @@
 
 ## 🔄 MCP 통합 에이전트 시스템 구조
 
-### **7개 MCP 도구 완전 통합**
+### **6개 MCP 도구 완전 통합**
 ```yaml
 MCP_도구_완전_통합:
   sequential_thinking: "✅ 단계별 논리적 사고로 복잡한 문제 해결 - 테스트 완료"
@@ -14,7 +14,6 @@ MCP_도구_완전_통합:
   memory: "✅ 지속적 학습 및 패턴 축적을 위한 지식 저장소 - 테스트 완료"
   github: "✅ GitHub API 연동으로 저장소 통합 관리 - 테스트 완료"
   playwright: "✅ 브라우저 자동화 및 웹 테스팅 도구 - 신규 추가 (2025-07-30)"
-  super_shell: "✅ 크로스 플랫폼 셸 명령 실행 도구 - 신규 추가 (2025-07-30)"
 ```
 
 ### **마스터-서브 에이전트 협업 구조**
@@ -39,8 +38,8 @@ MCP_도구_완전_통합:
   SEO_최적화_작업: ["context7", "filesystem", "memory"]
   보안_감사_작업: ["sequential-thinking", "filesystem", "memory"] # 🔒 NEW!
   웹_자동화_테스팅: ["playwright", "filesystem", "memory"] # 🎭 NEW!
-  크로스_플랫폼_작업: ["super-shell", "filesystem", "github"] # 🚀 NEW!
   UI_테스팅_자동화: ["playwright", "sequential-thinking", "memory"] # 🎭 NEW!
+  웹_성능_측정: ["playwright", "context7", "memory"] # 🎭 NEW!
 ```
 
 ## 🚀 완성된 워크플로우
@@ -99,12 +98,6 @@ const mcpIntegrationTestResults = {
     testCase: "브라우저 자동화 및 웹 테스팅",
     result: "웹 UI 자동화 및 테스트 실행 성공",
     automation: 0.92
-  },
-  superShell: {
-    status: "✅ PASSED", 
-    testCase: "크로스 플랫폼 셸 명령 실행",
-    result: "Windows/Linux 명령 자동 실행 성공",
-    crossPlatform: 0.90
   }
 };
 ```
@@ -201,23 +194,6 @@ await executeMCPIntegratedTask('프론트엔드 E2E 테스트', {
 });
 ```
 
-### **7. Super-Shell - 크로스 플랫폼 셸 명령 실행 (NEW!)**
-```javascript
-// 크로스 플랫폼 빌드 자동화
-await executeMCPIntegratedTask('크로스 플랫폼 빌드 자동화', {
-  mcpTools: ['super-shell'],
-  platforms: ['windows', 'linux', 'macos'],
-  commands: ['./gradlew build', 'npm run build', 'docker build'],
-  parallelExecution: true
-});
-
-// 개발 환경 자동 설정
-await executeMCPIntegratedTask('개발 환경 자동 설정', {
-  mcpTools: ['super-shell', 'filesystem'],
-  setup: ['java-check', 'node-install', 'docker-setup', 'redis-start'],
-  validation: true
-});
-```
 
 ## 🔒 보안 통합 기능 (NEW!)
 
