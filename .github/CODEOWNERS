@@ -1,0 +1,31 @@
+# CODEOWNERS 파일
+# 이 파일은 코드 소유자를 정의합니다.
+# PR이 생성될 때 자동으로 리뷰어로 추가됩니다.
+
+# 전체 프로젝트 기본 소유자
+* @dooseob
+
+# 백엔드 코드
+/src/ @dooseob
+/build.gradle.kts @dooseob
+/settings.gradle.kts @dooseob
+
+# 프론트엔드 코드
+/frontend/ @dooseob
+
+# 문서
+/docs/ @dooseob
+*.md @dooseob
+
+# 설정 파일
+/.github/ @dooseob
+/docker*.yml @dooseob
+/Dockerfile* @dooseob
+
+# 에이전트 시스템
+/claude-guides/ @dooseob
+CLAUDE.md @dooseob
+
+# 보안 관련 파일 (여러 리뷰어 필요 시)
+/src/main/java/com/globalcarelink/auth/ @dooseob
+/src/main/java/com/globalcarelink/common/config/SecurityConfig.java @dooseob

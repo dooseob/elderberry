@@ -3,6 +3,12 @@
 > **해외 거주 한인을 위한 AI 기반 돌봄 서비스 매칭 플랫폼**  
 > **Java 21 + Spring Boot 3.x + React 18 + 통합 에이전트 시스템**
 
+[![Backend CI](https://github.com/globalcarelink/elderberry/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/globalcarelink/elderberry/actions/workflows/ci-backend.yml)
+[![Frontend CI](https://github.com/globalcarelink/elderberry/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/globalcarelink/elderberry/actions/workflows/ci-frontend.yml)
+[![Docker Build](https://github.com/globalcarelink/elderberry/actions/workflows/docker-build.yml/badge.svg)](https://github.com/globalcarelink/elderberry/actions/workflows/docker-build.yml)
+[![CodeQL](https://github.com/globalcarelink/elderberry/actions/workflows/codeql.yml/badge.svg)](https://github.com/globalcarelink/elderberry/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ---
 
 ## 🚀 빠른 시작

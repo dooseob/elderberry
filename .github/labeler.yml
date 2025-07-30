@@ -1,0 +1,109 @@
+# 백엔드 관련 라벨
+backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**/*'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+
+# 프론트엔드 관련 라벨
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'frontend/**/*'
+      - 'package.json'
+      - 'package-lock.json'
+
+# 데이터베이스 관련 라벨
+database:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/main/resources/data.sql'
+      - 'src/main/resources/schema.sql'
+      - '**/entity/**/*'
+      - '**/repository/**/*'
+
+# API 관련 라벨
+api:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/controller/**/*'
+      - '**/dto/**/*'
+      - '**/api/**/*'
+
+# 보안 관련 라벨
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/security/**/*'
+      - '**/auth/**/*'
+      - '**/SecurityConfig.java'
+
+# 문서 관련 라벨
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**/*'
+
+# 테스트 관련 라벨
+test:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*Test.java'
+      - '**/*Tests.java'
+      - '**/test/**/*'
+      - '**/*.test.ts'
+      - '**/*.test.tsx'
+      - '**/*.spec.ts'
+      - '**/*.spec.tsx'
+
+# Docker 관련 라벨
+docker:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dockerfile*'
+      - 'docker-compose*.yml'
+      - '.dockerignore'
+
+# CI/CD 관련 라벨
+ci/cd:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**/*'
+      - '.github/**/*.yml'
+
+# 설정 파일 관련 라벨
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.properties'
+      - '**/*.json'
+      - '.env*'
+
+# 에이전트 시스템 관련 라벨
+agent-system:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'claude-guides/**/*'
+      - '**/agents/**/*'
+      - 'CLAUDE.md'
+
+# 긴급 수정 라벨 (핫픽스)
+hotfix:
+  - branch:
+    - 'hotfix/*'
+
+# 새로운 기능 라벨
+feature:
+  - branch:
+    - 'feature/*'
+    - 'feat/*'
+
+# 버그 수정 라벨
+bugfix:
+  - branch:
+    - 'bugfix/*'
+    - 'fix/*'
