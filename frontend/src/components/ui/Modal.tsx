@@ -770,7 +770,6 @@ export {
   ModalDescription,
   ModalContent,
   ModalFooter,
-  ConfirmModal,
   modalVariants,
   useModalContext,
 };

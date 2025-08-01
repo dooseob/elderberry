@@ -64,15 +64,8 @@ export {
 // === Status & Feedback Components ===
 export {
   Badge,
-  NotificationBadge,
-  StatusBadge,
   badgeVariants,
-  getOptimalBadgeSize,
-  getBadgeStyleForStatus,
-  validateBadgeAccessibility,
   type BadgeProps,
-  type NotificationBadgeProps,
-  type StatusBadgeProps,
 } from './Badge';
 
 // === Overlay Components ===

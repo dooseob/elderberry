@@ -17,7 +17,7 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowLeft,
-  Tab,
+  IndentIncrease,
   Check,
   X
 } from 'lucide-react';
@@ -173,11 +173,11 @@ const KeyboardNavigationDemo: React.FC = () => {
 
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="flex items-center gap-1">
-              <Tab className="w-3 h-3" />
+              <IndentIncrease className="w-3 h-3" />
               Tab: 다음 요소
             </Badge>
             <Badge variant="outline" className="flex items-center gap-1">
-              <Tab className="w-3 h-3" />
+              <IndentIncrease className="w-3 h-3" />
               Shift+Tab: 이전 요소
             </Badge>
             <Badge variant="outline">Enter/Space: 활성화</Badge>
