@@ -20,7 +20,8 @@ class MCPIntegratedAgentSystem {
             API_DOCUMENTATION: ['context7', 'filesystem', 'github', 'playwright'],
             TROUBLESHOOTING: ['memory', 'filesystem', 'sequential-thinking'],
             GOOGLE_SEO: ['context7', 'filesystem', 'memory', 'playwright'],
-            SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory', 'playwright'] // 보안감사 에이전트 추가
+            SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory', 'playwright'], // 보안감사 에이전트
+            WEB_TESTING_MASTER: ['playwright', 'sequential-thinking', 'memory', 'filesystem', 'github'] // 웹 테스팅 마스터 에이전트 추가
         };
     }
 
@@ -263,14 +264,15 @@ class MCPIntegratedAgentSystem {
             '/sync': ['github', 'memory', 'filesystem']
         };
 
-        // 명령어별 서브에이전트 매핑 (보안감사 에이전트 추가)
+        // 명령어별 서브에이전트 매핑 (웹 테스팅 마스터 에이전트 추가)
         const commandAgentMapping = {
-            '/max': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'TROUBLESHOOTING', 'GOOGLE_SEO', 'SECURITY_AUDIT'],
-            '/auto': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION'],
+            '/max': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'TROUBLESHOOTING', 'GOOGLE_SEO', 'SECURITY_AUDIT', 'WEB_TESTING_MASTER'],
+            '/auto': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'WEB_TESTING_MASTER'],
             '/smart': ['CLAUDE_GUIDE', 'TROUBLESHOOTING'],
             '/rapid': ['DEBUG'],
             '/deep': ['CLAUDE_GUIDE', 'DEBUG'],
-            '/sync': ['API_DOCUMENTATION', 'TROUBLESHOOTING']
+            '/sync': ['API_DOCUMENTATION', 'TROUBLESHOOTING'],
+            '/test': ['WEB_TESTING_MASTER'] // 테스팅 전용 명령어 추가
         };
 
         const mcpTools = commandMCPMapping[command] || ['context7', 'memory'];
@@ -521,6 +523,35 @@ class MCPIntegratedAgentSystem {
                         'SQL Injection 및 XSS 검증',
                         'HTTPS 및 보안 헤더 검증',
                         'Playwright 브라우저 보안 자동화'
+                    ]
+                };
+            },
+            
+            'WEB_TESTING_MASTER': async () => {
+                return {
+                    role: 'Playwright MCP 기반 웹 애플리케이션 종합 테스팅 전문가',
+                    action: `${command} 명령어로 ${task} 웹 테스팅 자동화`,
+                    mcpToolsUsed: mcpTools,
+                    result: 'Comprehensive web testing with E2E, performance, accessibility, and visual regression',
+                    customCommandSupport: true,
+                    testingCapabilities: [
+                        'E2E 테스트 자동화 (다중 브라우저)',
+                        '웹 성능 측정 (Core Web Vitals)',
+                        '접근성 검증 (WCAG 2.1 AA)',
+                        '시각적 회귀 테스트',
+                        'Linear Design System 컴포넌트 테스트',
+                        '엘더베리 프로젝트 통합 테스트',
+                        'API 엔드포인트 테스팅',
+                        '보안 테스팅 (XSS, CSRF 등)',
+                        '다중 해상도 반응형 테스트',
+                        'CI/CD 파이프라인 통합'
+                    ],
+                    specializations: [
+                        '엘더베리 인증 시스템 테스트',
+                        '시설 검색 기능 테스트',
+                        '건강 평가 시스템 테스트',
+                        'Linear Design System 완전 검증',
+                        '다국어/다테마 호환성 테스트'
                     ]
                 };
             }

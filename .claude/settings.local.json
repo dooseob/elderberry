@@ -118,7 +118,8 @@
       "Bash(npm info:*)",
       "Bash(./dev-restart.sh:*)",
       "Bash(npx playwright:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "mcp__filesystem__read_text_file"
     ],
     "deny": []
   }
