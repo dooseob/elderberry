@@ -1,0 +1,434 @@
+{
+  "config": {
+    "configFile": "/mnt/c/Users/human-10/elderberry/frontend/playwright.config.ts",
+    "rootDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 3
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Tablet",
+        "name": "Tablet",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "High Contrast",
+        "name": "High Contrast",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/mnt/c/Users/human-10/elderberry/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Dark Mode",
+        "name": "Dark Mode",
+        "testDir": "/mnt/c/Users/human-10/elderberry/frontend/tests",
+        "testIgnore": [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/build/**"
+        ],
+        "testMatch": [
+          "**/tests/**/*.spec.ts",
+          "**/tests/**/*.test.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.1",
+    "workers": 4,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "basic.spec.ts",
+      "file": "basic.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Basic E2E Tests",
+          "file": "basic.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load the application",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11374,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/Global Care Link/i\u001b[39m\nReceived string:  \u001b[31m\"로그인 | 엘더베리\"\u001b[39m\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 10000ms\u001b[22m\n\u001b[2m    2 × unexpected value \"엘더베리 - 재외동포를 위한 한국 요양원 구인구직 매칭 서비스\"\u001b[22m\n\u001b[2m    11 × unexpected value \"로그인 | 엘더베리\"\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/Global Care Link/i\u001b[39m\nReceived string:  \u001b[31m\"로그인 | 엘더베리\"\u001b[39m\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 10000ms\u001b[22m\n\u001b[2m    2 × unexpected value \"엘더베리 - 재외동포를 위한 한국 요양원 구인구직 매칭 서비스\"\u001b[22m\n\u001b[2m    11 × unexpected value \"로그인 | 엘더베리\"\u001b[22m\n\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:8:24",
+                        "location": {
+                          "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                          "column": 24,
+                          "line": 8
+                        },
+                        "snippet": "   6 |     \n   7 |     // 페이지가 로드되었는지 확인\n>  8 |     await expect(page).toHaveTitle(/Global Care Link/i);\n     |                        ^\n   9 |     \n  10 |     // 기본 요소가 있는지 확인\n  11 |     const heading = page.locator('h1').first();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                            "column": 24,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/Global Care Link/i\u001b[39m\nReceived string:  \u001b[31m\"로그인 | 엘더베리\"\u001b[39m\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 10000ms\u001b[22m\n\u001b[2m    2 × unexpected value \"엘더베리 - 재외동포를 위한 한국 요양원 구인구직 매칭 서비스\"\u001b[22m\n\u001b[2m    11 × unexpected value \"로그인 | 엘더베리\"\u001b[22m\n\n\n   6 |     \n   7 |     // 페이지가 로드되었는지 확인\n>  8 |     await expect(page).toHaveTitle(/Global Care Link/i);\n     |                        ^\n   9 |     \n  10 |     // 기본 요소가 있는지 확인\n  11 |     const heading = page.locator('h1').first();\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:8:24"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-31T05:38:16.028Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                        "column": 24,
+                        "line": 8
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8946741c555a0c4515d8-36eb1dabb68f27421549",
+              "file": "basic.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "should navigate to login page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1709,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-31T05:38:12.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8946741c555a0c4515d8-5af35c0065a1bc83971a",
+              "file": "basic.spec.ts",
+              "line": 15,
+              "column": 3
+            },
+            {
+              "title": "should display 404 page for invalid routes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 11639,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('text=404').or(locator('text=Not Found')).first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=404').or(locator('text=Not Found')).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('text=404').or(locator('text=Not Found')).first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=404').or(locator('text=Not Found')).first()\u001b[22m\n\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:33:87",
+                        "location": {
+                          "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                          "column": 87,
+                          "line": 33
+                        },
+                        "snippet": "  31 |     \n  32 |     // 404 메시지 확인\n> 33 |     await expect(page.locator('text=404').or(page.locator('text=Not Found')).first()).toBeVisible();\n     |                                                                                       ^\n  34 |   });\n  35 | });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                            "column": 87,
+                            "line": 33
+                          },
+                          "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('text=404').or(locator('text=Not Found')).first()\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=404').or(locator('text=Not Found')).first()\u001b[22m\n\n\n  31 |     \n  32 |     // 404 메시지 확인\n> 33 |     await expect(page.locator('text=404').or(page.locator('text=Not Found')).first()).toBeVisible();\n     |                                                                                       ^\n  34 |   });\n  35 | });\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:33:87"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-31T05:38:12.677Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts",
+                        "column": 87,
+                        "line": 33
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8946741c555a0c4515d8-3636edb0ed898b9056c9",
+              "file": "basic.spec.ts",
+              "line": 29,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-07-31T05:38:06.219Z",
+    "duration": 21649.792,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

@@ -21,7 +21,7 @@ interface AuthActions {
   login: (request: LoginRequest) => Promise<void>;
   register: (request: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
+  refreshTokens: () => Promise<void>;
   
   // 사용자 관리
   updateProfile: (request: UpdateProfileRequest) => Promise<void>;
@@ -133,18 +133,9 @@ export const useAuthStore = create<AuthStore>()(
               state.error = null;
             });
 
-            // API 호출 (실제 구현에서는 authApi 사용)
-            const response = await fetch('/api/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(request),
-            });
-
-            if (!response.ok) {
-              throw new Error('로그인에 실패했습니다.');
-            }
-
-            const data = await response.json();
+            // API 클라이언트 사용
+            const { login } = await import('../../../services/auth');
+            const data = await login(request);
             const { accessToken, refreshToken, memberInfo } = data;
 
             // 토큰 저장
@@ -183,18 +174,9 @@ export const useAuthStore = create<AuthStore>()(
               state.error = null;
             });
 
-            // API 호출
-            const response = await fetch('/api/auth/register', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(request),
-            });
-
-            if (!response.ok) {
-              throw new Error('회원가입에 실패했습니다.');
-            }
-
-            const data = await response.json();
+            // API 클라이언트 사용
+            const { register } = await import('../../../services/auth');
+            const data = await register(request);
             const { accessToken, refreshToken, memberInfo } = data;
 
             // 토큰 저장
@@ -224,13 +206,9 @@ export const useAuthStore = create<AuthStore>()(
 
         logout: async () => {
           try {
-            // 서버에 로그아웃 요청
-            await fetch('/api/auth/logout', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${get().accessToken}`,
-              },
-            });
+            // API 클라이언트 사용
+            const { logout } = await import('../../../services/auth');
+            await logout();
           } catch (error) {
             console.warn('로그아웃 요청 실패:', error);
           } finally {
@@ -251,38 +229,35 @@ export const useAuthStore = create<AuthStore>()(
           }
         },
 
-        refreshToken: async () => {
+        refreshTokens: async () => {
           try {
             const refreshToken = get().refreshToken;
             if (!refreshToken) {
               throw new Error('리프레시 토큰이 없습니다.');
             }
 
-            const response = await fetch('/api/auth/refresh', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ refreshToken }),
-            });
-
-            if (!response.ok) {
+            // API 클라이언트의 자동 토큰 갱신을 활용
+            const { validateToken } = await import('../../../services/auth');
+            const isValid = await validateToken();
+            
+            if (!isValid) {
               throw new Error('토큰 갱신에 실패했습니다.');
             }
 
-            const data = await response.json();
-            const { accessToken, refreshToken: newRefreshToken, memberInfo } = data;
+            // 토큰은 API 클라이언트에서 자동으로 저장됨
+            const newAccessToken = TokenManager.getAccessToken();
+            const newRefreshToken = TokenManager.getRefreshToken();
+            
+            if (newAccessToken && newRefreshToken) {
+              set((state) => {
+                state.accessToken = newAccessToken;
+                state.refreshToken = newRefreshToken;
+                state.isAuthenticated = true;
+                state.error = null;
+              });
 
-            TokenManager.setTokens(accessToken, newRefreshToken);
-            localStorage.setItem('user', JSON.stringify(memberInfo));
-
-            set((state) => {
-              state.user = memberInfo;
-              state.accessToken = accessToken;
-              state.refreshToken = newRefreshToken;
-              state.isAuthenticated = true;
-              state.error = null;
-            });
-
-            get().emit({ type: 'TOKEN_REFRESH', payload: { accessToken } });
+              get().emit({ type: 'TOKEN_REFRESH', payload: { accessToken: newAccessToken } });
+            }
 
           } catch (error) {
             // 리프레시 실패 시 로그아웃
@@ -435,17 +410,9 @@ export const useAuthStore = create<AuthStore>()(
             const token = get().accessToken;
             if (!token) return false;
 
-            const response = await fetch('/api/auth/validate', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify({ token }),
-            });
-
-            const result = await response.json();
-            return result.valid;
+            // API 클라이언트 사용
+            const { validateToken } = await import('../../../services/auth');
+            return await validateToken();
 
           } catch (error) {
             console.warn('토큰 검증 실패:', error);

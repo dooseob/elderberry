@@ -23,10 +23,14 @@ import LazyLoadErrorBoundary from './components/ui/LazyLoadErrorBoundary';
 // 토스트 컨텍스트 프로바이더
 import { ToastProvider } from './hooks/useToast';
 
+// Linear 테마 시스템
+import { ThemeProvider } from './components/theme/ThemeProvider';
+
 // 지연 로딩 페이지 컴포넌트들
 import {
   LazyLoginPage,
   LazyRegisterPage,
+  LazyForgotPasswordPage,
   LazyDashboardPage,
   LazyMyPage,
   LazyUnauthorizedPage,
@@ -42,6 +46,12 @@ import {
   LazyNotificationsPage
 } from './utils/lazyImports';
 
+// 테마 시스템 테스트 컴포넌트
+import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
+
+// Linear Design System 데모
+import LinearShowcase from './pages/demo/LinearShowcase';
+
 import './App.css';
 
 // 루트 리다이렉트 컴포넌트
@@ -53,19 +63,27 @@ const RootRedirect = () => {
 function App() {
   return (
     <LazyLoadErrorBoundary>
-      <ToastProvider>
-        <Router>
+      <ThemeProvider>
+        <ToastProvider>
+          <Router>
           <main className="min-h-screen bg-gray-50" role="main">
           <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
           <Routes>
             {/* 공개 라우트 */}
             <Route path="/login" element={<LazyLoginPage />} />
             <Route path="/register" element={<LazyRegisterPage />} />
+            <Route path="/forgot-password" element={<LazyForgotPasswordPage />} />
             <Route path="/unauthorized" element={<LazyUnauthorizedPage />} />
             
             {/* 챗봇 (인증 없이 사용 가능) */}
             <Route path="/chat-home" element={<LazyChatHomePage />} />
             <Route path="/chat" element={<LazyChatPage />} />
+            
+            {/* 테마 시스템 테스트 (개발용) */}
+            <Route path="/theme-test" element={<ThemeTestPlayground />} />
+            
+            {/* Linear Design System 데모 */}
+            <Route path="/linear-demo" element={<LinearShowcase />} />
           
             {/* 보호된 라우트 */}
             <Route 
@@ -340,8 +358,9 @@ function App() {
           </Routes>
           </Suspense>
           </main>
-        </Router>
-      </ToastProvider>
+          </Router>
+        </ToastProvider>
+      </ThemeProvider>
     </LazyLoadErrorBoundary>
   );
 }

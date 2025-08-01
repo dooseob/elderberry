@@ -1,0 +1,266 @@
+{
+  "design_system": {
+    "name": "Linear Design System",
+    "version": "2025",
+    "description": "Linear의 미니멀하고 전문적인 디자인 시스템을 기반으로 한 테마 구성",
+    "brand_identity": {
+      "primary_color": "#5E6AD2",
+      "description": "미묘하고 탈색된 블루 - 밝고 어두운 배경에 모두 적합",
+      "wordmark_usage": "단색 사용 권장",
+      "company_name": "Linear (대문자 L로 시작하는 단일 단어)"
+    },
+    "core_principles": [
+      "minimalism", 
+      "clarity", 
+      "performance", 
+      "accessibility",
+      "linear_flow"
+    ]
+  },
+  "theme_generation_system": {
+    "color_space": "LCH",
+    "description": "인간의 눈에 가장 가까운 색공간으로, 일관되게 좋은 테마 생성 가능",
+    "core_variables": {
+      "base_color": {
+        "type": "LCH",
+        "description": "기본 배경색과 표면 색상의 베이스",
+        "example": "[95.07617314910061, 2.1856276247566773, 265.9705972968138, 1]"
+      },
+      "accent_color": {
+        "type": "LCH", 
+        "description": "강조색상 - 버튼, 링크, 활성 요소",
+        "example": "[43.717135811988086, 99.37386079300107, 307.12305463765506, 1]"
+      },
+      "contrast": {
+        "type": "number",
+        "range": "0-100",
+        "description": "테마의 대비도 - 접근성을 위한 고대비 테마 지원",
+        "default": 30,
+        "high_contrast": 100
+      }
+    },
+    "generated_tokens": {
+      "surfaces": {
+        "background": "자동 생성",
+        "foreground": "자동 생성", 
+        "panels": "자동 생성",
+        "dialogs": "자동 생성",
+        "modals": "자동 생성"
+      },
+      "text_colors": "자동 생성",
+      "icon_colors": "자동 생성",
+      "control_colors": "자동 생성"
+    }
+  },
+  "popular_themes": {
+    "light_themes": [
+      {
+        "name": "Default Light",
+        "base": "[95, 2, 266, 1]",
+        "accent": "[44, 99, 307, 1]",
+        "contrast": 30,
+        "description": "Linear의 기본 라이트 테마"
+      },
+      {
+        "name": "Catppuccin Latte",
+        "base": "[95.07617314910061, 2.1856276247566773, 265.9705972968138, 1]",
+        "accent": "[43.717135811988086, 99.37386079300107, 307.12305463765506, 1]",
+        "contrast": 30
+      },
+      {
+        "name": "GitHub Light",
+        "base": "[98, 0, 0, 1]",
+        "accent": "[40, 80, 210, 1]",
+        "contrast": 35
+      }
+    ],
+    "dark_themes": [
+      {
+        "name": "Default Dark", 
+        "base": "[18, 11, 280, 1]",
+        "accent": "[72, 40, 311, 1]",
+        "contrast": 30,
+        "description": "Linear의 기본 다크 테마"
+      },
+      {
+        "name": "Catppuccin Mocha",
+        "base": "[16.02115422223583, 13.102236978320558, 282.51213623981425, 1]",
+        "accent": "[71.7932136171783, 46.50946588741101, 305.26693753987405, 1]",
+        "contrast": 30
+      },
+      {
+        "name": "Tokyo Night",
+        "base": "[15, 15, 250, 1]",
+        "accent": "[60, 90, 200, 1]",
+        "contrast": 40
+      }
+    ]
+  },
+  "design_characteristics": {
+    "typography": {
+      "approach": "bold_and_direct",
+      "font_weights": ["400", "500", "600", "700"],
+      "font_families": ["Inter", "SF Pro", "system-ui"],
+      "line_heights": {
+        "tight": "1.2",
+        "normal": "1.5", 
+        "relaxed": "1.75"
+      }
+    },
+    "spacing": {
+      "scale": "geometric",
+      "base_unit": "4px",
+      "values": ["4px", "8px", "12px", "16px", "24px", "32px", "48px", "64px", "96px"]
+    },
+    "shadows": {
+      "style": "subtle_soft",
+      "elevation_levels": {
+        "card": "0 1px 3px rgba(0,0,0,0.12)",
+        "modal": "0 4px 12px rgba(0,0,0,0.15)",
+        "dropdown": "0 8px 24px rgba(0,0,0,0.12)"
+      }
+    },
+    "borders": {
+      "radius": {
+        "small": "4px",
+        "medium": "8px", 
+        "large": "12px",
+        "full": "9999px"
+      },
+      "width": {
+        "thin": "1px",
+        "medium": "2px"
+      }
+    },
+    "gradients": {
+      "style": "angular_complex",
+      "examples": [
+        {
+          "name": "linear_signature",
+          "colors": ["#08AEEA", "#2AF598", "#B5FFFC", "#FF5ACD", "#FFFFFF"],
+          "stops": ["100%", "50%", "30%", "80%", "100%"],
+          "type": "angular"
+        }
+      ]
+    }
+  },
+  "ui_patterns": {
+    "layout": {
+      "sidebar": {
+        "width": "240px",
+        "collapsible": true,
+        "style": "minimal_icons"
+      },
+      "main_content": {
+        "max_width": "1200px",
+        "padding": "24px",
+        "responsive": true
+      },
+      "navigation": {
+        "style": "breadcrumb_linear",
+        "hierarchy": "clear_visual"
+      }
+    },
+    "components": {
+      "buttons": {
+        "primary": {
+          "background": "accent_color",
+          "text": "white",
+          "border_radius": "6px",
+          "padding": "8px 16px"
+        },
+        "secondary": {
+          "background": "transparent",
+          "border": "1px solid accent_color",
+          "text": "accent_color"
+        }
+      },
+      "cards": {
+        "background": "surface_elevated",
+        "border": "1px solid border_subtle",
+        "border_radius": "8px",
+        "padding": "16px"
+      },
+      "inputs": {
+        "background": "surface_input",
+        "border": "1px solid border_input",
+        "border_radius": "6px",
+        "focus_ring": "accent_color"
+      }
+    }
+  },
+  "accessibility": {
+    "contrast_ratios": {
+      "aa_normal": "4.5:1",
+      "aa_large": "3:1", 
+      "aaa_normal": "7:1"
+    },
+    "high_contrast_mode": {
+      "available": true,
+      "contrast_multiplier": 3.33
+    },
+    "keyboard_navigation": "full_support",
+    "screen_reader": "aria_compliant"
+  },
+  "implementation": {
+    "css_custom_properties": {
+      "naming_convention": "--linear-{category}-{variant}",
+      "examples": [
+        "--linear-color-background",
+        "--linear-color-foreground", 
+        "--linear-color-accent",
+        "--linear-spacing-xs",
+        "--linear-radius-medium"
+      ]
+    },
+    "theme_switching": {
+      "method": "css_class_toggle",
+      "classes": ["theme-light", "theme-dark", "theme-custom"],
+      "transition": "200ms ease-in-out"
+    },
+    "responsive_breakpoints": {
+      "mobile": "480px",
+      "tablet": "768px", 
+      "desktop": "1024px",
+      "large": "1440px"
+    }
+  },
+  "sample_theme_configs": {
+    "minimal_dark": {
+      "name": "Minimal Dark",
+      "base": "[12, 8, 270, 1]",
+      "accent": "[65, 85, 250, 1]", 
+      "contrast": 35,
+      "sidebar": {
+        "base": "[8, 5, 270, 1]",
+        "accent": "[65, 85, 250, 1]",
+        "contrast": 35
+      }
+    },
+    "warm_light": {
+      "name": "Warm Light",
+      "base": "[97, 5, 40, 1]",
+      "accent": "[50, 90, 15, 1]",
+      "contrast": 30,
+      "sidebar": {
+        "base": "[94, 8, 40, 1]", 
+        "accent": "[50, 90, 15, 1]",
+        "contrast": 30
+      }
+    }
+  },
+  "usage_instructions": {
+    "theme_installation": [
+      "Linear 설정으로 이동",
+      "Preferences → Theme 선택",
+      "Interface options에서 Custom 선택",
+      "JSON 테마 데이터 붙여넣기"
+    ],
+    "customization_tips": [
+      "base 색상은 주요 배경과 표면을 정의",
+      "accent 색상은 상호작용 요소에 사용", 
+      "contrast 값으로 가독성 조절",
+      "LCH 값 조정으로 미세한 색상 튜닝 가능"
+    ]
+  }
+}

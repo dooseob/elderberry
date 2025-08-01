@@ -116,7 +116,9 @@
       "Bash(sudo rm:*)",
       "mcp__playwright__*",
       "Bash(npm info:*)",
-      "Bash(./dev-restart.sh:*)"
+      "Bash(./dev-restart.sh:*)",
+      "Bash(npx playwright:*)",
+      "Bash(awk:*)"
     ],
     "deny": []
   }

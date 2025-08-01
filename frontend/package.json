@@ -9,7 +9,11 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "analyze": "npx vite-bundle-analyzer dist",
-    "perf:audit": "npm run build && npx lighthouse http://localhost:4173 --preset=desktop --output=html --output-path=./lighthouse-report.html"
+    "perf:audit": "npm run build && npx lighthouse http://localhost:4173 --preset=desktop --output=html --output-path=./lighthouse-report.html",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@allpepper/memory-bank-mcp": "^0.2.1",
@@ -33,6 +37,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.1",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
     "@typescript-eslint/eslint-plugin": "^8.20.0",

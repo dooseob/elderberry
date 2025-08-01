@@ -3,6 +3,9 @@
  * 'elderberry' 테마 기반 글로벌 스타일
  */
 
+/* Linear Theme System CSS 임포트 */
+@import './styles/linear-theme.css';
+
 /* Tailwind CSS 임포트 */
 @tailwind base;
 @tailwind components;

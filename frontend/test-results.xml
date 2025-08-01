@@ -1,0 +1,93 @@
+<testsuites id="" name="" tests="3" failures="2" skipped="0" errors="0" time="21.649792">
+<testsuite name="basic.spec.ts" timestamp="2025-07-31T05:38:06.653Z" hostname="chromium" tests="3" failures="2" skipped="0" time="24.722" errors="0">
+<testcase name="Basic E2E Tests › should load the application" classname="basic.spec.ts" time="11.374">
+<failure message="basic.spec.ts:4:3 should load the application" type="FAILURE">
+<![CDATA[  [chromium] › basic.spec.ts:4:3 › Basic E2E Tests › should load the application ───────────────────
+
+    Error: Timed out 10000ms waiting for expect(page).toHaveTitle(expected)
+
+    Expected pattern: /Global Care Link/i
+    Received string:  "로그인 | 엘더베리"
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        2 × unexpected value "엘더베리 - 재외동포를 위한 한국 요양원 구인구직 매칭 서비스"
+        11 × unexpected value "로그인 | 엘더베리"
+
+
+       6 |     
+       7 |     // 페이지가 로드되었는지 확인
+    >  8 |     await expect(page).toHaveTitle(/Global Care Link/i);
+         |                        ^
+       9 |     
+      10 |     // 기본 요소가 있는지 확인
+      11 |     const heading = page.locator('h1').first();
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:8:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-should-load-the-application-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Basic E2E Tests › should navigate to login page" classname="basic.spec.ts" time="1.709">
+</testcase>
+<testcase name="Basic E2E Tests › should display 404 page for invalid routes" classname="basic.spec.ts" time="11.639">
+<failure message="basic.spec.ts:29:3 should display 404 page for invalid routes" type="FAILURE">
+<![CDATA[  [chromium] › basic.spec.ts:29:3 › Basic E2E Tests › should display 404 page for invalid routes ───
+
+    Error: Timed out 10000ms waiting for expect(locator).toBeVisible()
+
+    Locator: locator('text=404').or(locator('text=Not Found')).first()
+    Expected: visible
+    Received: <element(s) not found>
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('text=404').or(locator('text=Not Found')).first()
+
+
+      31 |     
+      32 |     // 404 메시지 확인
+    > 33 |     await expect(page.locator('text=404').or(page.locator('text=Not Found')).first()).toBeVisible();
+         |                                                                                       ^
+      34 |   });
+      35 | });
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/basic.spec.ts:33:87
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/basic-Basic-E2E-Tests-shou-a686c-404-page-for-invalid-routes-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

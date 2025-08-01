@@ -34,12 +34,17 @@ function lazyWithMinDelay<T extends React.ComponentType<any>>(
 
 // 인증 관련 페이지 (우선순위: 높음 - 빠른 로딩 필요)
 export const LazyLoginPage = lazyWithMinDelay(
-  () => import('../features/auth/LoginPage'),
+  () => import('../pages/auth/LoginPage'),
   100 // 로그인은 빠른 로딩이 중요
 );
 
 export const LazyRegisterPage = lazyWithMinDelay(
-  () => import('../features/auth/RegisterPage'),
+  () => import('../pages/auth/RegisterPage'),
+  100
+);
+
+export const LazyForgotPasswordPage = lazyWithMinDelay(
+  () => import('../pages/auth/ForgotPasswordPage'),
   100
 );
 
@@ -129,7 +134,7 @@ export const LazyNotificationsPage = lazyWithMinDelay(
 
 // 청크 분석을 위한 컴포넌트 이름 매핑
 export const CHUNK_NAMES = {
-  auth: ['LazyLoginPage', 'LazyRegisterPage'],
+  auth: ['LazyLoginPage', 'LazyRegisterPage', 'LazyForgotPasswordPage'],
   dashboard: ['LazyDashboardPage', 'LazyMyPage'],
   boards: ['LazyBoardListPage', 'LazyPostDetailPage', 'LazyPostCreatePage'],
   profiles: ['LazyProfileListPage', 'LazyProfileDetailPage'],
