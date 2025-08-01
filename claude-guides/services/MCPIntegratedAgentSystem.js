@@ -10,17 +10,17 @@ class MCPIntegratedAgentSystem {
             context7: 'context7', 
             filesystem: 'filesystem',
             memory: 'memory',
-            github: 'github'
+            github: 'github',
+            playwright: 'playwright'  // Playwright 웹 자동화 도구 추가
         };
         
         this.agentCapabilities = {
-            CLAUDE_GUIDE: ['sequential-thinking', 'memory', 'context7'],
-            DEBUG: ['sequential-thinking', 'filesystem', 'memory'],
-            API_DOCUMENTATION: ['context7', 'filesystem', 'github'],
+            CLAUDE_GUIDE: ['sequential-thinking', 'memory', 'context7', 'playwright'],
+            DEBUG: ['sequential-thinking', 'filesystem', 'memory', 'playwright'],
+            API_DOCUMENTATION: ['context7', 'filesystem', 'github', 'playwright'],
             TROUBLESHOOTING: ['memory', 'filesystem', 'sequential-thinking'],
-            GOOGLE_SEO: ['context7', 'filesystem', 'memory'],
-            TEAM_COLLABORATION: ['sequential-thinking', 'context7', 'filesystem', 'memory'], // NEW!
-            DOCUMENT_MANAGEMENT: ['sequential-thinking', 'filesystem', 'memory'] // NEW!
+            GOOGLE_SEO: ['context7', 'filesystem', 'memory', 'playwright'],
+            SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory', 'playwright'] // 보안감사 에이전트 추가
         };
     }
 
@@ -253,19 +253,19 @@ class MCPIntegratedAgentSystem {
         
         const { command, task, options = {} } = params;
         
-        // 명령어별 MCP 도구 매핑
+        // 명령어별 MCP 도구 매핑 (Playwright 웹 자동화 도구 추가)
         const commandMCPMapping = {
-            '/max': ['sequential-thinking', 'context7', 'filesystem', 'memory', 'github'],
-            '/auto': ['sequential-thinking', 'context7', 'memory'],
+            '/max': ['sequential-thinking', 'context7', 'filesystem', 'memory', 'github', 'playwright'],
+            '/auto': ['sequential-thinking', 'context7', 'memory', 'playwright'],
             '/smart': ['memory', 'context7', 'filesystem'],
             '/rapid': ['filesystem', 'memory'],
             '/deep': ['sequential-thinking', 'context7', 'memory'],
             '/sync': ['github', 'memory', 'filesystem']
         };
 
-        // 명령어별 서브에이전트 매핑
+        // 명령어별 서브에이전트 매핑 (보안감사 에이전트 추가)
         const commandAgentMapping = {
-            '/max': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'TROUBLESHOOTING', 'GOOGLE_SEO'],
+            '/max': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'TROUBLESHOOTING', 'GOOGLE_SEO', 'SECURITY_AUDIT'],
             '/auto': ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION'],
             '/smart': ['CLAUDE_GUIDE', 'TROUBLESHOOTING'],
             '/rapid': ['DEBUG'],
@@ -502,7 +502,25 @@ class MCPIntegratedAgentSystem {
                         '메타태그 최적화',
                         '구조화된 데이터 마크업',
                         '시멘틱 HTML 태그',
-                        '페이지 속도 최적화'
+                        '페이지 속도 최적화',
+                        'Playwright 웹 성능 자동 측정'
+                    ]
+                };
+            },
+            
+            'SECURITY_AUDIT': async () => {
+                return {
+                    role: '보안 감사 및 취약점 분석',
+                    action: `${command} 명령어로 ${task} 보안 검증`,
+                    mcpToolsUsed: mcpTools,
+                    result: 'Security audit with vulnerability assessment',
+                    customCommandSupport: true,
+                    securityFeatures: [
+                        'API 키 및 민감 정보 스캔',
+                        '웹 애플리케이션 보안 테스팅',
+                        'SQL Injection 및 XSS 검증',
+                        'HTTPS 및 보안 헤더 검증',
+                        'Playwright 브라우저 보안 자동화'
                     ]
                 };
             }
