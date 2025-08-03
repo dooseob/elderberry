@@ -14,7 +14,7 @@ import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/
 import { useAuthStore } from './stores/authStore';
 
 // 레이아웃 컴포넌트 (즉시 로딩 - 모든 페이지에서 사용)
-import MainLayout from './widgets/layout';
+import { MainLayout } from './widgets/layout';
 
 // 로딩 폴백 컴포넌트
 import LazyPageFallback from './shared/ui/LazyPageFallback';

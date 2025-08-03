@@ -128,7 +128,8 @@
       "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/basic.spec.ts --reporter=line)",
       "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/basic.spec.ts --project=chromium --reporter=line)",
       "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/auth-improvement.spec.ts --project=chromium --reporter=line)",
-      "mcp__filesystem__move_file"
+      "mcp__filesystem__move_file",
+      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --timeout=30000 --project=chromium)"
     ],
     "deny": []
   }
