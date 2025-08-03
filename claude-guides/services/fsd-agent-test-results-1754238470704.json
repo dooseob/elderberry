@@ -1,0 +1,275 @@
+{
+  "status": "SUCCESS",
+  "success_rate": "100.0",
+  "details": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "details": [
+      {
+        "name": "FSD Layer Optimization",
+        "success": true,
+        "message": "모든 FSD 레이어 최적화 설정 정상",
+        "data": {
+          "widgets": {
+            "primary_agent": "CLAUDE_GUIDE",
+            "secondary_agents": [
+              "DEBUG"
+            ],
+            "mcp_tools": [
+              "mcp__sequential-thinking__sequentialthinking",
+              "mcp__memory__search_nodes"
+            ],
+            "focus": "UI 위젯 구조 최적화 및 재사용성",
+            "layer_type": "widgets"
+          },
+          "entities": {
+            "primary_agent": "API_DOCUMENTATION",
+            "secondary_agents": [
+              "CLAUDE_GUIDE",
+              "DEBUG"
+            ],
+            "mcp_tools": [
+              "mcp__context7__resolve-library-id",
+              "mcp__memory__search_nodes",
+              "mcp__filesystem__list_directory"
+            ],
+            "focus": "도메인 모델 설계 및 타입 안전성",
+            "layer_type": "entities"
+          },
+          "features": {
+            "primary_agent": "DEBUG",
+            "secondary_agents": [
+              "CLAUDE_GUIDE",
+              "TROUBLESHOOTING"
+            ],
+            "mcp_tools": [
+              "mcp__sequential-thinking__sequentialthinking",
+              "mcp__filesystem__list_directory",
+              "mcp__memory__search_nodes"
+            ],
+            "focus": "비즈니스 로직 구현 및 최적화",
+            "layer_type": "features"
+          },
+          "shared": {
+            "primary_agent": "CLAUDE_GUIDE",
+            "secondary_agents": [
+              "API_DOCUMENTATION"
+            ],
+            "mcp_tools": [
+              "mcp__context7__resolve-library-id",
+              "mcp__filesystem__list_directory",
+              "mcp__github__search_repositories"
+            ],
+            "focus": "공통 라이브러리 및 유틸리티 최적화",
+            "layer_type": "shared"
+          }
+        }
+      },
+      {
+        "name": "FSD Dependency Validation",
+        "success": true,
+        "message": "FSD 의존성 검증 규칙 정상 작동",
+        "data": {
+          "valid_dependencies": [
+            {
+              "valid": true,
+              "reason": "Valid FSD dependency"
+            },
+            {
+              "valid": true,
+              "reason": "Valid FSD dependency"
+            },
+            {
+              "valid": true,
+              "reason": "Valid FSD dependency"
+            }
+          ],
+          "invalid_dependencies": [
+            {
+              "valid": false,
+              "reason": "Invalid dependency: shared cannot depend on entities",
+              "allowed": []
+            },
+            {
+              "valid": false,
+              "reason": "Invalid dependency: entities cannot depend on features",
+              "allowed": [
+                "shared"
+              ]
+            },
+            {
+              "valid": false,
+              "reason": "Invalid dependency: shared cannot depend on widgets",
+              "allowed": []
+            }
+          ]
+        }
+      },
+      {
+        "name": "Public API Pattern Validation",
+        "success": true,
+        "message": "Public API 패턴 검증 정상 작동",
+        "data": {
+          "valid_pattern": {
+            "hasIndexFile": true,
+            "hasNamedExports": true,
+            "hasTypeExports": true,
+            "isEncapsulated": false,
+            "violations": []
+          },
+          "invalid_pattern": {
+            "hasIndexFile": false,
+            "hasNamedExports": false,
+            "hasTypeExports": false,
+            "isEncapsulated": false,
+            "violations": [
+              "Missing index.ts/js file for Public API",
+              "Missing named exports in Public API"
+            ]
+          }
+        }
+      },
+      {
+        "name": "FSD Code Structure Suggestion",
+        "success": true,
+        "message": "FSD 코드 구조 제안 정상 작동",
+        "data": {
+          "widget_suggestion": {
+            "directory_structure": [
+              "widgets/Navigation/",
+              "widgets/Navigation/ui/",
+              "widgets/Navigation/index.ts"
+            ],
+            "file_templates": {
+              "ui/Navigation.tsx": "React component with TypeScript",
+              "index.ts": "Public API exports"
+            },
+            "import_patterns": [
+              "import { Navigation } from 'widgets/Navigation';"
+            ],
+            "best_practices": [
+              "Use Public API pattern (index.ts) for all exports",
+              "Follow FSD dependency rules",
+              "Keep components focused and cohesive",
+              "Use TypeScript for type safety",
+              "Document component interfaces"
+            ]
+          },
+          "entity_suggestion": {
+            "directory_structure": [
+              "entities/Product/",
+              "entities/Product/model/",
+              "entities/Product/index.ts"
+            ],
+            "file_templates": {
+              "model/types.ts": "TypeScript type definitions",
+              "index.ts": "Public API exports"
+            },
+            "import_patterns": [
+              "import { ProductType } from 'entities/Product';"
+            ],
+            "best_practices": [
+              "Use Public API pattern (index.ts) for all exports",
+              "Follow FSD dependency rules",
+              "Keep components focused and cohesive",
+              "Use TypeScript for type safety",
+              "Document component interfaces"
+            ]
+          },
+          "feature_suggestion": {
+            "directory_structure": [
+              "features/Authentication/",
+              "features/Authentication/ui/",
+              "features/Authentication/model/",
+              "features/Authentication/api/",
+              "features/Authentication/index.ts"
+            ],
+            "file_templates": {},
+            "import_patterns": [],
+            "best_practices": [
+              "Use Public API pattern (index.ts) for all exports",
+              "Follow FSD dependency rules",
+              "Keep components focused and cohesive",
+              "Use TypeScript for type safety",
+              "Document component interfaces"
+            ]
+          }
+        }
+      },
+      {
+        "name": "System Configuration Validation",
+        "success": true,
+        "message": "FSD 지원 시스템 구성 정상",
+        "data": {
+          "mcp_tools_count": 6,
+          "agents_count": 6,
+          "custom_commands_count": 6,
+          "fsd_layers_supported": 6,
+          "sqlite_integration": true,
+          "learning_system": true,
+          "fsd_architecture_support": true,
+          "status": "OPTIMIZED_WITH_FSD",
+          "last_updated": "2025-08-03"
+        }
+      },
+      {
+        "name": "FSD Agent Mapping",
+        "success": true,
+        "message": "FSD 레이어별 에이전트 매핑 정상",
+        "data": {
+          "widgets": {
+            "primary_agent": "CLAUDE_GUIDE",
+            "secondary_agents": [
+              "DEBUG"
+            ],
+            "mcp_tools": [
+              "SEQUENTIAL_THINKING",
+              "MEMORY"
+            ],
+            "focus": "UI 위젯 구조 최적화 및 재사용성"
+          },
+          "entities": {
+            "primary_agent": "API_DOCUMENTATION",
+            "secondary_agents": [
+              "CLAUDE_GUIDE",
+              "DEBUG"
+            ],
+            "mcp_tools": [
+              "CONTEXT7",
+              "MEMORY",
+              "FILESYSTEM"
+            ],
+            "focus": "도메인 모델 설계 및 타입 안전성"
+          },
+          "features": {
+            "primary_agent": "DEBUG",
+            "secondary_agents": [
+              "CLAUDE_GUIDE",
+              "TROUBLESHOOTING"
+            ],
+            "mcp_tools": [
+              "SEQUENTIAL_THINKING",
+              "FILESYSTEM",
+              "MEMORY"
+            ],
+            "focus": "비즈니스 로직 구현 및 최적화"
+          },
+          "shared": {
+            "primary_agent": "CLAUDE_GUIDE",
+            "secondary_agents": [
+              "API_DOCUMENTATION"
+            ],
+            "mcp_tools": [
+              "CONTEXT7",
+              "FILESYSTEM",
+              "GITHUB"
+            ],
+            "focus": "공통 라이브러리 및 유틸리티 최적화"
+          }
+        }
+      }
+    ]
+  },
+  "timestamp": "2025-08-03T16:27:50.704Z"
+}

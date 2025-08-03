@@ -1,8 +1,8 @@
 /**
  * 엘더베리 프로젝트 - 에이전트별 MCP 도구 최적화 매핑 설정
- * @version 2.0.0
- * @date 2025-08-01
- * @description 6개 MCP 도구와 6개 서브에이전트의 최적화된 조합 설정
+ * @version 2.1.0
+ * @date 2025-08-03
+ * @description 6개 MCP 도구와 6개 서브에이전트의 최적화된 조합 설정 + FSD 아키텍처 지원
  */
 
 const AGENT_MCP_OPTIMIZATION_CONFIG = {
@@ -148,6 +148,74 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
         }
     },
 
+    // FSD (Feature-Sliced Design) 아키텍처 지원 설정
+    FSD_ARCHITECTURE_SUPPORT: {
+        // FSD 계층 구조 정의
+        LAYERS: {
+            APP: 'app',
+            PAGES: 'pages', 
+            WIDGETS: 'widgets',
+            FEATURES: 'features',
+            ENTITIES: 'entities',
+            SHARED: 'shared'
+        },
+        
+        // FSD 세그먼트 정의
+        SEGMENTS: {
+            UI: 'ui',
+            MODEL: 'model',
+            API: 'api',
+            LIB: 'lib',
+            CONFIG: 'config'
+        },
+        
+        // 계층별 의존성 규칙
+        DEPENDENCY_RULES: {
+            app: ['pages', 'widgets', 'features', 'entities', 'shared'],
+            pages: ['widgets', 'features', 'entities', 'shared'],
+            widgets: ['features', 'entities', 'shared'],
+            features: ['entities', 'shared'],
+            entities: ['shared'],
+            shared: []
+        },
+        
+        // FSD 레이어별 에이전트 특화 설정
+        LAYER_AGENT_MAPPING: {
+            widgets: {
+                primary_agent: 'CLAUDE_GUIDE',
+                secondary_agents: ['DEBUG'],
+                mcp_tools: ['SEQUENTIAL_THINKING', 'MEMORY'],
+                focus: 'UI 위젯 구조 최적화 및 재사용성'
+            },
+            entities: {
+                primary_agent: 'API_DOCUMENTATION',
+                secondary_agents: ['CLAUDE_GUIDE', 'DEBUG'],
+                mcp_tools: ['CONTEXT7', 'MEMORY', 'FILESYSTEM'],
+                focus: '도메인 모델 설계 및 타입 안전성'
+            },
+            features: {
+                primary_agent: 'DEBUG',
+                secondary_agents: ['CLAUDE_GUIDE', 'TROUBLESHOOTING'],
+                mcp_tools: ['SEQUENTIAL_THINKING', 'FILESYSTEM', 'MEMORY'],
+                focus: '비즈니스 로직 구현 및 최적화'
+            },
+            shared: {
+                primary_agent: 'CLAUDE_GUIDE',
+                secondary_agents: ['API_DOCUMENTATION'],
+                mcp_tools: ['CONTEXT7', 'FILESYSTEM', 'GITHUB'],
+                focus: '공통 라이브러리 및 유틸리티 최적화'
+            }
+        },
+        
+        // Public API 패턴 검증 규칙
+        PUBLIC_API_RULES: {
+            required_index_files: ['index.ts', 'index.js'],
+            export_patterns: ['named_exports', 'type_exports'],
+            import_validation: true,
+            capsulation_check: true
+        }
+    },
+    
     // 성능 최적화 설정
     PERFORMANCE_SETTINGS: {
         MAX_PARALLEL_AGENTS: 6,
@@ -176,6 +244,157 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
         AUTO_IMPROVEMENT: true
     }
 };
+
+/**
+ * FSD 레이어별 최적 에이전트 조합 가져오기
+ */
+function getFSDLayerOptimization(layerName) {
+    const config = AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.LAYER_AGENT_MAPPING[layerName];
+    if (!config) {
+        throw new Error(`Unknown FSD layer: ${layerName}`);
+    }
+    
+    return {
+        primary_agent: config.primary_agent,
+        secondary_agents: config.secondary_agents,
+        mcp_tools: config.mcp_tools.map(tool => AGENT_MCP_OPTIMIZATION_CONFIG.MCP_TOOLS[tool]),
+        focus: config.focus,
+        layer_type: layerName
+    };
+}
+
+/**
+ * FSD 계층 의존성 검증
+ */
+function validateFSDDependency(fromLayer, toLayer) {
+    const dependencyRules = AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.DEPENDENCY_RULES;
+    const allowedDependencies = dependencyRules[fromLayer];
+    
+    if (!allowedDependencies) {
+        return { valid: false, reason: `Unknown layer: ${fromLayer}` };
+    }
+    
+    if (!allowedDependencies.includes(toLayer)) {
+        return { 
+            valid: false, 
+            reason: `Invalid dependency: ${fromLayer} cannot depend on ${toLayer}`,
+            allowed: allowedDependencies
+        };
+    }
+    
+    return { valid: true, reason: 'Valid FSD dependency' };
+}
+
+/**
+ * FSD Public API 패턴 검증
+ */
+function validatePublicAPIPattern(layerPath, exports) {
+    const rules = AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.PUBLIC_API_RULES;
+    const validationResults = {
+        hasIndexFile: false,
+        hasNamedExports: false,
+        hasTypeExports: false,
+        isEncapsulated: false,
+        violations: []
+    };
+    
+    // index.ts/js 파일 존재 확인
+    const hasIndex = rules.required_index_files.some(file => 
+        layerPath.endsWith(file) || layerPath.includes(`/${file}`)
+    );
+    validationResults.hasIndexFile = hasIndex;
+    
+    if (!hasIndex) {
+        validationResults.violations.push('Missing index.ts/js file for Public API');
+    }
+    
+    // 내보내기 패턴 검증
+    if (exports && Array.isArray(exports)) {
+        validationResults.hasNamedExports = exports.some(exp => exp.type === 'named');
+        validationResults.hasTypeExports = exports.some(exp => exp.type === 'type');
+        
+        if (!validationResults.hasNamedExports) {
+            validationResults.violations.push('Missing named exports in Public API');
+        }
+    }
+    
+    return validationResults;
+}
+
+/**
+ * FSD 구조에 맞는 코드 생성 제안
+ */
+function suggestFSDCodeStructure(componentType, layerName, componentName) {
+    const segments = AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.SEGMENTS;
+    const layers = AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.LAYERS;
+    
+    const suggestions = {
+        directory_structure: [],
+        file_templates: {},
+        import_patterns: [],
+        best_practices: []
+    };
+    
+    // 레이어별 구조 제안
+    switch (layerName) {
+        case layers.WIDGETS:
+            suggestions.directory_structure = [
+                `${layerName}/${componentName}/`,
+                `${layerName}/${componentName}/${segments.UI}/`,
+                `${layerName}/${componentName}/index.ts`
+            ];
+            suggestions.file_templates = {
+                [`${segments.UI}/${componentName}.tsx`]: 'React component with TypeScript',
+                'index.ts': 'Public API exports'
+            };
+            suggestions.import_patterns = [
+                `import { ${componentName} } from 'widgets/${componentName}';`
+            ];
+            break;
+            
+        case layers.ENTITIES:
+            suggestions.directory_structure = [
+                `${layerName}/${componentName}/`,
+                `${layerName}/${componentName}/${segments.MODEL}/`,
+                `${layerName}/${componentName}/index.ts`
+            ];
+            suggestions.file_templates = {
+                [`${segments.MODEL}/types.ts`]: 'TypeScript type definitions',
+                'index.ts': 'Public API exports'
+            };
+            suggestions.import_patterns = [
+                `import { ${componentName}Type } from 'entities/${componentName}';`
+            ];
+            break;
+            
+        case layers.FEATURES:
+            suggestions.directory_structure = [
+                `${layerName}/${componentName}/`,
+                `${layerName}/${componentName}/${segments.UI}/`,
+                `${layerName}/${componentName}/${segments.MODEL}/`,
+                `${layerName}/${componentName}/${segments.API}/`,
+                `${layerName}/${componentName}/index.ts`
+            ];
+            break;
+            
+        case layers.SHARED:
+            suggestions.directory_structure = [
+                `${layerName}/${componentName}/`,
+                `${layerName}/${componentName}/index.ts`
+            ];
+            break;
+    }
+    
+    suggestions.best_practices = [
+        'Use Public API pattern (index.ts) for all exports',
+        'Follow FSD dependency rules',
+        'Keep components focused and cohesive',
+        'Use TypeScript for type safety',
+        'Document component interfaces'
+    ];
+    
+    return suggestions;
+}
 
 /**
  * 에이전트별 MCP 도구 조합 가져오기
@@ -215,21 +434,24 @@ function getCustomCommandOptimization(command) {
 }
 
 /**
- * 시스템 상태 검증
+ * 시스템 상태 검증 (FSD 지원 포함)
  */
 function validateSystemConfiguration() {
     const requiredMCPTools = Object.keys(AGENT_MCP_OPTIMIZATION_CONFIG.MCP_TOOLS);
     const requiredAgents = Object.keys(AGENT_MCP_OPTIMIZATION_CONFIG.AGENT_MCP_COMBINATIONS);
     const customCommands = Object.keys(AGENT_MCP_OPTIMIZATION_CONFIG.CUSTOM_COMMAND_OPTIMIZATION);
+    const fsdLayers = Object.keys(AGENT_MCP_OPTIMIZATION_CONFIG.FSD_ARCHITECTURE_SUPPORT.LAYERS);
     
     return {
         mcp_tools_count: requiredMCPTools.length,
         agents_count: requiredAgents.length,
         custom_commands_count: customCommands.length,
+        fsd_layers_supported: fsdLayers.length,
         sqlite_integration: AGENT_MCP_OPTIMIZATION_CONFIG.SQLITE_INTEGRATION.LOG_AGENT_EXECUTIONS,
         learning_system: AGENT_MCP_OPTIMIZATION_CONFIG.LEARNING_SYSTEM.PATTERN_RECOGNITION,
-        status: 'OPTIMIZED',
-        last_updated: '2025-08-01'
+        fsd_architecture_support: true,
+        status: 'OPTIMIZED_WITH_FSD',
+        last_updated: '2025-08-03'
     };
 }
 
@@ -237,5 +459,10 @@ module.exports = {
     AGENT_MCP_OPTIMIZATION_CONFIG,
     getAgentMCPCombination,
     getCustomCommandOptimization,
-    validateSystemConfiguration
+    validateSystemConfiguration,
+    // FSD 지원 함수들
+    getFSDLayerOptimization,
+    validateFSDDependency,
+    validatePublicAPIPattern,
+    suggestFSDCodeStructure
 };
