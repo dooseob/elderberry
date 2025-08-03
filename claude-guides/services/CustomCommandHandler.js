@@ -12,8 +12,9 @@ class CustomCommandHandler {
         this.version = '2.3.0';
         this.description = '엘더베리 프로젝트 전용 커스텀 명령어 핸들러';
         
-        // WebTestingMasterAgent 통합
+        // WebTestingMasterAgent + PlaywrightMCPEnhanced 통합
         this.webTestingAgent = null; // 실제 구현에서는 WebTestingMasterAgent 인스턴스
+        this.playwrightEnhancedAgent = null; // PlaywrightMCPEnhanced 에이전트
         
         // MCP 도구 매핑 (Playwright 추가)
         this.mcpTools = {
@@ -835,40 +836,73 @@ class CustomCommandHandler {
     }
 
     /**
-     * 🔍 브라우저 설치 상태 검증 (Chrome 중복 설치 방지)
+     * 🔍 브라우저 설치 상태 검증 (PlaywrightMCPEnhanced 통합)
      */
     async validateBrowserInstallation() {
-        console.log('🔍 브라우저 설치 상태 검증 중...');
+        console.log('🔍 Enhanced 브라우저 설치 상태 검증 중...');
         
         try {
-            const { execSync } = require('child_process');
+            // PlaywrightMCPEnhanced 에이전트 사용
+            if (this.playwrightEnhancedAgent) {
+                return await this.playwrightEnhancedAgent.validateBrowserInstallation();
+            }
             
-            // Playwright 브라우저 설치 상태 확인
-            const checkResult = execSync('npx playwright install --dry-run chromium', {
-                encoding: 'utf8',
-                timeout: 10000,
-                stdio: 'pipe'
-            });
+            // Fallback: 파일 시스템 기반 직접 확인
+            const fs = require('fs');
+            const os = require('os');
+            const path = require('path');
             
-            const isInstalled = checkResult.includes('is already installed');
+            const homeDir = os.homedir();
+            const playwrightCache = path.join(homeDir, '.cache', 'ms-playwright');
+            const possibleVersions = ['1181', '1180', '1179'];
+            
+            for (const version of possibleVersions) {
+                const chromiumDir = path.join(playwrightCache, `chromium-${version}`);
+                const chromiumBinary = path.join(chromiumDir, 'chrome-linux', 'chrome');
+                
+                if (fs.existsSync(chromiumBinary)) {
+                    try {
+                        fs.accessSync(chromiumBinary, fs.constants.X_OK);
+                        console.log(`✅ Chromium found and executable: ${chromiumBinary}`);
+                        return {
+                            status: 'installed',
+                            path: chromiumBinary,
+                            version: version,
+                            method: 'filesystem_check',
+                            executable: true
+                        };
+                    } catch (permError) {
+                        console.log(`⚠️ Chromium found but fixing permissions: ${chromiumBinary}`);
+                        try {
+                            const { execSync } = require('child_process');
+                            execSync(`chmod +x "${chromiumBinary}"`, { timeout: 5000 });
+                            return {
+                                status: 'installed_fixed_permissions',
+                                path: chromiumBinary,
+                                version: version,
+                                method: 'filesystem_check_fixed'
+                            };
+                        } catch (chmodError) {
+                            console.log('❌ Permission fix failed:', chmodError.message);
+                        }
+                    }
+                }
+            }
             
             return {
-                chromiumInstalled: isInstalled,
-                status: isInstalled ? 'already_installed' : 'needs_installation',
-                checkTime: new Date().toISOString(),
-                skipReinstall: isInstalled,
-                message: isInstalled ? 'Chromium already installed' : 'Chromium needs installation'
+                status: 'not_installed',
+                message: 'No valid Chromium installation found',
+                method: 'filesystem_check'
             };
             
         } catch (error) {
-            console.log('⚠️ 브라우저 설치 상태 확인 실패, 기존 설치 추정:', error.message);
+            console.log('⚠️ Enhanced 브라우저 검증 실패:', error.message);
             
             return {
-                chromiumInstalled: true, // 확인 실패 시 설치되어 있다고 가정
-                status: 'check_failed_assume_installed',
+                status: 'validation_failed',
                 error: error.message,
-                skipReinstall: true,
-                message: 'Check failed, assuming browser is installed'
+                fallback: 'proceed_with_caution',
+                method: 'error_fallback'
             };
         }
     }
@@ -917,6 +951,148 @@ class CustomCommandHandler {
             skipBrowserInstall: true,
             preventionActive: true
         };
+    }
+
+    /**
+     * 🧠 작업 컨텍스트 분석 (PlaywrightMCPEnhanced 지원)
+     */
+    analyzeTaskContext(task) {
+        const taskLower = task.toLowerCase();
+        
+        // 웹 관련 키워드 확장
+        const webKeywords = [
+            'web', 'ui', 'frontend', '프론트엔드', 'react', 'vue', 'angular',
+            'test', 'testing', '테스트', 'playwright', 'selenium', 
+            'browser', '브라우저', 'chrome', 'firefox', 'safari',
+            'e2e', 'end-to-end', 'component', '컴포넌트', 'css', 'html',
+            'responsive', '반응형', 'mobile', '모바일', 'accessibility',
+            'performance', '성능', 'lighthouse', 'core web vitals'
+        ];
+        
+        const isWebRelated = webKeywords.some(keyword => taskLower.includes(keyword));
+        
+        // Playwright 특화 키워드
+        const playwrightKeywords = [
+            'playwright', '플레이라이트', 'chrome', 'chromium', 
+            'browser', 'headless', 'screenshot', 'automation',
+            'e2e', 'end-to-end', 'visual regression', 'accessibility test'
+        ];
+        
+        const needsPlaywrightEnhanced = playwrightKeywords.some(keyword => taskLower.includes(keyword));
+        
+        return {
+            isWebRelated,
+            needsPlaywrightEnhanced,
+            complexity: this.estimateTaskComplexity(task),
+            urgency: this.estimateTaskUrgency(task),
+            keywords: this.extractKeywords(task),
+            recommendedAgents: this.getRecommendedAgents(isWebRelated, needsPlaywrightEnhanced),
+            estimatedDuration: this.estimateDuration(task)
+        };
+    }
+
+    /**
+     * 🚀 최적화된 에이전트 선택 (PlaywrightMCPEnhanced 통합)
+     */
+    getOptimizedAgentsForCommand(command, task) {
+        const context = this.analyzeTaskContext(task);
+        const baseAgents = ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION'];
+        
+        // 명령어별 기본 에이전트
+        const commandAgents = {
+            '/max': [...baseAgents, 'TROUBLESHOOTING', 'GOOGLE_SEO', 'SECURITY_AUDIT'],
+            '/auto': [...baseAgents],
+            '/smart': ['DEBUG', 'API_DOCUMENTATION'],
+            '/rapid': ['DEBUG', 'CLAUDE_GUIDE'],
+            '/deep': [...baseAgents, 'TROUBLESHOOTING'],
+            '/sync': ['CLAUDE_GUIDE', 'API_DOCUMENTATION'],
+            '/test': ['WEB_TESTING_MASTER']
+        };
+        
+        let agents = commandAgents[command] || baseAgents;
+        
+        // 웹 관련 작업시 WebTestingMaster 추가
+        if (context.isWebRelated && !agents.includes('WEB_TESTING_MASTER')) {
+            agents.push('WEB_TESTING_MASTER');
+        }
+        
+        // Playwright 특화 작업시 PlaywrightMCPEnhanced 표시
+        if (context.needsPlaywrightEnhanced) {
+            agents = agents.map(agent => 
+                agent === 'WEB_TESTING_MASTER' ? 'WEB_TESTING_MASTER_ENHANCED' : agent
+            );
+        }
+        
+        return agents;
+    }
+
+    /**
+     * 🛠️ 최적화된 MCP 도구 선택
+     */
+    getOptimizedMcpToolsForCommand(command, task) {
+        const context = this.analyzeTaskContext(task);
+        const baseTools = ['sequential-thinking', 'context7', 'memory', 'filesystem'];
+        
+        // 명령어별 기본 도구
+        const commandTools = {
+            '/max': [...baseTools, 'github', 'playwright'],
+            '/auto': [...baseTools],
+            '/smart': ['sequential-thinking', 'memory', 'filesystem'],
+            '/rapid': ['sequential-thinking', 'filesystem'],
+            '/deep': [...baseTools, 'github'],
+            '/sync': ['context7', 'filesystem', 'github'],
+            '/test': ['playwright', 'sequential-thinking', 'memory']
+        };
+        
+        let tools = commandTools[command] || baseTools;
+        
+        // 웹 관련 작업시 playwright 도구 추가
+        if (context.isWebRelated && !tools.includes('playwright')) {
+            tools.push('playwright');
+        }
+        
+        // GitHub 관련 작업시 github 도구 추가
+        if (task.toLowerCase().includes('commit') || task.toLowerCase().includes('git')) {
+            if (!tools.includes('github')) {
+                tools.push('github');
+            }
+        }
+        
+        return tools;
+    }
+
+    /**
+     * 유틸리티 메서드들
+     */
+    estimateTaskComplexity(task) {
+        const complexKeywords = ['architecture', 'refactor', 'migration', 'optimization', 'security'];
+        const simpleKeywords = ['fix', 'update', 'add', 'remove', 'change'];
+        
+        if (complexKeywords.some(k => task.toLowerCase().includes(k))) return 'high';
+        if (simpleKeywords.some(k => task.toLowerCase().includes(k))) return 'low';
+        return 'medium';
+    }
+    
+    estimateTaskUrgency(task) {
+        const urgentKeywords = ['urgent', 'critical', '긴급', '중요', 'asap', 'hotfix'];
+        return urgentKeywords.some(k => task.toLowerCase().includes(k)) ? 'high' : 'normal';
+    }
+    
+    extractKeywords(task) {
+        return task.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+    }
+    
+    getRecommendedAgents(isWebRelated, needsPlaywrightEnhanced) {
+        const base = ['CLAUDE_GUIDE', 'DEBUG'];
+        if (isWebRelated) base.push('WEB_TESTING_MASTER');
+        if (needsPlaywrightEnhanced) base.push('PLAYWRIGHT_MCP_ENHANCED');
+        return base;
+    }
+    
+    estimateDuration(task) {
+        const complexity = this.estimateTaskComplexity(task);
+        const durations = { 'low': '5-15분', 'medium': '15-30분', 'high': '30-60분' };
+        return durations[complexity];
     }
 }
 

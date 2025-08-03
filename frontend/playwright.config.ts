@@ -31,6 +31,21 @@ export default defineConfig({
     extraHTTPHeaders: {
       // CSP 헤더가 있는 경우 테마 CSS 로딩을 위해 필요할 수 있음
     },
+    
+    // 🔧 브라우저 실행 최적화 (Chrome 멈춤 해결)
+    launchOptions: {
+      args: [
+        '--no-sandbox',
+        '--disable-dev-shm-usage', 
+        '--disable-web-security',
+        '--disable-features=TranslateUI',
+        '--disable-ipc-flooding-protection',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+      ],
+      timeout: 45000, // 브라우저 시작 타임아웃 45초
+      slowMo: process.env.CI ? 100 : 0, // CI에서 안정성을 위해 약간의 지연
+    },
   },
 
   // 프로젝트별 설정
@@ -120,25 +135,6 @@ export default defineConfig({
   globalSetup: './tests/setup/global-setup.ts',
   // globalTeardown: './tests/setup/global-teardown.ts',
   
-  // 🚀 Chrome 설치 문제 해결 설정
-  workers: process.env.CI ? 1 : 2, // CI에서 안정성 향상
+  // 🚀 Chrome 설치 문제 해결 설정  
   maxFailures: process.env.CI ? 5 : 3, // 실패 시 조기 종료
-  
-  // 브라우저 재설치 방지 설정
-  metadata: {
-    skipBrowserDownload: true, // 브라우저 재다운로드 방지
-  },
-  
-  // 브라우저 실행 최적화
-  launchOptions: {
-    // Chrome 실행 시 안정성 향상 옵션
-    args: [
-      '--no-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-web-security',
-      '--disable-features=TranslateUI',
-      '--disable-ipc-flooding-protection',
-    ],
-    timeout: 30000, // 브라우저 시작 타임아웃 30초
-  },
 });

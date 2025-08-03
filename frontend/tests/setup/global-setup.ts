@@ -17,27 +17,41 @@ async function globalSetup(config: FullConfig) {
     console.log('⏭️ Skipping browser installation (SKIP_BROWSER_INSTALL=true)');
   }
 
-  // 🔍 기존 브라우저 설치 여부 확인
+  // 🔍 파일 시스템 기반 브라우저 설치 여부 확인
   try {
     console.log('🔍 Checking for existing Playwright browsers...');
-    const browserCheckResult = execSync('npx playwright install --dry-run chromium', { 
-      encoding: 'utf8',
-      timeout: 10000 
-    });
     
-    if (browserCheckResult.includes('is already installed')) {
+    const fs = await import('fs');
+    const os = await import('os');
+    const path = await import('path');
+    
+    // Playwright 브라우저 설치 경로 확인
+    const homeDir = os.homedir();
+    const playwrightCache = path.join(homeDir, '.cache', 'ms-playwright');
+    const chromiumDir = path.join(playwrightCache, 'chromium-1181');
+    const chromiumBinary = path.join(chromiumDir, 'chrome-linux', 'chrome');
+    
+    // 브라우저 바이너리 존재 여부 확인
+    const isChromiumInstalled = fs.existsSync(chromiumBinary) || fs.existsSync(chromiumDir);
+    
+    if (isChromiumInstalled) {
       console.log('✅ Chromium already installed, skipping installation');
-    } else {
+      console.log(`   Location: ${chromiumDir}`);
+    } else if (!skipBrowserInstall) {
       console.log('📦 Installing missing Playwright browsers (Chromium only)...');
       execSync('npx playwright install chromium', { 
         encoding: 'utf8',
-        timeout: 60000,
+        timeout: 120000, // 2분 타임아웃 (더 여유롭게)
         stdio: 'inherit'
       });
+      console.log('✅ Chromium installation completed');
+    } else {
+      console.log('⏭️ Skipping browser installation (SKIP_BROWSER_INSTALL=true)');
     }
   } catch (error) {
-    console.log('⚠️ Browser check failed, proceeding with existing installation:', error);
-    // 브라우저 확인에 실패해도 계속 진행 - 이미 설치되어 있을 가능성이 높음
+    console.log('⚠️ Browser installation check failed:', error.message);
+    // 설치 확인에 실패해도 계속 진행 - 기존 설치된 브라우저로 테스트 시도
+    console.log('   Continuing with existing browser installation...');
   }
 
   // 브라우저 시작 (타임아웃 설정)
