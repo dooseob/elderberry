@@ -5,9 +5,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { NotificationItem } from './NotificationItem';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
-import { Button } from '../ui/Button';
-import { ConditionalMotion } from '../ui/ConditionalMotion';
+import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
+import { Button } from '../../shared/ui/Button';
+import { ConditionalMotion } from '../../shared/ui/ConditionalMotion';
 
 interface NotificationDropdownProps {
   isOpen: boolean;

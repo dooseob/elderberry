@@ -3,9 +3,9 @@
  * 새로운 Linear Design System 컴포넌트들의 데모
  */
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/Card';
-import Button from '../ui/Button';
-import Input from '../ui/Input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../shared/ui/Card';
+import Button from '../../shared/ui/Button';
+import Input from '../../shared/ui/Input';
 import { LinearThemeProvider, LinearThemeSelector, LinearThemeManager, useLinearThemeContext } from '../theme/LinearThemeProvider';
 import { Search, User, Settings, Heart, Star, Download } from 'lucide-react';
 

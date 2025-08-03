@@ -20,8 +20,8 @@ import {
   ThumbsUp
 } from '../icons/LucideIcons';
 
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
 import { Review } from '../../types/review';
 import { useReviewStore } from '../../stores/reviewStore';
 

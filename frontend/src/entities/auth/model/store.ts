@@ -136,26 +136,30 @@ export const useAuthStore = create<AuthStore>()(
             // API 클라이언트 사용
             const { login } = await import('../../../services/auth');
             const data = await login(request);
-            const { accessToken, refreshToken, memberInfo } = data;
+            const { accessToken, refreshToken, member } = data;
 
-            // 토큰 저장
-            TokenManager.setTokens(accessToken, refreshToken);
-            localStorage.setItem('user', JSON.stringify(memberInfo));
+            // 토큰 저장 (백엔드에서 refreshToken이 없을 수 있음)
+            if (refreshToken) {
+              TokenManager.setTokens(accessToken, refreshToken);
+            } else {
+              localStorage.setItem('accessToken', accessToken);
+            }
+            localStorage.setItem('user', JSON.stringify(member));
 
             set((state) => {
-              state.user = memberInfo;
+              state.user = member;
               state.accessToken = accessToken;
-              state.refreshToken = refreshToken;
+              state.refreshToken = refreshToken || null;
               state.isAuthenticated = true;
               state.isLoading = false;
               state.error = null;
             });
 
             // 이벤트 발행
-            get().emit({ type: 'LOGIN_SUCCESS', payload: { user: memberInfo } });
+            get().emit({ type: 'LOGIN_SUCCESS', payload: { user: member } });
 
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
+            const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
             
             set((state) => {
               state.isLoading = false;
@@ -177,23 +181,27 @@ export const useAuthStore = create<AuthStore>()(
             // API 클라이언트 사용
             const { register } = await import('../../../services/auth');
             const data = await register(request);
-            const { accessToken, refreshToken, memberInfo } = data;
+            const { accessToken, refreshToken, member } = data;
 
             // 토큰 저장
-            TokenManager.setTokens(accessToken, refreshToken);
-            localStorage.setItem('user', JSON.stringify(memberInfo));
+            if (refreshToken) {
+              TokenManager.setTokens(accessToken, refreshToken);
+            } else {
+              localStorage.setItem('accessToken', accessToken);
+            }
+            localStorage.setItem('user', JSON.stringify(member));
 
             set((state) => {
-              state.user = memberInfo;
+              state.user = member;
               state.accessToken = accessToken;
-              state.refreshToken = refreshToken;
+              state.refreshToken = refreshToken || null;
               state.isAuthenticated = true;
               state.isLoading = false;
               state.error = null;
             });
 
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
+            const errorMessage = error instanceof Error ? error.message : 'Registration failed. Please try again.';
             
             set((state) => {
               state.isLoading = false;
@@ -210,7 +218,7 @@ export const useAuthStore = create<AuthStore>()(
             const { logout } = await import('../../../services/auth');
             await logout();
           } catch (error) {
-            console.warn('로그아웃 요청 실패:', error);
+            console.warn('Logout request failed:', error);
           } finally {
             // 로컬 상태 정리
             TokenManager.clearTokens();
@@ -233,7 +241,7 @@ export const useAuthStore = create<AuthStore>()(
           try {
             const refreshToken = get().refreshToken;
             if (!refreshToken) {
-              throw new Error('리프레시 토큰이 없습니다.');
+              throw new Error('No refresh token available.');
             }
 
             // API 클라이언트의 자동 토큰 갱신을 활용
@@ -241,7 +249,7 @@ export const useAuthStore = create<AuthStore>()(
             const isValid = await validateToken();
             
             if (!isValid) {
-              throw new Error('토큰 갱신에 실패했습니다.');
+              throw new Error('Token refresh failed.');
             }
 
             // 토큰은 API 클라이언트에서 자동으로 저장됨
@@ -284,7 +292,7 @@ export const useAuthStore = create<AuthStore>()(
             });
 
             if (!response.ok) {
-              throw new Error('프로필 업데이트에 실패했습니다.');
+              throw new Error('Profile update failed.');
             }
 
             const updatedUser = await response.json();
@@ -299,7 +307,7 @@ export const useAuthStore = create<AuthStore>()(
             get().emit({ type: 'PROFILE_UPDATE', payload: { user: updatedUser } });
 
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '프로필 업데이트에 실패했습니다.';
+            const errorMessage = error instanceof Error ? error.message : 'Profile update failed. Please try again.';
             
             set((state) => {
               state.isLoading = false;
@@ -327,7 +335,7 @@ export const useAuthStore = create<AuthStore>()(
             });
 
             if (!response.ok) {
-              throw new Error('비밀번호 변경에 실패했습니다.');
+              throw new Error('Password change failed.');
             }
 
             set((state) => {
@@ -336,7 +344,7 @@ export const useAuthStore = create<AuthStore>()(
             });
 
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '비밀번호 변경에 실패했습니다.';
+            const errorMessage = error instanceof Error ? error.message : 'Password change failed. Please try again.';
             
             set((state) => {
               state.isLoading = false;
@@ -360,7 +368,7 @@ export const useAuthStore = create<AuthStore>()(
             });
 
             if (!response.ok) {
-              throw new Error('사용자 정보 조회에 실패했습니다.');
+              throw new Error('Failed to fetch user information.');
             }
 
             const user = await response.json();
@@ -373,7 +381,7 @@ export const useAuthStore = create<AuthStore>()(
             });
 
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '사용자 정보 조회에 실패했습니다.';
+            const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user information. Please try again.';
             
             set((state) => {
               state.isLoading = false;
@@ -415,7 +423,7 @@ export const useAuthStore = create<AuthStore>()(
             return await validateToken();
 
           } catch (error) {
-            console.warn('토큰 검증 실패:', error);
+            console.warn('Token validation failed:', error);
             return false;
           }
         },

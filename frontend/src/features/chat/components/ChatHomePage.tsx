@@ -9,15 +9,15 @@ import {
   Send
 } from '../../../components/icons/LucideIcons';
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../components/ui/Button";
-import { Card, CardContent } from "../../../components/ui/Card";
-import { Separator } from "../../../components/ui/Separator";
+import { Button } from "../../../shared/ui/Button";
+import { Card, CardContent } from "../../../shared/ui/Card";
+import { Separator } from "../../../shared/ui/Separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../components/ui/Tooltip";
+} from "../../../shared/ui/Tooltip";
 export default function ChatHomePage() {
   const navigate = useNavigate();
   

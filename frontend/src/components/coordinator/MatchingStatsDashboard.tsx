@@ -11,8 +11,8 @@ import {
 } from '../icons/LucideIcons';
 import { motion } from 'framer-motion';
 import { CoordinatorMatchingStatistics } from '@/services/coordinatorApi';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import Button from '../../shared/ui/Button';
 
 interface MatchingStatsDashboardProps {
   statistics: CoordinatorMatchingStatistics;

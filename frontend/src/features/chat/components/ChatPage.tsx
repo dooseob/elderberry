@@ -10,14 +10,14 @@ import {
 } from '../../../components/icons/LucideIcons';
 import { devLogger, errorLogger } from '../../../utils/devLogger';
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "../../../components/ui/Button";
-import { Card, CardContent } from "../../../components/ui/Card";
+import { Button } from "../../../shared/ui/Button";
+import { Card, CardContent } from "../../../shared/ui/Card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../components/ui/Tooltip";
+} from "../../../shared/ui/Tooltip";
 interface Message {
   id: number;
   text: string;

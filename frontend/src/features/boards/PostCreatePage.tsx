@@ -21,8 +21,8 @@ import { useBoardStore } from '../../stores/boardStore';
 import { useAuthStore } from '../../stores/authStore';
 import { Board, PostCreateRequest } from '../../types/board';
 import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
+import Button from '../../../shared/ui/Button';
 import { boardFileService } from '../../services/boardApi';
 
 // 파일 정보 인터페이스

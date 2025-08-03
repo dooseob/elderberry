@@ -35,7 +35,7 @@ import {
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { EmailInput } from '../../components/auth/EmailInput';
 import { PasswordInput } from '../../components/auth/PasswordInput';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../shared/ui/Button';
 import { useAuthStore } from '../../entities/auth/model/store';
 import { useLinearTheme } from '../../hooks/useLinearTheme';
 import { cn } from '../../lib/utils';
@@ -199,7 +199,7 @@ export const SignInPage: React.FC = () => {
       navigate(redirectPath, { replace: true });
     } catch (error) {
       // 에러는 store에서 처리
-      console.error('로그인 실패:', error);
+      console.error('Login failed:', error);
     }
   };
   
@@ -211,7 +211,7 @@ export const SignInPage: React.FC = () => {
       // 소셜 로그인 구현 (실제로는 OAuth 플로우)
       window.location.href = `/api/auth/oauth/${provider}?redirect=${encodeURIComponent(redirectPath)}`;
     } catch (error) {
-      console.error(`${provider} 로그인 실패:`, error);
+      console.error(`${provider} login failed:`, error);
       setSocialLoading(null);
     }
   };
@@ -235,30 +235,17 @@ export const SignInPage: React.FC = () => {
       showThemeToggle
       testId="signin-page"
     >
-      <div className="space-y-6">
-        {/* 홈으로 돌아가기 링크 */}
-        <div className="text-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-          >
-            <Link to="/" className="flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
+      <div className="space-y-3 sm:space-y-4">
         
         {/* 테스트 계정 버튼 (개발 환경에서만) */}
         {import.meta.env.MODE === 'development' && (
-          <div className="text-center">
+          <div className="text-center mb-4">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={fillTestAccount}
-              className="text-xs"
+              className="text-xs px-3 py-1.5 border-dashed"
             >
               Use Test Account
             </Button>
@@ -268,43 +255,6 @@ export const SignInPage: React.FC = () => {
         {/* 이메일 단계 */}
         {step === 'email' && (
           <>
-            {/* 소셜 로그인 (간소화) */}
-            <div className="space-y-3">
-              <div className="grid gap-2">
-                {socialProviders.slice(0, 2).map((provider) => (
-                  <Button
-                    key={provider.id}
-                    type="button"
-                    variant="outline"
-                    size="default"
-                    onClick={() => handleSocialLogin(provider.id)}
-                    disabled={!provider.enabled || socialLoading === provider.id}
-                    loading={socialLoading === provider.id}
-                    className={cn(
-                      'w-full justify-center gap-3',
-                      !isReducedMotion && 'linear-animate-in',
-                      provider.color
-                    )}
-                    testId={`social-signin-${provider.id}`}
-                  >
-                    <provider.icon className="w-4 h-4" />
-                    Continue with {provider.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            
-            {/* 구분선 */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[var(--linear-color-border-subtle)]" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[var(--linear-color-surface-modal)] text-[var(--linear-color-text-secondary)]">
-                  Or continue with email
-                </span>
-              </div>
-            </div>
             
             {/* 이메일 입력 */}
             <div className="space-y-4">
@@ -326,12 +276,56 @@ export const SignInPage: React.FC = () => {
                 size="lg"
                 onClick={handleEmailContinue}
                 disabled={!watchedEmail || !!errors.email}
-                className="w-full"
+                className="w-full transition-all duration-200 ease-out hover:shadow-lg hover:transform hover:scale-[1.01] active:scale-[0.99]"
                 testId="email-continue"
               >
                 Continue
                 <ArrowRight className="w-4 h-4" />
               </Button>
+            </div>
+            
+            {/* 구분선 */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--linear-color-border-subtle)]" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-[var(--linear-color-surface-modal)] text-[var(--linear-color-text-secondary)]">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            
+            {/* 소셜 로그인 (하단으로 이동) */}
+            <div className="space-y-2">
+              <div className="grid gap-2">
+                {socialProviders.slice(0, 2).map((provider) => (
+                  <Button
+                    key={provider.id}
+                    type="button"
+                    variant="outline"
+                    size="default"
+                    onClick={() => handleSocialLogin(provider.id)}
+                    disabled={!provider.enabled || socialLoading === provider.id}
+                    loading={socialLoading === provider.id}
+                    className={cn(
+                      'w-full justify-center gap-3',
+                      'transition-all duration-200 ease-out',
+                      'hover:shadow-lg hover:transform hover:scale-[1.01]',
+                      'active:scale-[0.99] active:shadow-sm',
+                      !isReducedMotion && 'linear-animate-in',
+                      // 소셜 로그인 버튼은 기본 outline variant 사용
+                      provider.id === 'google' && 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50',
+                      provider.id === 'apple' && 'bg-black border-black text-white hover:bg-gray-800',
+                      provider.id === 'kakao' && 'bg-yellow-300 border-yellow-300 text-gray-900 hover:bg-yellow-400'
+                    )}
+                    testId={`social-signin-${provider.id}`}
+                  >
+                    <provider.icon className="w-4 h-4" />
+                    Continue with {provider.name}
+                  </Button>
+                ))}
+              </div>
             </div>
           </>
         )}
@@ -421,7 +415,7 @@ export const SignInPage: React.FC = () => {
               size="lg"
               loading={isLoading}
               disabled={!isValid || isLoading}
-              className="w-full"
+              className="w-full transition-all duration-200 ease-out hover:shadow-lg hover:transform hover:scale-[1.01] active:scale-[0.99]"
               testId="signin-submit"
             >
               <LogIn className="w-4 h-4" />
@@ -431,7 +425,7 @@ export const SignInPage: React.FC = () => {
         )}
         
         {/* 사인업 링크 */}
-        <div className="text-center space-y-3">
+        <div className="text-center space-y-3 pt-2">
           <div className="text-sm text-[var(--linear-color-text-secondary)]">
             Don't have an account?
           </div>
@@ -440,7 +434,7 @@ export const SignInPage: React.FC = () => {
             variant="ghost"
             size="default"
             asChild
-            className="w-full"
+            className="w-full hover:bg-[var(--linear-color-surface-secondary)] transition-colors duration-200"
             testId="signup-link"
           >
             <Link to="/auth/signup" className="flex items-center justify-center gap-2">
@@ -452,19 +446,19 @@ export const SignInPage: React.FC = () => {
         </div>
         
         {/* 도움말 링크 */}
-        <div className="text-center pt-4 border-t border-[var(--linear-color-border-subtle)]">
+        <div className="text-center pt-3 border-t border-[var(--linear-color-border-subtle)]">
           <p className="text-xs text-[var(--linear-color-text-tertiary)]">
             Having trouble signing in?{' '}
             <Link 
               to="/help" 
-              className="text-[var(--linear-color-accent)] hover:underline"
+              className="text-[var(--linear-color-accent)] hover:underline transition-colors"
             >
               Get help
             </Link>
             {' '}or{' '}
             <Link 
               to="/contact" 
-              className="text-[var(--linear-color-accent)] hover:underline"
+              className="text-[var(--linear-color-accent)] hover:underline transition-colors"
             >
               contact support
             </Link>

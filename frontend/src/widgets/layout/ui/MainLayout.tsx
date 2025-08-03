@@ -15,10 +15,10 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { useLinearTheme } from '../../hooks/useLinearTheme';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
+import { useLinearTheme } from '../../../hooks/useLinearTheme';
+import Header from '../../header/ui/Header';
+import Sidebar from '../../sidebar/ui/Sidebar';
+import Footer from '../../footer/ui/Footer';
 
 /**
  * 레이아웃 변형 타입

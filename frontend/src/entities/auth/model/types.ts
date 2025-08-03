@@ -69,11 +69,13 @@ export interface ValidateTokenRequest {
   token: string;
 }
 
-// API 응답 타입
+// API 응답 타입 (백엔드 응답과 일치)
 export interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
-  memberInfo: User;
+  refreshToken?: string; // refreshToken은 선택적일 수 있음
+  tokenType: string;
+  expiresIn: number;
+  member: User; // 백엔드에서 member 필드로 반환
 }
 
 export interface TokenValidationResponse {

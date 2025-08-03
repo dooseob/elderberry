@@ -18,8 +18,8 @@ import {
   TrendingUp
 } from '../../components/icons/LucideIcons';
 import { useAuthStore } from '../../stores/authStore';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '../../../shared/ui/Card';
+import { Button } from '../../../shared/ui/Button';
 import { ProfileOverview } from './components/ProfileOverview';
 import { MyReviews } from './components/MyReviews';
 import { MatchingHistory } from './components/MatchingHistory';

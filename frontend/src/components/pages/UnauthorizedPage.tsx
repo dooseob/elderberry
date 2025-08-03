@@ -13,8 +13,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 import { MemberRole } from '../../types/auth';
-import Button from '../ui/Button';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../ui/Card';
+import Button from '../../shared/ui/Button';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../../shared/ui/Card';
 
 export default function UnauthorizedPage() {
   const location = useLocation();

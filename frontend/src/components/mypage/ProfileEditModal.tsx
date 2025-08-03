@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, User, Phone, MapPin, FileText, Camera, Upload } from '../icons/LucideIcons';
 
-import { Button } from '../ui/Button';
+import { Button } from '../../shared/ui/Button';
 import { AuthUser } from '../../types/auth';
 import { ProfileResponse } from '../../types/profile';
 import { useAuthStore } from '../../stores/authStore';

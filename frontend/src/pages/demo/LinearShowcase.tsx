@@ -34,12 +34,12 @@ import {
 
 // 기존 컴포넌트들 import
 import { useThemeContext } from '../../components/theme/ThemeProvider';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/Card';
-import Modal from '../../components/ui/Modal';
-import Tooltip from '../../components/ui/Tooltip';
-import Badge from '../../components/ui/Badge';
+import Button from '../../shared/ui/Button';
+import Input from '../../shared/ui/Input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../shared/ui/Card';
+import Modal from '../../shared/ui/Modal';
+import Tooltip from '../../shared/ui/Tooltip';
+import Badge from '../../shared/ui/Badge';
 
 // 데모 컴포넌트들 import (생성 예정)
 import ThemeShowcaseSection from '../../components/demo/sections/ThemeShowcaseSection';
@@ -597,9 +597,9 @@ const ThemeSelector = () => {
   );
 };`,
     'ui-components': `// UI 컴포넌트 사용법
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
+import Button from '../../shared/ui/Button';
+import Input from '../../shared/ui/Input';
+import { Card } from '../../shared/ui/Card';
 
 const UIExample = () => (
   <Card>

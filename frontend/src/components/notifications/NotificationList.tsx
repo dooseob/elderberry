@@ -5,9 +5,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { NotificationItem } from './NotificationItem';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
-import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
+import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
+import { Button } from '../../shared/ui/Button';
+import { Card } from '../../shared/ui/Card';
 import { 
   NotificationFilter, 
   NotificationType, 

@@ -11,7 +11,7 @@ import { ThemeProvider } from './components/theme/ThemeProvider.tsx'
 import './App.css'
 import './styles/animations.css'
 import './styles/linear-theme.css'
-import './components/layout/layout.css'
+import './widgets/layout/ui/layout.css'
 
 // React 18 루트 생성 및 렌더링
 ReactDOM.createRoot(document.getElementById('root')!).render(

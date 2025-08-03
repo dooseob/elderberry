@@ -11,7 +11,7 @@ import {
 import { motion } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import type { Gender } from '@/types/health';
-import RadioGroup from '@/components/ui/RadioGroup';
+import RadioGroup from '../../../shared/ui/RadioGroup';
 
 const BasicInfoStep: React.FC = () => {
   const {

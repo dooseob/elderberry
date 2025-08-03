@@ -15,8 +15,8 @@
  */
 import React from 'react';
 import { Phone, Send, Check, Loader2 } from 'lucide-react';
-import { Input, validatePhoneNumber, type InputProps } from '../ui/Input';
-import { Button } from '../ui/Button';
+import { Input, validatePhoneNumber, type InputProps } from '../../shared/ui/Input';
+import { Button } from '../../shared/ui/Button';
 import { cn } from '../../lib/utils';
 
 /**

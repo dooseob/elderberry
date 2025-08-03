@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../entities/auth';
-import { LoadingSpinner } from '../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
 
 interface AuthProviderProps {
   children: React.ReactNode;

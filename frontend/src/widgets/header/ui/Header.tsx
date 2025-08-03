@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useLinearTheme } from '../../../hooks/useLinearTheme';
 import type { LayoutVariant, SidebarState } from './MainLayout';
 
 /**

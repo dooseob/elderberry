@@ -20,8 +20,8 @@ import { motion } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { HealthAssessmentApi } from '@/services/healthApi';
 import { ADL_OPTIONS, LTCI_GRADES, CARE_TARGET_STATUS, MEAL_TYPES } from '@/types/health';
-import Button from '@/components/ui/Button';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import Button from '../../../shared/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
 
 interface ReviewStepProps {
   onComplete?: (assessmentId: number) => void;

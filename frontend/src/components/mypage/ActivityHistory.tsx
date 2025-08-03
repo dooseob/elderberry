@@ -30,8 +30,8 @@ import {
   ExternalLink
 } from '../icons/LucideIcons';
 
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
 
 // 활동 타입 정의
 interface ActivityItem {

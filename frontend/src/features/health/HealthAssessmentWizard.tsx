@@ -12,9 +12,9 @@ import {
 } from '../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import Button from '@/components/ui/Button';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
-import ProgressBar from '@/components/ui/ProgressBar';
+import Button from '../../../shared/ui/Button';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../shared/ui/Card';
+import ProgressBar from '../../../shared/ui/ProgressBar';
 
 // 단계별 컴포넌트들
 import BasicInfoStep from './steps/BasicInfoStep';

@@ -23,8 +23,8 @@ import {
 } from '../../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FacilityRecommendation, useFacilityStore } from '@/stores/facilityStore';
-import Button from '@/components/ui/Button';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import Button from '../../../shared/ui/Button';
+import Card, { CardContent, CardHeader, CardTitle } from '../../../shared/ui/Card';
 import FacilityCard from './FacilityCard';
 
 interface RecommendationResultsProps {

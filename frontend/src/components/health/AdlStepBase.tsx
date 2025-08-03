@@ -15,7 +15,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { ADL_OPTIONS } from '@/types/health';
 import type { AdlLevel } from '@/types/health';
-import RadioGroup, { type RadioOption } from '@/components/ui/RadioGroup';
+import RadioGroup, { type RadioOption } from '../../shared/ui/RadioGroup';
 
 interface AdlStepBaseProps {
   // 기본 정보

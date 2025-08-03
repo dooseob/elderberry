@@ -29,8 +29,8 @@ import { useJobStore } from '../../stores/jobStore';
 import { useAuthStore } from '../../stores/authStore';
 import { Job, ApplicationStatus, JobApplicationCreateRequest } from '../../types/job';
 import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
+import Button from '../../../shared/ui/Button';
 import { applicationService } from '../../services/jobApi';
 
 // 고용 형태 한글 매핑

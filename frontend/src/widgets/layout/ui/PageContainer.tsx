@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import { useLinearTheme } from '../../hooks/useLinearTheme';
-import Breadcrumb, { type BreadcrumbItem } from './Breadcrumb';
+import { useLinearTheme } from '../../../hooks/useLinearTheme';
+import Breadcrumb, { type BreadcrumbItem } from '../../breadcrumb/ui/Breadcrumb';
 
 /**
  * 페이지 액션 버튼 타입

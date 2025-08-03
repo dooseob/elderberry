@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { FacilityProfile } from '@/stores/facilityStore';
 import FacilityCard from './FacilityCard';
-import Card, { CardContent } from '@/components/ui/Card';
+import Card, { CardContent } from '../../../shared/ui/Card';
 
 interface FacilityListProps {
   facilities: FacilityProfile[];

@@ -9,8 +9,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, Zap, Loader2 } from 'lucide-react';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
-import Button from '../../ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/ui/Card';
+import Button from '../../../shared/ui/Button';
 
 const HoverEffectsDemo: React.FC = () => {
   return (

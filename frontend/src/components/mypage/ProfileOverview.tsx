@@ -20,8 +20,8 @@ import {
   Target
 } from '../icons/LucideIcons';
 
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
 import { AuthUser, MemberRole } from '../../types/auth';
 import { ProfileResponse } from '../../types/profile';
 import ProfileEditModal from './ProfileEditModal';

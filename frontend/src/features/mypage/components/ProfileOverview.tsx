@@ -20,8 +20,8 @@ import {
   Activity,
   Users
 } from '../../../components/icons/LucideIcons';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../shared/ui/Card';
+import { Button } from '../../../shared/ui/Button';
 import { AuthUser } from '../../../types/auth';
 import { useProfileStore } from '../../../stores/profileStore';
 import { useReviewStore } from '../../../stores/reviewStore';

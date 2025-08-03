@@ -10,9 +10,9 @@ import { motion } from 'framer-motion';
 import { Palette, Eye, Contrast, Info, Check, AlertTriangle, X } from 'lucide-react';
 
 import { useThemeContext } from '../../theme/ThemeProvider';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
-import Badge from '../../ui/Badge';
-import Button from '../../ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/ui/Card';
+import Badge from '../../../shared/ui/Badge';
+import Button from '../../../shared/ui/Button';
 
 /**
  * 색상 팔레트 표시 컴포넌트

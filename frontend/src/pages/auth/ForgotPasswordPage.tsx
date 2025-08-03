@@ -37,8 +37,8 @@ import {
 import { AuthLayout } from '../../components/auth/AuthLayout';
 import { EmailInput } from '../../components/auth/EmailInput';
 import { PasswordInput, PasswordConfirmInput } from '../../components/auth/PasswordInput';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Button } from '../../shared/ui/Button';
+import { Input } from '../../shared/ui/Input';
 import { useLinearTheme } from '../../hooks/useLinearTheme';
 import { cn } from '../../lib/utils';
 

@@ -20,7 +20,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Home, Moon, Sun, Sparkles } from 'lucide-react';
 import { useLinearTheme } from '../../hooks/useLinearTheme';
-import { Button } from '../ui/Button';
+import { Button } from '../../shared/ui/Button';
 import { cn } from '../../lib/utils';
 
 /**
@@ -204,65 +204,79 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
         )}
       </header>
 
-      {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md space-y-8">
-          {/* 브랜딩 섹션 */}
+      {/* 메인 콘텐츠 영역 - 반응형 최적화 */}
+      <main className="flex-1 flex items-start justify-center px-4 py-2 sm:py-4 min-h-0 overflow-y-auto">
+        <div className="w-full max-w-md space-y-3 sm:space-y-4 mt-1 sm:mt-2">
+          {/* 브랜딩 섹션 (모바일 최적화) */}
           {showBranding && (
             <div 
               className={cn(
-                'text-center space-y-4',
+                'text-center space-y-1 sm:space-y-2',
                 !isReducedMotion && 'linear-animate-in'
               )}
             >
               {/* 로고 */}
               <div className="flex justify-center">
-                <ElderberryLogo size="lg" />
+                <ElderberryLogo size="sm" className="sm:hidden" />
+                <ElderberryLogo size="md" className="hidden sm:block" />
               </div>
               
-              {/* 브랜드명 및 설명 */}
-              <div className="space-y-2">
-                <h1 className="text-2xl font-[var(--linear-font-weight-bold)] text-[var(--linear-color-text-primary)]">
+              {/* 브랜드명 */}
+              <div className="space-y-0.5 sm:space-y-1">
+                <h1 className="text-lg sm:text-xl font-[var(--linear-font-weight-bold)] text-[var(--linear-color-text-primary)]">
                   엘더베리
                 </h1>
-                <p className="text-sm text-[var(--linear-color-text-secondary)] max-w-sm mx-auto">
-                  요양시설과 간병인을 연결하는 스마트 매칭 플랫폼
-                </p>
               </div>
             </div>
           )}
 
-          {/* 페이지 제목 */}
+          {/* 페이지 제목 (모바일 최적화) */}
           {(title || subtitle) && (
             <div 
               className={cn(
-                'text-center space-y-2',
+                'text-center space-y-0.5 sm:space-y-1',
                 !isReducedMotion && 'linear-animate-in linear-animate-delay-1'
               )}
             >
               {title && (
-                <h2 className="text-xl font-[var(--linear-font-weight-semibold)] text-[var(--linear-color-text-primary)]">
+                <h2 className="text-base sm:text-lg font-[var(--linear-font-weight-semibold)] text-[var(--linear-color-text-primary)]">
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p className="text-sm text-[var(--linear-color-text-secondary)]">
+                <p className="text-xs sm:text-sm text-[var(--linear-color-text-secondary)]">
                   {subtitle}
                 </p>
               )}
             </div>
           )}
 
-          {/* 메인 콘텐츠 카드 */}
+          {/* 메인 콘텐츠 카드 (모바일 최적화) */}
           <div 
             className={cn(
               'bg-[var(--linear-color-surface-modal)] border border-[var(--linear-color-border-subtle)]',
-              'rounded-[var(--linear-radius-large)] p-8 shadow-[var(--linear-shadow-modal)]',
+              'rounded-[var(--linear-radius-large)] p-4 sm:p-6 shadow-[var(--linear-shadow-modal)]',
               'backdrop-blur-sm',
               !isReducedMotion && 'linear-animate-in linear-animate-delay-2'
             )}
           >
             {children}
+            
+            {/* 홈으로 돌아가기 링크 (모바일에서 좋을 때만 표시) */}
+            <div className="text-center mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-[var(--linear-color-border-subtle)]">
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="text-xs hover:bg-[var(--linear-color-surface-secondary)] transition-colors"
+              >
+                <Link to="/" className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <ArrowLeft className="w-3 h-3" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Home</span>
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </main>

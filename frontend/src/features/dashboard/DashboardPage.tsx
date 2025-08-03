@@ -24,8 +24,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
+import Button from '../../../shared/ui/Button';
 import { useSEO, addStructuredData } from '../../hooks/useSEO';
 
 // 통계 카드 컴포넌트

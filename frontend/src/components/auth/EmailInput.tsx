@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import { Mail, Check, AlertCircle } from 'lucide-react';
-import { Input, validateEmail, type InputProps } from '../ui/Input';
+import { Input, validateEmail, type InputProps } from '../../shared/ui/Input';
 import { cn } from '../../lib/utils';
 
 // 한국 주요 이메일 도메인

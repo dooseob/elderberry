@@ -5,8 +5,8 @@
 import React, { useState, useEffect } from 'react';
 import { animationManager, AnimationConfig } from '../../utils/animationConfig';
 import { Settings, Zap, Eye, BarChart3 } from 'lucide-react';
-import Button from '../ui/Button';
-import { MotionFadeIn } from '../ui/ConditionalMotion';
+import Button from '../../shared/ui/Button';
+import { MotionFadeIn } from '../../shared/ui/ConditionalMotion';
 
 export default function AnimationSettings() {
   const [config, setConfig] = useState<AnimationConfig>(animationManager.getConfig());

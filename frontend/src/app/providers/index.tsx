@@ -6,7 +6,7 @@ import React from 'react';
 import { QueryProvider } from './QueryProvider';
 import { AuthProvider } from './AuthProvider';
 import { ThemeProvider } from './ThemeProvider';
-import { ErrorBoundary } from '../../shared/components/ui/ErrorBoundary';
+import { ErrorBoundary } from '../../shared/ui/ErrorBoundary';
 
 interface AppProviderProps {
   children: React.ReactNode;

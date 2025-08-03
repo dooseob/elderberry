@@ -14,11 +14,11 @@ import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/
 import { useAuthStore } from './stores/authStore';
 
 // 레이아웃 컴포넌트 (즉시 로딩 - 모든 페이지에서 사용)
-import MainLayout from './components/layout/MainLayout';
+import MainLayout from './widgets/layout';
 
 // 로딩 폴백 컴포넌트
-import LazyPageFallback from './components/ui/LazyPageFallback';
-import LazyLoadErrorBoundary from './components/ui/LazyLoadErrorBoundary';
+import LazyPageFallback from './shared/ui/LazyPageFallback';
+import LazyLoadErrorBoundary from './shared/ui/LazyLoadErrorBoundary';
 
 // 토스트 컨텍스트 프로바이더
 import { ToastProvider } from './hooks/useToast';
@@ -41,6 +41,9 @@ import {
   LazyBoardListPage,
   LazyPostDetailPage,
   LazyPostCreatePage,
+  LazyJobListPage,
+  LazyJobDetailPage,
+  LazyCoordinatorMatchingWizard,
   LazyProfileListPage,
   LazyProfileDetailPage,
   LazyNotificationsPage
@@ -220,6 +223,33 @@ function App() {
               } 
             />
 
+            {/* 구인구직 라우트 */}
+            <Route 
+              path="/jobs" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <LazyJobListPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/jobs/:jobId" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
+                      <LazyJobDetailPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
             {/* 프로필 관리 라우트 */}
             <Route 
               path="/profiles" 
@@ -320,7 +350,7 @@ function App() {
                 <CoordinatorRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">매칭 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 매칭 관리 페이지입니다.</p></div>
+                      <LazyCoordinatorMatchingWizard />
                     </Suspense>
                   </MainLayout>
                 </CoordinatorRoute>

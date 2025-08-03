@@ -183,7 +183,7 @@ class AuthApiClient {
         errorData
       );
     } else if (error.request) {
-      return new ApiError(0, 'NETWORK_ERROR', '네트워크 연결을 확인해주세요.');
+      return new ApiError(0, 'NETWORK_ERROR', 'Please check your network connection.');
     } else {
       return new ApiError(0, 'REQUEST_ERROR', error.message);
     }
@@ -219,7 +219,7 @@ class AuthApiClient {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
     } catch (error) {
-      console.warn('토큰 저장 실패:', error);
+      console.warn('Token storage failed:', error);
     }
   }
 
@@ -232,7 +232,7 @@ class AuthApiClient {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     } catch (error) {
-      console.warn('토큰 정리 실패:', error);
+      console.warn('Token cleanup failed:', error);
     }
   }
 
@@ -249,7 +249,7 @@ class AuthApiClient {
       try {
         const refreshToken = this.getStoredRefreshToken();
         if (!refreshToken) {
-          throw new Error('리프레시 토큰이 없습니다.');
+          throw new Error('No refresh token available.');
         }
 
         const response = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
@@ -297,7 +297,7 @@ class AuthApiClient {
     try {
       await this.client.post('/api/auth/logout');
     } catch (error) {
-      console.warn('로그아웃 요청 실패:', error);
+      console.warn('Logout request failed:', error);
     } finally {
       this.clearStoredTokens();
     }

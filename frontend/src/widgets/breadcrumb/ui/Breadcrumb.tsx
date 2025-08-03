@@ -15,7 +15,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useLinearTheme } from '../../../hooks/useLinearTheme';
 
 /**
  * 브레드크럼 아이템 타입

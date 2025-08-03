@@ -16,7 +16,7 @@
  */
 import React from 'react';
 import { Eye, EyeOff, Shield, Check, X, AlertTriangle } from 'lucide-react';
-import { Input, validatePassword, type InputProps } from '../ui/Input';
+import { Input, validatePassword, type InputProps } from '../../shared/ui/Input';
 import { cn } from '../../lib/utils';
 
 /**

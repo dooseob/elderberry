@@ -3,9 +3,9 @@
  * 시설 위치 표시 및 주변 편의시설 표시
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { Card } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
+import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
 import {
   MapPin,
   Navigation,

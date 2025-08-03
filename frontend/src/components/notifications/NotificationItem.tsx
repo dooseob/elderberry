@@ -11,7 +11,7 @@ import {
   NotificationPriority 
 } from '../../types/notifications';
 import { useNotificationStore } from '../../stores/notificationStore';
-import { ConditionalMotion } from '../ui/ConditionalMotion';
+import { ConditionalMotion } from '../../shared/ui/ConditionalMotion';
 
 interface NotificationItemProps {
   notification: Notification;

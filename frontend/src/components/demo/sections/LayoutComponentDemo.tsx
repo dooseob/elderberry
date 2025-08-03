@@ -9,9 +9,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Layout, Menu, Smartphone, Tablet, Monitor, Grid } from 'lucide-react';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../ui/Card';
-import Button from '../../ui/Button';
-import Badge from '../../ui/Badge';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/ui/Card';
+import Button from '../../../shared/ui/Button';
+import Badge from '../../../shared/ui/Badge';
 
 const ResponsiveDemo: React.FC = () => {
   const [activeBreakpoint, setActiveBreakpoint] = useState('desktop');

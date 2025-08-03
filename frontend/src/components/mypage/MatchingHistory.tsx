@@ -24,8 +24,8 @@ import {
   Award
 } from '../icons/LucideIcons';
 
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
 
 // 매칭 이력 타입 정의 (실제로는 별도 타입 파일에서 import)
 interface MatchingHistory {

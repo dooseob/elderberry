@@ -2,7 +2,7 @@
  * 토스트 알림 관리 훅
  */
 import { useState, useCallback } from 'react';
-import { ToastMessage, ToastType } from '../components/ui/Toast';
+import { ToastMessage, ToastType } from '../../shared/ui/Toast';
 
 export function useToast() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);

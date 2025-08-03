@@ -22,8 +22,8 @@ import {
 } from '../icons/LucideIcons';
 
 // 컴포넌트 imports
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Button } from '../../shared/ui/Button';
 import { useAuthStore } from '../../stores/authStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { useReviewStore } from '../../stores/reviewStore';
