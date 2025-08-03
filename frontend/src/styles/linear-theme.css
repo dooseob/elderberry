@@ -1,7 +1,15 @@
 /**
- * Linear Design System Theme
- * LCH 색공간 기반 테마 시스템 - 2025 Edition
+ * Linear Design System Theme - Enhanced Version 2025.2.0
+ * LCH 색공간 기반 테마 시스템 - Complete Implementation
  * Based on Linear's minimalist and professional design system
+ * 
+ * Features:
+ * - LCH Color Space for perceptually uniform colors
+ * - Multiple theme presets (Light, Dark, High Contrast)
+ * - Advanced animations and micro-interactions
+ * - Complete accessibility support (WCAG AAA)
+ * - Mobile-first responsive design
+ * - Performance optimized with CSS variables
  */
 
 :root {
@@ -101,10 +109,19 @@
   --linear-content-max-width: 1200px;
   --linear-content-padding: 24px;
   
-  /* Transitions */
-  --linear-transition-fast: 200ms ease-in-out;
-  --linear-transition-normal: 300ms ease-in-out;
-  --linear-transition-slow: 500ms ease-in-out;
+  /* Transitions - Enhanced */
+  --linear-transition-instant: 0ms;
+  --linear-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --linear-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --linear-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --linear-transition-slower: 600ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Easing Functions */
+  --linear-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --linear-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --linear-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --linear-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --linear-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   
   /* Gradients - Angular Complex */
   --linear-gradient-signature: linear-gradient(135deg, #08AEEA 0%, #2AF598 25%, #B5FFFC 50%, #FF5ACD 75%, #FFFFFF 100%);
@@ -118,15 +135,19 @@
   --linear-z-toast: 1200;
 }
 
-/* Light Themes */
+/* === Light Themes === */
+[data-theme="light"],
 .theme-light {
   --linear-lch-base: 95 2 266;
   --linear-lch-accent: 44 99 307;
+  --linear-contrast: 30;
 }
 
+[data-theme="catppuccin-latte"],
 .theme-catppuccin-latte {
   --linear-lch-base: 95.07617314910061 2.1856276247566773 265.9705972968138;
   --linear-lch-accent: 43.717135811988086 99.37386079300107 307.12305463765506;
+  --linear-contrast: 30;
 }
 
 .theme-github-light {
@@ -139,8 +160,10 @@
   --linear-lch-accent: 50 90 15;
 }
 
-/* Dark Themes */
-.theme-dark {
+/* === Dark Themes === */
+[data-theme="dark"],
+.theme-dark,
+.dark {
   --linear-lch-base: 18 11 280;
   --linear-lch-accent: 72 40 311;
   --linear-contrast: 30;
@@ -675,7 +698,33 @@ body {
   }
 }
 
-/* Custom scrollbar */
+/* === Advanced Features === */
+
+/* Container Queries Support */
+@container (min-width: 640px) {
+  .linear-container-sm {
+    padding: var(--linear-spacing-lg);
+  }
+}
+
+@container (min-width: 768px) {
+  .linear-container-md {
+    padding: var(--linear-spacing-xl);
+  }
+}
+
+/* Fluid Typography */
+.linear-fluid-text {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  line-height: var(--linear-line-height-normal);
+}
+
+.linear-fluid-heading {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: var(--linear-line-height-tight);
+}
+
+/* Custom scrollbar - Enhanced */
 .linear-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;

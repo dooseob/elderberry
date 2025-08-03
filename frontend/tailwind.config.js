@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // === Linear Design System Color Integration ===
-        // Linear CSS 변수를 Tailwind에서 사용할 수 있도록 매핑
+        // === Linear Design System Color Integration - Enhanced Version 2025.2.0 ===
+        // Linear CSS 변수를 Tailwind에서 사용할 수 있도록 매핑 (LCH 색공간 기반)
         linear: {
           // Background Colors
           'background': 'var(--linear-color-background)',
@@ -117,8 +117,9 @@ export default {
         'linear-relaxed': 'var(--linear-line-height-relaxed)',
       },
       spacing: {
-        // Linear 스페이싱 시스템
+        // Linear 스페이싱 시스템 (기하급수적 스케일)
         'linear-xs': 'var(--linear-spacing-xs)',
+        'linear-2xs': 'calc(var(--linear-spacing-xs) / 2)',
         'linear-sm': 'var(--linear-spacing-sm)',
         'linear-md': 'var(--linear-spacing-md)',
         'linear-lg': 'var(--linear-spacing-lg)',
@@ -147,17 +148,57 @@ export default {
         'linear-focus': 'var(--linear-shadow-focus)',
       },
       transitionDuration: {
-        // Linear 트랜지션
+        // Linear 트랜지션 (Enhanced)
+        'linear-instant': '0ms',
         'linear-fast': 'var(--linear-transition-fast)',
         'linear-normal': 'var(--linear-transition-normal)',
         'linear-slow': 'var(--linear-transition-slow)',
+        'linear-slower': '600ms',
+      },
+      transitionTimingFunction: {
+        // Linear 이징 함수
+        'linear-ease-in': 'cubic-bezier(0.4, 0, 1, 1)',
+        'linear-ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
+        'linear-ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'linear-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'linear-spring': 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+      },
+      animation: {
+        // Linear 애니메이션
+        'linear-fade-in': 'linear-fade-in var(--linear-transition-fast) ease-out',
+        'linear-slide-up': 'linear-slide-up var(--linear-transition-normal) ease-out',
+        'linear-slide-down': 'linear-slide-down var(--linear-transition-normal) ease-out',
+        'linear-scale-in': 'linear-scale-in var(--linear-transition-fast) ease-out',
+        'linear-spin': 'spin 1s linear infinite',
+        'linear-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       zIndex: {
-        // Linear Z-Index 스케일
+        // Linear Z-Index 스케일 (Enhanced)
+        'linear-base': '0',
         'linear-dropdown': 'var(--linear-z-dropdown)',
+        'linear-sticky': '1020',
+        'linear-fixed': '1030',
+        'linear-modal-backdrop': '1040',
         'linear-modal': 'var(--linear-z-modal)',
+        'linear-popover': '1060',
         'linear-tooltip': 'var(--linear-z-tooltip)',
         'linear-toast': 'var(--linear-z-toast)',
+      },
+      backdropFilter: {
+        // Linear 배경 필터
+        'linear-blur': 'blur(8px)',
+        'linear-blur-sm': 'blur(4px)',
+        'linear-blur-lg': 'blur(12px)',
+      },
+      gridTemplateColumns: {
+        // Linear 그리드 시스템
+        'linear-sidebar': 'var(--linear-sidebar-width) 1fr',
+        'linear-sidebar-collapsed': '60px 1fr',
+      },
+      maxWidth: {
+        // Linear 최대 너비
+        'linear-content': 'var(--linear-content-max-width)',
+        'linear-prose': '65ch',
       },
     },
   },

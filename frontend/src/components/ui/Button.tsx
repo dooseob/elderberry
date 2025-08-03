@@ -180,6 +180,12 @@ export interface ButtonProps
   
   /** 접근성: 제어하는 요소의 ID */
   'aria-controls'?: string;
+  
+  /** 자식 요소를 버튼으로 렌더링 (asChild pattern) */
+  asChild?: boolean;
+  
+  /** 테스트를 위한 data-testid 속성 */
+  testId?: string;
 }
 
 /**
@@ -199,6 +205,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     animation = true,
     loadingSpinner,
     disabledReason,
+    asChild = false,
+    testId,
     children, 
     disabled, 
     onClick,
@@ -328,6 +336,32 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       } : undefined,
     } : {};
     
+    // asChild 패턴 처리
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children, {
+        className: cn(
+          buttonVariants({ variant, size, radius }),
+          widthClass,
+          'linear-animate-in',
+          className,
+          children.props.className
+        ),
+        disabled: isDisabled,
+        onClick: handleClick,
+        onKeyDown: handleKeyDown,
+        'aria-label': computedAriaLabel,
+        'aria-describedby': computedAriaDescribedBy,
+        'aria-expanded': ariaExpanded,
+        'aria-controls': ariaControls,
+        'aria-busy': loading,
+        'aria-disabled': isDisabled,
+        'data-testid': testId,
+        tabIndex: isDisabled ? -1 : 0,
+        ...children.props,
+        ...props,
+      });
+    }
+    
     // 컴포넌트 선택 (애니메이션 여부에 따라)
     const ButtonComponent = shouldAnimate ? motion.button : 'button';
     
@@ -352,6 +386,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           aria-busy={loading}
           aria-disabled={isDisabled}
           tabIndex={isDisabled ? -1 : 0}
+          data-testid={testId}
           {...(shouldAnimate ? motionProps : {})}
           {...props}
         >

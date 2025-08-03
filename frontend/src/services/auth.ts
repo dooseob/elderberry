@@ -14,12 +14,13 @@
  * - Linear 테마 시스템과 통합
  * - 소셜 로그인 지원
  * - 이메일/전화번호 인증
+ * - Vite 환경변수 지원 (import.meta.env)
  */
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { AuthState, User, LoginRequest, RegisterRequest, AuthResponse } from '../entities/auth/model/types';
 
 // API 기본 설정
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 const API_TIMEOUT = 10000; // 10초
 
 /**

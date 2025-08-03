@@ -119,7 +119,12 @@
       "Bash(./dev-restart.sh:*)",
       "Bash(npx playwright:*)",
       "Bash(awk:*)",
-      "mcp__filesystem__read_text_file"
+      "mcp__filesystem__read_text_file",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_install",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --headed=false --timeout=30000)",
+      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --timeout=30000)"
     ],
     "deny": []
   }

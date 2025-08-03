@@ -191,7 +191,7 @@ export const LoginPage: React.FC = () => {
     >
       <div className="space-y-6">
         {/* 테스트 계정 버튼 (개발 환경에서만) */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.MODE === 'development' && (
           <div className="text-center">
             <Button
               type="button"

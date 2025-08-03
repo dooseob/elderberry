@@ -13,7 +13,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:install": "playwright install chromium --with-deps",
+    "test:e2e:install-fast": "SKIP_BROWSER_INSTALL=true playwright test",
+    "test:setup": "npm run test:e2e:install && npm run test:e2e"
   },
   "dependencies": {
     "@allpepper/memory-bank-mcp": "^0.2.1",
