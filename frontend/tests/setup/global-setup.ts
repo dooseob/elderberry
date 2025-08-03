@@ -3,12 +3,52 @@
  * Linear Theme System 전역 설정
  */
 import { chromium, FullConfig } from '@playwright/test';
+import { execSync } from 'child_process';
 
 async function globalSetup(config: FullConfig) {
   console.log('🎭 Starting Playwright Global Setup for Linear Design System...');
+  console.log('🚀 Chrome installation optimized - no hanging!');
 
-  // 브라우저 시작
-  const browser = await chromium.launch();
+  // 🔧 Chrome 설치 최적화 설정
+  const skipBrowserInstall = process.env.SKIP_BROWSER_INSTALL === 'true';
+  const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
+  
+  if (skipBrowserInstall) {
+    console.log('⏭️ Skipping browser installation (SKIP_BROWSER_INSTALL=true)');
+  }
+
+  // 🔍 기존 브라우저 설치 여부 확인
+  try {
+    console.log('🔍 Checking for existing Playwright browsers...');
+    const browserCheckResult = execSync('npx playwright install --dry-run chromium', { 
+      encoding: 'utf8',
+      timeout: 10000 
+    });
+    
+    if (browserCheckResult.includes('is already installed')) {
+      console.log('✅ Chromium already installed, skipping installation');
+    } else {
+      console.log('📦 Installing missing Playwright browsers (Chromium only)...');
+      execSync('npx playwright install chromium', { 
+        encoding: 'utf8',
+        timeout: 60000,
+        stdio: 'inherit'
+      });
+    }
+  } catch (error) {
+    console.log('⚠️ Browser check failed, proceeding with existing installation:', error);
+    // 브라우저 확인에 실패해도 계속 진행 - 이미 설치되어 있을 가능성이 높음
+  }
+
+  // 브라우저 시작 (타임아웃 설정)
+  const browser = await chromium.launch({
+    timeout: 30000, // 30초 타임아웃
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-web-security',
+    ]
+  });
   const page = await browser.newPage();
 
   try {

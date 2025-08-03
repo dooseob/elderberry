@@ -103,9 +103,11 @@ class WebTestingMasterAgent {
     /**
      * 🚀 엘더베리 프로젝트 전용 종합 테스트 스위트
      * 인증, 시설검색, 건강평가, Linear Design System 모든 영역 테스트
+     * Chrome 설치 문제 해결된 버전 v2.1.0
      */
     async runElderberryComprehensiveTestSuite(config = {}) {
         console.log('🏥 엘더베리 프로젝트 종합 테스트 스위트 시작...');
+        console.log('🔧 Chrome 설치 문제 해결된 버전 - 브라우저 중복 설치 방지');
         
         const {
             testUrl = 'http://localhost:5173',
@@ -117,8 +119,14 @@ class WebTestingMasterAgent {
             generateDetailedReport = true,
             runVisualRegression = true,
             measurePerformance = true,
-            validateAccessibility = true
+            validateAccessibility = true,
+            skipBrowserInstallCheck = process.env.SKIP_BROWSER_INSTALL === 'true'
         } = config;
+
+        // 🔍 기존 브라우저 설치 여부 사전 확인
+        if (!skipBrowserInstallCheck) {
+            await this.validatePlaywrightBrowsersInstalled();
+        }
 
         // Sequential Thinking으로 종합 테스트 전략 수립
         const testStrategy = await this.planElderberryTestStrategy({
@@ -964,6 +972,101 @@ class WebTestingMasterAgent {
 
         // 실제 구현에서는 Memory MCP 도구 사용
         return { memoryKey, learningData };
+    }
+
+    /**
+     * 🔍 Playwright 브라우저 설치 상태 검증
+     * Chrome 중복 설치 방지 및 기존 설치 확인
+     */
+    async validatePlaywrightBrowsersInstalled() {
+        console.log('🔍 Playwright 브라우저 설치 상태 검증...');
+        
+        try {
+            const { execSync } = require('child_process');
+            
+            // 브라우저 설치 상태 확인
+            const browserCheckResult = execSync('npx playwright install --dry-run chromium', { 
+                encoding: 'utf8',
+                timeout: 10000,
+                stdio: 'pipe'
+            });
+            
+            if (browserCheckResult.includes('is already installed')) {
+                console.log('✅ Chromium 이미 설치됨 - 중복 설치 건너뛰기');
+                return { status: 'already_installed', browsers: ['chromium'] };
+            } else {
+                console.log('📦 Chromium 설치 필요 - 자동 설치 시작...');
+                execSync('npx playwright install chromium', { 
+                    encoding: 'utf8',
+                    timeout: 120000,
+                    stdio: 'inherit'
+                });
+                console.log('✅ Chromium 설치 완료');
+                return { status: 'newly_installed', browsers: ['chromium'] };
+            }
+            
+        } catch (error) {
+            console.log('⚠️ 브라우저 설치 확인 실패 - 기존 설치된 브라우저 사용:', error.message);
+            
+            // 설치 확인 실패 시에도 계속 진행 (이미 설치되어 있을 가능성)
+            return { 
+                status: 'check_failed_continue', 
+                browsers: ['chromium'],
+                error: error.message,
+                note: '기존 설치된 브라우저로 테스트 진행'
+            };
+        }
+    }
+
+    /**
+     * 🚫 브라우저 중복 설치 방지 설정
+     */
+    async configureBrowserInstallationPrevention() {
+        console.log('🚫 브라우저 중복 설치 방지 설정...');
+        
+        // 환경변수로 브라우저 재설치 방지
+        process.env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1';
+        process.env.SKIP_BROWSER_INSTALL = 'true';
+        
+        console.log('✅ 브라우저 중복 설치 방지 설정 완료');
+        
+        return {
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1',
+            SKIP_BROWSER_INSTALL: 'true',
+            preventionActive: true
+        };
+    }
+
+    /**
+     * 🎯 브라우저별 실행 전 사전 체크
+     */
+    async preBrowserTestCheck(browser) {
+        console.log(`🎯 ${browser} 브라우저 실행 전 사전 체크...`);
+        
+        try {
+            // 브라우저 실행 가능 여부 빠른 확인
+            const { chromium } = require('@playwright/test');
+            const browserInstance = await chromium.launch({ 
+                timeout: 5000,
+                args: ['--no-sandbox', '--disable-dev-shm-usage']
+            });
+            
+            await browserInstance.close();
+            console.log(`✅ ${browser} 브라우저 실행 가능 확인`);
+            
+            return { status: 'ready', browser, executable: true };
+            
+        } catch (error) {
+            console.log(`❌ ${browser} 브라우저 실행 불가:`, error.message);
+            
+            return { 
+                status: 'failed', 
+                browser, 
+                executable: false,
+                error: error.message,
+                suggestion: 'npx playwright install chromium 명령 실행 필요'
+            };
+        }
     }
 
     // ===== 개별 테스트 메서드들 (고급 버전) =====

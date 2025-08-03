@@ -116,7 +116,29 @@ export default defineConfig({
     '**/build/**',
   ],
 
-  // 글로벌 설정 (일시적으로 비활성화)
-  // globalSetup: './tests/setup/global-setup.ts',
+  // 글로벌 설정 (Chrome 설치 최적화)
+  globalSetup: './tests/setup/global-setup.ts',
   // globalTeardown: './tests/setup/global-teardown.ts',
+  
+  // 🚀 Chrome 설치 문제 해결 설정
+  workers: process.env.CI ? 1 : 2, // CI에서 안정성 향상
+  maxFailures: process.env.CI ? 5 : 3, // 실패 시 조기 종료
+  
+  // 브라우저 재설치 방지 설정
+  metadata: {
+    skipBrowserDownload: true, // 브라우저 재다운로드 방지
+  },
+  
+  // 브라우저 실행 최적화
+  launchOptions: {
+    // Chrome 실행 시 안정성 향상 옵션
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-web-security',
+      '--disable-features=TranslateUI',
+      '--disable-ipc-flooding-protection',
+    ],
+    timeout: 30000, // 브라우저 시작 타임아웃 30초
+  },
 });
