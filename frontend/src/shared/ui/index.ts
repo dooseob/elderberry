@@ -117,6 +117,19 @@ export {
   type TimelineSeparatorProps,
 } from './Separator';
 
+// === Form Components ===
+export {
+  Form,
+  useFormContext,
+  default as FormComponent,
+  type FormRootProps,
+  type FormFieldProps,
+  type FormGroupProps,
+  type FormActionsProps,
+  type FormSubmitProps,
+  type FormResetProps,
+} from './Form';
+
 // === Utility Types ===
 export type LinearComponentSize = 'sm' | 'md' | 'lg' | 'xl';
 export type LinearComponentVariant = 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
