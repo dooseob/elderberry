@@ -52,13 +52,13 @@ import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
 // Linear Design System 데모
 import LinearShowcase from './pages/demo/LinearShowcase';
 
+// 새로운 페이지들
+import LandingPage from './pages/LandingPage';
+import SignInPage from './pages/auth/SignInPage';
+
 import './App.css';
 
-// 루트 리다이렉트 컴포넌트
-const RootRedirect = () => {
-  const { isAuthenticated } = useAuthStore();
-  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
-};
+// 루트 리다이렉트 컴포넌트 제거 - 랜딩페이지를 직접 표시
 
 function App() {
   return (
@@ -69,10 +69,13 @@ function App() {
           <main className="min-h-screen bg-gray-50" role="main">
           <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
           <Routes>
-            {/* 공개 라우트 */}
-            <Route path="/login" element={<LazyLoginPage />} />
+            {/* 공개 라우트 - 개선된 인증 시스템 */}
+            <Route path="/auth/signin" element={<SignInPage />} />
+            <Route path="/login" element={<Navigate to="/auth/signin" replace />} /> {/* 기존 로그인 리다이렉트 */}
             <Route path="/register" element={<LazyRegisterPage />} />
+            <Route path="/auth/signup" element={<LazyRegisterPage />} />
             <Route path="/forgot-password" element={<LazyForgotPasswordPage />} />
+            <Route path="/auth/forgot-password" element={<LazyForgotPasswordPage />} />
             <Route path="/unauthorized" element={<LazyUnauthorizedPage />} />
             
             {/* 챗봇 (인증 없이 사용 가능) */}
@@ -350,11 +353,11 @@ function App() {
               } 
             />
 
-            {/* 기본 경로 - 인증 상태에 따라 리다이렉트 */}
-            <Route path="/" element={<RootRedirect />} />
+            {/* 기본 경로 - 랜딩페이지 (비회원도 접근 가능) */}
+            <Route path="/" element={<LandingPage />} />
             
-            {/* 404 페이지 - 대시보드로 리다이렉트 */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* 404 페이지 - 랜딩페이지로 리다이렉트 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           </Suspense>
           </main>

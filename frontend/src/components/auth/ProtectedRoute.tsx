@@ -47,11 +47,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // 인증되지 않은 경우
+  // 인증되지 않은 경우 - 개선된 리다이렉트 경로
   if (!isAuthenticated || !user) {
+    const redirectPath = fallbackPath === '/login' ? '/auth/signin' : fallbackPath;
     return (
       <Navigate 
-        to={fallbackPath} 
+        to={redirectPath} 
         state={{ from: location.pathname }} 
         replace 
       />
