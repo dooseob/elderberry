@@ -18,11 +18,12 @@ export default defineConfig({
         ws: true, // WebSocket 지원
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
-            console.log('프록시 에러:', err);
+            console.error('프록시 에러:', err);
           });
-          proxy.on('proxyReq', (proxyReq, req, _res) => {
-            console.log('API 요청:', req.method, req.url);
-          });
+          // API 요청 로그는 너무 많아서 제거 (필요시 주석 해제)
+          // proxy.on('proxyReq', (proxyReq, req, _res) => {
+          //   console.log('API 요청:', req.method, req.url);
+          // });
         }
       }
     }

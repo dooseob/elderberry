@@ -149,11 +149,18 @@ export const useAuthStore = create<AuthStore>()(
           };
           
           const normalizedError = normalizeError(error, context);
-          errorLogger.error(normalizedError, context);
+          
+          // 로그인 실패는 사용자에게 더 친화적인 메시지로 표시하고, warn 레벨로 로깅
+          // (API 레벨에서 이미 에러 처리가 되었으므로 중복 로깅 방지)
+          const userFriendlyMessage = normalizedError.message?.includes('401') 
+            ? '이메일 또는 비밀번호가 올바르지 않습니다.' 
+            : normalizedError.message || '로그인에 실패했습니다.';
+          
+          errorLogger.warn(normalizedError, context);
           
           set({
             isLoading: false,
-            error: normalizedError.message || '로그인에 실패했습니다.'
+            error: userFriendlyMessage
           });
           throw normalizedError;
         }
@@ -196,11 +203,17 @@ export const useAuthStore = create<AuthStore>()(
           };
           
           const normalizedError = normalizeError(error, context);
-          errorLogger.error(normalizedError, context);
+          
+          // 회원가입 실패도 사용자 친화적인 메시지로 표시
+          const userFriendlyMessage = normalizedError.message?.includes('409') 
+            ? '이미 사용중인 이메일입니다.' 
+            : normalizedError.message || '회원가입에 실패했습니다.';
+          
+          errorLogger.warn(normalizedError, context);
           
           set({
             isLoading: false,
-            error: normalizedError.message || '회원가입에 실패했습니다.'
+            error: userFriendlyMessage
           });
           throw normalizedError;
         }

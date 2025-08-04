@@ -162,12 +162,12 @@ export const SignInPage: React.FC = () => {
     return getProvidersForRegion(navigator.language);
   }, []);
   
-  // 이미 로그인된 사용자 리다이렉트
+  // 이미 로그인된 사용자 리다이렉트 (한 번만 실행하도록 최적화)
   React.useEffect(() => {
     if (isAuthenticated) {
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, navigate, redirectPath]);
+  }, [isAuthenticated]); // navigate와 redirectPath 의존성 제거로 무한 루프 방지
   
   // 에러 정리
   React.useEffect(() => {
@@ -202,8 +202,8 @@ export const SignInPage: React.FC = () => {
         rememberMe: data.rememberMe,
       });
       
-      // 성공 시 리다이렉트
-      navigate(redirectPath, { replace: true });
+      // 성공 시 리다이렉트는 useEffect에서 처리하므로 여기서는 제거
+      // (isAuthenticated 상태 변화로 자동 리다이렉트)
     } catch (error) {
       // 에러는 store에서 처리
       console.error('Login failed:', error);

@@ -20,7 +20,7 @@ import type { AppError } from '../types/errors';
 
 // API 인스턴스 생성
 const authApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/auth` : 'http://localhost:8080/api/auth',
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api/auth` : 'http://localhost:8080/api/auth',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ const authApi = axios.create({
 });
 
 const memberApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/members` : 'http://localhost:8080/api/members',
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api/members` : 'http://localhost:8080/api/members',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -56,8 +56,8 @@ authApi.interceptors.request.use((config) => {
     delete config.headers.Authorization;
   }
   
-  // 디버깅을 위한 로그 (개발 환경에서만)
-  if (import.meta.env.MODE === 'development') {
+  // 디버깅을 위한 로그 (개발 환경에서만, VITE_DEBUG_MODE가 true일 때만)
+  if (import.meta.env.MODE === 'development' && import.meta.env.VITE_DEBUG_MODE === 'true') {
     console.log(`[Auth API] 요청: ${config.url}, 공개: ${isPublicEndpoint}, 토큰: ${!!config.headers.Authorization}`);
   }
   
@@ -91,9 +91,19 @@ const handleApiError = (error: unknown): Promise<never> => {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
       console.warn('토큰이 만료되어 자동 로그아웃되었습니다.');
+      
+      // 토큰 만료는 정상적인 상황이므로 warn 레벨로 로깅
+      const normalizedError = normalizeError(error, context);
+      errorLogger.warn(normalizedError, context);
+      return Promise.reject(normalizedError);
+    } else {
+      // 로그인 요청 실패는 authStore에서 처리하므로 여기서는 로깅하지 않음
+      const normalizedError = normalizeError(error, context);
+      return Promise.reject(normalizedError);
     }
   }
   
+  // 다른 에러들은 그대로 error 레벨로 로깅
   const normalizedError = normalizeError(error, context);
   errorLogger.error(normalizedError, context);
   
