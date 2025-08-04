@@ -2,6 +2,20 @@
 
 > **빠른 참조 (5분 완독)** | 상세 정보는 [docs/guides/](./docs/guides/) 참조
 
+## 🌐 **프로젝트 도메인 정보**
+
+```yaml
+메인 도메인: www.elderberry-ai.com
+API 서버: api.elderberry-ai.com
+프로덕션 URL: https://www.elderberry-ai.com
+API 기본 URL: https://api.elderberry-ai.com/api
+
+로컬 개발 환경:
+  프론트엔드: http://localhost:5173
+  백엔드: http://localhost:8080
+  API 기본: http://localhost:8080/api
+```
+
 ## 🛠️ **핵심 기술스택** (변경 금지!)
 
 ```yaml

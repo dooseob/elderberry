@@ -24,7 +24,7 @@ Allow: /login
 Allow: /register
 
 # 사이트맵 위치
-Sitemap: https://elderberry.co.kr/sitemap.xml
+Sitemap: https://www.elderberry-ai.com/sitemap.xml
 
 # 검색엔진별 특별 지시사항
 User-agent: Googlebot

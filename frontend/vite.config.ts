@@ -36,6 +36,8 @@ export default defineConfig({
     target: 'es2015', // 최신 브라우저 지원
     minify: 'terser', // 더 나은 압축
     chunkSizeWarningLimit: 1000, // 청크 크기 경고 임계값 (KB)
+    // 프로덕션 배포를 위한 base URL 설정
+    base: process.env.NODE_ENV === 'production' ? '/' : '/',
     
     // 청크 최적화 - 지연 로딩과 연계한 번들 분리
     rollupOptions: {
@@ -154,8 +156,18 @@ export default defineConfig({
     __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
     __API_BASE_URL__: JSON.stringify(
       process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:8080/api' 
-        : '/api'
+        ? process.env.LOCAL_API_BASE_URL || 'http://localhost:8080/api'
+        : process.env.API_BASE_URL || '/api'
+    ),
+    __FRONTEND_URL__: JSON.stringify(
+      process.env.NODE_ENV === 'development'
+        ? process.env.LOCAL_FRONTEND_URL || 'http://localhost:5173'
+        : process.env.FRONTEND_URL || 'https://www.elderberry-ai.com'
+    ),
+    __BACKEND_URL__: JSON.stringify(
+      process.env.NODE_ENV === 'development'
+        ? process.env.LOCAL_BACKEND_URL || 'http://localhost:8080'
+        : process.env.BACKEND_URL || 'https://api.elderberry-ai.com'
     )
   }
 })

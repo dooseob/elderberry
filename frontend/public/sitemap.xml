@@ -6,105 +6,105 @@
 
   <!-- 메인 페이지 -->
   <url>
-    <loc>https://elderberry.co.kr/</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- 주요 서비스 페이지 -->
   <url>
-    <loc>https://elderberry.co.kr/health-assessment</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/health-assessment</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/facility-search</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/facility-search</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/coordinator-matching</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/coordinator-matching</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- 인증 관련 페이지 -->
   <url>
-    <loc>https://elderberry.co.kr/login</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/login</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/register</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/register</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- 정보 페이지 -->
   <url>
-    <loc>https://elderberry.co.kr/about</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/about</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/services</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/services</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/contact</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/contact</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- 게시판 및 커뮤니티 -->
   <url>
-    <loc>https://elderberry.co.kr/board</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/board</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/jobs</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/jobs</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- 리뷰 및 평가 -->
   <url>
-    <loc>https://elderberry.co.kr/reviews</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/reviews</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- 법적 페이지 -->
   <url>
-    <loc>https://elderberry.co.kr/privacy-policy</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/privacy-policy</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://elderberry.co.kr/terms-of-service</loc>
-    <lastmod>2025-07-29</lastmod>
+    <loc>https://www.elderberry-ai.com/terms-of-service</loc>
+    <lastmod>2025-08-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

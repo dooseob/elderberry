@@ -97,6 +97,7 @@ jwt:
   secret: ${JWT_SECRET:CHANGE-THIS-SECRET-KEY-IMMEDIATELY-FOR-SECURITY}
   expiration: ${JWT_ACCESS_EXPIRATION:86400000}  # 24시간 (밀리초)
   refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7일 (밀리초)
+  issuer: ${JWT_ISSUER:elderberry-ai.com}
 
 # 서버 설정
 server:
@@ -128,6 +129,16 @@ logging:
     max-size: 50MB
     max-history: 30
     
+# 애플리케이션 도메인 설정
+app:
+  domain: ${DOMAIN:elderberry-ai.com}
+  frontend-url: ${FRONTEND_URL:https://www.elderberry-ai.com}
+  backend-url: ${BACKEND_URL:https://api.elderberry-ai.com}
+  api-base-url: ${API_BASE_URL:https://api.elderberry-ai.com/api}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://www.elderberry-ai.com,https://elderberry-ai.com}
+    allowed-origins-local: ${CORS_ALLOWED_ORIGINS_LOCAL:http://localhost:5173,http://localhost:3000}
+
 # 액추에이터 설정 (최소한으로 제한)
 management:
   endpoints:

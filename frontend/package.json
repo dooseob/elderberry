@@ -1,7 +1,8 @@
 {
-  "name": "global-care-link-frontend",
+  "name": "elderberry-ai-frontend",
   "version": "1.0.0",
   "type": "module",
+  "homepage": "https://www.elderberry-ai.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

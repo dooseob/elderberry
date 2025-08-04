@@ -22,6 +22,12 @@ services:
       - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD:-dev-redis-password}
       - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-immediately}
       - JWT_EXPIRATION=86400000
+      - JWT_ISSUER=${JWT_ISSUER:-elderberry-ai.com}
+      - DOMAIN=${DOMAIN:-elderberry-ai.com}
+      - FRONTEND_URL=${FRONTEND_URL:-https://www.elderberry-ai.com}
+      - BACKEND_URL=${BACKEND_URL:-https://api.elderberry-ai.com}
+      - API_BASE_URL=${API_BASE_URL:-https://api.elderberry-ai.com/api}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-https://www.elderberry-ai.com,https://elderberry-ai.com}
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
@@ -47,6 +53,10 @@ services:
     environment:
       - VITE_API_URL=http://localhost:8080
       - VITE_NODE_ENV=development
+      - VITE_API_BASE_URL=${LOCAL_API_BASE_URL:-http://localhost:8080/api}
+      - DOMAIN=${DOMAIN:-elderberry-ai.com}
+      - FRONTEND_URL=${LOCAL_FRONTEND_URL:-http://localhost:5173}
+      - BACKEND_URL=${LOCAL_BACKEND_URL:-http://localhost:8080}
     volumes:
       - ./frontend:/app
       - /app/node_modules  # anonymous volume for node_modules

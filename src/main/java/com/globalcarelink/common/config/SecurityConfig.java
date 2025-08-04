@@ -117,10 +117,10 @@ public class SecurityConfig {
         if (isProductionProfile()) {
             // 프로덕션: 실제 도메인만 허용
             configuration.setAllowedOriginPatterns(Arrays.asList(
-                "https://*.elderberry.app",
-                "https://*.globalcarelink.com",
-                "https://elderberry.vercel.app",
-                "https://globalcarelink.netlify.app"
+                "https://www.elderberry-ai.com",
+                "https://elderberry-ai.com",
+                "https://api.elderberry-ai.com",
+                "https://*.elderberry-ai.com"
             ));
         } else {
             // 개발 환경: localhost 포함 관대한 설정
@@ -129,8 +129,10 @@ public class SecurityConfig {
                 "http://localhost:5173", 
                 "http://localhost:5174",
                 "http://localhost:8080",
-                "https://*.elderberry.app",
-                "https://*.globalcarelink.com"
+                "https://www.elderberry-ai.com",
+                "https://elderberry-ai.com",
+                "https://api.elderberry-ai.com",
+                "https://*.elderberry-ai.com"
             ));
         }
         
