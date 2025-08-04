@@ -11,8 +11,7 @@
     "grepInvert": null,
     "maxFailures": 3,
     "metadata": {
-      "skipBrowserDownload": true,
-      "actualWorkers": 1
+      "actualWorkers": 4
     },
     "preserveOutput": "always",
     "reporter": [
@@ -46,8 +45,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "chromium",
         "name": "chromium",
@@ -68,8 +66,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "firefox",
         "name": "firefox",
@@ -90,8 +87,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "webkit",
         "name": "webkit",
@@ -112,8 +108,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Mobile Chrome",
         "name": "Mobile Chrome",
@@ -134,8 +129,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Mobile Safari",
         "name": "Mobile Safari",
@@ -156,8 +150,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Tablet",
         "name": "Tablet",
@@ -178,8 +171,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "High Contrast",
         "name": "High Contrast",
@@ -200,8 +192,7 @@
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
-          "skipBrowserDownload": true,
-          "actualWorkers": 1
+          "actualWorkers": 4
         },
         "id": "Dark Mode",
         "name": "Dark Mode",
@@ -222,7 +213,7 @@
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
     "version": "1.54.1",
-    "workers": 2,
+    "workers": 4,
     "webServer": {
       "command": "npm run dev",
       "url": "http://localhost:5173",
@@ -260,7 +251,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 11572,
+                      "duration": 12421,
                       "error": {
                         "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('heading', { name: /Find Quality Elder Care/ })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /Find Quality Elder Care/ })\u001b[22m\n",
                         "stack": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('heading', { name: /Find Quality Elder Care/ })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /Find Quality Elder Care/ })\u001b[22m\n\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:18:82",
@@ -284,7 +275,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-03T14:53:51.452Z",
+                      "startTime": "2025-08-04T07:09:31.669Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -317,19 +308,3206 @@
               "file": "auth-improvement.spec.ts",
               "line": 13,
               "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 12181,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('link', { name: /Sign In/ })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: /Sign In/ })\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('link', { name: /Sign In/ })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: /Sign In/ })\u001b[22m\n\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:32:32",
+                        "location": {
+                          "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                          "column": 32,
+                          "line": 32
+                        },
+                        "snippet": "  30 |     // Sign In 버튼 확인\n  31 |     const signInButton = page.getByRole('link', { name: /Sign In/ });\n> 32 |     await expect(signInButton).toBeVisible();\n     |                                ^\n  33 |     \n  34 |     // Get Started 버튼 확인  \n  35 |     const getStartedButton = page.getByRole('link', { name: /Get Started/ });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                            "column": 32,
+                            "line": 32
+                          },
+                          "message": "Error: \u001b[31mTimed out 10000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('link', { name: /Sign In/ })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: /Sign In/ })\u001b[22m\n\n\n  30 |     // Sign In 버튼 확인\n  31 |     const signInButton = page.getByRole('link', { name: /Sign In/ });\n> 32 |     await expect(signInButton).toBeVisible();\n     |                                ^\n  33 |     \n  34 |     // Get Started 버튼 확인  \n  35 |     const getStartedButton = page.getByRole('link', { name: /Get Started/ });\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:32:32"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-04T07:09:32.516Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                        "column": 32,
+                        "line": 32
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-553887c8789e21c3b0b1",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "interrupted",
+                      "duration": 17925,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-04T07:09:28.348Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-Sign-In-페이지가-글로벌-표준을-따라야-한다-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-Sign-In-페이지가-글로벌-표준을-따라야-한다-chromium/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-e0bff36758293b31a1b4",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 2280,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: /Continue/ }) resolved to 3 elements:\n    1) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"email-continue\" class=\"inline-flex items-center justify-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden bg-[var(--linear-color-accent)] text-[var(--linear-color-te…>…</button> aka getByTestId('email-continue')\n    2) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-google\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[v…>…</button> aka getByTestId('social-signin-google')\n    3) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-apple\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[va…>…</button> aka getByTestId('social-signin-apple')\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Continue/ })\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: /Continue/ }) resolved to 3 elements:\n    1) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"email-continue\" class=\"inline-flex items-center justify-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden bg-[var(--linear-color-accent)] text-[var(--linear-color-te…>…</button> aka getByTestId('email-continue')\n    2) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-google\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[v…>…</button> aka getByTestId('social-signin-google')\n    3) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-apple\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[va…>…</button> aka getByTestId('social-signin-apple')\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Continue/ })\u001b[22m\n\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:70:58",
+                        "location": {
+                          "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                          "column": 58,
+                          "line": 70
+                        },
+                        "snippet": "  68 |     const emailInput = page.getByLabel(/Email Address/);\n  69 |     await emailInput.fill('test.domestic@example.com');\n> 70 |     await page.getByRole('button', { name: /Continue/ }).click();\n     |                                                          ^\n  71 |     \n  72 |     // 2단계: 비밀번호 입력 화면으로 전환 확인\n  73 |     await expect(page.getByRole('heading', { name: /Enter Your Password/ })).toBeVisible();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                            "column": 58,
+                            "line": 70
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: /Continue/ }) resolved to 3 elements:\n    1) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"email-continue\" class=\"inline-flex items-center justify-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden bg-[var(--linear-color-accent)] text-[var(--linear-color-te…>…</button> aka getByTestId('email-continue')\n    2) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-google\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[v…>…</button> aka getByTestId('social-signin-google')\n    3) <button tabindex=\"0\" type=\"button\" aria-busy=\"false\" aria-disabled=\"false\" data-testid=\"social-signin-apple\" class=\"inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[va…>…</button> aka getByTestId('social-signin-apple')\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Continue/ })\u001b[22m\n\n\n  68 |     const emailInput = page.getByLabel(/Email Address/);\n  69 |     await emailInput.fill('test.domestic@example.com');\n> 70 |     await page.getByRole('button', { name: /Continue/ }).click();\n     |                                                          ^\n  71 |     \n  72 |     // 2단계: 비밀번호 입력 화면으로 전환 확인\n  73 |     await expect(page.getByRole('heading', { name: /Enter Your Password/ })).toBeVisible();\n    at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:70:58"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-04T07:09:28.348Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/mnt/c/Users/human-10/elderberry/frontend/test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts",
+                        "column": 58,
+                        "line": 70
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2d4afa0a5b6fc37a9b89",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "interrupted",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-04T07:09:45.675Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-41e940480922a3e84885",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-c45de5e82f48515a2001",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6144d60bda746d9857ee",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-529aaac00ed121f43521",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-e2d7396bc79828a535b9",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f19b822db53de2d52794",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f753513ab336677b5265",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a899aead54accfcaf3cc",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a6a8aa4d4f70e6d74148",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-9ad3999720e3e189484c",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3a21ff86e20e59e519f6",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-562076b3003da5f6fb57",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-13da98e89cafe5e15556",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-ad744ddb2dfac89dbcd5",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-4064140800d04a7109fe",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-83cc58914325825b7d2c",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-228c64d57e9611de275b",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-9e5927d9447bfc183115",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-863b29bcc2b8cb46a8d1",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b96d57cc6a5cd93455a4",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-cba9eac0b5e566b4dfec",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b3269941125cf9a25c4f",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3de3439aea5b37077253",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-5222f811524ef4793fe0",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3cb8c85375a0b039e9e4",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-63be66ed61231305f462",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-22d83152c40798c0de56",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-935f061854f65eb3cc3d",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f9cb7202a83a4bb3231a",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-9887a471efcf91d58274",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-97af26cfadf8b7d08856",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-116451e9adb144d09fd4",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-464ed8a238f4bd57e3de",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2d110b05dbf135dbd1fe",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8b5cb586a1740eae967b",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-7b3d583aad9f92d94559",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-aa6f5198fa326b1f382d",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b3850414c5461c1d36e7",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-243f71bca949f4ea56dc",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-7fe010bdb89c85229c75",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-feae56f9f077e7b5c1db",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3553da9acc1e29febe2a",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-df29f0a66594910a2691",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-5e931e251b81c3ba1964",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-bb517df3f9196a189e7f",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3f6620bf6817323d5044",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-80432519ac1551e9b80a",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-1a13913fbbbd942d9e2c",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-efa41d9b0feea2a5b968",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a4fdaa8d454020d7c4dd",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-ef20e2a6e27e42c3a200",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-9026e6bf055ccbbbb3ae",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-7d00eb86d933424c2276",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b75a438399c923ac1a6e",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2a97328d441dce07d410",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-0b29eb7b5c713ae341a8",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-62d890004ced28070cda",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-0603d370c7b72372e9fe",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-88c183144cbb9622507d",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-d5272826b01305868569",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-36103b12e1b60fe3199c",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-e800f0372bcd7cad1a24",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-630f93bdf8bf6341feb5",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-80933071873f020841d3",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-45b906ba0129eed10c59",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-c42e42786730b699a2d3",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-dfa9a0128842bbfb8e5f",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a6606c33081dc2a4200c",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-45cc4379c85b36844674",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8108a417d2366207ff9a",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a1b0dfaea34747fdd61f",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-00f33d0df92cf7ec73d6",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f8e500eb2b0fb6b68c61",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3b82c39ad280454da186",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-16d90becec1b9f447d97",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6ee7ebabe8d2e8ceca95",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f9e626ecbb1389c282f3",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-ef7cfa7995feffdc885b",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2cce0f7920179d408154",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-804ff28276197c4a55fd",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f98bf0efee61813d4935",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-37eb7c0269924d1f4d04",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8014a1aa33aa4d756ad6",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8c4d9ac552195030b26d",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-9a27102ab4c4dcb4d2c5",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-ad03f8557abd2187c3e0",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-dff32ceb100f929b76f5",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "비회원이 랜딩페이지에 접근할 수 있어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-c8d8a51b4673fe0bb565",
+              "file": "auth-improvement.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "헤더 네비게이션이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b74137afcd9903b3076b",
+              "file": "auth-improvement.spec.ts",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "title": "Sign In 페이지가 글로벌 표준을 따라야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-5f08420e7fa10280746c",
+              "file": "auth-improvement.spec.ts",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "title": "2단계 로그인 플로우가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-35e8ff89bb43407a4c8e",
+              "file": "auth-improvement.spec.ts",
+              "line": 64,
+              "column": 3
+            },
+            {
+              "title": "이메일 변경 기능이 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-0a15ca411d9b96cb6f2d",
+              "file": "auth-improvement.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "개선된 에러 메시지가 표시되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-bf5ce5c81de16f7ffdea",
+              "file": "auth-improvement.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "소셜 로그인 버튼들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-734c006724b3b0145b27",
+              "file": "auth-improvement.spec.ts",
+              "line": 111,
+              "column": 3
+            },
+            {
+              "title": "접근성이 개선되었는지 확인해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8fa54c206936c6aa0dde",
+              "file": "auth-improvement.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "기존 /login 경로가 새 경로로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-55a1b62773e8120a212a",
+              "file": "auth-improvement.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "홈으로 돌아가기 링크가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f65a2af531dcca917769",
+              "file": "auth-improvement.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "도움말 링크들이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a334255c87b8c30f8331",
+              "file": "auth-improvement.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "회원가입 링크가 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-7d5db6e273b49b61defb",
+              "file": "auth-improvement.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "Keep me signed in 체크박스가 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-b505a428d247c1496185",
+              "file": "auth-improvement.spec.ts",
+              "line": 183,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "랜딩페이지 기능",
+          "file": "auth-improvement.spec.ts",
+          "line": 198,
+          "column": 6,
+          "specs": [
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-cd3f3988fb1335fc744b",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6a57d3527db0d8184aae",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2b87e4d3e75760e259df",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-abbc352a87af1138a77f",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-402c310a2a038515f8fb",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a5fd576d12dc17814dc6",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-afdab17dd7992e8fd3fb",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3096b909d1e416265dd9",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-eed75a7af06a1ac991e7",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-3fe57e22d2381f2a1f69",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6acf4e0e91a8773c3b0f",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-76fd24deba5fae3ea6c2",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6af320db30beb0a3022c",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-d95348b41a7611cb7b0b",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-08be8c8fb19e99b375d9",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-4af156764b817d69a0cd",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-e4302b60e50093bf531c",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a1583e53531a39f4a8ab",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a423005483d5ae2837c9",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-57d5268aa1139a614777",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-77e894351ae3fecb57a4",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "모든 섹션이 올바르게 렌더링되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-73685e4db5bfcebff6fb",
+              "file": "auth-improvement.spec.ts",
+              "line": 199,
+              "column": 3
+            },
+            {
+              "title": "반응형 디자인이 올바르게 작동해야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-d782e02a16cce4a557a1",
+              "file": "auth-improvement.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "CTA 버튼들이 올바른 링크를 가져야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-da555255f482d9092d61",
+              "file": "auth-improvement.spec.ts",
+              "line": 230,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "사용자 경험 개선",
+          "file": "auth-improvement.spec.ts",
+          "line": 243,
+          "column": 6,
+          "specs": [
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-546c1fd60a5654e3ad0f",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-2a097840730bcee2c338",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-4174750e23977a57cf90",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a250fb305a0f843edea6",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-8e731ad5cd481715e743",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a6aeb08751385b9e99cc",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a0348552644bdf76691a",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a206c45555df79a32e21",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-6c1a101c5db415388f1f",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-bff73842b3dd0a30c523",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-ec8c81a46e5f4eeadd8f",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-7cf7aa95b11dcd18884d",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-19a20ae3f5fadfe1ef0f",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-063902040dd8201b89d4",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-1220e42800ae1f2963a6",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-f74638e9b15eadc117ed",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-24c97712213ab485c188",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Tablet",
+                  "projectName": "Tablet",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-893ff581eac3cd034009",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-5d0b182b571cf4112618",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-932b4406133ddd50d002",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "High Contrast",
+                  "projectName": "High Contrast",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-a8aa76267d13abe474be",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
+            },
+            {
+              "title": "페이지 로딩 시간이 합리적이어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-d86e5bcce58caed735f8",
+              "file": "auth-improvement.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "404 에러가 랜딩페이지로 리다이렉트되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-dae64fbe1ece2dfd89e1",
+              "file": "auth-improvement.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "SEO 메타 태그가 올바르게 설정되어야 한다",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Dark Mode",
+                  "projectName": "Dark Mode",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4c7198a2626d7e4c0f0a-4158d94887b192d4d0a0",
+              "file": "auth-improvement.spec.ts",
+              "line": 266,
+              "column": 3
             }
           ]
         }
       ]
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 3 maximum allowed failures.\u001b[39m"
+    }
+  ],
   "stats": {
-    "startTime": "2025-08-03T14:53:27.442Z",
-    "duration": 36197.998,
+    "startTime": "2025-08-04T07:09:19.429Z",
+    "duration": 27246.607,
     "expected": 0,
-    "skipped": 0,
-    "unexpected": 1,
+    "skipped": 149,
+    "unexpected": 3,
     "flaky": 0
   }
 }

@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="36.197998">
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-03T14:53:38.644Z" hostname="chromium" tests="1" failures="1" skipped="0" time="11.572" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="11.572">
+<testsuites id="" name="" tests="152" failures="3" skipped="149" errors="0" time="27.246607">
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="chromium" tests="19" failures="3" skipped="16" time="44.807" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="12.421">
 <failure message="auth-improvement.spec.ts:13:3 비회원이 랜딩페이지에 접근할 수 있어야 한다" type="FAILURE">
 <![CDATA[  [chromium] › auth-improvement.spec.ts:13:3 › 개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다 ───────────────
 
@@ -43,6 +43,703 @@
 [[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/error-context.md]]
 ]]>
 </system-out>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="12.181">
+<failure message="auth-improvement.spec.ts:29:3 헤더 네비게이션이 올바르게 작동해야 한다" type="FAILURE">
+<![CDATA[  [chromium] › auth-improvement.spec.ts:29:3 › 개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다 ─────────────────
+
+    Error: Timed out 10000ms waiting for expect(locator).toBeVisible()
+
+    Locator: getByRole('link', { name: /Sign In/ })
+    Expected: visible
+    Received: <element(s) not found>
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('link', { name: /Sign In/ })
+
+
+      30 |     // Sign In 버튼 확인
+      31 |     const signInButton = page.getByRole('link', { name: /Sign In/ });
+    > 32 |     await expect(signInButton).toBeVisible();
+         |                                ^
+      33 |     
+      34 |     // Get Started 버튼 확인  
+      35 |     const getStartedButton = page.getByRole('link', { name: /Get Started/ });
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:32:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="17.925">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="2.28">
+<failure message="auth-improvement.spec.ts:64:3 2단계 로그인 플로우가 작동해야 한다" type="FAILURE">
+<![CDATA[  [chromium] › auth-improvement.spec.ts:64:3 › 개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다 ───────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /Continue/ }) resolved to 3 elements:
+        1) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="email-continue" class="inline-flex items-center justify-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden bg-[var(--linear-color-accent)] text-[var(--linear-color-te…>…</button> aka getByTestId('email-continue')
+        2) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="social-signin-google" class="inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[v…>…</button> aka getByTestId('social-signin-google')
+        3) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="social-signin-apple" class="inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[va…>…</button> aka getByTestId('social-signin-apple')
+
+    Call log:
+      - waiting for getByRole('button', { name: /Continue/ })
+
+
+      68 |     const emailInput = page.getByLabel(/Email Address/);
+      69 |     await emailInput.fill('test.domestic@example.com');
+    > 70 |     await page.getByRole('button', { name: /Continue/ }).click();
+         |                                                          ^
+      71 |     
+      72 |     // 2단계: 비밀번호 입력 화면으로 전환 확인
+      73 |     await expect(page.getByRole('heading', { name: /Enter Your Password/ })).toBeVisible();
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:70:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="firefox" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="webkit" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Mobile Chrome" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Mobile Safari" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Tablet" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="High Contrast" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Dark Mode" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>

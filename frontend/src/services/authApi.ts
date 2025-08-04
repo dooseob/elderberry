@@ -45,11 +45,15 @@ authApi.interceptors.request.use((config) => {
     return url === endpoint || url.endsWith(endpoint);
   });
   
+  // 공개 엔드포인트에는 절대 Authorization 헤더를 추가하지 않음
   if (!isPublicEndpoint) {
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+  } else {
+    // 공개 엔드포인트 요청 시 Authorization 헤더가 있다면 제거
+    delete config.headers.Authorization;
   }
   
   // 디버깅을 위한 로그 (개발 환경에서만)

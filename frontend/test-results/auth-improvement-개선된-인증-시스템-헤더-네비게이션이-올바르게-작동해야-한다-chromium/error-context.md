@@ -1,0 +1,95 @@
+# Page snapshot
+
+```yaml
+- main:
+  - img
+  - text: Elderberry
+  - navigation:
+    - link "시설찾기":
+      - /url: /facility-search
+      - img
+      - text: 시설찾기
+    - link "구인구직":
+      - /url: /jobs
+      - img
+      - text: 구인구직
+    - link "게시판":
+      - /url: /boards
+      - img
+      - text: 게시판
+    - link "코디네이터":
+      - /url: /coordinator/matching
+      - img
+      - text: 코디네이터
+  - button "Sign In"
+  - button "Sign Up"
+  - img
+  - heading "AI가 도와주는 스마트 요양 서비스" [level=1]
+  - paragraph: 인공지능 챗봇과 함께 최적의 요양시설을 찾고, 맞춤형 케어 솔루션을 경험해보세요.
+  - button "AI 챗봇과 상담하기":
+    - img
+    - text: AI 챗봇과 상담하기
+    - img
+  - link "시설 둘러보기":
+    - /url: /facility-search
+    - img
+    - text: 시설 둘러보기
+  - img
+  - text: 4.9/5.0 평점
+  - img
+  - text: 1,000+ 만족 고객
+  - img
+  - text: 전국 서비스
+  - heading "엘더베리의 핵심 서비스" [level=2]
+  - paragraph: 전문적이고 체계적인 요양 서비스로 더 나은 케어를 제공합니다
+  - article:
+    - img
+    - heading "시설찾기" [level=3]
+    - paragraph: AI 기반 맞춤형 요양시설 검색 및 추천
+    - list:
+      - listitem: AI 맞춤 추천
+      - listitem: 상세 시설 정보
+      - listitem: 리뷰 및 평점
+    - link "자세히 보기":
+      - /url: /facility-search
+      - text: 자세히 보기
+      - img
+  - article:
+    - img
+    - heading "구인구직" [level=3]
+    - paragraph: 요양 분야 전문 구인구직 플랫폼
+    - list:
+      - listitem: 전문 구인정보
+      - listitem: 스킬 매칭
+      - listitem: 면접 지원
+    - link "자세히 보기":
+      - /url: /jobs
+      - text: 자세히 보기
+      - img
+  - article:
+    - img
+    - heading "게시판" [level=3]
+    - paragraph: 정보 공유 및 커뮤니티 소통 공간
+    - list:
+      - listitem: 정보 공유
+      - listitem: 질문 답변
+      - listitem: 경험 공유
+    - link "자세히 보기":
+      - /url: /boards
+      - text: 자세히 보기
+      - img
+  - article:
+    - img
+    - heading "코디네이터" [level=3]
+    - paragraph: 전문 코디네이터의 1:1 맞춤 상담
+    - list:
+      - listitem: 1:1 상담
+      - listitem: 맞춤 매칭
+      - listitem: 전문 가이드
+    - link "자세히 보기":
+      - /url: /coordinator/matching
+      - text: 자세히 보기
+      - img
+  - button:
+    - img
+```

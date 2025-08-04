@@ -36,7 +36,7 @@ import { AuthLayout } from '../../components/auth/AuthLayout';
 import { EmailInput } from '../../components/auth/EmailInput';
 import { PasswordInput } from '../../components/auth/PasswordInput';
 import { Button } from '../../shared/ui/Button';
-import { useAuthStore } from '../../entities/auth/model/store';
+import { useAuthStore } from '../../stores/authStore';
 import { useLinearTheme } from '../../hooks/useLinearTheme';
 import { cn } from '../../lib/utils';
 
@@ -120,7 +120,7 @@ export const SignInPage: React.FC = () => {
   // 훅스
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const { isReducedMotion } = useLinearTheme();
   
   // 상태
@@ -161,6 +161,13 @@ export const SignInPage: React.FC = () => {
   const socialProviders = React.useMemo(() => {
     return getProvidersForRegion(navigator.language);
   }, []);
+  
+  // 이미 로그인된 사용자 리다이렉트
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isAuthenticated, navigate, redirectPath]);
   
   // 에러 정리
   React.useEffect(() => {

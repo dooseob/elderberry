@@ -62,19 +62,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         
-        String token = resolveToken(request);
-        
-        if (StringUtils.hasText(token)) {
-            try {
-                if (jwtTokenProvider.validateToken(token)) {
-                    Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 공개 엔드포인트가 아닌 경우에만 토큰 검증 시도
+        if (!isPublicEndpoint) {
+            String token = resolveToken(request);
+            
+            if (StringUtils.hasText(token)) {
+                try {
+                    if (jwtTokenProvider.validateToken(token)) {
+                        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } catch (Exception e) {
+                    // 토큰 검증 실패 시 로그만 남기고 계속 진행 (SecurityConfig에서 처리)
+                    log.warn("JWT 토큰 검증 실패: {}", e.getMessage());
+                    SecurityContextHolder.clearContext();
                 }
-            } catch (Exception e) {
-                // 토큰 검증 실패 시 로그만 남기고 계속 진행 (SecurityConfig에서 처리)
-                log.warn("JWT 토큰 검증 실패 (무시됨): {}", e.getMessage());
-                // 공개 엔드포인트가 아닌 경우에만 에러를 던지도록 수정
-                // 현재는 에러를 던지지 않고 그냥 진행 (SecurityConfig가 처리)
             }
         }
         
