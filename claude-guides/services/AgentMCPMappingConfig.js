@@ -2,27 +2,27 @@
  * 엘더베리 프로젝트 - 에이전트별 MCP 도구 최적화 매핑 설정
  * @version 2.1.0
  * @date 2025-08-03
- * @description 6개 MCP 도구와 6개 서브에이전트의 최적화된 조합 설정 + FSD 아키텍처 지원
+ * @description 5개 MCP 도구와 6개 서브에이전트의 최적화된 조합 설정 + FSD 아키텍처 지원 (playwright MCP 제거됨)
  */
 
 const AGENT_MCP_OPTIMIZATION_CONFIG = {
-    // MCP 도구 정의 (2025-08-01 업데이트)
+    // MCP 도구 정의 (2025-08-04 업데이트 - playwright 제거됨)
     MCP_TOOLS: {
         SEQUENTIAL_THINKING: 'mcp__sequential-thinking__sequentialthinking',
         CONTEXT7: 'mcp__context7__resolve-library-id',
         MEMORY: 'mcp__memory__search_nodes',
         FILESYSTEM: 'mcp__filesystem__list_directory',
-        GITHUB: 'mcp__github__search_repositories',
-        PLAYWRIGHT: 'mcp__playwright__browser_navigate'
+        GITHUB: 'mcp__github__search_repositories'
+        // PLAYWRIGHT: 'mcp__playwright__browser_navigate' - MCP 제거됨 (2025-08-04)
     },
 
     // 서브에이전트별 최적화된 MCP 도구 조합
     AGENT_MCP_COMBINATIONS: {
         CLAUDE_GUIDE: {
             primary: ['SEQUENTIAL_THINKING', 'MEMORY', 'CONTEXT7'],
-            secondary: ['PLAYWRIGHT'],
-            specialty: 'architectural_guidance_with_web_verification',
-            description: '프로젝트 가이드라인 관리 + 웹 UI 가이드라인 준수 확인',
+            secondary: [], // playwright 제거됨
+            specialty: 'architectural_guidance',
+            description: '프로젝트 가이드라인 관리 및 아키텍처 검토',
             use_cases: [
                 '프로젝트 아키텍처 설계 및 검토',
                 '개발 가이드라인 수립 및 진화',
@@ -33,9 +33,9 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
 
         DEBUG: {
             primary: ['SEQUENTIAL_THINKING', 'FILESYSTEM', 'MEMORY'],
-            secondary: ['PLAYWRIGHT'],
-            specialty: 'systematic_debugging_with_web_testing',
-            description: '체계적 문제 해결 + 웹 브라우저 자동 테스팅',
+            secondary: [], // playwright 제거됨
+            specialty: 'systematic_debugging',
+            description: '체계적 문제 해결 및 성능 최적화',
             use_cases: [
                 '복잡한 버그 단계별 분석 및 해결',
                 '시스템 성능 병목 지점 식별',
@@ -46,9 +46,9 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
 
         API_DOCUMENTATION: {
             primary: ['CONTEXT7', 'FILESYSTEM', 'GITHUB'],
-            secondary: ['PLAYWRIGHT'],
-            specialty: 'automated_api_docs_with_testing',
-            description: '최신 API 문서 자동 생성 + 엔드포인트 자동 테스팅',
+            secondary: [], // playwright 제거됨
+            specialty: 'automated_api_docs',
+            description: '최신 API 문서 자동 생성 및 관리',
             use_cases: [
                 '최신 API 표준 준수 문서 생성',
                 'OpenAPI 스펙 자동 업데이트',
@@ -72,9 +72,9 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
 
         GOOGLE_SEO: {
             primary: ['CONTEXT7', 'FILESYSTEM', 'MEMORY'],
-            secondary: ['PLAYWRIGHT'],
-            specialty: 'automated_seo_performance_optimization',
-            description: '최신 SEO 가이드라인 + 웹 성능 자동 검증',
+            secondary: [], // playwright 제거됨
+            specialty: 'seo_optimization',
+            description: '최신 SEO 가이드라인 및 시멘틱 마크업 최적화',
             use_cases: [
                 '최신 SEO 가이드라인 적용',
                 '메타태그 및 시멘틱 마크업',
@@ -85,9 +85,9 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
 
         SECURITY_AUDIT: {
             primary: ['SEQUENTIAL_THINKING', 'FILESYSTEM', 'MEMORY'],
-            secondary: ['PLAYWRIGHT'],
-            specialty: 'comprehensive_security_testing',
-            description: '종합적 보안 감사 + 브라우저 보안 자동화',
+            secondary: [], // playwright 제거됨
+            specialty: 'security_audit',
+            description: '종합적 보안 감사 및 취약점 분석',
             use_cases: [
                 'API 키 및 민감 정보 자동 스캔',
                 '웹 애플리케이션 보안 취약점 검증',
@@ -101,7 +101,7 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
     CUSTOM_COMMAND_OPTIMIZATION: {
         '/max': {
             agents: ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION', 'TROUBLESHOOTING', 'GOOGLE_SEO', 'SECURITY_AUDIT'],
-            mcp_tools: ['SEQUENTIAL_THINKING', 'CONTEXT7', 'FILESYSTEM', 'MEMORY', 'GITHUB', 'PLAYWRIGHT'],
+            mcp_tools: ['SEQUENTIAL_THINKING', 'CONTEXT7', 'FILESYSTEM', 'MEMORY', 'GITHUB'] // playwright 제거됨,
             parallel_execution: true,
             performance_priority: 'MAXIMUM',
             description: '모든 리소스 최대 활용 - 복잡한 프로젝트 전체 분석 및 최적화'
@@ -109,7 +109,7 @@ const AGENT_MCP_OPTIMIZATION_CONFIG = {
 
         '/auto': {
             agents: ['CLAUDE_GUIDE', 'DEBUG', 'API_DOCUMENTATION'],
-            mcp_tools: ['SEQUENTIAL_THINKING', 'CONTEXT7', 'MEMORY', 'PLAYWRIGHT'],
+            mcp_tools: ['SEQUENTIAL_THINKING', 'CONTEXT7', 'MEMORY', 'FILESYSTEM'] // playwright 제거됨,
             parallel_execution: true,
             performance_priority: 'HIGH',
             description: '자동화 우선 - 반복 작업 자동화 및 효율성 최적화'
@@ -450,8 +450,8 @@ function validateSystemConfiguration() {
         sqlite_integration: AGENT_MCP_OPTIMIZATION_CONFIG.SQLITE_INTEGRATION.LOG_AGENT_EXECUTIONS,
         learning_system: AGENT_MCP_OPTIMIZATION_CONFIG.LEARNING_SYSTEM.PATTERN_RECOGNITION,
         fsd_architecture_support: true,
-        status: 'OPTIMIZED_WITH_FSD',
-        last_updated: '2025-08-03'
+        status: 'OPTIMIZED_WITH_FSD_NO_PLAYWRIGHT',
+        last_updated: '2025-08-04 (playwright MCP 제거)'
     };
 }
 

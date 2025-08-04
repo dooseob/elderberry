@@ -1,29 +1,29 @@
 /**
  * 엘더베리 프로젝트 커스텀 명령어 핸들러 v2.3.0
- * WebTestingMasterAgent 통합 + MCP 도구 완전 활용 + /auto 지능형 자동화
- * @date 2025-08-03
- * @version 2.3.0
- * @features WebTestingMasterAgent, Playwright MCP, 7개 서브에이전트 통합, /auto 컨텍스트 기반 자동화
+ * MCP 도구 완전 활용 + /auto 지능형 자동화 (playwright MCP 제거됨)
+ * @date 2025-08-04
+ * @version 2.3.1
+ * @features 5개 MCP 도구, 7개 서브에이전트 통합, /auto 컨텍스트 기반 자동화
  */
 
 class CustomCommandHandler {
     constructor() {
         this.supportedCommands = ["/max", "/auto", "/smart", "/rapid", "/deep", "/sync", "/test"];
-        this.version = '2.3.0';
+        this.version = '2.3.1'; // playwright MCP 제거 버전
         this.description = '엘더베리 프로젝트 전용 커스텀 명령어 핸들러';
         
-        // WebTestingMasterAgent + PlaywrightMCPEnhanced 통합
-        this.webTestingAgent = null; // 실제 구현에서는 WebTestingMasterAgent 인스턴스
-        this.playwrightEnhancedAgent = null; // PlaywrightMCPEnhanced 에이전트
+        // WebTestingMasterAgent + PlaywrightMCPEnhanced 통합 (비활성화됨)
+        this.webTestingAgent = null; // playwright MCP 제거로 비활성화
+        this.playwrightEnhancedAgent = null; // playwright MCP 제거로 비활성화
         
-        // MCP 도구 매핑 (Playwright 추가)
+        // MCP 도구 매핑 (playwright 제거됨)
         this.mcpTools = {
             'sequential-thinking': '체계적 단계별 사고 프로세스',
             'context7': '최신 기술 문서 및 베스트 프랙티스 조회',
             'filesystem': '파일 시스템 분석 및 관리',
             'memory': '학습 데이터 저장 및 패턴 분석',
-            'github': 'GitHub 통합 및 이슈 관리',
-            'playwright': '웹 자동화 및 E2E 테스팅' // 🚀 NEW!
+            'github': 'GitHub 통합 및 이슈 관리'
+            // 'playwright': '웹 자동화 및 E2E 테스팅' - MCP 제거됨 (2025-08-04)
         };
         
         // 서브에이전트 정의 (WebTestingMasterAgent 추가)
@@ -34,7 +34,7 @@ class CustomCommandHandler {
             'TROUBLESHOOTING': '이슈 진단 및 해결책 제공 전문가',
             'GOOGLE_SEO': 'SEO 최적화 및 웹 성능 전문가',
             'SECURITY_AUDIT': '보안 감사 및 취약점 분석 전문가',
-            'WEB_TESTING_MASTER': 'Playwright 웹 테스팅 및 자동화 전문가' // 🚀 NEW!
+            'WEB_TESTING_MASTER': '웹 테스팅 및 자동화 전문가 (playwright MCP 제거됨)' // MCP 제거됨
         };
     }
 
@@ -101,7 +101,7 @@ class CustomCommandHandler {
                     commandProcessingTime: executionTime,
                     agentCoordination: 'efficient',
                     mcpToolIntegration: 'optimal',
-                    webTestingCapability: command === '/test' ? 'advanced' : 'standard'
+                    webTestingCapability: command === '/test' ? 'basic' : 'standard' // playwright 제거로 기본 수준
                 }
             };
             
@@ -633,9 +633,9 @@ class CustomCommandHandler {
      */
     getBaseMcpToolsForCommand(command) {
         const baseToolMap = {
-            '/max': ['sequential-thinking', 'context7', 'filesystem', 'memory', 'github', 'playwright'], // 모든 도구
-            '/test': ['playwright', 'sequential-thinking', 'memory', 'filesystem', 'github'], // 웹 테스팅 최적화
-            '/auto': ['sequential-thinking', 'context7', 'memory', 'filesystem'], // 기본 도구 (웹 작업 시 playwright 자동 추가)
+            '/max': ['sequential-thinking', 'context7', 'filesystem', 'memory', 'github'], // 모든 도구 (playwright 제거됨)
+            '/test': ['sequential-thinking', 'memory', 'filesystem', 'github'], // 웹 테스팅 최적화 (playwright 제거됨)
+            '/auto': ['sequential-thinking', 'context7', 'memory', 'filesystem'], // 기본 도구
             '/smart': ['context7', 'memory', 'sequential-thinking'], // 지능형 도구 조합
             '/rapid': ['memory', 'filesystem'], // 최소한의 빠른 도구
             '/deep': ['sequential-thinking', 'context7', 'memory', 'github'], // 심층 분석 강화
@@ -704,12 +704,12 @@ class CustomCommandHandler {
         const conditionalTools = [];
         const baseTools = this.getBaseMcpToolsForCommand(command);
         
-        // 웹 관련 작업에 playwright 추가 (기본에 없는 명령어들)
-        if (['/auto', '/smart'].includes(command) && context.isWebRelated) {
-            if (!baseTools.includes('playwright')) {
-                conditionalTools.push('playwright');
-            }
-        }
+        // 웹 관련 작업에 playwright 추가 (기본에 없는 명령어들) - MCP 제거로 비활성화
+        // if (['/auto', '/smart'].includes(command) && context.isWebRelated) {
+        //     if (!baseTools.includes('playwright')) {
+        //         conditionalTools.push('playwright');
+        //     }
+        // }
         
         // 성능 관련 작업에 추가 도구
         if (context.isPerformanceRelated && !['/max', '/rapid'].includes(command)) {
@@ -785,8 +785,8 @@ class CustomCommandHandler {
         // 문제 해결 작업에 TROUBLESHOOTING 포함 시 +10점
         if (context.isTroubleshootingRelated && agents.includes('TROUBLESHOOTING')) relevanceScore += 10;
         
-        // Playwright 도구가 웹 작업에 적절히 사용됨 +10점
-        if (context.isWebRelated && tools.includes('playwright')) relevanceScore += 10;
+        // Playwright 도구가 웹 작업에 적절히 사용됨 +10점 - MCP 제거로 비활성화
+        // if (context.isWebRelated && tools.includes('playwright')) relevanceScore += 10;
         
         // 불필요한 에이전트 없으면 +10점
         if (!context.isWebRelated && !agents.includes('WEB_TESTING_MASTER')) relevanceScore += 10;
@@ -821,17 +821,17 @@ class CustomCommandHandler {
                 '/rapid': '⚡ 신속 처리 모드 - 핵심 에이전트 2개로 빠른 결과 도출',
                 '/deep': '🔍 심층 분석 모드 - 포괄적 분석 + GitHub 코드 검토 통합',
                 '/sync': '🔄 동기화 모드 - 최신 정보 조회 + 프로젝트 상태 동기화',
-                '/test': '🎭 WebTestingMaster 모드 - Playwright 웹 테스팅 완전 자동화 (Chrome 설치 최적화됨)'
+                '/test': '🎭 WebTestingMaster 모드 - 웹 테스팅 자동화 (playwright MCP 제거됨)'
             },
             optimizationFeatures: {
                 contextAnalysis: '작업 키워드 기반 지능형 에이전트 선택',
                 conditionalAgent: '웹/보안/성능 관련 작업 시 전문 에이전트 자동 추가',
                 efficiencyGain: '평균 40% 리소스 사용량 감소, 85% 정확도 향상',
-                smartMapping: '7개 서브에이전트 + 6개 MCP 도구 완전 최적화'
+                smartMapping: '7개 서브에이전트 + 5개 MCP 도구 완전 최적화 (playwright 제거됨)'
             },
             totalCommands: this.supportedCommands.length,
             version: this.version,
-            lastUpdated: '2025-08-03 (v2.3.0 지능형 자동화 완료)'
+            lastUpdated: '2025-08-04 (v2.3.1 playwright MCP 제거 완료)'
         };
     }
 
@@ -971,14 +971,14 @@ class CustomCommandHandler {
         
         const isWebRelated = webKeywords.some(keyword => taskLower.includes(keyword));
         
-        // Playwright 특화 키워드
-        const playwrightKeywords = [
-            'playwright', '플레이라이트', 'chrome', 'chromium', 
-            'browser', 'headless', 'screenshot', 'automation',
-            'e2e', 'end-to-end', 'visual regression', 'accessibility test'
-        ];
+        // Playwright 특화 키워드 - MCP 제거로 비활성화
+        // const playwrightKeywords = [
+        //     'playwright', '플레이라이트', 'chrome', 'chromium', 
+        //     'browser', 'headless', 'screenshot', 'automation',
+        //     'e2e', 'end-to-end', 'visual regression', 'accessibility test'
+        // ];
         
-        const needsPlaywrightEnhanced = playwrightKeywords.some(keyword => taskLower.includes(keyword));
+        const needsPlaywrightEnhanced = false; // playwright MCP 제거로 비활성화
         
         return {
             isWebRelated,
@@ -1035,21 +1035,21 @@ class CustomCommandHandler {
         
         // 명령어별 기본 도구
         const commandTools = {
-            '/max': [...baseTools, 'github', 'playwright'],
+            '/max': [...baseTools, 'github'], // playwright 제거됨
             '/auto': [...baseTools],
             '/smart': ['sequential-thinking', 'memory', 'filesystem'],
             '/rapid': ['sequential-thinking', 'filesystem'],
             '/deep': [...baseTools, 'github'],
             '/sync': ['context7', 'filesystem', 'github'],
-            '/test': ['playwright', 'sequential-thinking', 'memory']
+            '/test': ['sequential-thinking', 'memory'] // playwright 제거됨
         };
         
         let tools = commandTools[command] || baseTools;
         
-        // 웹 관련 작업시 playwright 도구 추가
-        if (context.isWebRelated && !tools.includes('playwright')) {
-            tools.push('playwright');
-        }
+        // 웹 관련 작업시 playwright 도구 추가 - MCP 제거로 비활성화
+        // if (context.isWebRelated && !tools.includes('playwright')) {
+        //     tools.push('playwright');
+        // }
         
         // GitHub 관련 작업시 github 도구 추가
         if (task.toLowerCase().includes('commit') || task.toLowerCase().includes('git')) {

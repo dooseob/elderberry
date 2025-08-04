@@ -14,7 +14,7 @@ class WebTestingMasterAgent {
         this.description = 'Playwright MCP 기반 웹 애플리케이션 종합 테스팅 전문가';
         
         this.capabilities = [
-            'playwright-mcp-integration',      // Playwright MCP 도구 완전 활용
+            // 'playwright-mcp-integration',   // Playwright MCP 도구 완전 활용 - MCP 제거됨 (2025-08-04)
             'e2e-testing-automation',          // E2E 테스트 자동화
             'visual-regression-testing',       // 시각적 회귀 테스트
             'web-performance-analysis',        // 웹 성능 분석 (Core Web Vitals)

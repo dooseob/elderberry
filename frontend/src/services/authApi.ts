@@ -20,7 +20,7 @@ import type { AppError } from '../types/errors';
 
 // API 인스턴스 생성
 const authApi = axios.create({
-  baseURL: 'http://localhost:8080/api/auth',
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/auth` : 'http://localhost:8080/api/auth',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -28,19 +28,35 @@ const authApi = axios.create({
 });
 
 const memberApi = axios.create({
-  baseURL: 'http://localhost:8080/api/members',
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/members` : 'http://localhost:8080/api/members',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// 요청 인터셉터: 토큰 자동 추가
+// 요청 인터셉터: 토큰 자동 추가 (로그인/회원가입 제외)
 authApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  // 로그인과 회원가입 요청에는 토큰을 포함하지 않음
+  const publicEndpoints = ['/login', '/register', '/signup', '/login-test', '/login-dto-test', '/login-simple-test', '/login-map-test', '/password-hash-test'];
+  const isPublicEndpoint = publicEndpoints.some(endpoint => {
+    // 정확한 엔드포인트 매칭을 위해 URL 끝부분 확인
+    const url = config.url || '';
+    return url === endpoint || url.endsWith(endpoint);
+  });
+  
+  if (!isPublicEndpoint) {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
+  
+  // 디버깅을 위한 로그 (개발 환경에서만)
+  if (import.meta.env.MODE === 'development') {
+    console.log(`[Auth API] 요청: ${config.url}, 공개: ${isPublicEndpoint}, 토큰: ${!!config.headers.Authorization}`);
+  }
+  
   return config;
 });
 
@@ -52,12 +68,27 @@ memberApi.interceptors.request.use((config) => {
   return config;
 });
 
-// 응답 인터셉터: 타입 안전한 에러 처리
+// 응답 인터셉터: 타입 안전한 에러 처리 및 토큰 만료 처리
 const handleApiError = (error: unknown): Promise<never> => {
+  const axiosError = error as AxiosError;
   const context: ErrorContext = {
     component: 'authApi',
-    route: (error as AxiosError)?.config?.url || ''
+    route: axiosError?.config?.url || ''
   };
+  
+  // 401 에러 시 토큰 정리 (로그인 요청 제외)
+  if (axiosError?.response?.status === 401) {
+    const url = axiosError.config?.url || '';
+    const isLoginRequest = url.includes('/login') || url.includes('/register');
+    
+    if (!isLoginRequest) {
+      // 만료된 토큰 정리
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      console.warn('토큰이 만료되어 자동 로그아웃되었습니다.');
+    }
+  }
   
   const normalizedError = normalizeError(error, context);
   errorLogger.error(normalizedError, context);

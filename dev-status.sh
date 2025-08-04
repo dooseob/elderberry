@@ -14,25 +14,25 @@ RUNNING_SERVICES=0
 TOTAL_SERVICES=4
 
 # 백엔드 체크
-if netstat -an 2>/dev/null | grep -q ":8080.*LISTEN"; then
-    log_success "백엔드 (8080): 실행중"
+if ss -tuln 2>/dev/null | grep -q ":8082" || netstat -an 2>/dev/null | grep -q ":8082.*LISTEN"; then
+    log_success "백엔드 (8082): 실행중"
     RUNNING_SERVICES=$((RUNNING_SERVICES + 1))
     
     # API 헬스 체크 (비동기 타임아웃 5초)
-    if timeout 5 curl -s http://localhost:8080/actuator/health >/dev/null 2>&1; then
+    if timeout 5 curl -s http://localhost:8082/actuator/health >/dev/null 2>&1; then
         log_success "      └─ Health Check: OK"
     else
         log_warning "      └─ Health Check: 시작 중 또는 비활성화"
     fi
 else
-    log_error "백엔드 (8080): 중지됨"
+    log_error "백엔드 (8082): 중지됨"
 fi
 
 # 프론트엔드 체크
-if netstat -an 2>/dev/null | grep -q ":5173.*LISTEN"; then
+if ss -tuln 2>/dev/null | grep -q ":5173" || netstat -an 2>/dev/null | grep -q ":5173.*LISTEN"; then
     log_success "프론트엔드 (5173): 실행중"
     RUNNING_SERVICES=$((RUNNING_SERVICES + 1))
-elif netstat -an 2>/dev/null | grep -q ":5174.*LISTEN"; then
+elif ss -tuln 2>/dev/null | grep -q ":5174" || netstat -an 2>/dev/null | grep -q ":5174.*LISTEN"; then
     log_success "프론트엔드 (5174): 실행중"
     RUNNING_SERVICES=$((RUNNING_SERVICES + 1))
 else
@@ -40,7 +40,7 @@ else
 fi
 
 # Redis 체크
-if netstat -an 2>/dev/null | grep -q ":6379.*LISTEN"; then
+if ss -tuln 2>/dev/null | grep -q ":6379" || netstat -an 2>/dev/null | grep -q ":6379.*LISTEN"; then
     log_success "Redis (6379): 실행중"
     RUNNING_SERVICES=$((RUNNING_SERVICES + 1))
     
@@ -55,7 +55,7 @@ else
 fi
 
 # Redis UI 체크
-if netstat -an 2>/dev/null | grep -q ":8081.*LISTEN"; then
+if ss -tuln 2>/dev/null | grep -q ":8081" || netstat -an 2>/dev/null | grep -q ":8081.*LISTEN"; then
     log_success "Redis UI (8081): 실행중"
     RUNNING_SERVICES=$((RUNNING_SERVICES + 1))
 else
@@ -137,11 +137,11 @@ fi
 echo ""
 echo "🔗 빠른 액세스 링크:"
 if [ $RUNNING_SERVICES -gt 0 ]; then
-    [ $(netstat -an 2>/dev/null | grep -c ":8080.*LISTEN") -gt 0 ] && echo "   • 백엔드: http://localhost:8080"
-    [ $(netstat -an 2>/dev/null | grep -c ":5173.*LISTEN") -gt 0 ] && echo "   • 프론트엔드: http://localhost:5173"
-    [ $(netstat -an 2>/dev/null | grep -c ":5174.*LISTEN") -gt 0 ] && echo "   • 프론트엔드: http://localhost:5174"
-    [ $(netstat -an 2>/dev/null | grep -c ":8080.*LISTEN") -gt 0 ] && echo "   • H2 Console: http://localhost:8080/h2-console"
-    [ $(netstat -an 2>/dev/null | grep -c ":8081.*LISTEN") -gt 0 ] && echo "   • Redis UI: http://localhost:8081"
+    if ss -tuln 2>/dev/null | grep -q ":8082" || netstat -an 2>/dev/null | grep -q ":8082.*LISTEN"; then echo "   • 백엔드: http://localhost:8082"; fi
+    if ss -tuln 2>/dev/null | grep -q ":5173" || netstat -an 2>/dev/null | grep -q ":5173.*LISTEN"; then echo "   • 프론트엔드: http://localhost:5173"; fi
+    if ss -tuln 2>/dev/null | grep -q ":5174" || netstat -an 2>/dev/null | grep -q ":5174.*LISTEN"; then echo "   • 프론트엔드: http://localhost:5174"; fi
+    if ss -tuln 2>/dev/null | grep -q ":8082" || netstat -an 2>/dev/null | grep -q ":8082.*LISTEN"; then echo "   • H2 Console: http://localhost:8082/h2-console"; fi
+    if ss -tuln 2>/dev/null | grep -q ":8081" || netstat -an 2>/dev/null | grep -q ":8081.*LISTEN"; then echo "   • Redis UI: http://localhost:8081"; fi
 else
     log_info "실행 중인 서비스가 없습니다"
 fi

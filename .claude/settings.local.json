@@ -114,22 +114,16 @@
       "Bash(wsl:*)",
       "Bash(DOCKER_BUILDKIT=0 docker build -t elderberry-backend:latest . --no-cache)",
       "Bash(sudo rm:*)",
-      "mcp__playwright__*",
       "Bash(npm info:*)",
       "Bash(./dev-restart.sh:*)",
-      "Bash(npx playwright:*)",
       "Bash(awk:*)",
       "mcp__filesystem__read_text_file",
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_install",
-      "mcp__playwright__browser_take_screenshot",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --headed=false --timeout=30000)",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --timeout=30000)",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/basic.spec.ts --reporter=line)",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/basic.spec.ts --project=chromium --reporter=line)",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test tests/auth-improvement.spec.ts --project=chromium --reporter=line)",
       "mcp__filesystem__move_file",
-      "Bash(SKIP_BROWSER_INSTALL=true npx playwright test --config playwright.config.ts --reporter=line --workers=1 --timeout=30000 --project=chromium)"
+      "Bash(fuser:*)",
+      "Bash(pgrep:*)",
+      "Bash(ps:*)",
+      "Bash(# 정상 로그인 테스트\necho \"\"🔍 8082 포트 새 서버 - 정상 로그인 테스트...\"\"\ncurl -X POST http://localhost:8082/api/auth/login \\\n  -H \"\"Content-Type: application/json\"\" \\\n  -d ''{\"\"email\"\":\"\"test.domestic@example.com\"\",\"\"password\"\":\"\"Password123!\"\",\"\"rememberMe\"\":false}'' \\\n  -s | head -50\n\necho -e \"\"\\n🔍 8082 포트 새 서버 - 잘못된 토큰과 함께 로그인 테스트...\"\"\ncurl -X POST http://localhost:8082/api/auth/login \\\n  -H \"\"Content-Type: application/json\"\" \\\n  -H \"\"Authorization: Bearer invalid-token-format\"\" \\\n  -d ''{\"\"email\"\":\"\"test.domestic@example.com\"\",\"\"password\"\":\"\"Password123!\"\",\"\"rememberMe\"\":false}'' \\\n  -s | head -50)",
+      "Bash(redis-cli:*)"
     ],
     "deny": []
   }

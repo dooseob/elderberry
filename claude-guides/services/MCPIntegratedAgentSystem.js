@@ -1,6 +1,6 @@
 /**
  * MCP 통합 에이전트 시스템 v2.3.0 - 최적화된 커스텀 명령어 시스템 통합
- * Sequential Thinking, Context7, Filesystem, Memory, GitHub, Playwright MCP 활용
+ * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 (playwright 제거됨)
  * @version 2.3.0
  * @date 2025-08-01
  * @features 지능형 에이전트 선택, 작업별 최적화, 효율성 40% 향상
@@ -18,18 +18,18 @@ class MCPIntegratedAgentSystem {
             context7: 'context7', 
             filesystem: 'filesystem',
             memory: 'memory',
-            github: 'github',
-            playwright: 'playwright'  // Playwright 웹 자동화 도구 추가
+            github: 'github'
+            // playwright: 'playwright'  // Playwright MCP 제거됨 (2025-08-04)
         };
         
         this.agentCapabilities = {
-            CLAUDE_GUIDE: ['sequential-thinking', 'memory', 'context7', 'playwright'],
-            DEBUG: ['sequential-thinking', 'filesystem', 'memory', 'playwright'],
-            API_DOCUMENTATION: ['context7', 'filesystem', 'github', 'playwright'],
+            CLAUDE_GUIDE: ['sequential-thinking', 'memory', 'context7'],
+            DEBUG: ['sequential-thinking', 'filesystem', 'memory'],
+            API_DOCUMENTATION: ['context7', 'filesystem', 'github'],
             TROUBLESHOOTING: ['memory', 'filesystem', 'sequential-thinking'],
-            GOOGLE_SEO: ['context7', 'filesystem', 'memory', 'playwright'],
-            SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory', 'playwright'],
-            WEB_TESTING_MASTER: ['playwright', 'sequential-thinking', 'memory', 'filesystem', 'github']
+            GOOGLE_SEO: ['context7', 'filesystem', 'memory'],
+            SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory'],
+            WEB_TESTING_MASTER: ['sequential-thinking', 'memory', 'filesystem', 'github']  // playwright 제거됨
         };
         
         // 🎯 최적화 메트릭 추적
@@ -627,7 +627,7 @@ class MCPIntegratedAgentSystem {
                         '구조화된 데이터 마크업',
                         '시멘틱 HTML 태그',
                         '페이지 속도 최적화',
-                        'Playwright 웹 성능 자동 측정'
+                        // 'Playwright 웹 성능 자동 측정' - MCP 제거됨
                     ]
                 };
             },
@@ -644,7 +644,7 @@ class MCPIntegratedAgentSystem {
                         '웹 애플리케이션 보안 테스팅',
                         'SQL Injection 및 XSS 검증',
                         'HTTPS 및 보안 헤더 검증',
-                        'Playwright 브라우저 보안 자동화'
+                        // 'Playwright 브라우저 보안 자동화' - MCP 제거됨
                     ]
                 };
             },

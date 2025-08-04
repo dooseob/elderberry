@@ -186,6 +186,9 @@ export interface InputProps
   
   /** 접근성: 필수 필드 */
   'aria-required'?: boolean;
+  
+  /** 테스트ID (data-testid로 변환됨) */
+  testId?: string;
 }
 
 /**
@@ -227,6 +230,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     'aria-describedby': ariaDescribedBy,
     'aria-invalid': ariaInvalid,
     'aria-required': ariaRequired,
+    testId,
     ...props
   }, ref) => {
     // Linear 테마 훅 사용
@@ -498,6 +502,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-describedby={describedBy}
             aria-invalid={ariaInvalid !== undefined ? ariaInvalid : (!!errorText || !!validationMessage)}
             aria-required={ariaRequired !== undefined ? ariaRequired : required}
+            data-testid={testId}
             {...(multiline ? { rows } : {})}
             {...props}
           />

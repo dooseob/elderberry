@@ -110,6 +110,11 @@ export const useAuthStore = create<AuthStore>()(
         try {
           set({ isLoading: true, error: null });
 
+          // 로그인 전에 기존 토큰 정리
+          removeStoredToken('ACCESS_TOKEN');
+          removeStoredToken('REFRESH_TOKEN');
+          removeStoredUser();
+
           const response = await authService.login(request);
           
           const user: AuthUser = {
