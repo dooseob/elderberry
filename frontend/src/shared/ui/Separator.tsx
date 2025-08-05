@@ -509,6 +509,7 @@ TimelineSeparator.displayName = "LinearTimelineSeparator";
 // === 내보내기 ===
 // 이미 위에서 개별적으로 export되고 있으므로 중복 export 제거
 export { separatorVariants };
+export { Separator };
 export default Separator;
 
 // === JSDoc 사용 예시 (Storybook 준비) ===
