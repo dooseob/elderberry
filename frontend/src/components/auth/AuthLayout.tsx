@@ -19,8 +19,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Home, Moon, Sun, Sparkles } from 'lucide-react';
-import { useLinearTheme } from '../../hooks/useLinearTheme';
-import { Button } from '../../shared/ui/Button';
+// import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useLinearTheme } from '../../hooks/useLinearTheme.simple';
+import { Button } from '../../shared/ui';
 import { cn } from '../../lib/utils';
 
 /**

@@ -23,8 +23,7 @@ import { useJobStore } from '../../stores/jobStore';
 import { useAuthStore } from '../../stores/authStore';
 import { Job, EmploymentType, ExperienceLevel, JobSearchParams } from '../../types/job';
 import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
-import Button from '../../../shared/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../../shared/ui';
 
 // 고용 형태 한글 매핑
 const employmentTypeLabels = {

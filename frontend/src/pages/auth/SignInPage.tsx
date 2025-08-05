@@ -32,14 +32,15 @@ import {
   Globe
 } from 'lucide-react';
 
-import { AuthLayout } from '@/components/auth/AuthLayout';
-import { EmailInput } from '@/components/auth/EmailInput';
-import { PasswordInput } from '@/components/auth/PasswordInput';
-import { Button } from '@/shared/ui';
-import { useAuthStore } from '@/stores/authStore';
-import { useLinearTheme } from '@/hooks/useLinearTheme';
-import { useRenderingMonitor, useDependencyTracker } from '@/hooks/useRenderingMonitor';
-import { cn } from '@/lib/utils';
+import { AuthLayout } from '../../components/auth/AuthLayout';
+import { EmailInput } from '../../components/auth/EmailInput';
+import { PasswordInput } from '../../components/auth/PasswordInput';
+import { Button } from '../../shared/ui';
+import { useAuthStore } from '../../stores/authStore';
+// import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useLinearTheme } from '../../hooks/useLinearTheme.simple';
+import { useRenderingMonitor, useDependencyTracker } from '../../hooks/useRenderingMonitor';
+import { cn } from '../../lib/utils';
 
 // 개선된 폼 스키마 (더 관대한 검증)
 const signInSchema = z.object({
