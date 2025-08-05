@@ -15,16 +15,16 @@ import {
   Settings,
   Sparkles,
   Star
-} from '../../components/icons/LucideIcons';
+} from '@/components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useFacilitySearchResults, useFacilityLoadingStates, useFacilityErrors } from '@/stores/facilityStore';
-import Button from '../../../shared/ui/Button';
-import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
+import { Button } from '@/shared/ui';
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
 import FacilityList from './components/FacilityList';
 import FacilitySearchFilters from './components/FacilitySearchFilters';
 import RecommendationResults from './components/RecommendationResults';
 import FacilityDetailModal from './components/FacilityDetailModal';
-import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
+import { useSEO, SEOPresets, addStructuredData } from '@/hooks/useSEO';
 
 interface FacilitySearchPageProps {
   memberId?: number;

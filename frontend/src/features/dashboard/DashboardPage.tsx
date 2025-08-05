@@ -18,15 +18,16 @@ import {
   MessageSquare,
   Star,
   TrendingUp,
-  Users
-} from '../../components/icons/LucideIcons';
+  Users,
+  Settings
+} from '@/components/icons/LucideIcons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '../../stores/authStore';
-import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
-import Button from '../../../shared/ui/Button';
-import { useSEO, addStructuredData } from '../../hooks/useSEO';
+import { useAuthStore } from '@/stores/authStore';
+import { MemberRole } from '@/types/auth';
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { Button } from '@/shared/ui';
+import { useSEO, addStructuredData } from '@/hooks/useSEO';
 
 // 통계 카드 컴포넌트
 interface StatCardProps {

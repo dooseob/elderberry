@@ -5,9 +5,9 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { MotionScaleIn, MotionSlideUp, MotionFadeIn } from './ConditionalMotion';
 import { RefreshCw, AlertTriangle, Home } from 'lucide-react';
-import Button from './Button';
-import { devLogger, errorLogger } from '../../utils/devLogger';
-import '../../styles/animations.css';
+import { Button } from './Button';
+import { devLogger, errorLogger } from '@/utils/devLogger';
+import '@/styles/animations.css';
 
 interface Props {
   children?: ReactNode;
@@ -116,6 +116,17 @@ export default class LazyLoadErrorBoundary extends Component<Props, State> {
                 </span>
               )}
             </p>
+            
+            {/* 구체적인 에러 메시지 표시 */}
+            {error?.message && (
+              <p className="text-sm text-gray-500 mt-2">
+                {error.message.includes('Failed to fetch dynamically imported module') 
+                  ? '모듈을 불러올 수 없습니다. 네트워크 연결을 확인해주세요.'
+                  : error.message.includes('Cannot find module')
+                  ? '요청하신 페이지를 찾을 수 없습니다.'
+                  : '일시적인 오류가 발생했습니다.'}
+              </p>
+            )}
 
             {/* 개발 환경에서만 에러 상세 정보 표시 */}
             {__DEV__ && error && (
@@ -123,8 +134,9 @@ export default class LazyLoadErrorBoundary extends Component<Props, State> {
                 <summary className="cursor-pointer text-gray-700 font-medium">
                   에러 상세 정보
                 </summary>
-                <pre className="mt-2 text-xs text-red-600 overflow-auto">
-                  {error.message}\n{error.stack}
+                <pre className="mt-2 text-xs text-red-600 overflow-auto whitespace-pre-wrap break-words">
+                  {error.message}
+                  {error.stack && `\n\nStack trace:\n${error.stack}`}
                 </pre>
               </details>
             )}
