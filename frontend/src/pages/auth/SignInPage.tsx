@@ -38,6 +38,7 @@ import { PasswordInput } from '../../components/auth/PasswordInput';
 import { Button } from '../../shared/ui/Button';
 import { useAuthStore } from '../../stores/authStore';
 import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useRenderingMonitor, useDependencyTracker } from '../../hooks/useRenderingMonitor';
 import { cn } from '../../lib/utils';
 
 // 개선된 폼 스키마 (더 관대한 검증)
@@ -123,6 +124,14 @@ export const SignInPage: React.FC = () => {
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const { isReducedMotion } = useLinearTheme();
   
+  // 렌더링 성능 모니터링 (개발 환경에서만)
+  const renderingMetrics = useRenderingMonitor({
+    componentName: 'SignInPage',
+    threshold: 5, // 5초 내 5회 이상 렌더링 시 경고
+    timeWindow: 5000
+  });
+  
+  
   // 상태
   const [showPassword, setShowPassword] = React.useState(false);
   const [socialLoading, setSocialLoading] = React.useState<string | null>(null);
@@ -162,12 +171,23 @@ export const SignInPage: React.FC = () => {
     return getProvidersForRegion(navigator.language);
   }, []);
   
-  // 이미 로그인된 사용자 리다이렉트 (한 번만 실행하도록 최적화)
+  // 이미 로그인된 사용자 리다이렉트 (렌더링 루프 방지 최적화)
+  const prevAuthenticatedRef = React.useRef(isAuthenticated);
+  const stableNavigate = React.useCallback(
+    (path: string) => navigate(path, { replace: true }),
+    [navigate]
+  );
+  
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate(redirectPath, { replace: true });
+    // 인증 상태가 false → true로 변경될 때만 네비게이션 실행
+    if (isAuthenticated && !prevAuthenticatedRef.current) {
+      stableNavigate(redirectPath);
     }
-  }, [isAuthenticated]); // navigate와 redirectPath 의존성 제거로 무한 루프 방지
+    prevAuthenticatedRef.current = isAuthenticated;
+  }, [isAuthenticated, stableNavigate, redirectPath]);
+  
+  // useEffect 의존성 추적 (개발 환경에서만)
+  useDependencyTracker('SignInPage-Auth-Effect', [isAuthenticated, stableNavigate, redirectPath]);
   
   // 에러 정리
   React.useEffect(() => {
