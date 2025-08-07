@@ -6,6 +6,12 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+// Route Wrappers
+import { 
+  FacilitySearchPageWrapper, 
+  HealthAssessmentWizardWrapper
+} from './router/RouteWrappers';
+
 // 개발용 로거
 import { devLogger } from './utils/devLogger';
 
@@ -176,11 +182,7 @@ function App() {
               element={
                 <MainLayout>
                   <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                    <LazyFacilitySearchPage 
-                      memberId={1}
-                      coordinatorId="coordinator-1"
-                      showRecommendations={false} // 비로그인에서는 추천 기능 비활성화
-                    />
+                    <FacilitySearchPageWrapper />
                   </Suspense>
                 </MainLayout>
               } 
@@ -251,16 +253,7 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <LazyHealthAssessmentWizard 
-                        memberId="1" 
-                        onComplete={(assessmentId) => {
-                          devLogger.action('건강 평가 완료', { assessmentId });
-                          window.location.href = '/facility-search';
-                        }}
-                        onCancel={() => {
-                          devLogger.action('건강 평가 취소');
-                        }}
-                      />
+                      <HealthAssessmentWizardWrapper />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
@@ -274,11 +267,7 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyFacilitySearchPage 
-                        memberId={1}
-                        coordinatorId="coordinator-1"
-                        showRecommendations={true} // 로그인 상태에서는 추천 기능 활성화
-                      />
+                      <FacilitySearchPageWrapper />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>

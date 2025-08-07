@@ -1,16 +1,26 @@
 /**
- * 라우팅 설정 - 단순화된 구조
- * 유지보수성과 가독성을 위한 라우팅 추상화
+ * 라우팅 설정 - 동적 사용자 정보 기반 라우팅
+ * Phase 2: 하드코딩된 값 제거 및 동적 라우팅 지원
  * 
- * @version 2.0.0 - Simplified Structure
- * @description 복잡한 라우팅 로직을 단순하고 명확한 구조로 재구성
+ * @version 3.0.0 - Dynamic User-Based Routing
+ * @description 실제 사용자 정보를 기반으로 한 동적 라우팅 시스템
  */
+import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
 
 // Layout Components
 import { MainLayout } from '../widgets/layout';
 import { ProtectedRoute, AdminRoute, CoordinatorRoute } from '../components/auth/ProtectedRoute';
+
+// Wrapper Components for Dynamic Routing
+import { 
+  FacilitySearchPageWrapper, 
+  HealthAssessmentWizardWrapper,
+  AdminMembersPageWrapper,
+  AdminFacilitiesPageWrapper,
+  CoordinatorMembersPageWrapper
+} from './RouteWrappers';
 
 // 즉시 로딩 컴포넌트 (중요한 페이지들)
 import LandingPage from '../pages/LandingPage';
@@ -45,15 +55,27 @@ export interface RouteConfig {
 const publicRoutes: AppRoute[] = [
   {
     path: '/',
-    element: <MainLayout><LandingPage /></MainLayout>
+    element: (
+      <MainLayout>
+        <LandingPage />
+      </MainLayout>
+    )
   },
   {
     path: '/about',
-    element: <MainLayout><AboutPage /></MainLayout>
+    element: (
+      <MainLayout>
+        <AboutPage />
+      </MainLayout>
+    )
   },
   {
     path: '/contact', 
-    element: <MainLayout><ContactPage /></MainLayout>
+    element: (
+      <MainLayout>
+        <ContactPage />
+      </MainLayout>
+    )
   },
   {
     path: '/auth/signin',
@@ -110,7 +132,7 @@ const protectedRoutes: AppRoute[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <FacilitySearchPage memberId={1} coordinatorId="coordinator-1" showRecommendations={true} />
+          <FacilitySearchPageWrapper />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -120,16 +142,7 @@ const protectedRoutes: AppRoute[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <HealthAssessmentWizard 
-            memberId="1" 
-            onComplete={(assessmentId) => {
-              console.log('건강 평가 완료', { assessmentId });
-              window.location.href = '/facility-search';
-            }}
-            onCancel={() => {
-              console.log('건강 평가 취소');
-            }}
-          />
+          <HealthAssessmentWizardWrapper />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -143,10 +156,7 @@ const adminRoutes: AppRoute[] = [
     element: (
       <AdminRoute>
         <MainLayout>
-          <div className="p-6">
-            <h1 className="text-2xl font-bold">회원 관리</h1>
-            <p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p>
-          </div>
+          <AdminMembersPageWrapper />
         </MainLayout>
       </AdminRoute>
     )
@@ -156,10 +166,7 @@ const adminRoutes: AppRoute[] = [
     element: (
       <AdminRoute>
         <MainLayout>
-          <div className="p-6">
-            <h1 className="text-2xl font-bold">시설 관리</h1>
-            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p>
-          </div>
+          <AdminFacilitiesPageWrapper />
         </MainLayout>
       </AdminRoute>
     )
@@ -173,10 +180,7 @@ const coordinatorRoutes: AppRoute[] = [
     element: (
       <CoordinatorRoute>
         <MainLayout>
-          <div className="p-6">
-            <h1 className="text-2xl font-bold">회원 관리</h1>
-            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p>
-          </div>
+          <CoordinatorMembersPageWrapper />
         </MainLayout>
       </CoordinatorRoute>
     )

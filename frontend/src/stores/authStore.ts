@@ -1,5 +1,6 @@
 /**
  * 인증 상태 관리 스토어 (Zustand)
+ * Phase 2: API 클라이언트 통합 및 TokenProvider 구현
  * 타입 안전한 에러 처리 적용
  */
 import { create } from 'zustand';
@@ -99,6 +100,14 @@ const initialState: AuthState = {
   isLoading: false,
   error: null
 };
+
+// TokenProvider 인터페이스 구현 (API 클라이언트용)
+export const createTokenProvider = (store: AuthStore) => ({
+  getAccessToken: () => store.accessToken,
+  getRefreshToken: () => store.refreshToken,
+  refreshToken: () => store.refreshToken(),
+  logout: () => store.logout(),
+});
 
 export const useAuthStore = create<AuthStore>()(
   persist(

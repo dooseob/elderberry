@@ -1,11 +1,13 @@
 /**
  * 시설 검색 및 매칭 상태 관리 (최적화)
+ * Phase 2: API 클라이언트 통합 및 토큰 관리 개선
  * Zustand를 사용한 최소한의 전역 상태 관리
  * 로컬 상태로 처리 가능한 것들은 분리하여 성능 최적화
  */
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { apiClient } from '../shared/api/apiClient';
 
 // 시설 관련 타입 정의
 export interface FacilityProfile {
@@ -183,28 +185,21 @@ const initialState: FacilityState = {
   isMatchingFormOpen: false,
 };
 
-// API 호출 함수들
+// API 호출 함수들 - 중앙집중식 API 클라이언트 사용
 const api = {
   async searchFacilities(filters: FacilitySearchFilters): Promise<FacilityProfile[]> {
-    const params = new URLSearchParams();
-    
-    if (filters.facilityType) params.append('facilityType', filters.facilityType);
-    if (filters.facilityGrade) params.append('facilityGrade', filters.facilityGrade);
-    if (filters.region) params.append('region', filters.region);
-    if (filters.careGradeLevel) params.append('careGradeLevel', filters.careGradeLevel.toString());
-    
-    const response = await fetch(`/api/facilities?${params.toString()}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error(`시설 검색 실패: ${response.statusText}`);
+    try {
+      const response = await apiClient.getWithParams<{ content: FacilityProfile[] }>('/facilities', {
+        facilityType: filters.facilityType,
+        facilityGrade: filters.facilityGrade,
+        region: filters.region,
+        careGradeLevel: filters.careGradeLevel,
+      });
+      
+      return response.data.content || [];
+    } catch (error: any) {
+      throw new Error(`시설 검색 실패: ${error.message || error.statusText}`);
     }
-    
-    const data = await response.json();
-    return data.content || [];
   },
 
   async getRecommendations(memberId: number, preference: FacilityMatchingPreference, coordinatorId?: string): Promise<FacilityRecommendation[]> {
@@ -225,37 +220,23 @@ const api = {
       maxResults: 10,
     };
 
-    const response = await fetch('/api/facilities/recommendations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
+    try {
+      const response = await apiClient.post<FacilityRecommendation[]>('/facilities/recommendations', requestBody);
+      return response.data;
+    } catch (error: any) {
       // 400 에러인 경우 상세 에러 정보 제공
-      if (response.status === 400) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`추천 시설 조회 실패: 건강 평가 데이터가 없거나 요청 데이터가 잘못되었습니다. (${response.status})`);
+      if (error.status === 400) {
+        throw new Error(`추천 시설 조회 실패: 건강 평가 데이터가 없거나 요청 데이터가 잘못되었습니다. (${error.status})`);
       }
-      throw new Error(`추천 시설 조회 실패: ${response.statusText} (${response.status})`);
+      throw new Error(`추천 시설 조회 실패: ${error.message || error.statusText} (${error.status || 'Unknown'})`);
     }
-
-    return response.json();
   },
 
   async trackFacilityAction(facilityId: number, action: 'contact' | 'visit'): Promise<void> {
-    const response = await fetch(`/api/facilities/${facilityId}/${action}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`시설 ${action} 추적 실패: ${response.statusText}`);
+    try {
+      await apiClient.post(`/facilities/${facilityId}/${action}`);
+    } catch (error: any) {
+      throw new Error(`시설 ${action} 추적 실패: ${error.message || error.statusText}`);
     }
   },
 
@@ -266,32 +247,20 @@ const api = {
       feedback,
     };
 
-    const response = await fetch(`/api/facilities/${facilityId}/complete-matching`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      throw new Error(`매칭 완료 처리 실패: ${response.statusText}`);
+    try {
+      await apiClient.post(`/facilities/${facilityId}/complete-matching`, requestBody);
+    } catch (error: any) {
+      throw new Error(`매칭 완료 처리 실패: ${error.message || error.statusText}`);
     }
   },
 
   async getUserHistory(): Promise<UserMatchingHistory[]> {
-    const response = await fetch('/api/facilities/matching-history', {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`매칭 이력 조회 실패: ${response.statusText}`);
+    try {
+      const response = await apiClient.get<UserMatchingHistory[]>('/facilities/matching-history');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`매칭 이력 조회 실패: ${error.message || error.statusText}`);
     }
-
-    return response.json();
   },
 };
 
