@@ -44,31 +44,43 @@ export default defineConfig({
     // 청크 최적화 - 지연 로딩과 연계한 번들 분리
     rollupOptions: {
       output: {
-        // 수동 청크 분리 - 의존성별 그룹화
+        // 수동 청크 분리 - 최적화된 의존성별 그룹화
         manualChunks: (id) => {
-          // 핵심 라이브러리 청크
+          // 핵심 React 라이브러리 (최우선 캐싱)
           if (id.includes('react') || id.includes('react-dom')) {
             return 'react-vendor';
           }
           
-          // 라우팅 관련
+          // 라우팅 관련 (별도 캐싱)
           if (id.includes('react-router')) {
             return 'router';
           }
           
-          // 상태 관리 및 데이터 페칭
-          if (id.includes('@tanstack/react-query') || id.includes('zustand')) {
+          // 상태 관리 및 데이터 페칭 (함께 사용되므로 묶음)
+          if (id.includes('@tanstack/react-query') || id.includes('zustand') || id.includes('immer')) {
             return 'state-management';
           }
           
-          // UI 라이브러리
-          if (id.includes('framer-motion') || id.includes('lucide-react')) {
-            return 'ui-libs';
+          // 애니메이션 라이브러리 (크기가 커서 별도 분리)
+          if (id.includes('framer-motion')) {
+            return 'animation-lib';
           }
           
-          // 유틸리티 라이브러리
-          if (id.includes('axios') || id.includes('zod') || id.includes('clsx')) {
+          // 아이콘 라이브러리 (선택적 로딩 가능하도록 분리)
+          if (id.includes('lucide-react')) {
+            return 'icon-lib';
+          }
+          
+          // 유틸리티 라이브러리 (경량 라이브러리들 묶음)
+          if (id.includes('axios') || id.includes('zod') || id.includes('clsx') || 
+              id.includes('class-variance-authority') || id.includes('tailwind-merge') ||
+              id.includes('date-fns')) {
             return 'utils';
+          }
+          
+          // 폼 관련 라이브러리
+          if (id.includes('react-hook-form') || id.includes('@hookform/resolvers')) {
+            return 'form-libs';
           }
           
           // 인증 관련 페이지
@@ -133,15 +145,26 @@ export default defineConfig({
       }
     },
     
-    // Terser 압축 옵션
+    // Terser 압축 옵션 (강화된 설정)
     terserOptions: {
       compress: {
         drop_console: true, // console.log 제거
         drop_debugger: true, // debugger 제거
-        pure_funcs: ['console.log', 'console.info'], // 특정 함수 제거
+        pure_funcs: ['console.log', 'console.info', 'console.warn'], // 특정 함수 제거
+        dead_code: true, // 사용되지 않는 코드 제거
+        unused: true, // 사용되지 않는 변수/함수 제거
+        reduce_vars: true, // 변수 최적화
+        passes: 2, // 최적화 패스 증가
       },
       mangle: {
-        safari10: true // Safari 10 호환성
+        safari10: true, // Safari 10 호환성
+        toplevel: true, // 최상위 스코프 변수명 압축
+        properties: {
+          regex: /^_/, // _로 시작하는 프로퍼티 압축
+        }
+      },
+      format: {
+        comments: false, // 주석 제거
       }
     }
   },

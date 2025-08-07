@@ -23,7 +23,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
 import FacilityList from './components/FacilityList';
 import FacilitySearchFilters from './components/FacilitySearchFilters';
 import RecommendationResults from './components/RecommendationResults';
-import FacilityDetailModal from './components/FacilityDetailModal';
+import FacilityDetailModal from './components/FacilityDetailModal/index';
 import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
 
 interface FacilitySearchPageProps {

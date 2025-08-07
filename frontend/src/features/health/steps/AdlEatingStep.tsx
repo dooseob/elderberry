@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { ADL_OPTIONS } from '@/types/health';
 import type { AdlLevel } from '@/types/health';
-import { RadioGroup }, { type RadioOption } from '@/shared/ui';
+import { RadioGroup, type RadioOption } from '@/shared/ui';
 
 const AdlEatingStep: React.FC = () => {
   const {

@@ -18,7 +18,7 @@ const filesToProcess = [
   'src/features/boards/PostCreatePage.tsx',
   'src/features/facility/FacilitySearchPage.tsx',
   'src/features/facility/components/FacilityCard.tsx',
-  'src/features/facility/components/FacilityDetailModal.tsx',
+  'src/features/facility/components/FacilityDetailModal/index.tsx',
   'src/features/facility/components/MatchingCompletionForm.tsx',
   'src/features/health/steps/ReviewStep.tsx',
   'src/features/jobs/JobDetailPage.tsx',

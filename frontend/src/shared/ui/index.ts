@@ -150,6 +150,26 @@ export {
   MetricIcons 
 } from './Dashboard';
 
+// === Style Utilities ===
+export { 
+  commonStyles, 
+  flexStyles, 
+  cardStyles, 
+  buttonStyles, 
+  inputStyles, 
+  textStyles, 
+  layoutStyles, 
+  statusStyles,
+  cx,
+  conditionalClass,
+  responsive,
+  stateClasses,
+  type StyleCategory,
+  type FlexStyleKey,
+  type CardStyleKey,
+  type ButtonStyleKey
+} from '../lib/styles';
+
 // === Utility Types ===
 export type LinearComponentSize = 'sm' | 'md' | 'lg' | 'xl';
 export type LinearComponentVariant = 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';

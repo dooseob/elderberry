@@ -50,7 +50,7 @@ import {
   LTCI_GRADE_INFO
 } from '../../types/profile';
 import { useAuthStore } from '../../stores/authStore';
-import { formatDate, calculateAge } from '../../utils/profileUtils';
+import { formatDate, calculateAge } from '@/shared/lib/profile';
 
 // ===== 메인 컴포넌트 =====
 
