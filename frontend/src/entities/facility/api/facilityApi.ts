@@ -10,6 +10,14 @@ import type {
   FacilitySearchFilters,
   FacilitySearchResponse 
 } from '../model/types';
+import {
+  adaptBackendSearchResponse,
+  adaptBackendFacilityDetail,
+  adaptFrontendSearchParams,
+  isBackendSearchResponseDto,
+  createEmptyFacilitySearchResponse,
+  createEmptyFacilityDetail
+} from '../../../shared/lib/adapters/facilityAdapters';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
@@ -91,20 +99,60 @@ export interface FacilityRecommendationParams {
 export const facilityApi = {
   // 통합 시설 검색
   async searchFacilities(params: FacilitySearchParams): Promise<FacilitySearchResponse> {
-    const response = await apiClient.get('/facilities/search', { params });
-    return response.data;
+    try {
+      const adaptedParams = adaptFrontendSearchParams(params);
+      const response = await apiClient.get('/facilities', { params: adaptedParams });
+      
+      if (isBackendSearchResponseDto(response.data)) {
+        return adaptBackendSearchResponse(response.data);
+      }
+      
+      return createEmptyFacilitySearchResponse();
+    } catch (error) {
+      console.error('시설 검색 중 오류:', error);
+      return createEmptyFacilitySearchResponse();
+    }
   },
 
   // 지도 기반 시설 검색
   async searchFacilitiesOnMap(params: FacilityMapSearchParams) {
-    const response = await apiClient.get('/facilities/search/map', { params });
-    return response.data;
+    try {
+      // 백엔드에서 지원하는 `/facilities` 엔드포인트 사용
+      const adaptedParams = {
+        latitude: (params.neLat + params.swLat) / 2,
+        longitude: (params.neLng + params.swLng) / 2,
+        radiusKm: Math.abs(params.neLat - params.swLat) * 110, // 대략적인 반경 계산
+        facilityType: params.facilityType,
+        minGrade: params.minGrade,
+        availableBedsOnly: params.availableBedsOnly
+      };
+      const response = await apiClient.get('/facilities', { params: adaptedParams });
+      
+      if (isBackendSearchResponseDto(response.data)) {
+        return adaptBackendSearchResponse(response.data);
+      }
+      
+      return createEmptyFacilitySearchResponse();
+    } catch (error) {
+      console.error('지도 기반 시설 검색 중 오류:', error);
+      return createEmptyFacilitySearchResponse();
+    }
   },
 
   // 시설 상세 정보 조회
   async getFacilityDetail(facilityId: number): Promise<FacilityDetail> {
-    const response = await apiClient.get(`/facilities/${facilityId}/detail`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/facilities/${facilityId}`);
+      
+      if (response.data && typeof response.data === 'object') {
+        return adaptBackendFacilityDetail(response.data);
+      }
+      
+      return createEmptyFacilityDetail(facilityId);
+    } catch (error) {
+      console.error(`시설 상세 정보 조회 중 오류 (ID: ${facilityId}):`, error);
+      return createEmptyFacilityDetail(facilityId);
+    }
   },
 
   // AI 추천 시설 목록
@@ -115,8 +163,8 @@ export const facilityApi = {
 
   // 인기 시설 목록
   async getPopularFacilities(): Promise<Facility[]> {
-    // 임시로 전체 검색을 사용 (인기도 정렬)
-    const response = await apiClient.get('/facilities/search', {
+    // 전체 검색을 사용 (인기도 정렬)
+    const response = await apiClient.get('/facilities', {
       params: { sortBy: 'rating', size: 10 }
     });
     return response.data.content || [];

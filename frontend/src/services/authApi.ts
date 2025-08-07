@@ -17,6 +17,14 @@ import {
 } from '../types/auth';
 import { normalizeError, errorLogger, ErrorContext } from '../utils/errorHandler';
 import type { AppError } from '../types/errors';
+import {
+  adaptBackendTokenResponse,
+  adaptBackendMember,
+  isBackendTokenResponseDto,
+  isBackendMemberDto,
+  createEmptyAuthUser,
+  createEmptyMemberResponse
+} from '../shared/lib/adapters/authAdapters';
 
 // API 인스턴스 생성
 const authApi = axios.create({
@@ -28,7 +36,7 @@ const authApi = axios.create({
 });
 
 const memberApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api/members` : 'http://localhost:8080/api/members',
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api/auth` : 'http://localhost:8080/api/auth',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -123,14 +131,24 @@ memberApi.interceptors.response.use(
 export const authService = {
   // 로그인
   async login(request: LoginRequest): Promise<TokenResponse> {
-    const response: AxiosResponse<TokenResponse> = await authApi.post('/login', request);
-    return response.data;
+    const response = await authApi.post('/login', request);
+    
+    if (isBackendTokenResponseDto(response.data)) {
+      return adaptBackendTokenResponse(response.data);
+    }
+    
+    throw new Error('Invalid login response format');
   },
 
   // 회원가입
   async register(request: RegisterRequest): Promise<TokenResponse> {
-    const response: AxiosResponse<TokenResponse> = await authApi.post('/register', request);
-    return response.data;
+    const response = await authApi.post('/register', request);
+    
+    if (isBackendTokenResponseDto(response.data)) {
+      return adaptBackendTokenResponse(response.data);
+    }
+    
+    throw new Error('Invalid register response format');
   },
 
   // 로그아웃
@@ -176,19 +194,24 @@ export const authService = {
 export const memberService = {
   // 회원 정보 조회
   async getProfile(): Promise<MemberResponse> {
-    const response: AxiosResponse<MemberResponse> = await memberApi.get('/profile');
-    return response.data;
+    const response = await memberApi.get('/me');
+    
+    if (isBackendMemberDto(response.data)) {
+      return adaptBackendMember(response.data);
+    }
+    
+    throw new Error('Invalid member response format');
   },
 
   // 회원 정보 수정
   async updateProfile(request: MemberUpdateRequest): Promise<MemberResponse> {
-    const response: AxiosResponse<MemberResponse> = await memberApi.put('/profile', request);
+    const response: AxiosResponse<MemberResponse> = await memberApi.put('/me', request);
     return response.data;
   },
 
   // 회원 탈퇴
   async deleteAccount(): Promise<void> {
-    await memberApi.delete('/profile');
+    await memberApi.delete('/me');
   },
 
   // 특정 회원 조회 (관리자용)
