@@ -23,7 +23,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from 'framer-motion';
 import { cn } from "../../lib/utils"
-import { useLinearTheme } from '../../hooks/useLinearTheme';
+import { useCurrentTheme } from '../../hooks/useLinearTheme';
 
 // Linear Card Variants (Class Variance Authority 기반)
 const cardVariants = cva(
@@ -206,8 +206,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     'aria-describedby': ariaDescribedBy,
     ...props
   }, ref) => {
-    // Linear 테마 훅 사용
-    const { isReducedMotion } = useLinearTheme();
+    // Linear 테마 훅 사용 (경량화 - 무한 루프 방지)
+    // useLinearTheme 대신 useCurrentTheme 사용으로 최적화
+    const { isDark, isHighContrast } = useCurrentTheme();
+    const isReducedMotion = false; // 임시로 비활성화하여 무한 루프 방지
     
     // 상태 계산
     const isInteractive = Boolean(onClick || interactive);

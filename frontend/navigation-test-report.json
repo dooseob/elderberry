@@ -1,0 +1,156 @@
+{
+  "timestamp": "2025-08-06T02:30:08.514Z",
+  "summary": {
+    "passed": 32,
+    "failed": 0,
+    "warnings": 0,
+    "successRate": "100.0%"
+  },
+  "details": [
+    {
+      "description": "About 페이지 파일 존재",
+      "status": "passed",
+      "path": "src/pages/AboutPage.tsx"
+    },
+    {
+      "description": "Contact 페이지 파일 존재",
+      "status": "passed",
+      "path": "src/pages/ContactPage.tsx"
+    },
+    {
+      "description": "Settings 페이지 파일 존재",
+      "status": "passed",
+      "path": "src/pages/SettingsPage.tsx"
+    },
+    {
+      "description": "404 페이지 파일 존재",
+      "status": "passed",
+      "path": "src/pages/NotFoundPage.tsx"
+    },
+    {
+      "description": "About 페이지 라우트 설정됨",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "Contact 페이지 라우트 설정됨",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "Settings 페이지 라우트 설정됨",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "404 페이지 라우트 설정됨",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "Header에 About 링크 존재",
+      "status": "passed",
+      "path": "src/widgets/header/ui/Header.tsx"
+    },
+    {
+      "description": "Header에 Contact 링크 존재",
+      "status": "passed",
+      "path": "src/widgets/header/ui/Header.tsx"
+    },
+    {
+      "description": "Header 사용자 메뉴에 Settings 링크 존재",
+      "status": "passed",
+      "path": "src/widgets/header/ui/Header.tsx"
+    },
+    {
+      "description": "Sidebar에서 React Router useNavigate 사용",
+      "status": "passed",
+      "path": "src/widgets/sidebar/ui/Sidebar.tsx"
+    },
+    {
+      "description": "Sidebar에서 navigate 함수 사용",
+      "status": "passed",
+      "path": "src/widgets/sidebar/ui/Sidebar.tsx"
+    },
+    {
+      "description": "LazyMyPage가 올바른 경로 사용",
+      "status": "passed",
+      "path": "src/utils/lazyImports.ts"
+    },
+    {
+      "description": "useBreadcrumb 훅 파일 존재",
+      "status": "passed",
+      "path": "src/hooks/useBreadcrumb.ts"
+    },
+    {
+      "description": "MainLayout에서 useBreadcrumb 훅 사용",
+      "status": "passed",
+      "path": "src/widgets/layout/ui/MainLayout.tsx"
+    },
+    {
+      "description": "MainLayout에 Breadcrumb 컴포넌트 포함",
+      "status": "passed",
+      "path": "src/widgets/layout/ui/MainLayout.tsx"
+    },
+    {
+      "description": "Sidebar에 active state 로직 포함",
+      "status": "passed",
+      "path": "src/widgets/sidebar/ui/Sidebar.tsx"
+    },
+    {
+      "description": "Header에 active state 로직 포함",
+      "status": "passed",
+      "path": "src/widgets/header/ui/Header.tsx"
+    },
+    {
+      "description": "App.tsx에서 AboutPage 임포트",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "App.tsx에서 ContactPage 임포트",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "App.tsx에서 SettingsPage 임포트",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "App.tsx에서 NotFoundPage 임포트",
+      "status": "passed",
+      "path": "src/App.tsx"
+    },
+    {
+      "description": "404 페이지에 추천 페이지 기능 포함",
+      "status": "passed",
+      "path": "src/pages/NotFoundPage.tsx"
+    },
+    {
+      "description": "404 페이지에 자동 리디렉션 기능 포함",
+      "status": "passed",
+      "path": "src/pages/NotFoundPage.tsx"
+    },
+    {
+      "description": "Contact 페이지에 문의 폼 포함",
+      "status": "passed",
+      "path": "src/pages/ContactPage.tsx"
+    },
+    {
+      "description": "Contact 페이지에 연락 방법 정보 포함",
+      "status": "passed",
+      "path": "src/pages/ContactPage.tsx"
+    },
+    {
+      "description": "Settings 페이지에 테마 설정 포함",
+      "status": "passed",
+      "path": "src/pages/SettingsPage.tsx"
+    },
+    {
+      "description": "Settings 페이지에 설정 토글 컴포넌트 포함",
+      "status": "passed",
+      "path": "src/pages/SettingsPage.tsx"
+    }
+  ]
+}

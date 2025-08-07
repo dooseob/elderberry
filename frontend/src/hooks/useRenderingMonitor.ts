@@ -36,12 +36,13 @@ export const useRenderingMonitor = ({
   const renderCountRef = useRef(0);
   const renderTimesRef = useRef<number[]>([]);
   const startTimeRef = useRef(Date.now());
-  const [metrics, setMetrics] = useState<RenderingMetrics>({
+  const metricsRef = useRef<RenderingMetrics>({
     renderCount: 0,
     averageRenderTime: 0,
     suspiciousActivity: false,
     lastRenderTime: 0
   });
+  const suspiciousActivityReportedRef = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
@@ -49,7 +50,7 @@ export const useRenderingMonitor = ({
     const renderStartTime = performance.now();
     renderCountRef.current += 1;
     
-    // 렌더링 완료 시점 측정
+    // 렌더링 완료 시점 측정 (상태 업데이트 없이)
     const measureRenderEnd = () => {
       const renderEndTime = performance.now();
       const renderDuration = renderEndTime - renderStartTime;
@@ -67,8 +68,17 @@ export const useRenderingMonitor = ({
       const averageTime = renderTimesRef.current.reduce((sum, time) => sum + time, 0) / recentRenderCount;
       const isSuspicious = recentRenderCount > threshold;
       
-      // 의심스러운 활동 감지 시 경고
-      if (isSuspicious && !metrics.suspiciousActivity) {
+      // 메트릭 업데이트 (ref만 업데이트, 리렌더 방지)
+      metricsRef.current = {
+        renderCount: renderCountRef.current,
+        averageRenderTime: averageTime,
+        suspiciousActivity: isSuspicious,
+        lastRenderTime: renderDuration
+      };
+      
+      // 의심스러운 활동 감지 시 경고 (한 번만 출력)
+      if (isSuspicious && !suspiciousActivityReportedRef.current) {
+        suspiciousActivityReportedRef.current = true;
         console.warn(
           `🚨 [Rendering Monitor] Suspicious rendering activity detected in ${componentName}:
           - Render count in ${timeWindow}ms: ${recentRenderCount}
@@ -81,19 +91,18 @@ export const useRenderingMonitor = ({
         console.trace(`Stack trace for ${componentName} suspicious rendering:`);
       }
       
-      setMetrics({
-        renderCount: renderCountRef.current,
-        averageRenderTime: averageTime,
-        suspiciousActivity: isSuspicious,
-        lastRenderTime: renderDuration
-      });
+      // 의심스러운 활동이 멈추면 리포트 리셋
+      if (!isSuspicious && suspiciousActivityReportedRef.current) {
+        suspiciousActivityReportedRef.current = false;
+      }
     };
 
-    // 마이크로태스크로 렌더링 완료 시점 측정
+    // 마이크로태스크로 렌더링 완료 시점 측정 (상태 업데이트 없음)
     Promise.resolve().then(measureRenderEnd);
   });
 
-  return metrics;
+  // 현재 메트릭 반환 (ref에서 직접 읽음)
+  return metricsRef.current;
 };
 
 /**

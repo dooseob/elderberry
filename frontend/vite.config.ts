@@ -9,6 +9,7 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    strictPort: false, // 포트 충돌 시 자동으로 다음 포트 사용
     // API 프록시 설정 (CORS 문제 해결)
     proxy: {
       '/api': {
@@ -148,7 +149,7 @@ export default defineConfig({
   // 절대 경로 설정
   resolve: {
     alias: {
-      '@': '/src',
+      '@': new URL('./src', import.meta.url).pathname,
     },
   },
 

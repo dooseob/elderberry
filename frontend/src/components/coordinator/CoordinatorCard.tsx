@@ -12,7 +12,7 @@ import {
   Users
 } from '../icons/LucideIcons';
 import { motion } from 'framer-motion';
-import Card, { CardHeader, CardContent, CardFooter } from '../../shared/ui/Card';
+import { Card, CardHeader, CardContent, CardFooter } from '../../shared/ui/Card';
 import Button from '../../shared/ui/Button';
 import { CoordinatorMatch, CoordinatorLanguageSkill } from '@/services/coordinatorApi';
 

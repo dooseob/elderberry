@@ -18,8 +18,8 @@ import { HealthAssessment } from '@/types/health';
 import CoordinatorCard from '@/components/coordinator/CoordinatorCard';
 import MatchingPreferencePanel from '@/components/coordinator/MatchingPreferencePanel';
 import MatchingStatsDashboard from '@/components/coordinator/MatchingStatsDashboard';
-import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
-import Button from '../../../shared/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 
 interface CoordinatorMatchingWizardProps {
   assessmentId: number;

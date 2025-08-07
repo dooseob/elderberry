@@ -16,7 +16,7 @@ import {
   Phone,
   Mail,
   User,
-  Building,
+  Building2,
   Star,
   TrendingUp,
   RefreshCw,
@@ -24,8 +24,8 @@ import {
   MessageSquare,
   ChevronRight
 } from '../../../components/icons/LucideIcons';
-import { Card } from '../../../shared/ui/Card';
-import { Button } from '../../../shared/ui/Button';
+import { Card } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import { useFacilityStore } from '../../../stores/facilityStore';
 import { useAuthStore } from '../../../stores/authStore';
 
@@ -297,7 +297,7 @@ export const MatchingHistory: React.FC = () => {
       {/* 통계 카드 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4 text-center">
-          <Building className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+          <Building2 className="h-6 w-6 text-blue-500 mx-auto mb-2" />
           <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
           <div className="text-sm text-gray-600">총 신청</div>
         </Card>
@@ -455,7 +455,7 @@ export const MatchingHistory: React.FC = () => {
                       
                       <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                         <div className="flex items-center space-x-1">
-                          <Building className="h-4 w-4" />
+                          <Building2 className="h-4 w-4" />
                           <span>{record.facilityType}</span>
                         </div>
                         <div className="flex items-center space-x-1">

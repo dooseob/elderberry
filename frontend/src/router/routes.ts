@@ -1,0 +1,234 @@
+/**
+ * 라우팅 설정 - 단순화된 구조
+ * 유지보수성과 가독성을 위한 라우팅 추상화
+ * 
+ * @version 2.0.0 - Simplified Structure
+ * @description 복잡한 라우팅 로직을 단순하고 명확한 구조로 재구성
+ */
+import { RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
+
+// Layout Components
+import { MainLayout } from '../widgets/layout';
+import { ProtectedRoute, AdminRoute, CoordinatorRoute } from '../components/auth/ProtectedRoute';
+
+// 즉시 로딩 컴포넌트 (중요한 페이지들)
+import LandingPage from '../pages/LandingPage';
+import SignInPage from '../pages/auth/SignInPage';
+import AboutPage from '../pages/AboutPage';
+import ContactPage from '../pages/ContactPage';
+import NotFoundPage from '../pages/NotFoundPage';
+
+// 지연 로딩 컴포넌트 (필요시에만)
+const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
+const DashboardPage = lazy(() => import('../features/dashboard/DashboardPage'));
+const MyPage = lazy(() => import('../pages/MyPage'));
+const SettingsPage = lazy(() => import('../pages/SettingsPage'));
+const FacilitySearchPage = lazy(() => import('../features/facility/FacilitySearchPage'));
+const HealthAssessmentWizard = lazy(() => import('../features/health/HealthAssessmentWizard'));
+
+// Route Type Definitions
+export interface AppRoute {
+  path: string;
+  element: React.ReactNode;
+  children?: AppRoute[];
+}
+
+export interface RouteConfig {
+  public: AppRoute[];
+  protected: AppRoute[];
+  admin: AppRoute[];
+  coordinator: AppRoute[];
+}
+
+// Public Routes (인증 불필요)
+const publicRoutes: AppRoute[] = [
+  {
+    path: '/',
+    element: <MainLayout><LandingPage /></MainLayout>
+  },
+  {
+    path: '/about',
+    element: <MainLayout><AboutPage /></MainLayout>
+  },
+  {
+    path: '/contact', 
+    element: <MainLayout><ContactPage /></MainLayout>
+  },
+  {
+    path: '/auth/signin',
+    element: <SignInPage />
+  },
+  {
+    path: '/auth/signup',
+    element: <RegisterPage />
+  },
+  {
+    path: '/login',
+    element: <SignInPage /> // Redirect handling
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />
+  }
+];
+
+// Protected Routes (인증 필요)
+const protectedRoutes: AppRoute[] = [
+  {
+    path: '/dashboard',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <DashboardPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/mypage',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <MyPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/settings',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <SettingsPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/facility-search',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <FacilitySearchPage memberId={1} coordinatorId="coordinator-1" showRecommendations={true} />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/health-assessment',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <HealthAssessmentWizard 
+            memberId="1" 
+            onComplete={(assessmentId) => {
+              console.log('건강 평가 완료', { assessmentId });
+              window.location.href = '/facility-search';
+            }}
+            onCancel={() => {
+              console.log('건강 평가 취소');
+            }}
+          />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  }
+];
+
+// Admin Routes
+const adminRoutes: AppRoute[] = [
+  {
+    path: '/admin/members',
+    element: (
+      <AdminRoute>
+        <MainLayout>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold">회원 관리</h1>
+            <p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p>
+          </div>
+        </MainLayout>
+      </AdminRoute>
+    )
+  },
+  {
+    path: '/admin/facilities',
+    element: (
+      <AdminRoute>
+        <MainLayout>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold">시설 관리</h1>
+            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p>
+          </div>
+        </MainLayout>
+      </AdminRoute>
+    )
+  }
+];
+
+// Coordinator Routes
+const coordinatorRoutes: AppRoute[] = [
+  {
+    path: '/coordinator/members',
+    element: (
+      <CoordinatorRoute>
+        <MainLayout>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold">회원 관리</h1>
+            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p>
+          </div>
+        </MainLayout>
+      </CoordinatorRoute>
+    )
+  }
+];
+
+// Export Route Configuration
+export const routeConfig: RouteConfig = {
+  public: publicRoutes,
+  protected: protectedRoutes,
+  admin: adminRoutes,
+  coordinator: coordinatorRoutes
+};
+
+// Generate React Router Routes
+export const generateRoutes = (): RouteObject[] => {
+  const allRoutes = [
+    ...publicRoutes,
+    ...protectedRoutes,
+    ...adminRoutes,
+    ...coordinatorRoutes,
+    {
+      path: '*',
+      element: <NotFoundPage />
+    }
+  ];
+
+  return allRoutes.map(route => ({
+    path: route.path,
+    element: route.element
+  }));
+};
+
+// Route Metadata for SEO and Analytics
+export const routeMetadata = {
+  '/': {
+    title: '엘더베리 - 요양원 구인구직 플랫폼',
+    description: '전국 요양원 정보와 구인구직을 한번에',
+    keywords: ['요양원', '구인구직', '간병', '요양'],
+  },
+  '/auth/signin': {
+    title: '로그인 - 엘더베리',
+    description: '엘더베리 계정으로 로그인하세요',
+  },
+  '/dashboard': {
+    title: '대시보드 - 엘더베리', 
+    description: '개인화된 대시보드에서 정보를 확인하세요',
+  },
+  '/facility-search': {
+    title: '시설 검색 - 엘더베리',
+    description: '조건에 맞는 요양 시설을 찾아보세요',
+  }
+};
+
+export default generateRoutes;

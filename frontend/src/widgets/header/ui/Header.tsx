@@ -15,8 +15,27 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useLinearTheme } from '../../../hooks/useLinearTheme';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useCurrentTheme } from '../../../hooks/useLinearTheme';
+import { useAuthStore } from '../../../stores/authStore';
+import { useLanguage, SUPPORTED_LANGUAGES } from '../../../hooks/useLanguage';
 import type { LayoutVariant, SidebarState } from './MainLayout';
+import './header-styles.css';
+
+/**
+ * 지원 언어 타입
+ */
+export type SupportedLanguage = 'ko' | 'en' | 'zh';
+
+/**
+ * 언어 옵션 인터페이스
+ */
+export interface LanguageOption {
+  code: SupportedLanguage;
+  name: string;
+  nativeName: string;
+  flag: string;
+}
 
 /**
  * 네비게이션 메뉴 아이템 타입
@@ -88,35 +107,118 @@ export interface HeaderProps {
   className?: string;
 }
 
+// SUPPORTED_LANGUAGES는 이제 useLanguage 훅에서 import
+
 /**
- * 기본 네비게이션 메뉴
+ * 기본 네비게이션 메뉴 (비로그인 상태)
  */
-const DEFAULT_NAV_ITEMS: NavMenuItem[] = [
+const DEFAULT_PUBLIC_NAV_ITEMS: NavMenuItem[] = [
   {
     id: 'home',
     label: '홈',
     href: '/',
-    active: true,
   },
   {
     id: 'facilities',
     label: '시설 찾기',
-    href: '/facilities',
+    href: '/facility-search',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    )
   },
   {
     id: 'health',
     label: '건강 평가',
-    href: '/health',
+    href: '/health-assessment',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    )
+  },
+  {
+    id: 'community',
+    label: '커뮤니티',
+    href: '/boards',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    )
   },
   {
     id: 'about',
     label: '소개',
     href: '/about',
   },
+];
+
+/**
+ * 로그인 상태 네비게이션 메뉴
+ */
+const DEFAULT_AUTH_NAV_ITEMS: NavMenuItem[] = [
   {
-    id: 'contact',
-    label: '문의',
-    href: '/contact',
+    id: 'home',
+    label: '홈',
+    href: '/',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9,22 9,12 15,12 15,22" />
+      </svg>
+    )
+  },
+  {
+    id: 'facilities',
+    label: '시설 찾기',
+    href: '/facility-search',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    )
+  },
+  {
+    id: 'health',
+    label: '건강 평가',
+    href: '/health-assessment',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    )
+  },
+  {
+    id: 'boards',
+    label: '커뮤니티',
+    href: '/boards',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    )
+  },
+  {
+    id: 'jobs',
+    label: '구인구직',
+    href: '/jobs',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+    )
   },
 ];
 
@@ -129,30 +231,49 @@ const Header: React.FC<HeaderProps> = ({
   variant = 'default',
   isMobile = false,
   fixed = true,
-  navItems = DEFAULT_NAV_ITEMS,
+  navItems,
   userMenuItems = [],
-  user,
+  user: propUser,
   onLogoClick,
   className = '',
 }) => {
+  // 인증 상태 및 사용자 정보
+  const { isAuthenticated, user: storeUser, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // 사용자 정보는 props 우선, 없으면 store에서 가져오기
+  const user = propUser || storeUser;
+  
+  // 네비게이션 메뉴는 인증 상태에 따라 결정
+  const effectiveNavItems = navItems || (isAuthenticated ? DEFAULT_AUTH_NAV_ITEMS : DEFAULT_PUBLIC_NAV_ITEMS);
+  
+  // 현재 경로에 따른 active 상태 설정
+  const navItemsWithActive = effectiveNavItems.map(item => ({
+    ...item,
+    active: location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href))
+  }));
   // Linear 테마 훅
   const {
-    currentTheme,
-    isDarkMode,
-    toggleDarkMode,
-    themePreview,
-    setTheme,
-  } = useLinearTheme();
+    isDark: isDarkMode,
+    isHighContrast,
+    isReducedMotion,
+  } = useCurrentTheme();
+  
+  // 언어 관리 훅
+  const { currentLanguage, setLanguage, getCurrentLanguageOption, t } = useLanguage();
   
   // 상태 관리
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   
   // Refs
   const userMenuRef = useRef<HTMLDivElement>(null);
   const themeMenuRef = useRef<HTMLDivElement>(null);
   const navMenuRef = useRef<HTMLDivElement>(null);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
   
   // 메뉴 외부 클릭 감지
   useEffect(() => {
@@ -165,6 +286,9 @@ const Header: React.FC<HeaderProps> = ({
       }
       if (navMenuRef.current && !navMenuRef.current.contains(event.target as Node)) {
         setIsNavMenuOpen(false);
+      }
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false);
       }
     };
     
@@ -180,16 +304,97 @@ const Header: React.FC<HeaderProps> = ({
     }
   }, []);
   
-  // 테마 변경 핸들러
+  // 테마 변경 핸들러 (임시 비활성화)
   const handleThemeChange = useCallback((themeId: string) => {
-    setTheme(themeId);
+    console.log('테마 변경:', themeId);
     setIsThemeMenuOpen(false);
-  }, [setTheme]);
+  }, []);
+  
+  // 언어 변경 핸들러 (실제 동작하는 버전)
+  const handleLanguageChange = useCallback((languageCode: SupportedLanguage) => {
+    setLanguage(languageCode);
+    setIsLanguageMenuOpen(false);
+    
+    // 성공 피드백 (선택적)
+    if (window.confirm) {
+      // 간단한 확인 메시지 (실제 프로덕션에서는 toast나 다른 UI 사용)
+      const languageOption = SUPPORTED_LANGUAGES.find(lang => lang.code === languageCode);
+      console.log(`🌐 언어가 ${languageOption?.nativeName}로 변경되었습니다.`);
+    }
+  }, [setLanguage]);
   
   // 로고 클릭 핸들러
   const handleLogoClick = useCallback(() => {
-    onLogoClick?.() || (window.location.href = '/');
-  }, [onLogoClick]);
+    if (onLogoClick) {
+      onLogoClick();
+    } else {
+      navigate('/');
+    }
+  }, [onLogoClick, navigate]);
+  
+  // 로그아웃 핸들러
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  }, [logout, navigate]);
+  
+  // 기본 사용자 메뉴 아이템들 (로그인 상태)
+  const defaultUserMenuItems: UserMenuItem[] = isAuthenticated && user ? [
+    {
+      id: 'profile',
+      label: '내 프로필',
+      onClick: () => navigate('/mypage'),
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      )
+    },
+    {
+      id: 'notifications',
+      label: '알림',
+      onClick: () => navigate('/notifications'),
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+      )
+    },
+    {
+      id: 'settings',
+      label: '설정',
+      onClick: () => navigate('/settings'),
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+      )
+    },
+    {
+      id: 'logout',
+      label: '로그아웃',
+      onClick: handleLogout,
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16,17 21,12 16,7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+      ),
+      divider: true,
+      danger: true
+    }
+  ] : [];
+  
+  // 최종 사용자 메뉴 아이템들
+  const finalUserMenuItems = userMenuItems.length > 0 ? userMenuItems : defaultUserMenuItems;
   
   // 사용자 메뉴 아이템 렌더링
   const renderUserMenuItem = (item: UserMenuItem) => (
@@ -209,11 +414,9 @@ const Header: React.FC<HeaderProps> = ({
   
   // 네비게이션 아이템 렌더링
   const renderNavItem = (item: NavMenuItem) => (
-    <a
+    <button
       key={item.id}
-      href={item.href}
-      target={item.external ? '_blank' : undefined}
-      rel={item.external ? 'noopener noreferrer' : undefined}
+      onClick={() => navigate(item.href)}
       className={`
         nav-item linear-button-ghost
         ${item.active ? 'nav-item-active' : ''}
@@ -224,7 +427,7 @@ const Header: React.FC<HeaderProps> = ({
       {item.badge && (
         <span className="linear-badge nav-item-badge">{item.badge}</span>
       )}
-    </a>
+    </button>
   );
   
   // 헤더 클래스 계산
@@ -280,13 +483,84 @@ const Header: React.FC<HeaderProps> = ({
         {!isMobile && (
           <nav className="header-nav" role="navigation" aria-label="메인 네비게이션">
             <div className="nav-items">
-              {navItems.map(renderNavItem)}
+              {navItemsWithActive.map(renderNavItem)}
             </div>
           </nav>
         )}
         
         {/* 오른쪽 영역: 테마 토글 + 사용자 메뉴 */}
         <div className="header-end">
+          {/* 언어 선택 메뉴 */}
+          <div className="language-menu" ref={languageMenuRef}>
+            <button
+              onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+              className="language-toggle linear-button-ghost"
+              aria-label="언어 선택"
+              aria-expanded={isLanguageMenuOpen}
+              title="Select Language / 언어 선택"
+            >
+              <span className="language-flag">
+                {getCurrentLanguageOption().flag}
+              </span>
+              <span className="language-code">
+                {currentLanguage.toUpperCase()}
+              </span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`language-chevron ${isLanguageMenuOpen ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6,9 12,15 18,9" />
+              </svg>
+            </button>
+            
+            {/* 언어 드롭다운 */}
+            {isLanguageMenuOpen && (
+              <div className="linear-dropdown language-dropdown">
+                <div className="dropdown-header">
+                  <h3>Select Language</h3>
+                </div>
+                <div className="language-options">
+                  {SUPPORTED_LANGUAGES.map((language) => (
+                    <button
+                      key={language.code}
+                      onClick={() => handleLanguageChange(language.code)}
+                      className={`language-option ${language.code === currentLanguage ? 'active' : ''}`}
+                      title={`Switch to ${language.name}`}
+                    >
+                      <span className="language-flag">{language.flag}</span>
+                      <div className="language-info">
+                        <span className="language-name">{language.name}</span>
+                        <span className="language-native">{language.nativeName}</span>
+                      </div>
+                      {language.code === currentLanguage && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="check-icon"
+                        >
+                          <polyline points="20,6 9,17 4,12" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
           {/* 테마 전환 메뉴 */}
           <div className="theme-menu" ref={themeMenuRef}>
             <button
@@ -322,14 +596,14 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="dropdown-header">
                   <h3>테마 선택</h3>
                   <button
-                    onClick={toggleDarkMode}
+                    onClick={() => console.log('다크모드 토글 (임시 비활성화)')}
                     className="linear-button-secondary"
                   >
                     {isDarkMode ? '라이트' : '다크'} 모드
                   </button>
                 </div>
                 <div className="theme-grid">
-                  {themePreview.map((theme) => (
+                  {[].map((theme: any) => (
                     <button
                       key={theme.id}
                       onClick={() => handleThemeChange(theme.id)}
@@ -350,8 +624,9 @@ const Header: React.FC<HeaderProps> = ({
             )}
           </div>
           
-          {/* 사용자 메뉴 */}
-          {user && (
+          {/* 인증 상태에 따른 메뉴 */}
+          {isAuthenticated && user ? (
+            /* 로그인 상태: 사용자 메뉴 */
             <div className="user-menu" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -378,10 +653,28 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
                   </div>
                   <div className="dropdown-items">
-                    {userMenuItems.map(renderUserMenuItem)}
+                    {finalUserMenuItems.map(renderUserMenuItem)}
                   </div>
                 </div>
               )}
+            </div>
+          ) : (
+            /* 비로그인 상태: Sign In/Sign Up 버튼 */
+            <div className="auth-buttons">
+              <button
+                onClick={() => navigate('/auth/signin')}
+                className="linear-button-ghost auth-signin-btn"
+                title="Sign in to your account"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => navigate('/auth/signup')}
+                className="linear-button-primary auth-signup-btn"
+                title="Create a new account"
+              >
+                Sign Up
+              </button>
             </div>
           )}
           
@@ -414,7 +707,32 @@ const Header: React.FC<HeaderProps> = ({
       {isMobile && isNavMenuOpen && (
         <nav className="mobile-nav linear-animate-slide-down" ref={navMenuRef}>
           <div className="mobile-nav-items">
-            {navItems.map(renderNavItem)}
+            {navItemsWithActive.map(renderNavItem)}
+            {/* 모바일에서 비로그인 상태일 때 로그인/회원가입 버튼 */}
+            {!isAuthenticated && (
+              <div className="mobile-auth-buttons">
+                <button
+                  onClick={() => {
+                    navigate('/auth/signin');
+                    setIsNavMenuOpen(false);
+                  }}
+                  className="linear-button-ghost w-full mobile-auth-btn"
+                  title="Sign in to your account"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/auth/signup');
+                    setIsNavMenuOpen(false);
+                  }}
+                  className="linear-button-primary w-full mt-2 mobile-auth-btn"
+                  title="Create a new account"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
           </div>
         </nav>
       )}

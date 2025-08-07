@@ -23,8 +23,7 @@ import LazyLoadErrorBoundary from './shared/ui/LazyLoadErrorBoundary';
 // 토스트 컨텍스트 프로바이더
 import { ToastProvider } from './hooks/useToast';
 
-// Linear 테마 시스템
-import { ThemeProvider } from './components/theme/ThemeProvider';
+// Linear 테마 시스템 - main.tsx에서 이미 제공되므로 제거
 
 // 지연 로딩 페이지 컴포넌트들
 import {
@@ -55,9 +54,17 @@ import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
 // Linear Design System 데모
 import LinearShowcase from './pages/demo/LinearShowcase';
 
-// 새로운 페이지들
+// FSD 아키텍처에 따른 페이지 import
 import LandingPage from './pages/LandingPage';
 import SignInPage from './pages/auth/SignInPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import SettingsPage from './pages/SettingsPage';
+import NotFoundPage from './pages/NotFoundPage';
+import EmergencySearchPage from './pages/EmergencySearchPage';
+import PlannedSearchPage from './pages/PlannedSearchPage';
+import JobSearchPage from './pages/JobSearchPage';
+import ConsultationPage from './pages/ConsultationPage';
 
 import './App.css';
 
@@ -66,24 +73,118 @@ import './App.css';
 function App() {
   return (
     <LazyLoadErrorBoundary>
-      <ThemeProvider>
-        <ToastProvider>
-          <Router>
+      <ToastProvider>
+        <Router>
           <main className="min-h-screen bg-gray-50" role="main">
-          <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
-          <Routes>
+            <Routes>
             {/* 공개 라우트 - 개선된 인증 시스템 */}
-            <Route path="/auth/signin" element={<SignInPage />} />
+            <Route path="/auth/signin" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
+                <SignInPage />
+              </Suspense>
+            } />
+            
+            {/* 새로 추가된 공개 페이지들 */}
+            <Route path="/about" element={
+              <MainLayout>
+                <Suspense fallback={<LazyPageFallback type="spinner" message="소개 페이지를 로딩 중..." />}>
+                  <AboutPage />
+                </Suspense>
+              </MainLayout>
+            } />
+            <Route path="/contact" element={
+              <MainLayout>
+                <Suspense fallback={<LazyPageFallback type="spinner" message="문의 페이지를 로딩 중..." />}>
+                  <ContactPage />
+                </Suspense>
+              </MainLayout>
+            } />
             <Route path="/login" element={<Navigate to="/auth/signin" replace />} /> {/* 기존 로그인 리다이렉트 */}
-            <Route path="/register" element={<LazyRegisterPage />} />
-            <Route path="/auth/signup" element={<LazyRegisterPage />} />
-            <Route path="/forgot-password" element={<LazyForgotPasswordPage />} />
-            <Route path="/auth/forgot-password" element={<LazyForgotPasswordPage />} />
-            <Route path="/unauthorized" element={<LazyUnauthorizedPage />} />
+            <Route path="/register" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지를 로딩 중..." />}>
+                <LazyRegisterPage />
+              </Suspense>
+            } />
+            <Route path="/auth/signup" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지를 로딩 중..." />}>
+                <LazyRegisterPage />
+              </Suspense>
+            } />
+            <Route path="/forgot-password" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지를 로딩 중..." />}>
+                <LazyForgotPasswordPage />
+              </Suspense>
+            } />
+            <Route path="/auth/forgot-password" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지를 로딩 중..." />}>
+                <LazyForgotPasswordPage />
+              </Suspense>
+            } />
+            <Route path="/unauthorized" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="페이지를 로딩 중..." />}>
+                <LazyUnauthorizedPage />
+              </Suspense>
+            } />
             
             {/* 챗봇 (인증 없이 사용 가능) */}
             <Route path="/chat-home" element={<LazyChatHomePage />} />
             <Route path="/chat" element={<LazyChatPage />} />
+            
+            {/* 긴급 검색 (비회원도 이용 가능) */}
+            <Route 
+              path="/emergency-search" 
+              element={
+                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                  <EmergencySearchPage />
+                </Suspense>
+              } 
+            />
+            
+            {/* 계획적 준비 (건강평가 연결) */}
+            <Route 
+              path="/planned-search" 
+              element={
+                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                  <PlannedSearchPage />
+                </Suspense>
+              } 
+            />
+            
+            {/* 구직자 전용 (비회원도 이용 가능) */}
+            <Route 
+              path="/job-search" 
+              element={
+                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                  <JobSearchPage />
+                </Suspense>
+              } 
+            />
+            
+            {/* 전문가 상담 (회원가입 유도) */}
+            <Route 
+              path="/consultation" 
+              element={
+                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                  <ConsultationPage />
+                </Suspense>
+              } 
+            />
+            
+            {/* 시설찾기 (비로그인 상태에서도 접근 가능) */}
+            <Route 
+              path="/facility-search" 
+              element={
+                <MainLayout>
+                  <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                    <LazyFacilitySearchPage 
+                      memberId={1}
+                      coordinatorId="coordinator-1"
+                      showRecommendations={false} // 비로그인에서는 추천 기능 비활성화
+                    />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
             
             {/* 테마 시스템 테스트 (개발용) */}
             <Route path="/theme-test" element={<ThemeTestPlayground />} />
@@ -130,6 +231,19 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                      <SettingsPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
           
             <Route 
               path="/health-assessment" 
@@ -153,8 +267,9 @@ function App() {
               } 
             />
           
+            {/* 로그인 상태에서의 시설찾기 (고급 기능 사용 가능) - 다른 경로로 변경 */}
             <Route 
-              path="/facility-search" 
+              path="/facility-search/advanced" 
               element={
                 <ProtectedRoute>
                   <MainLayout>
@@ -162,7 +277,7 @@ function App() {
                       <LazyFacilitySearchPage 
                         memberId={1}
                         coordinatorId="coordinator-1"
-                        showRecommendations={true}
+                        showRecommendations={true} // 로그인 상태에서는 추천 기능 활성화
                       />
                     </Suspense>
                   </MainLayout>
@@ -383,17 +498,25 @@ function App() {
               } 
             />
 
-            {/* 기본 경로 - 랜딩페이지 (비회원도 접근 가능) */}
-            <Route path="/" element={<LandingPage />} />
+            {/* 기본 경로 - 원래 랜딩페이지 (비회원도 접근 가능) */}
+            <Route path="/" element={
+              <MainLayout>
+                <Suspense fallback={<LazyPageFallback type="spinner" message="홈페이지를 로딩 중..." />}>
+                  <LandingPage />
+                </Suspense>
+              </MainLayout>
+            } />
             
-            {/* 404 페이지 - 랜딩페이지로 리다이렉트 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          </Suspense>
+            {/* 404 페이지 - 전용 NotFound 페이지 */}
+            <Route path="*" element={
+              <Suspense fallback={<LazyPageFallback type="spinner" message="페이지를 로딩 중..." />}>
+                <NotFoundPage />
+              </Suspense>
+            } />
+            </Routes>
           </main>
-          </Router>
-        </ToastProvider>
-      </ThemeProvider>
+        </Router>
+      </ToastProvider>
     </LazyLoadErrorBoundary>
   );
 }

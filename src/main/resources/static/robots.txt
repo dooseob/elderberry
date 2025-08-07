@@ -1,0 +1,46 @@
+# Elderberry Robots.txt
+# 재외동포 요양원 매칭 서비스
+
+User-agent: *
+Allow: /
+
+# 허용하지 않을 경로
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /_next/
+Disallow: /build/
+Disallow: /node_modules/
+Disallow: /*.json$
+Disallow: /*?*utm_*
+Disallow: /*?*fbclid*
+Disallow: /*?*gclid*
+
+# 중요한 페이지 우선순위 지정
+Allow: /health-assessment
+Allow: /facility-search  
+Allow: /coordinator-matching
+Allow: /login
+Allow: /register
+
+# 사이트맵 위치
+Sitemap: https://www.elderberry-ai.com/sitemap.xml
+
+# 검색엔진별 특별 지시사항
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 2
+
+User-agent: Yandex
+Crawl-delay: 3
+
+# 속도 제한 (서버 부하 방지)
+User-agent: *
+Crawl-delay: 1
+
+# 중요: 개인정보 보호
+Disallow: /my-page/
+Disallow: /profile/
+Disallow: /dashboard/personal/

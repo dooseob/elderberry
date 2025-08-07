@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
+import java.util.stream.Collectors;
 
 /**
  * 시설 관리 컨트롤러 (매칭 및 분석 기능 포함)
@@ -108,7 +109,7 @@ public class FacilityController {
 
     // ===== 매칭 및 추천 API =====
 
-    @Operation(summary = "맞춤형 시설 추천", description = "사용자의 건강 상태와 선호도를 기반으로 최적의 시설을 추천합니다.")
+    @Operation(summary = "맞춤형 시설 추천 (POST)", description = "사용자의 건강 상태와 선호도를 기반으로 최적의 시설을 추천합니다.")
     @PostMapping("/recommendations")
     public ResponseEntity<List<FacilityRecommendation>> getRecommendations(
             @Valid @RequestBody FacilityMatchingRequest request,
@@ -142,12 +143,88 @@ public class FacilityController {
         recommendations = facilityProfileService.adjustMatchingScoresWithLearning(recommendations, userIdLong);
         
         // 매칭 이력 저장 (타입 불일치로 인해 임시 주석 처리)
-        // TODO: FacilityRecommendation DTO와 내부 클래스 타입 불일치 해결 필요
+        // TODO: FacilityRecommendation DTO와 내부 클래스 타입 분0일치 해결 필요
         // facilityProfileService.recordMatchingRecommendations(
         //         userIdLong, request.getCoordinatorId(), recommendations, assessment, request.getPreference());
         
         log.info("시설 추천 완료 - 사용자: {}, 추천 수: {}", userId, recommendations.size());
         return ResponseEntity.ok(recommendations);
+    }
+
+    @Operation(summary = "간단한 시설 추천 (GET)", description = "쿼리 파라미터를 이용한 간단한 시설 추천입니다.")
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<FacilityRecommendation>> getRecommendationsSimple(
+            @RequestParam(required = false) Long healthAssessmentId,
+            @RequestParam(required = false) Integer careGrade,
+            @RequestParam(required = false) String preferredRegion,
+            @RequestParam(required = false) Integer budgetRange,
+            @RequestParam(defaultValue = "10") Integer limit,
+            Authentication authentication) {
+        
+        String userId = authentication != null ? authentication.getName() : "anonymous";
+        
+        try {
+            // 사용자 ID 기반으로 기본 건강 평가 조회 시도
+            Long userIdLong;
+            try {
+                userIdLong = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                userIdLong = (long) userId.hashCode();
+            }
+            
+            // 기본 선호도 설정 생성
+            FacilityMatchingPreference defaultPreference = FacilityMatchingPreference.builder()
+                .preferredRegion(preferredRegion)
+                .maxMonthlyFee(budgetRange)
+                .build();
+            
+            // 기두리 요청 객체 생성
+            FacilityMatchingRequest request = new FacilityMatchingRequest();
+            request.setMemberId(userId);
+            request.setPreference(defaultPreference);
+            request.setMaxResults(Math.min(limit, 20)); // 최대 20개로 제한
+            
+            // 현재 사용자의 건강 평가 정보 조회
+            Optional<HealthAssessment> assessmentOpt = healthAssessmentRepository.findByMemberId(userId);
+            
+            List<FacilityRecommendation> recommendations;
+            
+            if (assessmentOpt.isPresent()) {
+                // 건강 평가가 있는 경우 정밀 추천
+                HealthAssessment assessment = assessmentOpt.get();
+                recommendations = facilityProfileService.recommendFacilities(assessment, defaultPreference);
+                recommendations = facilityProfileService.adjustMatchingScoresWithLearning(recommendations, userIdLong);
+            } else {
+                // 건강 평가가 없는 경우 지역 및 조건 기반 추천
+                List<FacilityProfileResponse> facilities = facilityProfileService.findFacilitiesByRegion(
+                    preferredRegion, null, careGrade, limit);
+                
+                // FacilityProfileResponse를 FacilityRecommendation으로 변환
+                recommendations = facilities.stream()
+                    .map(facility -> {
+                        FacilityRecommendation rec = new FacilityRecommendation();
+                        rec.setFacilityId(facility.getId());
+                        rec.setFacilityName(facility.getFacilityName());
+                        rec.setFacilityType(facility.getFacilityType());
+                        rec.setFacilityGrade(facility.getFacilityGrade());
+                        rec.setRegion(facility.getRegion());
+                        rec.setDistrict(facility.getDistrict());
+                        rec.setMatchingScore(75.0); // 기본 점수 (Double 타입)
+                        rec.setRecommendationReason("지역 및 조건 매칭");
+                        return rec;
+                    })
+                    .limit(limit)
+                    .toList();
+            }
+            
+            log.info("간단 시설 추천 완료 - 사용자: {}, 추천 수: {}", userId, recommendations.size());
+            return ResponseEntity.ok(recommendations);
+            
+        } catch (Exception e) {
+            log.error("시설 추천 중 오류 발생: {}", e.getMessage());
+            // 비어있는 추천 목록 반환
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @Operation(summary = "지역별 시설 검색", description = "특정 지역의 시설을 검색합니다.")

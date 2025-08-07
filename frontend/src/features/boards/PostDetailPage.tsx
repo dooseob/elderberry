@@ -28,8 +28,8 @@ import { useBoardStore } from '../../stores/boardStore';
 import { useAuthStore } from '../../stores/authStore';
 import { Post, Comment, CommentCreateRequest } from '../../types/board';
 import { MemberRole } from '../../types/auth';
-import Card, { CardHeader, CardTitle, CardContent } from '../../../shared/ui/Card';
-import Button from '../../../shared/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 
 // 날짜 포맷팅 함수
 const formatDate = (dateString: string) => {

@@ -15,10 +15,12 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { useLinearTheme } from '../../../hooks/useLinearTheme';
+import { useCurrentTheme } from '../../../hooks/useLinearTheme';
+import { useBreadcrumb } from '../../../hooks/useBreadcrumb';
 import Header from '../../header/ui/Header';
 import Sidebar from '../../sidebar/ui/Sidebar';
 import Footer from '../../footer/ui/Footer';
+import Breadcrumb from '../../breadcrumb/ui/Breadcrumb';
 
 /**
  * 레이아웃 변형 타입
@@ -88,7 +90,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   onLayoutChange,
 }) => {
   // Linear 테마 훅
-  const { currentTheme, isDarkMode, isReducedMotion } = useLinearTheme();
+  const { isDark: isDarkMode, isHighContrast, isReducedMotion } = useCurrentTheme();
+  
+  // 브레드크럼 훅
+  const { items: breadcrumbItems, showBreadcrumb } = useBreadcrumb();
   
   // 사이드바 상태 관리
   const [sidebarState, setSidebarState] = useState<SidebarState>(initialSidebarState);
@@ -222,6 +227,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           role="main"
           aria-label="메인 콘텐츠"
         >
+          {/* 브레드크럼 네비게이션 */}
+          {showBreadcrumb && (
+            <div className="breadcrumb-container">
+              <Breadcrumb
+                items={breadcrumbItems}
+                showHomeIcon={true}
+                includeStructuredData={true}
+                onItemClick={(item) => {
+                  if (item.href) {
+                    window.location.href = item.href;
+                  }
+                }}
+              />
+            </div>
+          )}
+          
           <div className="content-wrapper">
             {children}
           </div>

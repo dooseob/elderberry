@@ -16,7 +16,7 @@ import {
   MapPin,
   DollarSign,
   User,
-  Building,
+  Building2,
   Star,
   TrendingUp,
   Eye,
@@ -27,8 +27,8 @@ import {
   Award,
   Users
 } from '../../../components/icons/LucideIcons';
-import { Card } from '../../../shared/ui/Card';
-import { Button } from '../../../shared/ui/Button';
+import { Card } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import { useAuthStore } from '../../../stores/authStore';
 import { useJobStore } from '../../../stores/jobStore';
 
@@ -406,7 +406,7 @@ export const JobApplications: React.FC = () => {
                           
                           <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                             <div className="flex items-center space-x-1">
-                              <Building className="h-4 w-4" />
+                              <Building2 className="h-4 w-4" />
                               <span>{application.facilityName}</span>
                             </div>
                             <div className="flex items-center space-x-1">
@@ -479,7 +479,7 @@ export const JobApplications: React.FC = () => {
           {/* 통계 카드 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4 text-center">
-              <Building className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+              <Building2 className="h-6 w-6 text-blue-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{postStats.total}</div>
               <div className="text-sm text-gray-600">총 공고</div>
             </Card>
@@ -512,7 +512,7 @@ export const JobApplications: React.FC = () => {
           <div className="space-y-4">
             {dummyPostings.length === 0 ? (
               <div className="text-center py-12">
-                <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   등록된 구인공고가 없습니다
                 </h3>

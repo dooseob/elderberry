@@ -15,16 +15,16 @@ import {
   Settings,
   Sparkles,
   Star
-} from '@/components/icons/LucideIcons';
+} from '../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useFacilityStore, useFacilitySearchResults, useFacilityLoadingStates, useFacilityErrors } from '@/stores/facilityStore';
-import { Button } from '@/shared/ui';
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { useFacilityStore, useFacilitySearchResults, useIsSearching, useIsLoadingRecommendations, useSearchError, useRecommendationError } from '../../stores/facilityStore';
+import { Button } from '../../shared/ui';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
 import FacilityList from './components/FacilityList';
 import FacilitySearchFilters from './components/FacilitySearchFilters';
 import RecommendationResults from './components/RecommendationResults';
 import FacilityDetailModal from './components/FacilityDetailModal';
-import { useSEO, SEOPresets, addStructuredData } from '@/hooks/useSEO';
+import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
 
 interface FacilitySearchPageProps {
   memberId?: number;
@@ -58,10 +58,12 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
     addStructuredData(facilitySearchData, 'facility-search-data');
   }, []);
 
-  // Zustand 스토어 상태 및 액션들
+  // Zustand 스토어 상태 및 액션들 (개별 구독으로 최적화)
   const searchResults = useFacilitySearchResults();
-  const { isSearching, isLoadingRecommendations } = useFacilityLoadingStates();
-  const { searchError, recommendationError } = useFacilityErrors();
+  const isSearching = useIsSearching();
+  const isLoadingRecommendations = useIsLoadingRecommendations();
+  const searchError = useSearchError();
+  const recommendationError = useRecommendationError();
   
   const {
     recommendations,

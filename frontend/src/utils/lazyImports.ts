@@ -56,7 +56,7 @@ export const LazyDashboardPage = lazyWithMinDelay(
 
 // 마이페이지 (우선순위: 높음 - 자주 접근하는 페이지)
 export const LazyMyPage = lazyWithMinDelay(
-  () => import('../components/mypage/MyPage'),
+  () => import('../features/mypage/MyPage'),
   150
 );
 

@@ -20,8 +20,7 @@ import {
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
 import { FacilityProfile, useFacilityStore } from '@/stores/facilityStore';
-import Button from '../../../shared/ui/Button';
-import Card, { CardContent, CardHeader } from '../../../shared/ui/Card';
+import { Button, Card, CardContent, CardHeader } from '@/shared/ui';
 
 interface FacilityCardProps {
   facility: FacilityProfile;

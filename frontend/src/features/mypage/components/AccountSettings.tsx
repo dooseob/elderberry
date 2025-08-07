@@ -27,8 +27,8 @@ import {
   Save,
   RefreshCw
 } from '../../../components/icons/LucideIcons';
-import { Card } from '../../../shared/ui/Card';
-import { Button } from '../../../shared/ui/Button';
+import { Card } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import { useAuthStore } from '../../../stores/authStore';
 
 interface PasswordChangeForm {

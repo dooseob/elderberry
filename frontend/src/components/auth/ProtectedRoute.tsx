@@ -22,6 +22,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, user, isLoading, validateToken } = useAuthStore();
   const [isValidating, setIsValidating] = useState(true);
 
+  // 디버깅을 위한 로깅
+  console.log('[ProtectedRoute] Checking route:', location.pathname, {
+    isAuthenticated,
+    user,
+    isLoading,
+    isValidating,
+    roles
+  });
+
   useEffect(() => {
     const checkAuth = async () => {
       if (isAuthenticated && user) {

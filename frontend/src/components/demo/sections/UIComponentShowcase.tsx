@@ -42,12 +42,12 @@ import {
   Loader2
 } from 'lucide-react';
 
-import Button from '../../../shared/ui/Button';
-import Input from '../../../shared/ui/Input';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../shared/ui/Card';
-import Badge from '../../../shared/ui/Badge';
-import Modal from '../../../shared/ui/Modal';
-import Tooltip from '../../../shared/ui/Tooltip';
+import { Button } from '@/shared/ui';
+import { Input } from '@/shared/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/shared/ui';
+import { Badge } from '@/shared/ui';
+import { Modal } from '@/shared/ui';
+import { Tooltip } from '@/shared/ui';
 import { useLinearTheme } from '../../../hooks/useLinearTheme';
 
 /**

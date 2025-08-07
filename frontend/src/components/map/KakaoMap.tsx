@@ -24,6 +24,8 @@ import {
 declare global {
   interface Window {
     kakao: any;
+    facilityDetailClick?: (facilityId: number) => void;
+    infoWindows?: any[];
   }
 }
 
@@ -62,15 +64,20 @@ const NEARBY_CATEGORIES: NearbyCategory[] = [
 ];
 
 interface KakaoMapProps {
-  // 메인 시설 정보
-  facility: {
+  // 시설 정보 (단일 또는 다중)
+  facilities: Array<{
     id: number;
     name: string;
     address: string;
     latitude?: number;
     longitude?: number;
     phone?: string;
-  };
+    facilityType?: string;
+    grade?: string;
+    availableBeds?: number;
+    rating?: number;
+    isRecommended?: boolean;
+  }>;
   
   // 지도 설정
   width?: string;
@@ -79,21 +86,27 @@ interface KakaoMapProps {
   showNearbyPlaces?: boolean;
   showTrafficInfo?: boolean;
   showControls?: boolean;
+  enableClustering?: boolean;
   
   // 이벤트 핸들러
   onLocationChange?: (lat: number, lng: number) => void;
+  onFacilityClick?: (facility: any) => void;
+  onMapBoundsChange?: (bounds: { ne: { lat: number; lng: number }, sw: { lat: number; lng: number } }) => void;
   className?: string;
 }
 
 export const KakaoMap: React.FC<KakaoMapProps> = ({
-  facility,
+  facilities,
   width = '100%',
   height = '400px',
   level = 3,
-  showNearbyPlaces = true,
+  showNearbyPlaces = false,
   showTrafficInfo = false,
   showControls = true,
+  enableClustering = true,
   onLocationChange,
+  onFacilityClick,
+  onMapBoundsChange,
   className = ''
 }) => {
   // Refs
@@ -107,6 +120,8 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
   const [nearbyPlaces, setNearbyPlaces] = useState<MapPlace[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [coordinates, setCoordinates] = useState<{lat: number, lng: number} | null>(null);
+  const [facilityClusters, setFacilityClusters] = useState<any[]>([]);
+  const [selectedFacility, setSelectedFacility] = useState<any>(null);
 
   // 카카오 지도 SDK 로드
   useEffect(() => {
@@ -146,24 +161,20 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
 
         await loadKakaoMapScript();
         
-        // 주소로 좌표 검색 또는 기존 좌표 사용
-        let lat = facility.latitude;
-        let lng = facility.longitude;
-        
-        if (!lat || !lng) {
-          const coords = await geocodeAddress(facility.address);
-          lat = coords.lat;
-          lng = coords.lng;
-        }
-        
-        setCoordinates({ lat, lng });
+        // 시설들의 중심점 계산
+        const centerCoords = await calculateMapCenter(facilities);
+        setCoordinates(centerCoords);
         
         // 지도 생성
-        createMap(lat, lng);
+        createMap(centerCoords.lat, centerCoords.lng);
         
-        // 주변 편의시설 검색
-        if (showNearbyPlaces) {
-          searchNearbyPlaces(lat, lng);
+        // 시설 마커들 추가
+        await addFacilityMarkers();
+        
+        // 주변 편의시설 검색 (첫 번째 시설 기준)
+        if (showNearbyPlaces && facilities.length > 0) {
+          const firstFacility = await ensureFacilityCoordinates(facilities[0]);
+          searchNearbyPlaces(firstFacility.latitude!, firstFacility.longitude!);
         }
         
       } catch (error: any) {
@@ -175,7 +186,7 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
     };
 
     initializeMap();
-  }, [facility, level, showNearbyPlaces]);
+  }, [facilities, level, showNearbyPlaces]);
 
   // 주소로 좌표 검색
   const geocodeAddress = (address: string): Promise<{lat: number, lng: number}> => {
@@ -222,8 +233,18 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
       map.addOverlayMapTypeId(window.kakao.maps.MapTypeId.TRAFFIC);
     }
 
-    // 메인 시설 마커 추가
-    addMainFacilityMarker(map, lat, lng);
+    // 지도 범위 변경 이벤트 리스너
+    if (onMapBoundsChange) {
+      window.kakao.maps.event.addListener(map, 'bounds_changed', () => {
+        const bounds = map.getBounds();
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        onMapBoundsChange({
+          ne: { lat: ne.getLat(), lng: ne.getLng() },
+          sw: { lat: sw.getLat(), lng: sw.getLng() }
+        });
+      });
+    }
 
     // 지도 이동 이벤트
     if (onLocationChange) {
@@ -234,21 +255,88 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   };
 
-  // 메인 시설 마커 추가
-  const addMainFacilityMarker = (map: any, lat: number, lng: number) => {
-    const markerPosition = new window.kakao.maps.LatLng(lat, lng);
+  // 시설들의 중심점 계산
+  const calculateMapCenter = async (facilities: any[]): Promise<{lat: number, lng: number}> => {
+    if (facilities.length === 0) {
+      return { lat: 37.5665, lng: 126.9780 }; // 기본값: 서울 시청
+    }
+    
+    if (facilities.length === 1) {
+      const facility = await ensureFacilityCoordinates(facilities[0]);
+      return { lat: facility.latitude!, lng: facility.longitude! };
+    }
+    
+    // 모든 시설의 좌표를 확보
+    const facilitiesWithCoords = await Promise.all(
+      facilities.map(facility => ensureFacilityCoordinates(facility))
+    );
+    
+    // 중심점 계산
+    const totalLat = facilitiesWithCoords.reduce((sum, f) => sum + f.latitude!, 0);
+    const totalLng = facilitiesWithCoords.reduce((sum, f) => sum + f.longitude!, 0);
+    
+    return {
+      lat: totalLat / facilitiesWithCoords.length,
+      lng: totalLng / facilitiesWithCoords.length
+    };
+  };
+  
+  // 시설 좌표 확보 (주소 → 좌표 변환 포함)
+  const ensureFacilityCoordinates = async (facility: any): Promise<any> => {
+    if (facility.latitude && facility.longitude) {
+      return facility;
+    }
+    
+    try {
+      const coords = await geocodeAddress(facility.address);
+      return { ...facility, latitude: coords.lat, longitude: coords.lng };
+    } catch (error) {
+      console.warn(`시설 "${facility.name}" 좌표 변환 실패:`, error);
+      return { ...facility, latitude: 37.5665, longitude: 126.9780 }; // 기본값
+    }
+  };
+
+  // 모든 시설 마커 추가
+  const addFacilityMarkers = async () => {
+    if (!mapInstance.current || facilities.length === 0) return;
+    
+    const facilitiesWithCoords = await Promise.all(
+      facilities.map(facility => ensureFacilityCoordinates(facility))
+    );
+    
+    facilitiesWithCoords.forEach((facility, index) => {
+      addFacilityMarker(mapInstance.current, facility, index);
+    });
+    
+    // 지도 범위를 모든 마커가 보이도록 조정
+    if (facilitiesWithCoords.length > 1) {
+      const bounds = new window.kakao.maps.LatLngBounds();
+      facilitiesWithCoords.forEach(facility => {
+        bounds.extend(new window.kakao.maps.LatLng(facility.latitude, facility.longitude));
+      });
+      mapInstance.current.setBounds(bounds);
+    }
+  };
+
+  // 개별 시설 마커 추가
+  const addFacilityMarker = (map: any, facility: any, index: number) => {
+    const markerPosition = new window.kakao.maps.LatLng(facility.latitude, facility.longitude);
+    
+    // 시설 유형/등급에 따른 마커 색상 결정
+    const markerColor = getMarkerColor(facility);
+    const markerSize = facility.isRecommended ? { width: 36, height: 45 } : { width: 28, height: 35 };
     
     // 커스텀 마커 이미지
     const imageSrc = 'data:image/svg+xml;base64,' + btoa(`
-      <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
-        <path d="M16 0C7.2 0 0 7.2 0 16c0 16 16 24 16 24s16-8 16-24C32 7.2 24.8 0 16 0z" fill="#FF6B6B"/>
-        <circle cx="16" cy="16" r="8" fill="white"/>
-        <path d="M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" fill="#FF6B6B"/>
+      <svg width="${markerSize.width}" height="${markerSize.height}" viewBox="0 0 ${markerSize.width} ${markerSize.height}" xmlns="http://www.w3.org/2000/svg">
+        <path d="M${markerSize.width/2} 0C${markerSize.width*0.225} 0 0 ${markerSize.width*0.225} 0 ${markerSize.width*0.5}c0 ${markerSize.width*0.5} ${markerSize.width/2} ${markerSize.height*0.6} ${markerSize.width/2} ${markerSize.height*0.6}s${markerSize.width/2}-${markerSize.height*0.1} ${markerSize.width/2}-${markerSize.height*0.6}C${markerSize.width} ${markerSize.width*0.225} ${markerSize.width*0.775} 0 ${markerSize.width/2} 0z" fill="${markerColor}"/>
+        <circle cx="${markerSize.width/2}" cy="${markerSize.width*0.5}" r="${markerSize.width*0.25}" fill="white"/>
+        ${facility.isRecommended ? `<path d="M${markerSize.width/2} ${markerSize.width*0.3}l${markerSize.width*0.06} ${markerSize.width*0.12}h${markerSize.width*0.13}l-${markerSize.width*0.105} ${markerSize.width*0.075}l${markerSize.width*0.04} ${markerSize.width*0.12}l-${markerSize.width*0.105}-${markerSize.width*0.075}l-${markerSize.width*0.105} ${markerSize.width*0.075}l${markerSize.width*0.04}-${markerSize.width*0.12}l-${markerSize.width*0.105}-${markerSize.width*0.075}h${markerSize.width*0.13}z" fill="${markerColor}"/>` : ''}
       </svg>
     `);
     
-    const imageSize = new window.kakao.maps.Size(32, 40);
-    const imageOption = { offset: new window.kakao.maps.Point(16, 40) };
+    const imageSize = new window.kakao.maps.Size(markerSize.width, markerSize.height);
+    const imageOption = { offset: new window.kakao.maps.Point(markerSize.width/2, markerSize.height) };
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
     
     const marker = new window.kakao.maps.Marker({
@@ -260,20 +348,85 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
     markersRef.current.push(marker);
 
     // 정보 윈도우
+    const infoContent = createFacilityInfoWindow(facility);
     const infowindow = new window.kakao.maps.InfoWindow({
-      content: `
-        <div style="padding: 12px; font-size: 14px; max-width: 250px;">
-          <div style="font-weight: bold; margin-bottom: 4px;">${facility.name}</div>
-          <div style="color: #666; margin-bottom: 4px;">${facility.address}</div>
-          ${facility.phone ? `<div style="color: #007bff;">${facility.phone}</div>` : ''}
-        </div>
-      `
+      content: infoContent
     });
 
-    // 마커 클릭 시 정보 윈도우 표시
+    // 마커 클릭 이벤트
     window.kakao.maps.event.addListener(marker, 'click', () => {
+      // 기존 정보창 모두 닫기
+      markersRef.current.forEach((_, idx) => {
+        if (window.infoWindows && window.infoWindows[idx]) {
+          window.infoWindows[idx].close();
+        }
+      });
+      
+      // 새 정보창 열기
       infowindow.open(map, marker);
+      setSelectedFacility(facility);
+      
+      // 콜백 호출
+      if (onFacilityClick) {
+        onFacilityClick(facility);
+      }
     });
+    
+    // 정보창 참조 저장
+    if (!window.infoWindows) window.infoWindows = [];
+    window.infoWindows[index] = infowindow;
+  };
+  
+  // 시설 마커 색상 결정
+  const getMarkerColor = (facility: any): string => {
+    if (facility.isRecommended) return '#FF6B6B'; // 추천 시설: 빨간색
+    if (!facility.availableBeds || facility.availableBeds === 0) return '#9CA3AF'; // 대기자: 회색
+    
+    switch (facility.grade) {
+      case 'A': case 'A등급': return '#10B981'; // A등급: 초록색
+      case 'B': case 'B등급': return '#3B82F6'; // B등급: 파란색
+      case 'C': case 'C등급': return '#F59E0B'; // C등급: 주황색
+      default: return '#6366F1'; // 기본: 보라색
+    }
+  };
+  
+  // 시설 정보창 HTML 생성
+  const createFacilityInfoWindow = (facility: any): string => {
+    return `
+      <div style="padding: 15px; font-size: 14px; max-width: 280px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div style="font-weight: bold; font-size: 16px; color: #1f2937; flex: 1;">${facility.name}</div>
+          ${facility.isRecommended ? '<span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 8px;">추천</span>' : ''}
+        </div>
+        
+        <div style="color: #6b7280; margin-bottom: 4px; font-size: 13px;">${facility.address}</div>
+        
+        <div style="display: flex; gap: 12px; margin: 8px 0; align-items: center;">
+          ${facility.grade ? `<span style="background: ${getGradeColor(facility.grade)}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${facility.grade}</span>` : ''}
+          ${facility.rating ? `<span style="color: #f59e0b;">★ ${facility.rating.toFixed(1)}</span>` : ''}
+          ${facility.availableBeds !== undefined ? `<span style="color: ${facility.availableBeds > 0 ? '#10b981' : '#ef4444'}; font-size: 12px;">
+            ${facility.availableBeds > 0 ? `입소가능 ${facility.availableBeds}개` : '대기필요'}
+          </span>` : ''}
+        </div>
+        
+        ${facility.facilityType ? `<div style="color: #6b7280; font-size: 12px; margin-bottom: 4px;">${facility.facilityType}</div>` : ''}
+        ${facility.phone ? `<div style="color: #3b82f6; font-size: 12px;">${facility.phone}</div>` : ''}
+        
+        <div style="text-align: center; margin-top: 10px;">
+          <button onclick="window.facilityDetailClick(${facility.id})" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">상세보기</button>
+        </div>
+      </div>
+    `;
+  };
+  
+  // 등급별 색상
+  const getGradeColor = (grade: string): string => {
+    switch (grade) {
+      case 'A': case 'A등급': return '#10b981';
+      case 'B': case 'B등급': return '#3b82f6';
+      case 'C': case 'C등급': return '#f59e0b';
+      default: return '#6b7280';
+    }
   };
 
   // 주변 편의시설 검색
@@ -395,12 +548,27 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
   };
 
   // 길찾기 함수
-  const openDirections = () => {
-    if (!coordinates) return;
+  const openDirections = (facility?: any) => {
+    const targetFacility = facility || selectedFacility;
+    if (!targetFacility) return;
     
-    const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(facility.name)},${coordinates.lat},${coordinates.lng}`;
+    const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(targetFacility.name)},${targetFacility.latitude},${targetFacility.longitude}`;
     window.open(kakaoMapUrl, '_blank');
   };
+  
+  // 전역 함수로 시설 상세보기 콜백 등록
+  useEffect(() => {
+    window.facilityDetailClick = (facilityId: number) => {
+      const facility = facilities.find(f => f.id === facilityId);
+      if (facility && onFacilityClick) {
+        onFacilityClick(facility);
+      }
+    };
+    
+    return () => {
+      delete window.facilityDetailClick;
+    };
+  }, [facilities, onFacilityClick]);
 
   // 컴포넌트 언마운트 시 정리
   useEffect(() => {
@@ -448,21 +616,76 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
       {/* 지도 컨트롤 */}
       {!isLoading && !error && (
         <>
-          {/* 길찾기 버튼 */}
-          <div className="absolute top-4 right-4 z-10">
-            <Button
-              onClick={openDirections}
-              className="bg-white shadow-lg hover:shadow-xl flex items-center space-x-2"
-              variant="outline"
-            >
-              <Navigation className="h-4 w-4" />
-              <span>길찾기</span>
-            </Button>
+          {/* 컨트롤 버튼들 */}
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+            {selectedFacility && (
+              <Button
+                onClick={() => openDirections(selectedFacility)}
+                className="bg-white shadow-lg hover:shadow-xl flex items-center space-x-2"
+                variant="outline"
+                size="sm"
+              >
+                <Navigation className="h-4 w-4" />
+                <span>길찾기</span>
+              </Button>
+            )}
+            
+            {facilities.length > 1 && (
+              <Button
+                onClick={() => {
+                  if (mapInstance.current) {
+                    const bounds = new window.kakao.maps.LatLngBounds();
+                    facilities.forEach(facility => {
+                      if (facility.latitude && facility.longitude) {
+                        bounds.extend(new window.kakao.maps.LatLng(facility.latitude, facility.longitude));
+                      }
+                    });
+                    mapInstance.current.setBounds(bounds);
+                  }
+                }}
+                className="bg-white shadow-lg hover:shadow-xl flex items-center space-x-2"
+                variant="outline"
+                size="sm"
+              >
+                <MapPin className="h-4 w-4" />
+                <span>전체보기</span>
+              </Button>
+            )}
           </div>
 
-          {/* 주변 편의시설 버튼 */}
-          {showNearbyPlaces && nearbyPlaces.length > 0 && (
-            <div className="absolute bottom-4 left-4 right-4 z-10">
+          {/* 하단 정보 패널 */}
+          <div className="absolute bottom-4 left-4 right-4 z-10">
+            {/* 선택된 시설 정보 */}
+            {selectedFacility && (
+              <Card className="p-4 bg-white/95 backdrop-blur-sm mb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">{selectedFacility.name}</h3>
+                    <p className="text-sm text-gray-600">{selectedFacility.address}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      {selectedFacility.grade && (
+                        <Badge className="text-xs" style={{ backgroundColor: getGradeColor(selectedFacility.grade) }}>
+                          {selectedFacility.grade}
+                        </Badge>
+                      )}
+                      {selectedFacility.rating && (
+                        <span className="text-sm text-yellow-600">★ {selectedFacility.rating.toFixed(1)}</span>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedFacility(null)}
+                  >
+                    ✕
+                  </Button>
+                </div>
+              </Card>
+            )}
+            
+            {/* 주변 편의시설 버튼 */}
+            {showNearbyPlaces && nearbyPlaces.length > 0 && (
               <Card className="p-3 bg-white/95 backdrop-blur-sm">
                 <p className="text-sm font-medium text-gray-700 mb-3">주변 편의시설</p>
                 <div className="flex flex-wrap gap-2">
@@ -475,7 +698,7 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
                     return (
                       <Button
                         key={category.code}
-                        variant={activeCategory === category.code ? 'primary' : 'outline'}
+                        variant={activeCategory === category.code ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => showCategoryPlaces(category.code)}
                         className="flex items-center space-x-1"
@@ -489,8 +712,22 @@ export const KakaoMap: React.FC<KakaoMapProps> = ({
                   })}
                 </div>
               </Card>
-            </div>
-          )}
+            )}
+            
+            {/* 시설 통계 정보 */}
+            {facilities.length > 1 && (
+              <Card className="p-3 bg-white/95 backdrop-blur-sm mt-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">총 {facilities.length}개 시설</span>
+                  <div className="flex gap-3">
+                    <span className="text-green-600">A등급 {facilities.filter(f => f.grade?.includes('A')).length}개</span>
+                    <span className="text-blue-600">입소가능 {facilities.filter(f => f.availableBeds && f.availableBeds > 0).length}개</span>
+                    <span className="text-red-600">추천 {facilities.filter(f => f.isRecommended).length}개</span>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
         </>
       )}
     </div>

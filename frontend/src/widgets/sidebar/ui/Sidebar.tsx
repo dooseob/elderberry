@@ -15,6 +15,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLinearTheme } from '../../../hooks/useLinearTheme';
 import type { SidebarState } from './MainLayout';
 
@@ -85,19 +86,17 @@ export interface SidebarProps {
 }
 
 /**
- * 기본 사이드바 메뉴 아이템들
+ * 기본 사이드바 메뉴 아이템들 (대시보드 제거, 홈으로 부터 시작)
  */
 const DEFAULT_MENU_ITEMS: SidebarMenuItem[] = [
   {
-    id: 'dashboard',
-    label: '대시보드',
-    href: '/dashboard',
+    id: 'home',
+    label: '홈',
+    href: '/',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7"/>
-        <rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/>
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9,22 9,12 15,12 15,22"/>
       </svg>
     ),
     active: true,
@@ -105,7 +104,7 @@ const DEFAULT_MENU_ITEMS: SidebarMenuItem[] = [
   {
     id: 'facilities',
     label: '시설 찾기',
-    href: '/facilities',
+    href: '/facility-search',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -116,9 +115,7 @@ const DEFAULT_MENU_ITEMS: SidebarMenuItem[] = [
   {
     id: 'health',
     label: '건강 평가',
-    href: '/health',
-    badge: '새로움',
-    badgeVariant: 'success',
+    href: '/health-assessment',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -126,9 +123,32 @@ const DEFAULT_MENU_ITEMS: SidebarMenuItem[] = [
     ),
   },
   {
+    id: 'boards',
+    label: '커뮤니티',
+    href: '/boards',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'jobs',
+    label: '구인구직',
+    href: '/jobs',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+    ),
+  },
+  {
     id: 'profile',
     label: '마이페이지',
-    href: '/profile',
+    href: '/mypage',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -173,23 +193,23 @@ const DEFAULT_MENU_ITEMS: SidebarMenuItem[] = [
 ];
 
 /**
- * 기본 사이드바 섹션들
+ * 기본 사이드바 섹션들 (수정된 메뉴 구조)
  */
 const DEFAULT_SECTIONS: SidebarSection[] = [
   {
     id: 'main',
     title: '메인',
-    items: DEFAULT_MENU_ITEMS.slice(0, 2),
+    items: DEFAULT_MENU_ITEMS.slice(0, 2), // 홈, 시설찾기
   },
   {
     id: 'services',
     title: '서비스',
-    items: DEFAULT_MENU_ITEMS.slice(2, 4),
+    items: DEFAULT_MENU_ITEMS.slice(2, 5), // 건강평가, 커뮤니티, 구인구직
   },
   {
-    id: 'support',
-    title: '지원',
-    items: DEFAULT_MENU_ITEMS.slice(4),
+    id: 'account',
+    title: '계정',
+    items: DEFAULT_MENU_ITEMS.slice(5), // 마이페이지, 도움말
   },
 ];
 
@@ -207,6 +227,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   showFooter = true,
   className = '',
 }) => {
+  // 라우팅 훅
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   // Linear 테마 훅
   const { currentTheme, isDarkMode } = useLinearTheme();
   
@@ -247,6 +271,15 @@ const Sidebar: React.FC<SidebarProps> = ({
       action();
     }
   }, []);
+  
+  // 메뉴 아이템에 active 상태 추가하는 헬퍼 함수
+  const addActiveState = useCallback((items: SidebarMenuItem[]): SidebarMenuItem[] => {
+    return items.map(item => ({
+      ...item,
+      active: location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href)),
+      children: item.children ? addActiveState(item.children) : undefined
+    }));
+  }, [location.pathname]);
   
   // 메뉴 아이템 렌더링
   const renderMenuItem = (item: SidebarMenuItem, level = 0) => {
@@ -294,16 +327,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
           </button>
         ) : (
-          <a
-            href={item.href}
-            target={item.external ? '_blank' : undefined}
-            rel={item.external ? 'noopener noreferrer' : undefined}
+          <button
+            onClick={() => navigate(item.href)}
             className={`
               menu-item-link
               ${item.active ? 'active' : ''}
               ${item.disabled ? 'disabled' : ''}
             `}
-            aria-disabled={item.disabled}
+            disabled={item.disabled}
           >
             <span className="menu-item-icon">{item.icon}</span>
             {!isCollapsed && (
@@ -316,7 +347,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </>
             )}
-          </a>
+          </button>
         )}
         
         {/* 서브메뉴 */}
@@ -387,10 +418,13 @@ const Sidebar: React.FC<SidebarProps> = ({
     className,
   ].filter(Boolean).join(' ');
   
-  // 단순 메뉴 아이템들이 제공된 경우 처리
+  // 단순 메뉴 아이템들이 제공된 경우 처리 및 active 상태 추가
   const effectiveSections = menuItems 
-    ? [{ id: 'main', title: '메인', items: menuItems }] 
-    : sections;
+    ? [{ id: 'main', title: '메인', items: addActiveState(menuItems) }] 
+    : sections.map(section => ({
+        ...section,
+        items: addActiveState(section.items)
+      }));
   
   return (
     <aside className={sidebarClasses} role="complementary" aria-label="사이드바 네비게이션">

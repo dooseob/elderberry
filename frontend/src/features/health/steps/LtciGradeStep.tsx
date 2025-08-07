@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
 import { LTCI_GRADES } from '@/types/health';
 import type { LtciGrade } from '@/types/health';
-import RadioGroup, { type RadioOption } from '../../../shared/ui/RadioGroup';
+import { RadioGroup }, { type RadioOption } from '@/shared/ui';
 
 const LtciGradeStep: React.FC = () => {
   const {

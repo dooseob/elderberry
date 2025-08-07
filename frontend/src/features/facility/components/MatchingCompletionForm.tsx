@@ -23,8 +23,8 @@ import {
 } from '../../../components/icons/LucideIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useSelectedFacility } from '@/stores/facilityStore';
-import Button from '../../../shared/ui/Button';
-import Card, { CardContent, CardHeader, CardTitle } from '../../../shared/ui/Card';
+import { Button } from '@/shared/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
 interface MatchingCompletionFormProps {
   facilityId?: number;

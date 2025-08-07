@@ -18,8 +18,7 @@
     "validate:exports": "node validate-exports.cjs",
     "test:e2e:install": "playwright install chromium --with-deps",
     "test:e2e:install-fast": "SKIP_BROWSER_INSTALL=true playwright test",
-    "test:setup": "npm run test:e2e:install && npm run test:e2e",
-    "validate:exports": "node validate-exports.cjs"
+    "test:setup": "npm run test:e2e:install && npm run test:e2e"
   },
   "dependencies": {
     "@allpepper/memory-bank-mcp": "^0.2.1",

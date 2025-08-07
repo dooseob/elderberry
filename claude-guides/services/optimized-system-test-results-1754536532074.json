@@ -1,0 +1,235 @@
+{
+  "startTime": "2025-08-07T03:15:32.049Z",
+  "version": "2.3.0",
+  "totalTests": 24,
+  "passedTests": 22,
+  "failedTests": 2,
+  "optimizationResults": [
+    {
+      "testName": "효율성 메트릭: /max",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 5,
+          "newCount": 7,
+          "reductionPercentage": "-40.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 7,
+          "newAvg": 5.5,
+          "speedGain": "25%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.061Z"
+    },
+    {
+      "testName": "효율성 메트릭: /auto",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 3,
+          "newCount": 4,
+          "reductionPercentage": "-33.3",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 3.2,
+          "speedGain": "15%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.061Z"
+    },
+    {
+      "testName": "효율성 메트릭: /smart",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 1,
+          "newCount": 3,
+          "reductionPercentage": "-200.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 2.3,
+          "speedGain": "35%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.061Z"
+    },
+    {
+      "testName": "효율성 메트릭: /rapid",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 2,
+          "newCount": 3,
+          "reductionPercentage": "-50.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 1,
+          "newAvg": 2,
+          "speedGain": "10%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.062Z"
+    },
+    {
+      "testName": "효율성 메트릭: /deep",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 3,
+          "newCount": 5,
+          "reductionPercentage": "-66.7",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 3.5,
+          "speedGain": "20%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.062Z"
+    },
+    {
+      "testName": "효율성 메트릭: /sync",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 2,
+          "newCount": 3,
+          "reductionPercentage": "-50.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 2,
+          "newAvg": 2.5,
+          "speedGain": "30%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.062Z"
+    },
+    {
+      "testName": "효율성 메트릭: /test",
+      "metrics": {
+        "success": true,
+        "agentReduction": {
+          "oldCount": 2,
+          "newCount": 1,
+          "reductionPercentage": "50.0",
+          "isOptimized": true
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 2.5,
+          "speedGain": "40%"
+        },
+        "qualityCheck": "우수"
+      },
+      "timestamp": "2025-08-07T03:15:32.063Z"
+    },
+    {
+      "testName": "실제 시뮬레이션: /max \"엘더베리 프로젝트 웹 성능 최적화\"",
+      "metrics": {
+        "agentReduction": {
+          "oldCount": 5,
+          "newCount": 6,
+          "reductionPercentage": "-20.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 80,
+        "efficiencyGain": {
+          "oldAvg": 7,
+          "newAvg": 5.5,
+          "speedGain": "25%"
+        }
+      },
+      "timestamp": "2025-08-07T03:15:32.069Z"
+    },
+    {
+      "testName": "실제 시뮬레이션: /auto \"React 컴포넌트 자동 테스트\"",
+      "metrics": {
+        "agentReduction": {
+          "oldCount": 3,
+          "newCount": 4,
+          "reductionPercentage": "-33.3",
+          "isOptimized": false
+        },
+        "relevanceScore": 90,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 3.2,
+          "speedGain": "15%"
+        }
+      },
+      "timestamp": "2025-08-07T03:15:32.070Z"
+    },
+    {
+      "testName": "실제 시뮬레이션: /smart \"API 문서 업데이트\"",
+      "metrics": {
+        "agentReduction": {
+          "oldCount": 1,
+          "newCount": 2,
+          "reductionPercentage": "-100.0",
+          "isOptimized": false
+        },
+        "relevanceScore": 80,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 2.3,
+          "speedGain": "35%"
+        }
+      },
+      "timestamp": "2025-08-07T03:15:32.071Z"
+    },
+    {
+      "testName": "실제 시뮬레이션: /test \"엘더베리 E2E 테스팅\"",
+      "metrics": {
+        "agentReduction": {
+          "oldCount": 2,
+          "newCount": 1,
+          "reductionPercentage": "50.0",
+          "isOptimized": true
+        },
+        "relevanceScore": 70,
+        "efficiencyGain": {
+          "oldAvg": 3,
+          "newAvg": 2.5,
+          "speedGain": "40%"
+        }
+      },
+      "timestamp": "2025-08-07T03:15:32.074Z"
+    }
+  ],
+  "errors": [
+    {
+      "testName": "에이전트 선택: /smart \"성능 문제 분석\"",
+      "error": "예상 에이전트 누락: CLAUDE_GUIDE, DEBUG",
+      "timestamp": "2025-08-07T03:15:32.058Z"
+    },
+    {
+      "testName": "MCP 도구 선택: /test \"E2E 테스팅\"",
+      "error": "예상 도구 누락: playwright, sequential-thinking, memory, filesystem, github",
+      "timestamp": "2025-08-07T03:15:32.060Z"
+    }
+  ],
+  "overallGrade": "A",
+  "endTime": "2025-08-07T03:15:32.074Z"
+}

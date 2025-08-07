@@ -1,0 +1,699 @@
+{
+  "info": {
+    "name": "엘더베리 백엔드 API Collection",
+    "description": "엘더베리 프로젝트의 모든 백엔드 API 엔드포인트 테스트 컬렉션",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "apiUrl",
+      "value": "{{baseUrl}}/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testEmail",
+      "value": "test.domestic@example.com",
+      "type": "string"
+    },
+    {
+      "key": "testPassword",
+      "value": "Password123!",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "서버 상태 확인",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "테스트 엔드포인트",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/test",
+              "host": ["{{apiUrl}}"],
+              "path": ["test"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔐 인증 관리",
+      "item": [
+        {
+          "name": "회원가입",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"NewPassword123!\",\n  \"name\": \"새 사용자\",\n  \"phoneNumber\": \"010-9999-8888\",\n  \"role\": \"DOMESTIC\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/register",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "로그인",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const responseJson = pm.response.json();",
+                  "  if (responseJson.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', responseJson.accessToken);",
+                  "  }",
+                  "  if (responseJson.refreshToken) {",
+                  "    pm.collectionVariables.set('refreshToken', responseJson.refreshToken);",
+                  "  }",
+                  "  console.log('로그인 성공, 토큰 저장됨');",
+                  "} else {",
+                  "  console.log('로그인 실패:', pm.response.text());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/login",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "내 정보 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/auth/me",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "토큰 갱신",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/refresh",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "로그아웃",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/auth/logout",
+              "host": ["{{apiUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👤 회원 관리",
+      "item": [
+        {
+          "name": "프로필 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/members/profile",
+              "host": ["{{apiUrl}}"],
+              "path": ["members", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "프로필 수정",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"수정된 이름\",\n  \"phoneNumber\": \"010-1234-5678\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/members/profile",
+              "host": ["{{apiUrl}}"],
+              "path": ["members", "profile"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏢 시설 관리",
+      "item": [
+        {
+          "name": "시설 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/facilities?page=0&size=10",
+              "host": ["{{apiUrl}}"],
+              "path": ["facilities"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시설 검색",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/facilities/search?keyword=요양원&region=서울&page=0&size=10",
+              "host": ["{{apiUrl}}"],
+              "path": ["facilities", "search"],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "요양원"
+                },
+                {
+                  "key": "region",
+                  "value": "서울"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시설 상세 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/facilities/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["facilities", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AI 시설 추천",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": 1,\n  \"budget\": 2000000,\n  \"region\": \"서울\",\n  \"careLevel\": \"INTERMEDIATE\",\n  \"specialNeeds\": [\"DEMENTIA_CARE\"]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/facilities/recommendations",
+              "host": ["{{apiUrl}}"],
+              "path": ["facilities", "recommendations"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚕️ 건강평가",
+      "item": [
+        {
+          "name": "건강평가 생성",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": 1,\n  \"basicInfo\": {\n    \"age\": 75,\n    \"gender\": \"FEMALE\",\n    \"weight\": 55,\n    \"height\": 160\n  },\n  \"healthConditions\": {\n    \"chronicDiseases\": [\"DIABETES\", \"HYPERTENSION\"],\n    \"mobility\": \"WALKER_NEEDED\",\n    \"cognitiveState\": \"MILD_IMPAIRMENT\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/health/assessments",
+              "host": ["{{apiUrl}}"],
+              "path": ["health", "assessments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "건강평가 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/health/assessments?memberId=1",
+              "host": ["{{apiUrl}}"],
+              "path": ["health", "assessments"],
+              "query": [
+                {
+                  "key": "memberId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "건강평가 상세 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/health/assessments/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["health", "assessments", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💬 게시판",
+      "item": [
+        {
+          "name": "게시판 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/boards",
+              "host": ["{{apiUrl}}"],
+              "path": ["boards"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "게시글 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/boards/1/posts?page=0&size=10",
+              "host": ["{{apiUrl}}"],
+              "path": ["boards", "1", "posts"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "게시글 작성",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"boardId\": 1,\n  \"title\": \"테스트 게시글\",\n  \"content\": \"이것은 테스트용 게시글 내용입니다.\",\n  \"category\": \"GENERAL\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/boards/1/posts",
+              "host": ["{{apiUrl}}"],
+              "path": ["boards", "1", "posts"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💼 구인구직",
+      "item": [
+        {
+          "name": "구인구직 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/jobs?page=0&size=10&type=ALL",
+              "host": ["{{apiUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "type",
+                  "value": "ALL"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "구인구직 등록",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"간병인 구합니다\",\n  \"description\": \"경험 있는 간병인을 모집합니다.\",\n  \"jobType\": \"CAREGIVER\",\n  \"employmentType\": \"FULL_TIME\",\n  \"location\": \"서울시 강남구\",\n  \"salary\": 2500000,\n  \"requirements\": [\"경력 2년 이상\", \"자격증 필수\"]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/jobs",
+              "host": ["{{apiUrl}}"],
+              "path": ["jobs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "구인구직 상세 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/jobs/1",
+              "host": ["{{apiUrl}}"],
+              "path": ["jobs", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔔 알림 관리",
+      "item": [
+        {
+          "name": "알림 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/notifications?page=0&size=20",
+              "host": ["{{apiUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "알림 읽음 처리",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/notifications/1/read",
+              "host": ["{{apiUrl}}"],
+              "path": ["notifications", "1", "read"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💬 채팅",
+      "item": [
+        {
+          "name": "채팅방 목록 조회",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apiUrl}}/chat/rooms",
+              "host": ["{{apiUrl}}"],
+              "path": ["chat", "rooms"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "채팅방 생성",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"테스트 채팅방\",\n  \"participants\": [1, 2],\n  \"type\": \"PRIVATE\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/chat/rooms",
+              "host": ["{{apiUrl}}"],
+              "path": ["chat", "rooms"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤖 챗봇",
+      "item": [
+        {
+          "name": "챗봇 대화",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"안녕하세요, 요양원을 찾고 있습니다.\",\n  \"sessionId\": \"test-session-123\",\n  \"context\": {\n    \"previousMessages\": []\n  }\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/chatbot/chat",
+              "host": ["{{apiUrl}}"],
+              "path": ["chatbot", "chat"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,743 +1,538 @@
-<testsuites id="" name="" tests="152" failures="3" skipped="149" errors="0" time="27.246607">
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="chromium" tests="19" failures="3" skipped="16" time="44.807" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="12.421">
-<failure message="auth-improvement.spec.ts:13:3 비회원이 랜딩페이지에 접근할 수 있어야 한다" type="FAILURE">
-<![CDATA[  [chromium] › auth-improvement.spec.ts:13:3 › 개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다 ───────────────
+<testsuites id="" name="" tests="96" failures="3" skipped="93" errors="0" time="49.634766">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="chromium" tests="12" failures="3" skipped="9" time="120.336" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="30.405">
+<failure message="facility-search-e2e.spec.ts:22:3 페이지가 올바로 로드되는지 확인" type="FAILURE">
+<![CDATA[  [chromium] › facility-search-e2e.spec.ts:22:3 › 시설찾기 페이지 › 페이지가 올바로 로드되는지 확인 ─────────────────────
 
-    Error: Timed out 10000ms waiting for expect(locator).toBeVisible()
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
 
-    Locator: getByRole('heading', { name: /Find Quality Elder Care/ })
-    Expected: visible
-    Received: <element(s) not found>
+       6 |
+       7 | test.describe('시설찾기 페이지', () => {
+    >  8 |   test.beforeEach(async ({ page }) => {
+         |        ^
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+      11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:8:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
     Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for getByRole('heading', { name: /Find Quality Elder Care/ })
+      - waiting for locator('[data-testid="email-input"]')
 
 
-      16 |     
-      17 |     // 메인 헤드라인 확인
-    > 18 |     await expect(page.getByRole('heading', { name: /Find Quality Elder Care/ })).toBeVisible();
-         |                                                                                  ^
-      19 |     
-      20 |     // 로그인 없이도 접근 가능한 요소들 확인
-      21 |     await expect(page.getByText('Worldwide')).toBeVisible();
-        at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:18:82
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+    > 11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+         |                ^
+      12 |     await page.fill('[data-testid="password-input"]', 'Password123!');
+      13 |     await page.click('[data-testid="login-button"]');
+      14 |     
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:11:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/test-failed-1.png
+    ../test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/video.webm
+    ../test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/error-context.md
+    Error Context: ../test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/video.webm]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-비회원이-랜딩페이지에-접근할-수-있어야-한다-chromium/error-context.md]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-페이지가-올바로-로드되는지-확인-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="12.181">
-<failure message="auth-improvement.spec.ts:29:3 헤더 네비게이션이 올바르게 작동해야 한다" type="FAILURE">
-<![CDATA[  [chromium] › auth-improvement.spec.ts:29:3 › 개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다 ─────────────────
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="30.479">
+<failure message="facility-search-e2e.spec.ts:34:3 검색 기능이 정상 작동하는지 확인" type="FAILURE">
+<![CDATA[  [chromium] › facility-search-e2e.spec.ts:34:3 › 시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인 ────────────────────
 
-    Error: Timed out 10000ms waiting for expect(locator).toBeVisible()
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
 
-    Locator: getByRole('link', { name: /Sign In/ })
-    Expected: visible
-    Received: <element(s) not found>
+       6 |
+       7 | test.describe('시설찾기 페이지', () => {
+    >  8 |   test.beforeEach(async ({ page }) => {
+         |        ^
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+      11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:8:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
     Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for getByRole('link', { name: /Sign In/ })
+      - waiting for locator('[data-testid="email-input"]')
 
 
-      30 |     // Sign In 버튼 확인
-      31 |     const signInButton = page.getByRole('link', { name: /Sign In/ });
-    > 32 |     await expect(signInButton).toBeVisible();
-         |                                ^
-      33 |     
-      34 |     // Get Started 버튼 확인  
-      35 |     const getStartedButton = page.getByRole('link', { name: /Get Started/ });
-        at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:32:32
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+    > 11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+         |                ^
+      12 |     await page.fill('[data-testid="password-input"]', 'Password123!');
+      13 |     await page.click('[data-testid="login-button"]');
+      14 |     
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:11:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/test-failed-1.png
+    ../test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/video.webm
+    ../test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/error-context.md
+    Error Context: ../test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/video.webm]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-헤더-네비게이션이-올바르게-작동해야-한다-chromium/error-context.md]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-검색-기능이-정상-작동하는지-확인-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="17.925">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="29.054">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="2.28">
-<failure message="auth-improvement.spec.ts:64:3 2단계 로그인 플로우가 작동해야 한다" type="FAILURE">
-<![CDATA[  [chromium] › auth-improvement.spec.ts:64:3 › 개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다 ───────────────────
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="30.398">
+<failure message="facility-search-e2e.spec.ts:75:3 맞춤 추천 탭이 정상 작동하는지 확인" type="FAILURE">
+<![CDATA[  [chromium] › facility-search-e2e.spec.ts:75:3 › 시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인 ──────────────────
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /Continue/ }) resolved to 3 elements:
-        1) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="email-continue" class="inline-flex items-center justify-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden bg-[var(--linear-color-accent)] text-[var(--linear-color-te…>…</button> aka getByTestId('email-continue')
-        2) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="social-signin-google" class="inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[v…>…</button> aka getByTestId('social-signin-google')
-        3) <button tabindex="0" type="button" aria-busy="false" aria-disabled="false" data-testid="social-signin-apple" class="inline-flex items-center whitespace-nowrap font-[var(--linear-font-weight-medium)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--linear-color-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-[44px] select-none cursor-pointer relative overflow-hidden border hover:border-[var(--linear-color-border-strong)] active:bg-[va…>…</button> aka getByTestId('social-signin-apple')
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
 
+       6 |
+       7 | test.describe('시설찾기 페이지', () => {
+    >  8 |   test.beforeEach(async ({ page }) => {
+         |        ^
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+      11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:8:8
+
+    Error: page.fill: Test timeout of 30000ms exceeded.
     Call log:
-      - waiting for getByRole('button', { name: /Continue/ })
+      - waiting for locator('[data-testid="email-input"]')
 
 
-      68 |     const emailInput = page.getByLabel(/Email Address/);
-      69 |     await emailInput.fill('test.domestic@example.com');
-    > 70 |     await page.getByRole('button', { name: /Continue/ }).click();
-         |                                                          ^
-      71 |     
-      72 |     // 2단계: 비밀번호 입력 화면으로 전환 확인
-      73 |     await expect(page.getByRole('heading', { name: /Enter Your Password/ })).toBeVisible();
-        at /mnt/c/Users/human-10/elderberry/frontend/tests/auth-improvement.spec.ts:70:58
+       9 |     // 테스트 사용자로 로그인
+      10 |     await page.goto('/login');
+    > 11 |     await page.fill('[data-testid="email-input"]', 'test.domestic@example.com');
+         |                ^
+      12 |     await page.fill('[data-testid="password-input"]', 'Password123!');
+      13 |     await page.click('[data-testid="login-button"]');
+      14 |     
+        at /mnt/c/Users/human-10/elderberry/frontend/tests/facility-search-e2e.spec.ts:11:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/test-failed-1.png
+    ../test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/video.webm
+    ../test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ../test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/error-context.md
+    Error Context: ../test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/test-failed-1.png]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/test-failed-1.png]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/video.webm]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/video.webm]]
 
-[[ATTACHMENT|test-results/auth-improvement-개선된-인증-시스템-2단계-로그인-플로우가-작동해야-한다-chromium/error-context.md]]
+[[ATTACHMENT|test-results/facility-search-e2e-시설찾기-페이지-맞춤-추천-탭이-정상-작동하는지-확인-chromium/error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="firefox" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="firefox" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="webkit" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="webkit" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Mobile Chrome" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="Mobile Chrome" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Mobile Safari" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="Mobile Safari" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Tablet" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="Tablet" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="High Contrast" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="High Contrast" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="auth-improvement.spec.ts" timestamp="2025-08-04T07:09:22.279Z" hostname="Dark Mode" tests="19" failures="0" skipped="19" time="0" errors="0">
-<testcase name="개선된 인증 시스템 › 비회원이 랜딩페이지에 접근할 수 있어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testsuite name="facility-search-e2e.spec.ts" timestamp="2025-08-05T08:08:38.680Z" hostname="Dark Mode" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="시설찾기 페이지 › 페이지가 올바로 로드되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 헤더 네비게이션이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 검색 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › Sign In 페이지가 글로벌 표준을 따라야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 필터 기능이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 2단계 로그인 플로우가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 맞춤 추천 탭이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 이메일 변경 기능이 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 보기 모드 전환이 정상 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 개선된 에러 메시지가 표시되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 에러 상태에서 복구가 가능한지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 소셜 로그인 버튼들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 키보드 접근성이 올바로 구현되어 있는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 접근성이 개선되었는지 확인해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 응답성 및 모바일 뷰가 올바로 작동하는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 기존 /login 경로가 새 경로로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 페이지 › 성능 및 로딩 시간 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 홈으로 돌아가기 링크가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › useLinearTheme 무한 루프 에러가 해결되었는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 도움말 링크들이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › API 에러가 올바로 처리되는지 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>
-<testcase name="개선된 인증 시스템 › 회원가입 링크가 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="개선된 인증 시스템 › Keep me signed in 체크박스가 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 모든 섹션이 올바르게 렌더링되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › 반응형 디자인이 올바르게 작동해야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="랜딩페이지 기능 › CTA 버튼들이 올바른 링크를 가져야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 페이지 로딩 시간이 합리적이어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › 404 에러가 랜딩페이지로 리다이렉트되어야 한다" classname="auth-improvement.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="사용자 경험 개선 › SEO 메타 태그가 올바르게 설정되어야 한다" classname="auth-improvement.spec.ts" time="0">
+<testcase name="시설찾기 에러 처리 › 네트워크 연결 문제 처리 확인" classname="facility-search-e2e.spec.ts" time="0">
 <skipped>
 </skipped>
 </testcase>

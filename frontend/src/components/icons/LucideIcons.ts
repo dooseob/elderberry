@@ -30,6 +30,8 @@ export {
   LogIn,
   LogOut,
   Lock,
+  Unlock,
+  Key,
   Eye,
   EyeOff,
 
@@ -123,6 +125,8 @@ export {
   // 미디어 컨트롤
   Play,
   Pause,
+  Volume2,
+  VolumeX,
 
   // 기타 자주 사용되는 아이콘들
   Bell,

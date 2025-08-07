@@ -43,7 +43,7 @@ const TOKEN_KEYS = {
 
 const getStoredToken = (key: keyof typeof TOKEN_KEYS): string | null => {
   try {
-    return localStorage.getItem(TOKEN_KEYS[key]);
+    return sessionStorage.getItem(TOKEN_KEYS[key]);
   } catch {
     return null;
   }
@@ -51,23 +51,23 @@ const getStoredToken = (key: keyof typeof TOKEN_KEYS): string | null => {
 
 const setStoredToken = (key: keyof typeof TOKEN_KEYS, value: string): void => {
   try {
-    localStorage.setItem(TOKEN_KEYS[key], value);
+    sessionStorage.setItem(TOKEN_KEYS[key], value);
   } catch {
-    // LocalStorage 사용 불가 시 무시
+    // SessionStorage 사용 불가 시 무시
   }
 };
 
 const removeStoredToken = (key: keyof typeof TOKEN_KEYS): void => {
   try {
-    localStorage.removeItem(TOKEN_KEYS[key]);
+    sessionStorage.removeItem(TOKEN_KEYS[key]);
   } catch {
-    // LocalStorage 사용 불가 시 무시
+    // SessionStorage 사용 불가 시 무시
   }
 };
 
 const getStoredUser = (): AuthUser | null => {
   try {
-    const userStr = localStorage.getItem(TOKEN_KEYS.USER);
+    const userStr = sessionStorage.getItem(TOKEN_KEYS.USER);
     return userStr ? JSON.parse(userStr) : null;
   } catch {
     return null;
@@ -76,17 +76,17 @@ const getStoredUser = (): AuthUser | null => {
 
 const setStoredUser = (user: AuthUser): void => {
   try {
-    localStorage.setItem(TOKEN_KEYS.USER, JSON.stringify(user));
+    sessionStorage.setItem(TOKEN_KEYS.USER, JSON.stringify(user));
   } catch {
-    // LocalStorage 사용 불가 시 무시
+    // SessionStorage 사용 불가 시 무시
   }
 };
 
 const removeStoredUser = (): void => {
   try {
-    localStorage.removeItem(TOKEN_KEYS.USER);
+    sessionStorage.removeItem(TOKEN_KEYS.USER);
   } catch {
-    // LocalStorage 사용 불가 시 무시
+    // SessionStorage 사용 불가 시 무시
   }
 };
 
@@ -429,7 +429,7 @@ export const useAuthStore = create<AuthStore>()(
     {
       name: 'elderberry-auth',
       partialize: (state) => ({
-        // persist에서는 토큰만 저장하고, 사용자 정보는 localStorage에서 직접 관리
+        // persist에서는 토큰만 저장하고, 사용자 정보는 sessionStorage에서 직접 관리
         isAuthenticated: state.isAuthenticated
       })
     }

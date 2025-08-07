@@ -1,9 +1,9 @@
 /**
- * MCP 통합 에이전트 시스템 v2.3.0 - 최적화된 커스텀 명령어 시스템 통합
- * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 (playwright 제거됨)
- * @version 2.3.0
- * @date 2025-08-01
- * @features 지능형 에이전트 선택, 작업별 최적화, 효율성 40% 향상
+ * MCP 통합 에이전트 시스템 v2.3.3 - 5개 MCP 도구 안정성 최적화
+ * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 (Playwright 완전 제거)
+ * @version 2.3.3
+ * @date 2025-08-07
+ * @features 6개 서브에이전트 + 5개 MCP 도구, 안정성 우선 최적화
  */
 
 const { CustomCommandHandler } = require('./CustomCommandHandler');
@@ -18,8 +18,8 @@ class MCPIntegratedAgentSystem {
             context7: 'context7', 
             filesystem: 'filesystem',
             memory: 'memory',
-            github: 'github'
-            // playwright: 'playwright'  // Playwright MCP 제거됨 (2025-08-04)
+            github: 'github',
+
         };
         
         this.agentCapabilities = {
@@ -29,7 +29,7 @@ class MCPIntegratedAgentSystem {
             TROUBLESHOOTING: ['memory', 'filesystem', 'sequential-thinking'],
             GOOGLE_SEO: ['context7', 'filesystem', 'memory'],
             SECURITY_AUDIT: ['sequential-thinking', 'filesystem', 'memory'],
-            WEB_TESTING_MASTER: ['sequential-thinking', 'memory', 'filesystem', 'github']  // playwright 제거됨
+
         };
         
         // 🎯 최적화 메트릭 추적
@@ -484,7 +484,7 @@ class MCPIntegratedAgentSystem {
         // Context7으로 최신 성능 최적화 패턴 조회
         const performancePatterns = await this.getContext7Documentation('performance-optimization-patterns-2025');
         
-        // 모든 서브에이전트 동시 실행
+        // 6개 서브에이전트 동시 실행 (Playwright 제거로 안정성 향상)
         const allAgents = Object.keys(this.agentCapabilities);
         const maxResults = {};
 
@@ -649,37 +649,13 @@ class MCPIntegratedAgentSystem {
                 };
             },
             
-            'WEB_TESTING_MASTER': async () => {
-                return {
-                    role: 'Playwright MCP 기반 웹 애플리케이션 종합 테스팅 전문가',
-                    action: `${command} 명령어로 ${task} 웹 테스팅 자동화`,
-                    mcpToolsUsed: mcpTools,
-                    result: 'Comprehensive web testing with E2E, performance, accessibility, and visual regression',
-                    customCommandSupport: true,
-                    testingCapabilities: [
-                        'E2E 테스트 자동화 (다중 브라우저)',
-                        '웹 성능 측정 (Core Web Vitals)',
-                        '접근성 검증 (WCAG 2.1 AA)',
-                        '시각적 회귀 테스트',
-                        'Linear Design System 컴포넌트 테스트',
-                        '엘더베리 프로젝트 통합 테스트',
-                        'API 엔드포인트 테스팅',
-                        '보안 테스팅 (XSS, CSRF 등)',
-                        '다중 해상도 반응형 테스트',
-                        'CI/CD 파이프라인 통합'
-                    ],
-                    specializations: [
-                        '엘더베리 인증 시스템 테스트',
-                        '시설 검색 기능 테스트',
-                        '건강 평가 시스템 테스트',
-                        'Linear Design System 완전 검증',
-                        '다국어/다테마 호환성 테스트'
-                    ]
-                };
-            }
+
         };
 
-        return await agentSpecializations[agentType]?.() || { error: 'Unknown agent type' };
+        return await agentSpecializations[agentType]?.() || { 
+            error: 'Unknown agent type',
+            note: 'WEB_TESTING_MASTER 에이전트는 Playwright MCP 제거로 비활성화되었습니다.'
+        };
     }
 
     /**

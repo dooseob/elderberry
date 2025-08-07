@@ -17,7 +17,7 @@
  * - 디바운싱 및 쓰로틀링
  */
 
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState, useLayoutEffect } from 'react';
 import { useThemeContext } from '../components/theme/ThemeProvider';
 import type {
   LinearTheme,
@@ -125,7 +125,7 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
   const themeStartTimeRef = useRef<number>(Date.now());
   const eventListenersRef = useRef<Map<ThemeEventType, Set<(event: ThemeEvent) => void>>>(new Map());
 
-  // 디바운스된 테마 설정
+  // 디바운스된 테마 설정 (세션 통계 업데이트 제거로 무한 루프 방지)
   const debouncedSetTheme = useCallback(
     (themeId: string, options?: ThemeApplicationOptions) => {
       if (debounceRef.current) {
@@ -139,11 +139,8 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
           ...options,
         });
         
-        // 세션 통계 업데이트
-        setSessionStats(prev => ({
-          ...prev,
-          sessionChanges: prev.sessionChanges + 1,
-        }));
+        // 세션 통계 업데이트 제거 (무한 루프 방지)
+        // setSessionStats 호출 제거됨
         
         themeStartTimeRef.current = Date.now();
       }, debounceDelay);
@@ -151,7 +148,7 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
     [context.setTheme, debounceDelay, enableAnimations, autoSave]
   );
 
-  // 즉시 테마 설정 (디바운스 없음)
+  // 즉시 테마 설정 (디바운스 없음, 세션 통계 업데이트 제거)
   const setThemeImmediate = useCallback(
     (themeId: string, options?: ThemeApplicationOptions) => {
       if (debounceRef.current) {
@@ -165,10 +162,8 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
         ...options,
       });
       
-      setSessionStats(prev => ({
-        ...prev,
-        sessionChanges: prev.sessionChanges + 1,
-      }));
+      // 세션 통계 업데이트 제거 (무한 루프 방지)
+      // setSessionStats 호출 제거됨
       
       themeStartTimeRef.current = Date.now();
     },
@@ -382,29 +377,22 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
     [context.removeEventListener]
   );
 
-  // 파생된 상태 (메모이제이션)
+  // 파생된 상태 (메모이제이션 최적화) - 무한 루프 방지
   const derivedState = useMemo(() => {
     const totalThemes = Object.keys(context.allThemes).length;
     const customThemes = Object.keys(context.customThemes).length;
     
-    // 현재 테마 분석
-    const currentAnalysis = analyzeTheme();
-    
-    // 호환 테마 목록 (같은 카테고리 또는 비슷한 색상)
-    const compatibleThemes = context.themePreview.filter(theme => {
+    // 호환 테마 목록 (같은 카테고리 또는 비슷한 색상) - 안정적인 계산
+    const currentThemePreview = context.themePreview.find(t => t.id === context.currentThemeId);
+    const compatibleThemes = currentThemePreview ? context.themePreview.filter(theme => {
       if (theme.id === context.currentThemeId) return false;
-      
-      const currentThemePreview = context.themePreview.find(t => t.id === context.currentThemeId);
-      if (!currentThemePreview) return false;
-      
       return theme.category === currentThemePreview.category ||
              theme.variant === currentThemePreview.variant;
-    });
+    }) : [];
     
     return {
       totalThemes,
       customThemes,
-      currentAnalysis,
       compatibleThemes,
       isValidTheme: context.currentTheme !== null,
       hasCustomThemes: customThemes > 0,
@@ -416,17 +404,21 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
     context.currentThemeId,
     context.currentTheme,
     context.themePreview,
-    analyzeTheme,
   ]);
 
-  // 세션 통계 업데이트
+  // 세션 통계 업데이트 (완전 비활성화로 무한 루프 방지)
+  // 주석: 이 부분이 무한 루프를 일으키므로 임시로 비활성화
+  // 추후 ThemeProvider에서 직접 관리하도록 변경 예정
+  /*
   useEffect(() => {
+    // 안전한 업데이트 (기본값 사용)
     setSessionStats(prev => ({
       ...prev,
-      totalThemes: derivedState.totalThemes,
-      customThemes: derivedState.customThemes,
+      totalThemes: 0, // 기본값으로 설정
+      customThemes: 0, // 기본값으로 설정
     }));
-  }, [derivedState.totalThemes, derivedState.customThemes]);
+  }, []); // 빈 의존성 배열로 한 번만 실행
+  */
 
   // 정리
   useEffect(() => {
@@ -458,6 +450,9 @@ export const useLinearTheme = (options: UseLinearThemeOptions = {}) => {
     
     // 파생된 상태
     ...derivedState,
+    
+    // 현재 테마 분석 (안전한 호출)
+    currentAnalysis: context.currentTheme ? analyzeTheme() : null,
     
     // 로컬 상태
     sessionStats,

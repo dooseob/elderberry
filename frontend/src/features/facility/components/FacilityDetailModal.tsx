@@ -40,8 +40,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFacilityStore, useSelectedFacility } from '@/stores/facilityStore';
 import { useReviewStore } from '@/stores/reviewStore';
-import Button from '../../../shared/ui/Button';
-import Card, { CardContent, CardHeader, CardTitle } from '../../../shared/ui/Card';
+import { Button } from '@/shared/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { KakaoMap } from '@/components/map/KakaoMap';
 import { useFocusTrap } from '../../../hooks/useFocusTrap';
 import { 

@@ -125,7 +125,13 @@
       "Bash(# 정상 로그인 테스트\necho \"\"🔍 8082 포트 새 서버 - 정상 로그인 테스트...\"\"\ncurl -X POST http://localhost:8082/api/auth/login \\\n  -H \"\"Content-Type: application/json\"\" \\\n  -d ''{\"\"email\"\":\"\"test.domestic@example.com\"\",\"\"password\"\":\"\"Password123!\"\",\"\"rememberMe\"\":false}'' \\\n  -s | head -50\n\necho -e \"\"\\n🔍 8082 포트 새 서버 - 잘못된 토큰과 함께 로그인 테스트...\"\"\ncurl -X POST http://localhost:8082/api/auth/login \\\n  -H \"\"Content-Type: application/json\"\" \\\n  -H \"\"Authorization: Bearer invalid-token-format\"\" \\\n  -d ''{\"\"email\"\":\"\"test.domestic@example.com\"\",\"\"password\"\":\"\"Password123!\"\",\"\"rememberMe\"\":false}'' \\\n  -s | head -50)",
       "Bash(redis-cli:*)",
       "Bash(npm test:*)",
-      "Bash(./test-login-fix.sh:*)"
+      "Bash(./test-login-fix.sh:*)",
+      "Bash(./scripts/check-ports.sh:*)",
+      "Bash(/mnt/c/Users/human-10/elderberry/scripts/check-ports.sh:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm start)",
+      "Bash(/mnt/c/Users/human-10/elderberry/fix-imports.sh:*)",
+      "Bash(../dev-status.sh)"
     ],
     "deny": []
   }

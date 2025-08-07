@@ -25,11 +25,11 @@ import {
 } from 'lucide-react';
 
 import { useThemeContext } from '../../theme/ThemeProvider';
-import Button from '../../../shared/ui/Button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../shared/ui/Card';
-import Badge from '../../../shared/ui/Badge';
-import Tooltip from '../../../shared/ui/Tooltip';
-import Input from '../../../shared/ui/Input';
+import { Button } from '@/shared/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/shared/ui';
+import { Badge } from '@/shared/ui';
+import { Tooltip } from '@/shared/ui';
+import { Input } from '@/shared/ui';
 import type { ThemePreview, LCHColor } from '../../../types/theme';
 
 /**

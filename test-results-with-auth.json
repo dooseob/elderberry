@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-08-05T06:39:45.943Z",
+  "totalTests": 9,
+  "passedTests": 9,
+  "failedTests": 0,
+  "results": [
+    {
+      "name": "환경변수 설정 확인",
+      "status": "PASS",
+      "duration": 5,
+      "error": null
+    },
+    {
+      "name": "프론트엔드 빌드 설정 확인",
+      "status": "PASS",
+      "duration": 8,
+      "error": null
+    },
+    {
+      "name": "백엔드 서버 상태 확인",
+      "status": "PASS",
+      "duration": 304,
+      "error": null
+    },
+    {
+      "name": "시설 통합 검색 API",
+      "status": "PASS",
+      "duration": 70,
+      "error": null
+    },
+    {
+      "name": "지도 기반 검색 API",
+      "status": "PASS",
+      "duration": 72,
+      "error": null
+    },
+    {
+      "name": "시설 상세 정보 API",
+      "status": "PASS",
+      "duration": 178,
+      "error": null
+    },
+    {
+      "name": "AI 추천 시설 API",
+      "status": "PASS",
+      "duration": 45,
+      "error": null
+    },
+    {
+      "name": "API 통합 시나리오",
+      "status": "PASS",
+      "duration": 766,
+      "error": null
+    },
+    {
+      "name": "성능 테스트",
+      "status": "PASS",
+      "duration": 161,
+      "error": null
+    }
+  ]
+}

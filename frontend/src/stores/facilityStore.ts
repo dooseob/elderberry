@@ -162,11 +162,11 @@ const initialState: FacilityState = {
   selectedFacility: null,
   searchFilters: {},
   matchingPreference: {
-    preferredRegions: new Set(),
-    preferredFacilityTypes: new Set(),
-    maxMonthlyFee: null,
-    minFacilityGrade: 'C',
-    requiredSpecialties: new Set(),
+    preferredRegions: new Set(['서울특별시', '경기도']), // 기본 선호 지역 설정
+    preferredFacilityTypes: new Set(['요양원', '요양병원']), // 기본 시설 유형 설정
+    maxMonthlyFee: 3000000, // 기본 최대 월 비용 설정 (300만원)
+    minFacilityGrade: 'C', // 기본 최소 시설 등급
+    requiredSpecialties: new Set(), // 필수 전문 치료는 빈 세트로 시작
     maxDistanceKm: null,
     prioritizeAvailability: true,
     prioritizeCost: false,
@@ -209,7 +209,7 @@ const api = {
 
   async getRecommendations(memberId: number, preference: FacilityMatchingPreference, coordinatorId?: string): Promise<FacilityRecommendation[]> {
     const requestBody = {
-      memberId,
+      memberId: memberId.toString(), // 백엔드에서 String 타입을 요구하므로 변환
       coordinatorId,
       preference: {
         preferredRegions: Array.from(preference.preferredRegions),
@@ -235,7 +235,12 @@ const api = {
     });
 
     if (!response.ok) {
-      throw new Error(`추천 시설 조회 실패: ${response.statusText}`);
+      // 400 에러인 경우 상세 에러 정보 제공
+      if (response.status === 400) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`추천 시설 조회 실패: 건강 평가 데이터가 없거나 요청 데이터가 잘못되었습니다. (${response.status})`);
+      }
+      throw new Error(`추천 시설 조회 실패: ${response.statusText} (${response.status})`);
     }
 
     return response.json();
@@ -515,16 +520,72 @@ export const useFacilityStore = create<FacilityStore>()(
   )
 );
 
-// 선택적 구독을 위한 셀렉터들
-export const useFacilitySearchResults = () => useFacilityStore((state) => state.searchResults);
-export const useFacilityRecommendations = () => useFacilityStore((state) => state.recommendations);
+// 선택적 구독을 위한 셀렉터들 (getSnapshot 캐싱 최적화)
+const searchResultsMemo = new WeakMap();
+export const useFacilitySearchResults = () => {
+  return useFacilityStore((state) => {
+    if (!searchResultsMemo.has(state) || searchResultsMemo.get(state) !== state.searchResults) {
+      searchResultsMemo.set(state, state.searchResults);
+    }
+    return searchResultsMemo.get(state);
+  });
+};
+
+const recommendationsMemo = new WeakMap();
+export const useFacilityRecommendations = () => {
+  return useFacilityStore((state) => {
+    if (!recommendationsMemo.has(state) || recommendationsMemo.get(state) !== state.recommendations) {
+      recommendationsMemo.set(state, state.recommendations);
+    }
+    return recommendationsMemo.get(state);
+  });
+};
+
 export const useSelectedFacility = () => useFacilityStore((state) => state.selectedFacility);
-export const useFacilityLoadingStates = () => useFacilityStore((state) => ({
-  isSearching: state.isSearching,
-  isLoadingRecommendations: state.isLoadingRecommendations,
-  isLoadingHistory: state.isLoadingHistory,
-}));
-export const useFacilityErrors = () => useFacilityStore((state) => ({
-  searchError: state.searchError,
-  recommendationError: state.recommendationError,
-})); 
+
+// 로딩 상태 셀렉터 (캐싱 최적화)
+const loadingStatesCache = new WeakMap();
+export const useFacilityLoadingStates = () => {
+  return useFacilityStore((state) => {
+    const cacheKey = `${state.isSearching}-${state.isLoadingRecommendations}-${state.isLoadingHistory}`;
+    if (!loadingStatesCache.has(state) || loadingStatesCache.get(state)?.key !== cacheKey) {
+      const result = {
+        key: cacheKey,
+        data: {
+          isSearching: state.isSearching,
+          isLoadingRecommendations: state.isLoadingRecommendations,
+          isLoadingHistory: state.isLoadingHistory,
+        }
+      };
+      loadingStatesCache.set(state, result);
+      return result.data;
+    }
+    return loadingStatesCache.get(state)!.data;
+  });
+};
+
+// 에러 상태 셀렉터 (캐싱 최적화)
+const errorsCache = new WeakMap();
+export const useFacilityErrors = () => {
+  return useFacilityStore((state) => {
+    const cacheKey = `${state.searchError || 'null'}-${state.recommendationError || 'null'}`;
+    if (!errorsCache.has(state) || errorsCache.get(state)?.key !== cacheKey) {
+      const result = {
+        key: cacheKey,
+        data: {
+          searchError: state.searchError,
+          recommendationError: state.recommendationError,
+        }
+      };
+      errorsCache.set(state, result);
+      return result.data;
+    }
+    return errorsCache.get(state)!.data;
+  });
+};
+
+// 개별 로딩 상태 셀렉터들 (더 세분화된 구독)
+export const useIsSearching = () => useFacilityStore((state) => state.isSearching);
+export const useIsLoadingRecommendations = () => useFacilityStore((state) => state.isLoadingRecommendations);
+export const useSearchError = () => useFacilityStore((state) => state.searchError);
+export const useRecommendationError = () => useFacilityStore((state) => state.recommendationError); 

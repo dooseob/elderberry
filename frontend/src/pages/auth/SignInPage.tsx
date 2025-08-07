@@ -40,6 +40,7 @@ import { useAuthStore } from '../../stores/authStore';
 // import { useLinearTheme } from '../../hooks/useLinearTheme';
 import { useLinearTheme } from '../../hooks/useLinearTheme.simple';
 import { useRenderingMonitor, useDependencyTracker } from '../../hooks/useRenderingMonitor';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import { cn } from '../../lib/utils';
 
 // 개선된 폼 스키마 (더 관대한 검증)
@@ -116,20 +117,20 @@ const getHelpfulErrorMessage = (error: string) => {
 };
 
 /**
- * SignInPage Component
+ * SignInPage Component (Internal)
  */
-export const SignInPage: React.FC = () => {
+const SignInPageInternal: React.FC = () => {
   // 훅스
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const { isReducedMotion } = useLinearTheme();
   
-  // 렌더링 성능 모니터링 (개발 환경에서만)
+  // 렌더링 성능 모니터링 (개발 환경에서만) - 민감도 강화
   const renderingMetrics = useRenderingMonitor({
     componentName: 'SignInPage',
-    threshold: 5, // 5초 내 5회 이상 렌더링 시 경고
-    timeWindow: 5000
+    threshold: 3, // 3회 이상 렌더링 시 경고 (민감도 강화)
+    timeWindow: 3000 // 3초 윈도우로 단축
   });
   
   
@@ -145,6 +146,7 @@ export const SignInPage: React.FC = () => {
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -244,13 +246,63 @@ export const SignInPage: React.FC = () => {
     }
   };
   
-  // 테스트 계정 자동 입력 (개발 환경에서만)
-  const fillTestAccount = () => {
-    setValue('email', 'test.domestic@example.com');
-    setValue('password', 'Password123!');
-    setEmailValue('test.domestic@example.com');
-    setStep('password');
-  };
+  // 테스트 계정 자동 입력 상태
+  const [isAutoFilling, setIsAutoFilling] = React.useState(false);
+  
+  // 테스트 계정 자동 입력 (개발 환경에서만) - 배치 업데이트 최적화 버전
+  const fillTestAccount = React.useCallback(async () => {
+    if (isAutoFilling) return; // 중복 실행 방지
+    
+    console.log('🧪 [TEST] fillTestAccount 시작 - 배치 업데이트 최적화 모드');
+    setIsAutoFilling(true);
+    
+    try {
+      // 1단계: React 상태를 완전히 분리된 마이크로태스크에서 처리
+      await new Promise<void>(resolve => {
+        React.startTransition(() => {
+          console.log('🧪 [TEST] 1단계: 로컬 상태 업데이트 (React 상태)');
+          // React 상태만 동기적으로 업데이트 (flushSync 호환성 확인)
+          if (typeof React.flushSync === 'function') {
+            React.flushSync(() => {
+              setEmailValue('test.domestic@example.com');
+              setStep('password');
+            });
+          } else {
+            // flushSync가 없는 경우 일반 상태 업데이트
+            setEmailValue('test.domestic@example.com');
+            setStep('password');
+          }
+          resolve();
+        });
+      });
+      
+      // 2단계: 폼 상태는 별도 마이크로태스크에서 처리 (검증 비활성화)
+      await new Promise<void>(resolve => {
+        setTimeout(() => {
+          console.log('🧪 [TEST] 2단계: 폼 값 업데이트 (검증 비활성화)');
+          // shouldValidate: false로 불필요한 검증 방지
+          setValue('email', 'test.domestic@example.com', { shouldValidate: false });
+          setValue('password', 'Password123!', { shouldValidate: false });
+          resolve();
+        }, 0);
+      });
+      
+      // 3단계: 최종 검증은 마지막에 한 번만 실행
+      await new Promise<void>(resolve => {
+        setTimeout(() => {
+          console.log('🧪 [TEST] 3단계: 최종 폼 검증 (한 번만)');
+          trigger(); // 전체 폼 검증을 한 번만 실행
+          resolve();
+        }, 10);
+      });
+      
+      console.log('🧪 [TEST] fillTestAccount 완료 - 성공');
+    } catch (error) {
+      console.error('🧪 [TEST] Auto-fill failed:', error);
+    } finally {
+      setIsAutoFilling(false);
+    }
+  }, [isAutoFilling, setValue, trigger]);
   
   return (
     <AuthLayout
@@ -273,10 +325,18 @@ export const SignInPage: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={fillTestAccount}
-              className="text-xs px-3 py-1.5 border-dashed"
+              disabled={isAutoFilling || isLoading}
+              loading={isAutoFilling}
+              className="text-xs px-3 py-1.5 border-dashed transition-opacity duration-200"
+              testId="test-account-button"
             >
-              Use Test Account
+              {isAutoFilling ? 'Filling...' : 'Use Test Account'}
             </Button>
+            {/* 렌더링 성능 디버깅 정보 (개발 환경에서만) */}
+            <div className="mt-2 text-xs text-gray-500">
+              Renders: {renderingMetrics.renderCount} | Avg: {renderingMetrics.averageRenderTime.toFixed(1)}ms
+              {renderingMetrics.suspiciousActivity && <span className="text-red-500 ml-2">⚠️ High render activity</span>}
+            </div>
           </div>
         )}
         
@@ -494,6 +554,17 @@ export const SignInPage: React.FC = () => {
         </div>
       </div>
     </AuthLayout>
+  );
+};
+
+/**
+ * SignInPage Component with Error Boundary
+ */
+export const SignInPage: React.FC = () => {
+  return (
+    <ErrorBoundary maxErrors={2}>
+      <SignInPageInternal />
+    </ErrorBoundary>
   );
 };
 

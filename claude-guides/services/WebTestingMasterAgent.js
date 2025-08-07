@@ -1,20 +1,23 @@
 /**
- * 웹 테스팅 마스터 에이전트
- * Playwright MCP + E2E 테스팅 + 웹 성능 + 접근성 + 시각적 회귀 통합 전문가
+ * 웹 테스팅 마스터 에이전트 (DEPRECATED)
+ * Playwright MCP 제거로 비활성화됨
  * 
- * @version 2.0.0
- * @specialization 웹 애플리케이션 종합 테스팅 자동화
- * @capabilities E2E, 성능, 접근성, 시각적 회귀, 다중 브라우저, 모바일 테스팅
+ * @version 2.0.1
+ * @deprecated Playwright MCP 제거로 비활성화 (2025-08-07)
+ * @status INACTIVE
+ * @alternative 수동 테스트 또는 curl/Postman API 테스트 귑장
  */
 
 class WebTestingMasterAgent {
     constructor() {
         this.agentType = 'WEB_TESTING_MASTER';
         this.version = '2.0.0';
-        this.description = 'Playwright MCP 기반 웹 애플리케이션 종합 테스팅 전문가';
+        this.description = 'DEPRECATED: Playwright MCP 제거로 비활성화된 에이전트';
+        this.status = 'INACTIVE';
+        this.reason = 'Playwright MCP 오류 및 안정성 문제로 제거됨';
         
         this.capabilities = [
-            // 'playwright-mcp-integration',   // Playwright MCP 도구 완전 활용 - MCP 제거됨 (2025-08-04)
+            // 'playwright-mcp-integration',   // DEPRECATED: MCP 제거로 비활성화됨
             'e2e-testing-automation',          // E2E 테스트 자동화
             'visual-regression-testing',       // 시각적 회귀 테스트
             'web-performance-analysis',        // 웹 성능 분석 (Core Web Vitals)
@@ -30,12 +33,19 @@ class WebTestingMasterAgent {
         ];
         
         this.mcpTools = [
-            'playwright',           // 주 도구: 웹 자동화
-            'sequential-thinking',  // 테스트 전략 수립
+            // 'playwright',           // DEPRECATED: MCP 제거됨
+            'sequential-thinking',  // 테스트 전략 수립 (기본 분석용)
             'memory',              // 테스트 결과 학습
-            'filesystem',          // 테스트 파일 관리
-            'github'               // 이슈 생성 및 리포트
+            'filesystem',          // 테스트 파일 분석
+            'github'               // 이슈 생성
         ];
+        
+        this.alternatives = {
+            manual: '수동 브라우저 테스트',
+            api: 'curl 또는 Postman API 테스트',
+            unit: 'Jest + React Testing Library',
+            linting: 'ESLint + TypeScript 컴파일러'
+        };
         
         this.testEnvironments = {
             browsers: {

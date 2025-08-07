@@ -8,8 +8,8 @@
 import React from 'react';
 import { Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/ui/Card';
-import Badge from '../../../shared/ui/Badge';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui';
+import { Badge } from '@/shared/ui';
 
 const FontSizesDemo: React.FC = () => {
   const fontSizes = [

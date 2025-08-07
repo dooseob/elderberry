@@ -130,6 +130,26 @@ export {
   type FormResetProps,
 } from './Form';
 
+export {
+  default as RadioGroup,
+  type RadioOption,
+} from './RadioGroup';
+
+// === Progress Components ===
+export { default as ProgressBar } from './ProgressBar';
+
+// === Advanced Components ===
+export { DataTable } from './DataTable';
+export { 
+  DashboardLayout, 
+  MetricGrid, 
+  StatCard, 
+  QuickActionsGrid, 
+  QuickAction, 
+  ActivityFeed, 
+  MetricIcons 
+} from './Dashboard';
+
 // === Utility Types ===
 export type LinearComponentSize = 'sm' | 'md' | 'lg' | 'xl';
 export type LinearComponentVariant = 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';

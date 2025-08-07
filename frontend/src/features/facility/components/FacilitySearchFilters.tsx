@@ -12,7 +12,7 @@ import {
   X
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import Button from '../../../shared/ui/Button';
+import { Button } from '@/shared/ui';
 import { FacilitySearchFilters as FilterType } from '@/stores/facilityStore';
 
 interface FacilitySearchFiltersProps {

@@ -1,5 +1,6 @@
 package com.globalcarelink.facility;
 
+import com.globalcarelink.external.PublicDataApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,14 @@ import java.util.stream.Collectors;
  * - 지역별 시설 밀도 분석
  * - 경로 최적화 및 접근성 평가
  * - 실시간 교통정보 연동
+ * - 공공데이터 API 통합
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MapBasedFacilityService {
+
+    private final PublicDataApiService publicDataApiService;
 
     /**
      * 거리 기반 시설 검색 및 점수 계산
@@ -212,9 +216,208 @@ public class MapBasedFacilityService {
     // ===== 내부 헬퍼 메서드들 =====
 
     /**
-     * 전체 시설 목록 조회 (위치 정보 포함)
+     * 지도 영역 내 시설 검색 (공공데이터 API 연동)
+     */
+    public Map<String, Object> searchFacilitiesInMapBounds(
+            double neLat, double neLng, double swLat, double swLng,
+            String facilityType, String minGrade, boolean availableBedsOnly) {
+        
+        log.info("지도 영역 내 시설 검색 - NE({},{}) SW({},{})", neLat, neLng, swLat, swLng);
+        
+        // 중심점 및 반경 계산
+        double centerLat = (neLat + swLat) / 2;
+        double centerLng = (neLng + swLng) / 2;
+        double latDiff = Math.abs(neLat - swLat);
+        double lngDiff = Math.abs(neLng - swLng);
+        int radiusKm = (int) Math.ceil(Math.max(latDiff, lngDiff) * 111); // 1도 ≈ 111km
+        
+        // 공공데이터에서 주변 시설 조회
+        PublicDataApiService.PublicFacilityResponse publicResponse = 
+            publicDataApiService.getNearbyFacilities(centerLat, centerLng, radiusKm);
+        
+        // 지도 영역 내 시설만 필터링
+        List<Map<String, Object>> facilitiesInBounds = publicResponse.getFacilities().stream()
+            .filter(facility -> {
+                if (facility.getLatitude() == null || facility.getLongitude() == null) {
+                    return false;
+                }
+                return facility.getLatitude() >= swLat && facility.getLatitude() <= neLat &&
+                       facility.getLongitude() >= swLng && facility.getLongitude() <= neLng;
+            })
+            .map(this::convertPublicFacilityToMapData)
+            .collect(Collectors.toList());
+        
+        // 추가 필터링 적용
+        if (facilityType != null && !facilityType.isEmpty()) {
+            facilitiesInBounds = facilitiesInBounds.stream()
+                .filter(f -> facilityType.equals(f.get("facilityType")))
+                .collect(Collectors.toList());
+        }
+        
+        if (availableBedsOnly) {
+            facilitiesInBounds = facilitiesInBounds.stream()
+                .filter(f -> {
+                    Integer availableBeds = (Integer) f.get("availableBeds");
+                    return availableBeds != null && availableBeds > 0;
+                })
+                .collect(Collectors.toList());
+        }
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalCount", facilitiesInBounds.size());
+        result.put("facilities", facilitiesInBounds);
+        result.put("boundingBox", Map.of(
+            "northeast", Map.of("lat", neLat, "lng", neLng),
+            "southwest", Map.of("lat", swLat, "lng", swLng)
+        ));
+        result.put("clusters", generateAdvancedClusters(facilitiesInBounds));
+        result.put("dataSource", "public_api");
+        
+        log.info("지도 영역 내 시설 검색 완료 - {}개 시설 발견", facilitiesInBounds.size());
+        return result;
+    }
+    
+    /**
+     * 공공데이터 시설 정보를 지도용 데이터로 변환
+     */
+    private Map<String, Object> convertPublicFacilityToMapData(PublicDataApiService.PublicFacilityInfo facility) {
+        Map<String, Object> mapData = new HashMap<>();
+        mapData.put("facilityId", facility.getFacilityId());
+        mapData.put("facilityName", facility.getFacilityName());
+        mapData.put("facilityType", facility.getFacilityType());
+        mapData.put("address", facility.getAddress());
+        mapData.put("phoneNumber", facility.getPhoneNumber());
+        mapData.put("latitude", facility.getLatitude());
+        mapData.put("longitude", facility.getLongitude());
+        mapData.put("operatorName", facility.getOperatorName());
+        mapData.put("totalCapacity", facility.getTotalCapacity());
+        mapData.put("currentOccupancy", facility.getCurrentOccupancy());
+        
+        // 가용 침상 수 계산
+        int availableBeds = 0;
+        if (facility.getTotalCapacity() != null && facility.getCurrentOccupancy() != null) {
+            availableBeds = Math.max(0, facility.getTotalCapacity() - facility.getCurrentOccupancy());
+        }
+        mapData.put("availableBeds", availableBeds);
+        
+        // 등급 추정 (공공데이터에는 등급 정보가 없을 수 있음)
+        mapData.put("grade", determineGradeFromFacilityInfo(facility));
+        
+        // 추천 여부는 별도 로직으로 결정
+        mapData.put("isRecommended", false);
+        
+        // 마커 색상 결정
+        String markerColor = availableBeds > 0 ? "green" : "gray";
+        mapData.put("markerColor", markerColor);
+        
+        return mapData;
+    }
+    
+    /**
+     * 시설 정보로부터 등급 추정
+     */
+    private String determineGradeFromFacilityInfo(PublicDataApiService.PublicFacilityInfo facility) {
+        // 실제로는 별도의 등급 평가 로직이나 외부 API 연동 필요
+        // 여기서는 정원 규모나 운영자 유형을 기준으로 간단히 추정
+        
+        if (facility.getTotalCapacity() != null) {
+            if (facility.getTotalCapacity() >= 50) {
+                return "A등급";
+            } else if (facility.getTotalCapacity() >= 30) {
+                return "B등급";
+            } else {
+                return "C등급";
+            }
+        }
+        
+        return "미등급";
+    }
+    
+    /**
+     * 고급 클러스터링 (공공데이터 기반)
+     */
+    private List<Map<String, Object>> generateAdvancedClusters(List<Map<String, Object>> facilities) {
+        if (facilities.size() <= 10) {
+            return List.of(); // 시설이 적으면 클러스터링 하지 않음
+        }
+        
+        // 간단한 그리드 기반 클러스터링 구현
+        Map<String, List<Map<String, Object>>> clusters = new HashMap<>();
+        
+        for (Map<String, Object> facility : facilities) {
+            Double lat = (Double) facility.get("latitude");
+            Double lng = (Double) facility.get("longitude");
+            
+            if (lat != null && lng != null) {
+                // 0.01도 단위로 그리드 생성 (약 1km)
+                String gridKey = String.format("%.2f,%.2f", 
+                    Math.floor(lat * 100) / 100, Math.floor(lng * 100) / 100);
+                
+                clusters.computeIfAbsent(gridKey, k -> new java.util.ArrayList<>()).add(facility);
+            }
+        }
+        
+        // 클러스터 정보 생성
+        return clusters.entrySet().stream()
+            .filter(entry -> entry.getValue().size() >= 2) // 2개 이상만 클러스터로 취급
+            .map(entry -> {
+                List<Map<String, Object>> clusterFacilities = entry.getValue();
+                
+                // 클러스터 중심점 계산
+                double avgLat = clusterFacilities.stream()
+                    .mapToDouble(f -> (Double) f.get("latitude"))
+                    .average().orElse(0.0);
+                double avgLng = clusterFacilities.stream()
+                    .mapToDouble(f -> (Double) f.get("longitude"))
+                    .average().orElse(0.0);
+                
+                // 클러스터 내 등급 분포 계산
+                Map<String, Long> gradeDistribution = clusterFacilities.stream()
+                    .collect(Collectors.groupingBy(
+                        f -> String.valueOf(f.get("grade")), 
+                        Collectors.counting()
+                    ));
+                
+                String dominantGrade = gradeDistribution.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse("Unknown");
+                
+                return Map.of(
+                    "lat", avgLat,
+                    "lng", avgLng,
+                    "count", clusterFacilities.size(),
+                    "dominantGrade", dominantGrade,
+                    "gradeDistribution", gradeDistribution,
+                    "availableBeds", clusterFacilities.stream()
+                        .mapToInt(f -> {
+                            Integer beds = (Integer) f.get("availableBeds");
+                            return beds != null ? beds : 0;
+                        }).sum()
+                );
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * 전체 시설 목록 조회 (위치 정보 포함) - 공공데이터 우선
      */
     private List<Map<String, Object>> getAllFacilitiesWithLocation() {
+        // 공공데이터에서 전체 시설 조회 시도
+        try {
+            PublicDataApiService.PublicFacilityResponse publicResponse = 
+                publicDataApiService.getAllFacilities(1, 100);
+            
+            if (publicResponse.getFacilities() != null && !publicResponse.getFacilities().isEmpty()) {
+                return publicResponse.getFacilities().stream()
+                    .map(this::convertPublicFacilityToMapData)
+                    .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            log.warn("공공데이터 조회 실패, 더미 데이터 사용: {}", e.getMessage());
+        }
+        
+        // 공공데이터 조회 실패 시 더미 데이터 사용
         return List.of(
             createFacilityWithLocation(1L, "서울중앙요양원", "노인요양시설", 37.5665, 126.9780, "A등급", 15),
             createFacilityWithLocation(2L, "강남실버케어", "노인요양시설", 37.5172, 127.0473, "A등급", 8),

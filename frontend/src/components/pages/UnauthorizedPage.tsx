@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 import { MemberRole } from '../../types/auth';
 import Button from '../../shared/ui/Button';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../../shared/ui/Card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../shared/ui/Card';
 
 export default function UnauthorizedPage() {
   const location = useLocation();

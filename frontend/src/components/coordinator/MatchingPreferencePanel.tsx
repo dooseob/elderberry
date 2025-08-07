@@ -9,7 +9,7 @@ import {
 } from '../icons/LucideIcons';
 import { motion } from 'framer-motion';
 import { MatchingPreference } from '@/services/coordinatorApi';
-import Card, { CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui/Card';
 import Button from '../../shared/ui/Button';
 
 interface MatchingPreferencePanelProps {

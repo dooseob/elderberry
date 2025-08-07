@@ -4,9 +4,9 @@
  */
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Card } from '../../../shared/ui/Card';
-import { Button } from '../../../shared/ui/Button';
-import { LoadingSpinner } from '../../../shared/ui/LoadingSpinner';
+import { Card } from '@/shared/ui';
+import { Button } from '@/shared/ui';
+import { LoadingSpinner } from '@/shared/ui';
 import { useReviewStore } from '../../stores/reviewStore';
 import { 
   ReviewFilter, 

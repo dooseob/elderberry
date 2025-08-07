@@ -50,3 +50,7 @@ export type {
   FacilityStatus,
   VisitStatus,
 } from './model/types';
+
+// API 클라이언트 내보내기
+export { facilityApi, facilityQueryKeys } from './api';
+export type { FacilitySearchParams, FacilityMapSearchParams } from './api';
