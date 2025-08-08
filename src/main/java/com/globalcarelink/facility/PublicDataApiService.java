@@ -15,7 +15,7 @@ import java.util.Map;
  * 국민건강보험공단 장기요양기관 정보를 실시간으로 조회
  */
 @Slf4j
-@Service
+@Service("facilityPublicDataApiService")
 @RequiredArgsConstructor
 public class PublicDataApiService {
 

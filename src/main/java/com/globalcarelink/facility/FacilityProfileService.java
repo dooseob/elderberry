@@ -78,14 +78,19 @@ public class FacilityProfileService {
      * 지역별 시설 조회
      */
     @Cacheable(value = "facility-profiles-by-region")
-    public List<FacilityProfileResponse> findFacilitiesByRegion(String region, String district, Integer limit, int offset) {
-        log.info("지역별 시설 조회 - 지역: {}, 구/군: {}", region, district);
+    public List<FacilityProfileResponse> findFacilitiesByRegion(String region, String facilityType, Integer careGradeLevel, int limit) {
+        log.info("지역별 시설 조회 - 지역: {}, 시설 타입: {}, 케어 등급: {}", region, facilityType, careGradeLevel);
         
-        Pageable pageable = PageRequest.of(offset / limit, limit);
+        Pageable pageable = PageRequest.of(0, limit);
         Page<FacilityProfile> facilities;
         
-        if (district != null) {
-            facilities = facilityProfileRepository.findByRegionAndDistrict(region, district, pageable);
+        // 조건에 따른 시설 검색
+        if (facilityType != null && careGradeLevel != null) {
+            facilities = facilityProfileRepository.findByRegionAndFacilityTypeAndCareGradeLevel(region, facilityType, careGradeLevel, pageable);
+        } else if (facilityType != null) {
+            facilities = facilityProfileRepository.findByRegionAndFacilityType(region, facilityType, pageable);
+        } else if (careGradeLevel != null) {
+            facilities = facilityProfileRepository.findByRegionAndCareGradeLevel(region, careGradeLevel, pageable);
         } else {
             facilities = facilityProfileRepository.findByRegion(region, pageable);
         }

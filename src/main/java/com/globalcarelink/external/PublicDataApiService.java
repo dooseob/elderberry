@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * - 지역별 시설 검색
  * - 실시간 데이터 동기화
  */
-@Service
+@Service("externalPublicDataApiService")
 @RequiredArgsConstructor
 @Slf4j
 public class PublicDataApiService {

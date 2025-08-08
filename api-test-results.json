@@ -1,0 +1,55 @@
+{
+  "success": true,
+  "completionRate": 89,
+  "systemStatus": "🟡 테스트 완료",
+  "totalTests": 9,
+  "passedTests": 8,
+  "failedTests": 1,
+  "details": [
+    {
+      "name": "백엔드 서버 상태",
+      "status": true,
+      "details": "Status: 200, Health: UP"
+    },
+    {
+      "name": "사용자 로그인",
+      "status": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0LmRvbWVzdGljQGV4YW1wbGUuY29tIiwidG9rZW5JZCI6ImE1MzIxODk5LTZiYzQtNDMyZi1hNzVkLWE4ZmFiMjIzNzBhYyIsInJvbGVzIjpbIlJPTEVfVVNFUl9ET01FU1RJQyJdLCJ0eXBlIjoiQUNDRVNTIiwiaWF0IjoxNzU0NjM1NzY5LCJleHAiOjE3NTQ2Mzc1Njl9.Q3X1U9TBS8GDHbKkEDOoabYdHsVSY2CyuPQvZaTWDFo",
+      "details": "Status: 200"
+    },
+    {
+      "name": "시설 목록 조회",
+      "status": true,
+      "details": "Status: 200, Count: 4"
+    },
+    {
+      "name": "지역별 시설 검색",
+      "status": false,
+      "details": "Status: 500, Count: 0"
+    },
+    {
+      "name": "시설 추천 API",
+      "status": true,
+      "details": "Status: 200, Count: 3"
+    },
+    {
+      "name": "시설 통계 조회",
+      "status": true,
+      "details": "Status: 200"
+    },
+    {
+      "name": "매칭 트렌드 분석",
+      "status": true,
+      "details": "Status: 200"
+    },
+    {
+      "name": "추천 정확도 분석",
+      "status": true,
+      "details": "Status: 200"
+    },
+    {
+      "name": "공공데이터 API 설정",
+      "status": true,
+      "details": "환경변수 설정 완료, API 키는 실제 키 설정 필요"
+    }
+  ]
+}

@@ -427,6 +427,52 @@ public interface FacilityProfileRepository extends JpaRepository<FacilityProfile
                                                           Pageable pageable);
 
     /**
+     * 지역 + 시설타입 + 케어등급 조회 (페이징)
+     */
+    @Query("""
+        SELECT DISTINCT f FROM FacilityProfile f 
+        JOIN FETCH f.acceptableCareGrades g 
+        WHERE (:region IS NULL OR f.region = :region)
+        AND (:facilityType IS NULL OR f.facilityType = :facilityType)
+        AND (:careGradeLevel IS NULL OR g = :careGradeLevel)
+        AND f.businessStatus IN ('정상', '운영중')
+        ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
+        """)
+    Page<FacilityProfile> findByRegionAndFacilityTypeAndCareGradeLevel(@Param("region") String region,
+                                                                      @Param("facilityType") String facilityType,
+                                                                      @Param("careGradeLevel") Integer careGradeLevel,
+                                                                      Pageable pageable);
+
+    /**
+     * 지역 + 시설타입 조회 (페이징)
+     */
+    @Query("""
+        SELECT f FROM FacilityProfile f 
+        WHERE (:region IS NULL OR f.region = :region)
+        AND (:facilityType IS NULL OR f.facilityType = :facilityType)
+        AND f.businessStatus IN ('정상', '운영중')
+        ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
+        """)
+    Page<FacilityProfile> findByRegionAndFacilityType(@Param("region") String region,
+                                                     @Param("facilityType") String facilityType,
+                                                     Pageable pageable);
+
+    /**
+     * 지역 + 케어등급 조회 (페이징)
+     */
+    @Query("""
+        SELECT DISTINCT f FROM FacilityProfile f 
+        JOIN FETCH f.acceptableCareGrades g 
+        WHERE (:region IS NULL OR f.region = :region)
+        AND (:careGradeLevel IS NULL OR g = :careGradeLevel)
+        AND f.businessStatus IN ('정상', '운영중')
+        ORDER BY f.facilityGrade ASC, f.evaluationScore DESC
+        """)
+    Page<FacilityProfile> findByRegionAndCareGradeLevel(@Param("region") String region,
+                                                       @Param("careGradeLevel") Integer careGradeLevel,
+                                                       Pageable pageable);
+
+    /**
      * 종합 시설 매칭 검색 (복합 조건)
      */
     @Query("""
