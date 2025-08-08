@@ -34,6 +34,7 @@ const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
 const DashboardPage = lazy(() => import('../features/dashboard/DashboardPage'));
 const MyPage = lazy(() => import('../pages/MyPage'));
 const SettingsPage = lazy(() => import('../pages/SettingsPage'));
+const ProfileEditPage = lazy(() => import('../pages/profile/ProfileEditPage'));
 const FacilitySearchPage = lazy(() => import('../features/facility/FacilitySearchPage'));
 const HealthAssessmentWizard = lazy(() => import('../features/health/HealthAssessmentWizard'));
 
@@ -124,6 +125,14 @@ const protectedRoutes: AppRoute[] = [
         <MainLayout>
           <SettingsPage />
         </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/profile/edit',
+    element: (
+      <ProtectedRoute>
+        <ProfileEditPage />
       </ProtectedRoute>
     )
   },
@@ -232,6 +241,11 @@ export const routeMetadata = {
   '/facility-search': {
     title: '시설 검색 - 엘더베리',
     description: '조건에 맞는 요양 시설을 찾아보세요',
+  },
+  '/profile/edit': {
+    title: '프로필 수정 - 엘더베리',
+    description: '개인정보와 구직자 상태를 관리하세요',
+    keywords: ['프로필', '수정', '개인정보', '구직자'],
   }
 };
 

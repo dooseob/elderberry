@@ -53,11 +53,43 @@ export interface CreateUserRequest {
   phoneNumber?: string;
 }
 
-// 사용자 업데이트 요청
+// 사용자 업데이트 요청 (백엔드 MemberUpdateRequest와 일치)
 export interface UpdateUserRequest {
   name?: string;
   phoneNumber?: string;
-  profileImageUrl?: string;
+  language?: string;
+  region?: string;
+}
+
+// 회원 응답 타입 (백엔드 MemberResponse와 일치)
+export interface MemberResponse {
+  id: number;
+  email: string;
+  name: string;
+  phoneNumber?: string;
+  role: UserRole;
+  isJobSeeker: boolean;
+  isActive: boolean;
+  language?: string;
+  region?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 프로필 수정 폼 데이터
+export interface ProfileEditFormData {
+  name: string;
+  phoneNumber: string;
+  language: string;
+  region: string;
+}
+
+// 프로필 수정 검증 에러
+export interface ProfileEditErrors {
+  name?: string;
+  phoneNumber?: string;
+  language?: string;
+  region?: string;
 }
 
 // 사용자 상태 변경 요청

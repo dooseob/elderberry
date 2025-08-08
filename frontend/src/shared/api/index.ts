@@ -15,7 +15,26 @@ export {
   type ApiError 
 } from './apiClient';
 
-// 특화된 API 서비스들 (향후 추가 예정)
+// 특화된 API 서비스들
+// Member API
+export {
+  memberApiService,
+  getCurrentUserProfile,
+  updateCurrentUserProfile,
+  toggleCurrentUserJobSeeker,
+  getMemberCacheKey,
+  CURRENT_USER_CACHE_KEY,
+  isMemberApiError,
+  hasPermissionToEdit,
+  isJobSeeker,
+  isActiveMember,
+} from './memberApi';
+
+export type {
+  MemberApiError,
+} from './memberApi';
+
+// 향후 추가 예정
 // export * from './authApi';
 // export * from './facilityApi';
 // export * from './healthApi';
