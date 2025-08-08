@@ -109,6 +109,16 @@ export const LazyCoordinatorMatchingWizard = lazyWithMinDelay(
   300
 );
 
+export const LazyAvailableCoordinatorsPage = lazyWithMinDelay(
+  () => import('../features/coordinator/AvailableCoordinatorsPage'),
+  250
+);
+
+export const LazySimulationDashboard = lazyWithMinDelay(
+  () => import('../features/coordinator/SimulationDashboard'),
+  250
+);
+
 // 채팅 관련 페이지 (우선순위: 낮음 - 추가 기능)
 export const LazyChatHomePage = lazyWithMinDelay(
   () => import('../features/chat/components/ChatHomePage'),
@@ -138,6 +148,22 @@ export const LazyNotificationSettingsPage = lazyWithMinDelay(
   150
 );
 
+// 리뷰 관련 페이지 (우선순위: 중간)
+export const LazyMyReviewsPage = lazyWithMinDelay(
+  () => import('../features/reviews/MyReviewsPage'),
+  200
+);
+
+export const LazyFacilityReviewsPage = lazyWithMinDelay(
+  () => import('../features/reviews/FacilityReviewsPage'),
+  200
+);
+
+export const LazyReviewCreatePage = lazyWithMinDelay(
+  () => import('../features/reviews/ReviewCreatePage'),
+  250
+);
+
 // 청크 분석을 위한 컴포넌트 이름 매핑
 export const CHUNK_NAMES = {
   auth: ['LazyLoginPage', 'LazyRegisterPage', 'LazyForgotPasswordPage'],
@@ -147,8 +173,9 @@ export const CHUNK_NAMES = {
   jobs: ['LazyJobListPage', 'LazyJobDetailPage'],
   health: ['LazyHealthAssessmentWizard'],
   facility: ['LazyFacilitySearchPage'],
-  coordinator: ['LazyCoordinatorMatchingWizard'],
+  coordinator: ['LazyCoordinatorMatchingWizard', 'LazyAvailableCoordinatorsPage', 'LazySimulationDashboard'],
   chat: ['LazyChatHomePage', 'LazyChatPage'],
   notifications: ['LazyNotificationsPage', 'LazyNotificationSettingsPage'],
+  reviews: ['LazyMyReviewsPage', 'LazyFacilityReviewsPage', 'LazyReviewCreatePage'],
   misc: ['LazyUnauthorizedPage']
 } as const;

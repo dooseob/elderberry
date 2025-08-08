@@ -1,54 +1,33 @@
-import { BaseEntity } from 'shared/types';
-import type { Member } from 'entities/auth';
-import type { FacilityProfile } from 'entities/facility';
-
 /**
- * 리뷰 타입
+ * Review Entity - Domain Types
+ * FSD 아키텍처: 리뷰 도메인 모델 타입 정의
  */
-export enum ReviewType {
-  FACILITY = 'FACILITY',
-  SERVICE = 'SERVICE',
-  CAREGIVER = 'CAREGIVER',
-  PROGRAM = 'PROGRAM'
-}
 
-/**
- * 리뷰 상태
- */
-export enum ReviewStatus {
-  ACTIVE = 'ACTIVE',
-  PENDING = 'PENDING',
-  BLOCKED = 'BLOCKED',
-  DELETED = 'DELETED'
-}
+// 리뷰 타입 열거형
+export type ReviewType = 
+  | 'FACILITY'      // 시설 리뷰
+  | 'SERVICE'       // 서비스 리뷰  
+  | 'CAREGIVER'     // 요양보호사 리뷰
+  | 'PROGRAM';      // 프로그램 리뷰
 
-/**
- * 투표 유형
- */
-export enum VoteType {
-  HELPFUL = 'HELPFUL',
-  NOT_HELPFUL = 'NOT_HELPFUL'
-}
+// 리뷰 상태
+export type ReviewStatus = 
+  | 'ACTIVE'        // 활성
+  | 'PENDING'       // 검토중
+  | 'BLOCKED'       // 차단됨
+  | 'DELETED';      // 삭제됨
 
-/**
- * 신고 사유
- */
-export enum ReportCategory {
-  SPAM = 'SPAM',
-  INAPPROPRIATE = 'INAPPROPRIATE',
-  FAKE = 'FAKE',
-  OFFENSIVE = 'OFFENSIVE',
-  COPYRIGHT = 'COPYRIGHT',
-  OTHER = 'OTHER'
-}
-
-/**
- * 리뷰 엔티티
- */
-export interface Review extends BaseEntity {
+// 리뷰 기본 정보
+export interface Review {
   id: number;
-  reviewer: Member;
-  facility: FacilityProfile;
+  reviewer: {
+    id: number;
+    name: string;
+  };
+  facility: {
+    id: number;
+    name: string;
+  };
   title: string;
   content: string;
   overallRating: number;
@@ -60,58 +39,22 @@ export interface Review extends BaseEntity {
   reviewType: ReviewType;
   status: ReviewStatus;
   recommended: boolean;
-  visitDate?: string; // ISO date string
+  visitDate?: string;
   serviceDurationDays?: number;
   helpfulCount: number;
   notHelpfulCount: number;
   reportCount: number;
   adminResponse?: string;
-  adminResponseDate?: string; // ISO date string
-  adminResponder?: Member;
+  adminResponseDate?: string;
   verified: boolean;
   anonymous: boolean;
   imageUrls: string[];
   tags: string[];
-  
-  // Computed properties
-  reviewerDisplayName: string;
-  facilityName: string;
-  averageDetailRating: number;
-  hasImages: boolean;
-  hasTags: boolean;
-  hasAdminResponse: boolean;
-  isActive: boolean;
-  isEditable: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-/**
- * 리뷰 투표 엔티티
- */
-export interface ReviewVote extends BaseEntity {
-  id: number;
-  review: Review;
-  voter: Member;
-  voteType: VoteType;
-}
-
-/**
- * 리뷰 신고 엔티티
- */
-export interface ReviewReport extends BaseEntity {
-  id: number;
-  review: Review;
-  reporter: Member;
-  category: ReportCategory;
-  reason: string;
-  status: 'PENDING' | 'REVIEWED' | 'DISMISSED';
-  reviewedBy?: Member;
-  reviewedAt?: string; // ISO date string
-  adminNotes?: string;
-}
-
-/**
- * 리뷰 생성 요청
- */
+// 리뷰 작성 요청
 export interface ReviewCreateRequest {
   facilityId: number;
   title: string;
@@ -122,8 +65,8 @@ export interface ReviewCreateRequest {
   staffRating?: number;
   priceRating?: number;
   accessibilityRating?: number;
-  reviewType: ReviewType;
-  recommended: boolean;
+  reviewType?: ReviewType;
+  recommended?: boolean;
   visitDate?: string;
   serviceDurationDays?: number;
   anonymous?: boolean;
@@ -131,13 +74,11 @@ export interface ReviewCreateRequest {
   tags?: string[];
 }
 
-/**
- * 리뷰 수정 요청
- */
+// 리뷰 수정 요청
 export interface ReviewUpdateRequest {
-  title?: string;
-  content?: string;
-  overallRating?: number;
+  title: string;
+  content: string;
+  overallRating: number;
   serviceQualityRating?: number;
   facilityRating?: number;
   staffRating?: number;
@@ -146,132 +87,121 @@ export interface ReviewUpdateRequest {
   recommended?: boolean;
   visitDate?: string;
   serviceDurationDays?: number;
+  anonymous?: boolean;
   imageUrls?: string[];
   tags?: string[];
 }
 
-/**
- * 리뷰 투표 요청
- */
-export interface ReviewVoteRequest {
-  reviewId: number;
-  voteType: VoteType;
-}
-
-/**
- * 리뷰 신고 요청
- */
-export interface ReviewReportRequest {
-  reviewId: number;
-  category: ReportCategory;
-  reason: string;
-}
-
-/**
- * 관리자 응답 요청
- */
-export interface AdminResponseRequest {
-  response: string;
-}
-
-/**
- * 리뷰 검색 필터
- */
-export interface ReviewSearchFilters {
+// 리뷰 응답 (API)
+export interface ReviewResponse {
+  id: number;
+  reviewerName: string;
   facilityId?: number;
-  reviewType?: ReviewType;
-  status?: ReviewStatus;
-  minRating?: number;
-  maxRating?: number;
-  verified?: boolean;
-  hasImages?: boolean;
-  sortBy?: 'createdAt' | 'rating' | 'helpful' | 'visitDate';
-  sortDirection?: 'asc' | 'desc';
+  facilityName?: string;
+  title: string;
+  content: string;
+  overallRating: number;
+  serviceQualityRating?: number;
+  facilityRating?: number;
+  staffRating?: number;
+  priceRating?: number;
+  accessibilityRating?: number;
+  status: ReviewStatus;
+  recommended: boolean;
+  visitDate?: string;
+  serviceDurationDays?: number;
+  helpfulCount: number;
+  notHelpfulCount: number;
+  anonymous: boolean;
+  verified: boolean;
+  imageUrls: string[];
+  tags: string[];
+  adminResponse?: string;
+  adminResponseDate?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// 페이지네이션 응답
+export interface ReviewPage {
+  content: ReviewResponse[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      property: string;
+      direction: 'ASC' | 'DESC';
+    };
+  };
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+// 리뷰 통계
+export interface ReviewStatistics {
+  totalCount: number;
+  averageRating: number;
+  ratingDistribution: {
+    [key: string]: number; // "5": 10, "4": 20, etc.
+  };
+  verifiedCount: number;
+  recommendationRate: number;
+  mostCommonTags: Array<{
+    tag: string;
+    count: number;
+  }>;
+}
+
+// 리뷰 필터
+export interface ReviewFilters {
+  rating?: number; // 최소 평점
+  verified?: boolean; // 검증된 리뷰만
+  recommended?: boolean; // 추천 리뷰만
+  hasImages?: boolean; // 이미지 포함
+  sortBy?: 'createdAt' | 'overallRating' | 'helpfulCount';
+  sortOrder?: 'ASC' | 'DESC';
   page?: number;
   size?: number;
 }
 
-/**
- * 리뷰 목록 응답
- */
-export interface ReviewResponse {
-  content: Review[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
+// 리뷰 투표 (도움됨/안됨)
+export interface ReviewVote {
+  reviewId: number;
+  voteType: 'HELPFUL' | 'NOT_HELPFUL';
 }
 
-/**
- * 리뷰 통계
- */
-export interface ReviewStatistics {
-  totalReviews: number;
-  averageRating: number;
-  ratingDistribution: Record<number, number>; // 1-5점별 리뷰 수
-  verifiedReviewsCount: number;
-  totalHelpfulVotes: number;
-  averageServiceQuality: number;
-  averageFacilityRating: number;
-  averageStaffRating: number;
-  averagePriceRating: number;
-  averageAccessibilityRating: number;
-  recommendationRate: number; // 추천 비율 (0-100)
-  mostCommonTags: Array<{ tag: string; count: number }>;
+// 리뷰 신고
+export interface ReviewReport {
+  reviewId: number;
+  reason: 'SPAM' | 'INAPPROPRIATE' | 'FALSE_INFO' | 'OTHER';
+  description?: string;
 }
 
-/**
- * 리뷰 타입별 디스플레이 명
- */
-export const REVIEW_TYPE_LABELS: Record<ReviewType, string> = {
-  [ReviewType.FACILITY]: '시설 리뷰',
-  [ReviewType.SERVICE]: '서비스 리뷰',
-  [ReviewType.CAREGIVER]: '요양보호사 리뷰',
-  [ReviewType.PROGRAM]: '프로그램 리뷰'
-};
+// 별점 정보
+export interface RatingBreakdown {
+  category: string;
+  label: string;
+  value?: number;
+  description: string;
+}
 
-/**
- * 리뷰 상태별 디스플레이 명
- */
-export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
-  [ReviewStatus.ACTIVE]: '활성',
-  [ReviewStatus.PENDING]: '검토중',
-  [ReviewStatus.BLOCKED]: '차단됨',
-  [ReviewStatus.DELETED]: '삭제됨'
-};
+// 리뷰 작성 단계
+export type ReviewStepType = 
+  | 'facility_select'   // 시설 선택
+  | 'basic_info'        // 기본 정보
+  | 'ratings'           // 평점
+  | 'content'           // 내용 작성
+  | 'media'             // 이미지/태그
+  | 'final';            // 최종 확인
 
-/**
- * 신고 사유별 디스플레이 명
- */
-export const REPORT_CATEGORY_LABELS: Record<ReportCategory, string> = {
-  [ReportCategory.SPAM]: '스팸',
-  [ReportCategory.INAPPROPRIATE]: '부적절한 내용',
-  [ReportCategory.FAKE]: '가짜 리뷰',
-  [ReportCategory.OFFENSIVE]: '모욕적 내용',
-  [ReportCategory.COPYRIGHT]: '저작권 침해',
-  [ReportCategory.OTHER]: '기타'
-};
-
-/**
- * 평점 색상 매핑
- */
-export const RATING_COLORS = {
-  1: '#ef4444', // red-500
-  2: '#f97316', // orange-500
-  3: '#eab308', // yellow-500
-  4: '#22c55e', // green-500
-  5: '#10b981'  // emerald-500
-};
-
-/**
- * 평점별 라벨
- */
-export const RATING_LABELS = {
-  1: '매우 불만',
-  2: '불만',
-  3: '보통',
-  4: '만족',
-  5: '매우 만족'
-};
+export interface ReviewStep {
+  type: ReviewStepType;
+  title: string;
+  description: string;
+  completed: boolean;
+  required: boolean;
+}

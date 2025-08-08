@@ -50,9 +50,14 @@ import {
   LazyJobListPage,
   LazyJobDetailPage,
   LazyCoordinatorMatchingWizard,
+  LazyAvailableCoordinatorsPage,
+  LazySimulationDashboard,
   LazyProfileListPage,
   LazyProfileDetailPage,
-  LazyNotificationsPage
+  LazyNotificationsPage,
+  LazyMyReviewsPage,
+  LazyFacilityReviewsPage,
+  LazyReviewCreatePage
 } from './utils/lazyImports';
 
 // 테마 시스템 테스트 컴포넌트
@@ -411,6 +416,44 @@ function App() {
               } 
             />
 
+            {/* 리뷰 관리 라우트 */}
+            <Route 
+              path="/reviews/my" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <LazyMyReviewsPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/reviews/facility/:facilityId" 
+              element={
+                <MainLayout>
+                  <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                    <LazyFacilityReviewsPage />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
+            
+            <Route 
+              path="/reviews/create" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                      <LazyReviewCreatePage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
             {/* 관리자 전용 라우트 */}
             <Route 
               path="/admin/members" 
@@ -488,6 +531,32 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </CoordinatorRoute>
+              } 
+            />
+            
+            <Route 
+              path="/coordinator/available" 
+              element={
+                <CoordinatorRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <LazyAvailableCoordinatorsPage />
+                    </Suspense>
+                  </MainLayout>
+                </CoordinatorRoute>
+              } 
+            />
+            
+            <Route 
+              path="/coordinator/simulation" 
+              element={
+                <AdminRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                      <LazySimulationDashboard />
+                    </Suspense>
+                  </MainLayout>
+                </AdminRoute>
               } 
             />
             
