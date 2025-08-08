@@ -13,7 +13,7 @@ import { PostEditor } from './components/PostEditor';
 import { boardApi } from '../../entities/board';
 import type { Board, PostCreateRequest } from '../../entities/board';
 import { BOARD_METADATA } from '../../entities/board';
-import { useAuthStore } from '../../shared/stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 
 export const PostCreatePage: React.FC = () => {
   const { boardId } = useParams<{ boardId: string }>();

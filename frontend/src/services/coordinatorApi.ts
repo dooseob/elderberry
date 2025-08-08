@@ -70,24 +70,81 @@ class CoordinatorMatchingApi {
   private baseUrl = '/api/coordinator-matching';
 
   async findMatches(assessmentId: number, preference?: MatchingPreference): Promise<CoordinatorMatch[]> {
+    // Backend expects POST /api/coordinator-matching/match with healthAssessmentId param and preference body
     const params = new URLSearchParams();
-    if (preference) {
-      Object.entries(preference).forEach(([key, value]) => {
-        if (value !== undefined) {
-          params.append(key, String(value));
-        }
-      });
-    }
-
-    const response = await fetch(`${this.baseUrl}/${assessmentId}/matches?${params}`);
+    params.append('healthAssessmentId', String(assessmentId));
+    
+    const response = await fetch(`${this.baseUrl}/match?${params}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(preference || {}),
+    });
+    
     if (!response.ok) {
       throw new Error(`매칭 조회 실패: ${response.status}`);
     }
     return response.json();
   }
 
+  async getCoordinatorsByLanguage(languageCode: string, countryCode?: string, needsProfessionalConsultation?: boolean): Promise<CoordinatorMatch[]> {
+    // Backend: GET /api/coordinator-matching/language/{languageCode}
+    const params = new URLSearchParams();
+    if (countryCode) params.append('countryCode', countryCode);
+    if (needsProfessionalConsultation !== undefined) {
+      params.append('needsProfessionalConsultation', String(needsProfessionalConsultation));
+    }
+
+    const response = await fetch(`${this.baseUrl}/language/${languageCode}?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`언어별 코디네이터 조회 실패: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getCoordinatorsBySpecialty(specialty: string): Promise<any[]> {
+    // Backend: GET /api/coordinator-matching/specialty/{specialty}
+    const response = await fetch(`${this.baseUrl}/specialty/${specialty}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`전문분야별 코디네이터 조회 실패: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getAvailableCoordinators(): Promise<any[]> {
+    // Backend: GET /api/coordinator-matching/available
+    const response = await fetch(`${this.baseUrl}/available`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`가용 코디네이터 조회 실패: ${response.status}`);
+    }
+    return response.json();
+  }
+
   async getStatistics(): Promise<CoordinatorMatchingStatistics> {
-    const response = await fetch(`${this.baseUrl}/statistics`);
+    // Backend: GET /api/coordinator-matching/statistics (Admin only)
+    const response = await fetch(`${this.baseUrl}/statistics`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    
     if (!response.ok) {
       throw new Error(`통계 조회 실패: ${response.status}`);
     }
@@ -95,10 +152,12 @@ class CoordinatorMatchingApi {
   }
 
   async runSimulation(request: MatchingSimulationRequest): Promise<MatchingSimulationResult> {
-    const response = await fetch(`${this.baseUrl}/simulation`, {
+    // Backend: POST /api/coordinator-matching/simulate (Admin only)
+    const response = await fetch(`${this.baseUrl}/simulate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(request),
     });
@@ -109,8 +168,15 @@ class CoordinatorMatchingApi {
     return response.json();
   }
 
+  // This endpoint doesn't exist in backend - keeping for potential future use
   async getCoordinatorDetails(coordinatorId: string): Promise<CoordinatorMatch> {
-    const response = await fetch(`${this.baseUrl}/coordinator/${coordinatorId}`);
+    // Note: This endpoint is not implemented in backend yet
+    const response = await fetch(`${this.baseUrl}/coordinator/${coordinatorId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    
     if (!response.ok) {
       throw new Error(`코디네이터 정보 조회 실패: ${response.status}`);
     }

@@ -1,291 +1,142 @@
-import { BaseEntity } from 'shared/types';
-import type { Member } from 'entities/auth';
-
 /**
- * 직종 카테고리
+ * 구인구직 시스템 타입 정의
+ * JobController API 기반
  */
-export enum JobCategory {
-  CAREGIVER = 'CAREGIVER',
-  NURSE = 'NURSE', 
-  PHYSICAL_THERAPIST = 'PHYSICAL_THERAPIST',
-  OCCUPATIONAL_THERAPIST = 'OCCUPATIONAL_THERAPIST',
-  SOCIAL_WORKER = 'SOCIAL_WORKER',
-  FACILITY_MANAGER = 'FACILITY_MANAGER',
-  ADMINISTRATOR = 'ADMINISTRATOR',
-  DRIVER = 'DRIVER',
-  COOK = 'COOK',
-  CLEANER = 'CLEANER',
-  OTHER = 'OTHER'
-}
 
-/**
- * 급여 유형
- */
-export enum SalaryType {
-  HOURLY = 'HOURLY',
-  DAILY = 'DAILY',
-  MONTHLY = 'MONTHLY', 
-  ANNUAL = 'ANNUAL',
-  NEGOTIABLE = 'NEGOTIABLE'
-}
+// 지원 상태 열거형
+export type JobApplicationStatus = 
+  | 'UNDER_REVIEW'      // 검토중
+  | 'INTERVIEW_SCHEDULED' // 면접예정
+  | 'INTERVIEW_COMPLETED' // 면접완료
+  | 'ACCEPTED'          // 합격
+  | 'REJECTED'          // 불합격
+  | 'WITHDRAWN';        // 지원철회
 
-/**
- * 경력 수준
- */
-export enum ExperienceLevel {
-  ENTRY = 'ENTRY',
-  JUNIOR = 'JUNIOR',
-  SENIOR = 'SENIOR',
-  EXPERT = 'EXPERT',
-  ANY = 'ANY'
-}
-
-/**
- * 근무 형태
- */
-export enum WorkType {
-  FULL_TIME = 'FULL_TIME',
-  PART_TIME = 'PART_TIME',
-  CONTRACT = 'CONTRACT',
-  SHIFT = 'SHIFT',
-  FLEXIBLE = 'FLEXIBLE'
-}
-
-/**
- * 공고 상태
- */
-export enum JobStatus {
-  ACTIVE = 'ACTIVE',
-  CLOSED = 'CLOSED',
-  SUSPENDED = 'SUSPENDED',
-  DELETED = 'DELETED'
-}
-
-/**
- * 지원 상태
- */
-export enum ApplicationStatus {
-  SUBMITTED = 'SUBMITTED',
-  UNDER_REVIEW = 'UNDER_REVIEW',
-  INTERVIEW_SCHEDULED = 'INTERVIEW_SCHEDULED',
-  INTERVIEW_COMPLETED = 'INTERVIEW_COMPLETED',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-  WITHDRAWN = 'WITHDRAWN'
-}
-
-/**
- * 구인 공고 엔티티
- */
-export interface Job extends BaseEntity {
+// 구인공고 타입
+export interface Job {
   id: number;
+  facilityName: string;
   title: string;
-  description: string;
-  employer: Member;
-  companyName: string;
-  workLocation: string;
-  detailAddress?: string;
-  latitude?: number;
-  longitude?: number;
-  category: JobCategory;
-  salaryType: SalaryType;
-  minSalary?: number;
-  maxSalary?: number;
-  experienceLevel: ExperienceLevel;
-  minExperienceYears?: number;
-  workType: WorkType;
-  workHours?: string;
-  recruitCount: number;
-  applicationDeadline: string; // ISO date string
-  preferredQualifications?: string;
-  benefits?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  contactPerson?: string;
-  viewCount: number;
-  status: JobStatus;
+  salary: string;
+  location: string;
   isUrgent: boolean;
-  isFeatured: boolean;
-  applications: JobApplication[];
-  applicationCount: number;
-  isDeadlineApproaching: boolean;
-  isExpired: boolean;
-}
-
-/**
- * 지원서 엔티티
- */
-export interface JobApplication extends BaseEntity {
-  id: number;
-  job: Job;
-  applicant: Member;
-  status: ApplicationStatus;
-  appliedAt: string; // ISO date string
-  coverLetter?: string;
-  resumeUrl?: string;
-  interviewDate?: string; // ISO date string
-  interviewLocation?: string;
-  notes?: string;
-  reviewedAt?: string; // ISO date string
-}
-
-/**
- * 채용 공고 생성 요청
- */
-export interface JobCreateRequest {
-  title: string;
-  description: string;
-  companyName: string;
-  workLocation: string;
-  detailAddress?: string;
-  latitude?: number;
-  longitude?: number;
-  category: JobCategory;
-  salaryType: SalaryType;
-  minSalary?: number;
-  maxSalary?: number;
-  experienceLevel: ExperienceLevel;
-  minExperienceYears?: number;
-  workType: WorkType;
-  workHours?: string;
-  recruitCount: number;
-  applicationDeadline: string;
-  preferredQualifications?: string;
+  // 추가 필드 (실제 구현 시 확장 가능)
+  description?: string;
+  requirements?: string;
   benefits?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  contactPerson?: string;
-  isUrgent?: boolean;
-  isFeatured?: boolean;
+  workSchedule?: string;
+  contactInfo?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deadline?: string;
+  employmentType?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT';
+  experienceLevel?: 'ENTRY' | 'JUNIOR' | 'SENIOR' | 'EXPERT';
 }
 
-/**
- * 채용 공고 수정 요청
- */
-export interface JobUpdateRequest extends Partial<JobCreateRequest> {
-  status?: JobStatus;
-}
-
-/**
- * 지원서 제출 요청
- */
-export interface JobApplicationCreateRequest {
-  jobId: number;
-  coverLetter?: string;
-  resumeUrl?: string;
-}
-
-/**
- * 지원서 상태 업데이트 요청
- */
-export interface ApplicationStatusUpdateRequest {
-  status: ApplicationStatus;
+// 내 지원서 타입
+export interface JobApplication {
+  id: number;
+  facilityName: string;
+  jobTitle: string;
+  status: JobApplicationStatus;
+  statusText: string;
+  salary: string;
+  location: string;
+  // 추가 필드
+  applicationDate?: string;
+  lastUpdated?: string;
   interviewDate?: string;
-  interviewLocation?: string;
   notes?: string;
+  jobId?: number;
 }
 
-/**
- * 채용 공고 검색 필터
- */
-export interface JobSearchFilters {
-  keyword?: string;
-  category?: JobCategory;
-  salaryType?: SalaryType;
-  experienceLevel?: ExperienceLevel;
-  workType?: WorkType;
-  minSalary?: number;
-  maxSalary?: number;
-  location?: string;
-  isUrgent?: boolean;
-  status?: JobStatus;
+// 지원 요청 타입
+export interface JobApplyRequest {
+  coverLetter: string;
+  expectedSalary?: string;
+  startDate?: string;
+  additionalInfo?: string;
+  // 첨부파일 등 추가 필드
+  resumeUrl?: string;
+  certificateUrls?: string[];
+}
+
+// 지원 응답 타입
+export interface JobApplyResponse {
+  applicationId: number;
+  jobId: number;
+  message: string;
+  status: 'SUCCESS' | 'ERROR';
+  applicationDate: string;
+}
+
+// 구인공고 검색 파라미터
+export interface JobSearchParams {
   page?: number;
   size?: number;
-  sort?: string;
+  region?: string;
+  position?: string;
+  salary?: string;
+  employmentType?: string;
+  experienceLevel?: string;
+  isUrgent?: boolean;
+  keyword?: string;
+  sortBy?: 'latest' | 'salary' | 'location' | 'urgent';
+  sortOrder?: 'asc' | 'desc';
 }
 
-/**
- * 채용 공고 응답
- */
-export interface JobResponse {
-  content: Job[];
+// 내 지원서 검색 파라미터
+export interface MyApplicationsParams {
+  page?: number;
+  size?: number;
+  status?: JobApplicationStatus;
+  sortBy?: 'latest' | 'status' | 'facility';
+  sortOrder?: 'asc' | 'desc';
+}
+
+// 페이지네이션 응답 타입
+export interface JobPage<T> {
+  content: T[];
   totalElements: number;
   totalPages: number;
-  size: number;
   number: number;
+  size: number;
   first: boolean;
   last: boolean;
+  empty: boolean;
 }
 
-/**
- * 카테고리별 디스플레이 명
- */
-export const JOB_CATEGORY_LABELS: Record<JobCategory, string> = {
-  [JobCategory.CAREGIVER]: '요양보호사',
-  [JobCategory.NURSE]: '간병인',
-  [JobCategory.PHYSICAL_THERAPIST]: '물리치료사',
-  [JobCategory.OCCUPATIONAL_THERAPIST]: '작업치료사',
-  [JobCategory.SOCIAL_WORKER]: '사회복지사',
-  [JobCategory.FACILITY_MANAGER]: '시설관리자',
-  [JobCategory.ADMINISTRATOR]: '사무직',
-  [JobCategory.DRIVER]: '운전기사',
-  [JobCategory.COOK]: '조리사',
-  [JobCategory.CLEANER]: '청소원',
-  [JobCategory.OTHER]: '기타'
+// 상태 텍스트 매핑
+export const JOB_APPLICATION_STATUS_TEXT: Record<JobApplicationStatus, string> = {
+  UNDER_REVIEW: '검토중',
+  INTERVIEW_SCHEDULED: '면접예정',
+  INTERVIEW_COMPLETED: '면접완료',
+  ACCEPTED: '합격',
+  REJECTED: '불합격',
+  WITHDRAWN: '지원철회',
 };
 
-/**
- * 급여 유형별 디스플레이 명
- */
-export const SALARY_TYPE_LABELS: Record<SalaryType, string> = {
-  [SalaryType.HOURLY]: '시급',
-  [SalaryType.DAILY]: '일급',
-  [SalaryType.MONTHLY]: '월급',
-  [SalaryType.ANNUAL]: '연봉',
-  [SalaryType.NEGOTIABLE]: '협의'
+// 상태별 색상 매핑 (UI에서 사용)
+export const JOB_APPLICATION_STATUS_COLORS: Record<JobApplicationStatus, { bg: string; text: string }> = {
+  UNDER_REVIEW: { bg: 'bg-yellow-50', text: 'text-yellow-800' },
+  INTERVIEW_SCHEDULED: { bg: 'bg-blue-50', text: 'text-blue-800' },
+  INTERVIEW_COMPLETED: { bg: 'bg-purple-50', text: 'text-purple-800' },
+  ACCEPTED: { bg: 'bg-green-50', text: 'text-green-800' },
+  REJECTED: { bg: 'bg-red-50', text: 'text-red-800' },
+  WITHDRAWN: { bg: 'bg-gray-50', text: 'text-gray-800' },
 };
 
-/**
- * 경력 수준별 디스플레이 명
- */
-export const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
-  [ExperienceLevel.ENTRY]: '신입',
-  [ExperienceLevel.JUNIOR]: '경력 1-3년',
-  [ExperienceLevel.SENIOR]: '경력 3-5년',
-  [ExperienceLevel.EXPERT]: '경력 5년 이상',
-  [ExperienceLevel.ANY]: '경력무관'
+// 고용 형태 텍스트
+export const EMPLOYMENT_TYPE_TEXT = {
+  FULL_TIME: '정규직',
+  PART_TIME: '파트타임',
+  CONTRACT: '계약직',
 };
 
-/**
- * 근무 형태별 디스플레이 명
- */
-export const WORK_TYPE_LABELS: Record<WorkType, string> = {
-  [WorkType.FULL_TIME]: '정규직',
-  [WorkType.PART_TIME]: '계약직',
-  [WorkType.CONTRACT]: '파트타임',
-  [WorkType.SHIFT]: '교대근무',
-  [WorkType.FLEXIBLE]: '유연근무'
-};
-
-/**
- * 공고 상태별 디스플레이 명
- */
-export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
-  [JobStatus.ACTIVE]: '모집중',
-  [JobStatus.CLOSED]: '마감',
-  [JobStatus.SUSPENDED]: '임시중단',
-  [JobStatus.DELETED]: '삭제됨'
-};
-
-/**
- * 지원 상태별 디스플레이 명
- */
-export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
-  [ApplicationStatus.SUBMITTED]: '지원완료',
-  [ApplicationStatus.UNDER_REVIEW]: '검토중',
-  [ApplicationStatus.INTERVIEW_SCHEDULED]: '면접예정',
-  [ApplicationStatus.INTERVIEW_COMPLETED]: '면접완료',
-  [ApplicationStatus.ACCEPTED]: '합격',
-  [ApplicationStatus.REJECTED]: '불합격',
-  [ApplicationStatus.WITHDRAWN]: '지원취소'
+// 경력 레벨 텍스트
+export const EXPERIENCE_LEVEL_TEXT = {
+  ENTRY: '신입',
+  JUNIOR: '경력 1-3년',
+  SENIOR: '경력 3-7년',
+  EXPERT: '경력 7년+',
 };

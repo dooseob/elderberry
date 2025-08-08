@@ -1,18 +1,24 @@
 /**
  * BoardListPage - 게시판 목록 페이지
- * 모든 활성 게시판을 카테고리별로 표시
+ * 카테고리별 게시판 목록 표시 및 접근 권한 관리
  */
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { 
   MessageSquare, 
-  TrendingUp, 
   Users, 
+  Briefcase, 
+  Heart,
+  TrendingUp,
+  ChevronRight,
+  Plus,
+  Star,
+  Eye,
+  MessageCircle,
   Clock,
-  ArrowRight,
-  Settings,
-  Plus
+  Lock,
+  Shield
 } from 'lucide-react';
 import { Button } from '../../shared/ui/Button';
 import { Badge } from '../../shared/ui/Badge';
@@ -21,9 +27,10 @@ import { ErrorMessage } from '../../shared/ui/ErrorMessage';
 import { boardApi } from '../../entities/board';
 import type { Board } from '../../entities/board';
 import { BOARD_METADATA, BOARD_COLORS } from '../../entities/board';
-import { useAuthStore } from '../../shared/stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 
 export const BoardListPage: React.FC = () => {
+  const { boardId } = useParams<{ boardId?: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   
@@ -37,9 +44,8 @@ export const BoardListPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        const boardList = await boardApi.getAllBoards();
-        setBoards(boardList.sort((a, b) => a.sortOrder - b.sortOrder));
+        const boardsData = await boardApi.getBoards();
+        setBoards(boardsData);
       } catch (err) {
         console.error('게시판 목록 로드 실패:', err);
         setError('게시판 목록을 불러오는데 실패했습니다.');
@@ -54,28 +60,30 @@ export const BoardListPage: React.FC = () => {
   // 게시판 카드 렌더링
   const renderBoardCard = (board: Board) => {
     const metadata = BOARD_METADATA[board.type];
-    const color = BOARD_COLORS[board.type];
+    const colors = BOARD_COLORS[board.type];
     
     // 관리자 전용 게시판 접근 권한 체크
-    if (board.adminOnly && (!user || (user.role !== 'ADMIN' && user.role !== 'FACILITY'))) {
-      return null;
-    }
+    const canAccess = !board.adminOnly || (user && (user.role === 'ADMIN' || user.role === 'FACILITY'));
+    
+    if (!canAccess) return null;
 
     return (
       <div
         key={board.id}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer group"
+        className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all cursor-pointer group ${
+          !canAccess ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
         onClick={() => navigate(`/boards/${board.id}`)}
       >
         <div className="p-6">
           {/* 게시판 헤더 */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 bg-${color}-100 rounded-xl flex items-center justify-center text-2xl`}>
+              <div className={`w-12 h-12 ${colors.bg} ${colors.text} rounded-lg flex items-center justify-center`}>
                 {metadata.icon}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-elderberry-600 transition-colors">
                   {board.name}
                 </h3>
                 <p className="text-sm text-gray-500">
@@ -86,78 +94,69 @@ export const BoardListPage: React.FC = () => {
             
             <div className="flex items-center gap-2">
               {board.adminOnly && (
-                <Badge variant="secondary" className="text-xs">
-                  관리자
-                </Badge>
+                <Shield className="w-4 h-4 text-orange-500" />
               )}
-              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-elderberry-600 transition-colors" />
             </div>
           </div>
 
           {/* 게시판 통계 */}
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
-                <MessageSquare className="w-4 h-4" />
-                <span className="text-xs">게시글</span>
-              </div>
-              <p className="text-lg font-semibold text-gray-900">
-                {board.postCount || 0}
-              </p>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-1">
+              <MessageSquare className="w-4 h-4" />
+              <span>{board.postCount || 0}개 게시글</span>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-xs">인기</span>
-              </div>
-              <p className="text-lg font-semibold text-gray-900">-</p>
+            <div className="flex items-center gap-1">
+              <Eye className="w-4 h-4" />
+              <span>{board.totalViews || 0}회 조회</span>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
+            {board.lastPostDate && (
+              <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
-                <span className="text-xs">최근</span>
+                <span>최근 {new Date(board.lastPostDate).toLocaleDateString()}</span>
               </div>
-              <p className="text-sm text-gray-600">
-                {new Date(board.lastModifiedDate || board.createdDate).toLocaleDateString()}
-              </p>
-            </div>
+            )}
           </div>
+
+          {/* 최근 게시글 미리보기 (있는 경우) */}
+          {board.recentPosts && board.recentPosts.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="space-y-2">
+                {board.recentPosts.slice(0, 2).map(post => (
+                  <div key={post.id} className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600 truncate flex-1">
+                      {post.title}
+                    </span>
+                    <span className="text-gray-400 text-xs ml-2">
+                      {new Date(post.createdDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
   };
 
-  // 카테고리별 게시판 그룹화
-  const groupedBoards = {
-    official: boards.filter(board => 
-      ['NOTICE', 'ANNOUNCEMENT', 'FAQ'].includes(board.type)
-    ),
-    community: boards.filter(board => 
-      ['GENERAL', 'COMMUNITY', 'QNA', 'REVIEW'].includes(board.type)
-    ),
-    business: boards.filter(board => 
-      board.type === 'JOB'
-    )
-  };
-
-  const renderBoardGroup = (title: string, icon: React.ReactNode, boards: Board[], description?: string) => {
-    if (boards.length === 0) return null;
+  // 게시판 그룹 렌더링 헬퍼
+  const renderBoardGroup = (title: string, icon: React.ReactNode, boardList: Board[], description?: string) => {
+    if (!boardList || boardList.length === 0) return null;
 
     return (
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            {icon}
-          </div>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          {icon}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
             {description && (
               <p className="text-sm text-gray-500">{description}</p>
             )}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {boards.map(renderBoardCard)}
+          {boardList.map(renderBoardCard)}
         </div>
       </div>
     );
@@ -184,119 +183,74 @@ export const BoardListPage: React.FC = () => {
     );
   }
 
-  // Set document title
-  React.useEffect(() => {
-    document.title = '커뮤니티 - 엘더베리';
-    return () => {
-      document.title = '엘더베리';
-    };
-  }, []);
+  // 게시판을 카테고리별로 그룹화
+  const groupedBoards = {
+    community: boards.filter(board => 
+      ['GENERAL', 'ANNOUNCEMENT', 'NOTICE'].includes(board.type)
+    ),
+    support: boards.filter(board => 
+      ['FAQ', 'QNA'].includes(board.type)
+    ),
+    social: boards.filter(board => 
+      ['COMMUNITY', 'REVIEW'].includes(board.type)
+    ),
+    business: boards.filter(board => 
+      ['JOB'].includes(board.type)
+    )
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* 페이지 헤더 */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* 페이지 헤더 */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            커뮤니티
+          </h1>
+          <p className="text-gray-600">
+            다양한 주제의 게시판에서 소통하고 정보를 공유하세요.
+          </p>
+        </div>
+
+        {/* 게시판 생성 버튼 (관리자용) */}
+        {user && (user.role === 'ADMIN' || user.role === 'FACILITY') && (
           <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  커뮤니티
-                </h1>
-                <p className="text-gray-600">
-                  다양한 정보를 공유하고 같은 관심사를 가진 사람들과 소통해보세요
-                </p>
-              </div>
-              
-              {/* 관리자 메뉴 */}
-              {isAuthenticated && user && (user.role === 'ADMIN' || user.role === 'FACILITY') && (
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate('/admin/boards')}
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    게시판 관리
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={() => navigate('/admin/boards/create')}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    게시판 추가
-                  </Button>
-                </div>
-              )}
-            </div>
+            <Button
+              onClick={() => navigate('/admin/boards/create')}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              새 게시판 만들기
+            </Button>
           </div>
+        )}
 
-          {/* 통계 요약 */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">전체 게시판</p>
-                  <p className="text-xl font-semibold text-gray-900">{boards.length}개</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">총 게시글</p>
-                  <p className="text-xl font-semibold text-gray-900">
-                    {boards.reduce((sum, board) => sum + (board.postCount || 0), 0)}개
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">활성 사용자</p>
-                  <p className="text-xl font-semibold text-gray-900">-</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">오늘 게시글</p>
-                  <p className="text-xl font-semibold text-gray-900">-</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 게시판 그룹별 표시 */}
+        <div className="space-y-8">
+          {/* 커뮤니티 게시판 */}
           {renderBoardGroup(
-            "공식 안내", 
+            "일반 커뮤니티", 
             <MessageSquare className="w-4 h-4 text-blue-600" />,
-            groupedBoards.official,
-            "공지사항과 중요한 안내사항을 확인하세요"
-          )}
-          
-          {renderBoardGroup(
-            "커뮤니티", 
-            <Users className="w-4 h-4 text-green-600" />,
             groupedBoards.community,
-            "자유로운 소통과 정보 공유 공간입니다"
+            "공지사항과 일반적인 이야기를 나누세요"
           )}
-          
+
+          {/* 지원 게시판 */}
+          {renderBoardGroup(
+            "지원 & 문의", 
+            <Users className="w-4 h-4 text-green-600" />,
+            groupedBoards.support,
+            "궁금한 점을 해결하고 도움을 받으세요"
+          )}
+
+          {/* 소셜 게시판 */}
+          {renderBoardGroup(
+            "소셜 & 리뷰", 
+            <Heart className="w-4 h-4 text-red-600" />,
+            groupedBoards.social,
+            "경험을 공유하고 리뷰를 작성하세요"
+          )}
+
+          {/* 구인구직 게시판 */}
           {renderBoardGroup(
             "구인구직", 
             <TrendingUp className="w-4 h-4 text-purple-600" />,

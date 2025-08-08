@@ -57,7 +57,8 @@ import {
   LazyNotificationsPage,
   LazyMyReviewsPage,
   LazyFacilityReviewsPage,
-  LazyReviewCreatePage
+  LazyReviewCreatePage,
+  LazyMyApplicationsPage
 } from './utils/lazyImports';
 
 // 테마 시스템 테스트 컴포넌트
@@ -383,6 +384,19 @@ function App() {
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
                       <LazyJobDetailPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/jobs/my-applications" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                      <LazyMyApplicationsPage />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>

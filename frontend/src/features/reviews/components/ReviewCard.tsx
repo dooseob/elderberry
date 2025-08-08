@@ -10,11 +10,10 @@ import {
   User,
   ShieldCheck as VerifiedIcon
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/shared/ui';
-import { Button } from '@/shared/ui';
+import { Card, CardContent } from '../../../shared/ui/Card';
+import { Button } from '../../../shared/ui/Button';
 import { StarRating } from './StarRating';
-import { Review } from '@/entities/review/model/types';
+import { Review } from '../../../entities/review/model/types';
 
 interface ReviewCardProps {
   review: Review;

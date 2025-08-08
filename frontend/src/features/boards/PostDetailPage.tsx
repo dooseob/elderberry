@@ -29,7 +29,7 @@ import { CommentForm } from './components/CommentForm';
 import { boardApi } from '../../entities/board';
 import type { Board, Post, Comment, Page } from '../../entities/board';
 import { BOARD_METADATA } from '../../entities/board';
-import { useAuthStore } from '../../shared/stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 
 export const PostDetailPage: React.FC = () => {
   const { boardId, postId } = useParams<{ boardId: string; postId: string }>();
@@ -145,7 +145,8 @@ export const PostDetailPage: React.FC = () => {
   }, [post, board]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
           {/* 상단 네비게이션 */}
           <div className="flex items-center gap-2 mb-6">

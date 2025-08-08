@@ -91,6 +91,10 @@ export const LazyJobDetailPage = lazyWithMinDelay(
   () => import('../features/jobs/JobDetailPage')
 );
 
+export const LazyMyApplicationsPage = lazyWithMinDelay(
+  () => import('../features/jobs/MyApplicationsPage')
+);
+
 // 건강 평가 관련 페이지 (우선순위: 낮음 - 선택적 기능)
 export const LazyHealthAssessmentWizard = lazyWithMinDelay(
   () => import('../features/health/HealthAssessmentWizard'),
@@ -170,7 +174,7 @@ export const CHUNK_NAMES = {
   dashboard: ['LazyDashboardPage', 'LazyMyPage'],
   boards: ['LazyBoardListPage', 'LazyPostDetailPage', 'LazyPostCreatePage'],
   profiles: ['LazyProfileListPage', 'LazyProfileDetailPage'],
-  jobs: ['LazyJobListPage', 'LazyJobDetailPage'],
+  jobs: ['LazyJobListPage', 'LazyJobDetailPage', 'LazyMyApplicationsPage'],
   health: ['LazyHealthAssessmentWizard'],
   facility: ['LazyFacilitySearchPage'],
   coordinator: ['LazyCoordinatorMatchingWizard', 'LazyAvailableCoordinatorsPage', 'LazySimulationDashboard'],

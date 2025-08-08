@@ -41,6 +41,9 @@ const CoordinatorMatchingWizard: React.FC<CoordinatorMatchingWizardProps> = ({
   });
   const [showPreferences, setShowPreferences] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [searchMode, setSearchMode] = useState<'assessment' | 'language' | 'specialty'>('assessment');
+  const [languageCode, setLanguageCode] = useState<string>('ko');
+  const [specialty, setSpecialty] = useState<string>('dementia');
 
   const {
     data: matches,
@@ -48,9 +51,22 @@ const CoordinatorMatchingWizard: React.FC<CoordinatorMatchingWizardProps> = ({
     error: matchingError,
     refetch: refetchMatches,
   } = useQuery({
-    queryKey: ['coordinator-matches', assessmentId, preference],
-    queryFn: () => coordinatorMatchingApi.findMatches(assessmentId, preference),
-    enabled: !!assessmentId,
+    queryKey: ['coordinator-matches', assessmentId, preference, searchMode, languageCode, specialty],
+    queryFn: () => {
+      if (searchMode === 'assessment' && assessmentId) {
+        return coordinatorMatchingApi.findMatches(assessmentId, preference);
+      } else if (searchMode === 'language') {
+        return coordinatorMatchingApi.getCoordinatorsByLanguage(
+          languageCode, 
+          preference.countryCode, 
+          preference.needsProfessionalConsultation
+        );
+      } else if (searchMode === 'specialty') {
+        return coordinatorMatchingApi.getCoordinatorsBySpecialty(specialty);
+      }
+      return Promise.resolve([]);
+    },
+    enabled: (searchMode === 'assessment' && !!assessmentId) || searchMode === 'language' || searchMode === 'specialty',
     staleTime: 5 * 60 * 1000,
   });
 
@@ -104,32 +120,99 @@ const CoordinatorMatchingWizard: React.FC<CoordinatorMatchingWizardProps> = ({
 
         <div className="flex gap-6">
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowPreferences(!showPreferences)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter className="w-4 h-4" />
-                  매칭 설정
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowStatistics(!showStatistics)}
-                  className="flex items-center gap-2"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  통계 보기
-                </Button>
-              </div>
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex bg-elderberry-100 rounded-lg p-1">
+                    <Button
+                      variant={searchMode === 'assessment' ? 'primary' : 'ghost'}
+                      size="sm"
+                      onClick={() => setSearchMode('assessment')}
+                      className="text-xs"
+                    >
+                      평가 기반
+                    </Button>
+                    <Button
+                      variant={searchMode === 'language' ? 'primary' : 'ghost'}
+                      size="sm"
+                      onClick={() => setSearchMode('language')}
+                      className="text-xs"
+                    >
+                      언어별 검색
+                    </Button>
+                    <Button
+                      variant={searchMode === 'specialty' ? 'primary' : 'ghost'}
+                      size="sm"
+                      onClick={() => setSearchMode('specialty')}
+                      className="text-xs"
+                    >
+                      전문분야별
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPreferences(!showPreferences)}
+                    className="flex items-center gap-2"
+                  >
+                    <Filter className="w-4 h-4" />
+                    매칭 설정
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowStatistics(!showStatistics)}
+                    className="flex items-center gap-2"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    통계 보기
+                  </Button>
+                </div>
 
-              {matches && (
-                <div className="text-sm text-elderberry-600">
-                  총 {matches.length}명의 코디네이터를 찾았습니다
+                {matches && (
+                  <div className="text-sm text-elderberry-600">
+                    총 {matches.length}명의 코디네이터를 찾았습니다
+                  </div>
+                )}
+              </div>
+              
+              {searchMode === 'language' && (
+                <div className="flex items-center gap-4 mb-4">
+                  <label className="text-sm font-medium text-elderberry-700">언어:</label>
+                  <select
+                    value={languageCode}
+                    onChange={(e) => setLanguageCode(e.target.value)}
+                    className="px-3 py-2 border border-elderberry-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-elderberry-500"
+                  >
+                    <option value="ko">한국어</option>
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                    <option value="zh">中文</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                  </select>
+                </div>
+              )}
+              
+              {searchMode === 'specialty' && (
+                <div className="flex items-center gap-4 mb-4">
+                  <label className="text-sm font-medium text-elderberry-700">전문분야:</label>
+                  <select
+                    value={specialty}
+                    onChange={(e) => setSpecialty(e.target.value)}
+                    className="px-3 py-2 border border-elderberry-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-elderberry-500"
+                  >
+                    <option value="dementia">치매 케어</option>
+                    <option value="medical">의료 케어</option>
+                    <option value="rehabilitation">재활 치료</option>
+                    <option value="palliative">완화 케어</option>
+                    <option value="mental">정신 건강</option>
+                    <option value="nutrition">영양 관리</option>
+                    <option value="physical">물리 치료</option>
+                  </select>
                 </div>
               )}
             </div>

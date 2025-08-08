@@ -18,7 +18,7 @@ import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { CommentForm } from './CommentForm';
 import { boardApi } from '../../../entities/board';
 import type { Comment, Page } from '../../../entities/board';
-import { useAuthStore } from '../../../shared/stores/authStore';
+import { useAuthStore } from '../../../stores/authStore';
 
 interface CommentListProps {
   boardId: number;

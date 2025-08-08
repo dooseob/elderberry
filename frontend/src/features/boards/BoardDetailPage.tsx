@@ -26,7 +26,7 @@ import { Pagination } from '../../shared/ui/Pagination';
 import { boardApi } from '../../entities/board';
 import type { Board, Post, Page } from '../../entities/board';
 import { BOARD_METADATA, POST_SORT_OPTIONS, POST_SEARCH_TYPES } from '../../entities/board';
-import { useAuthStore } from '../../shared/stores/authStore';
+import { useAuthStore } from '../../stores/authStore';
 
 export const BoardDetailPage: React.FC = () => {
   const { boardId } = useParams<{ boardId: string }>();

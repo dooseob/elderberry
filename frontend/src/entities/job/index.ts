@@ -1,4 +1,23 @@
 // Job Entity Public API
-export type { Job, JobApplication, JobCategory, SalaryType, ExperienceLevel, WorkType, JobStatus } from './model/types';
-export { useJobStore } from './model/store';
-export * from './api';
+
+// Types
+export type {
+  Job,
+  JobApplication,
+  JobApplyRequest,
+  JobApplyResponse,
+  JobSearchParams,
+  MyApplicationsParams,
+  JobPage,
+  JobApplicationStatus,
+} from './model/types';
+
+export {
+  JOB_APPLICATION_STATUS_TEXT,
+  JOB_APPLICATION_STATUS_COLORS,
+  EMPLOYMENT_TYPE_TEXT,
+  EXPERIENCE_LEVEL_TEXT,
+} from './model/types';
+
+// API Client
+export { jobApi } from './api/jobApi';
