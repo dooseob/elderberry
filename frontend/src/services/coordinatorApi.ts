@@ -1,4 +1,4 @@
-import { HealthAssessment } from '@/types/health';
+import { HealthAssessment } from '../../../entities/health';
 
 export interface CoordinatorMatch {
   coordinatorId: string;

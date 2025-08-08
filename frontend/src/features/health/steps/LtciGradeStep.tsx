@@ -8,9 +8,9 @@ import {
   Shield
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { LTCI_GRADES } from '@/types/health';
-import type { LtciGrade } from '@/types/health';
+import { useHealthAssessmentStore } from '../../../stores/healthAssessmentStore';
+import { LTCI_GRADES } from '../../../entities/health';
+import type { LtciGrade } from '../../../entities/health';
 import { RadioGroup, type RadioOption } from '@/shared/ui';
 
 const LtciGradeStep: React.FC = () => {

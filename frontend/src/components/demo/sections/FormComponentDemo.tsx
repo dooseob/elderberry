@@ -25,10 +25,10 @@ import {
   Smartphone
 } from 'lucide-react';
 
-import { Button } from '@/shared/ui';
-import { Input } from '@/shared/ui';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/shared/ui';
-import { Badge } from '@/shared/ui';
+import { Button } from '../../../shared/ui';
+import { Input } from '../../../shared/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../shared/ui';
+import { Badge } from '../../../shared/ui';
 
 /**
  * 로그인 폼 데모

@@ -14,7 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { devLogger } from '../../utils/devLogger';
 
 import { coordinatorMatchingApi, CoordinatorMatch, MatchingPreference, CoordinatorMatchingStatistics } from '@/services/coordinatorApi';
-import { HealthAssessment } from '@/types/health';
+import { HealthAssessment } from '../../../entities/health';
 import CoordinatorCard from '@/components/coordinator/CoordinatorCard';
 import MatchingPreferencePanel from '@/components/coordinator/MatchingPreferencePanel';
 import MatchingStatsDashboard from '@/components/coordinator/MatchingStatsDashboard';

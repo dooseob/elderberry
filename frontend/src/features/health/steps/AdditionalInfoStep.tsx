@@ -8,9 +8,9 @@ import {
   FileText
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { CARE_TARGET_STATUS, MEAL_TYPES } from '@/types/health';
-import type { CareTargetStatus, MealType } from '@/types/health';
+import { useHealthAssessmentStore } from '../../../stores/healthAssessmentStore';
+import { CARE_TARGET_STATUS, MEAL_TYPES } from '../../../entities/health';
+import type { CareTargetStatus, MealType } from '../../../entities/health';
 import { RadioGroup, type RadioOption } from '@/shared/ui';
 
 const AdditionalInfoStep: React.FC = () => {

@@ -22,10 +22,10 @@ import {
   X
 } from 'lucide-react';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui';
-import { Button } from '@/shared/ui';
-import { Input } from '@/shared/ui';
-import { Badge } from '@/shared/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/ui';
+import { Button } from '../../../shared/ui';
+import { Input } from '../../../shared/ui';
+import { Badge } from '../../../shared/ui';
 import { useThemeContext } from '../../theme/ThemeProvider';
 
 /**

@@ -8,18 +8,18 @@ import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { devLogger, errorLogger } from '../utils/devLogger';
 import type { 
-  HealthAssessmentCreateRequest, 
+  CreateHealthAssessmentRequest, 
   AdlLevel,
   LtciGrade,
   CareTargetStatus,
   MealType,
-  Gender 
-} from '@/types/health';
+  HealthGender 
+} from '../entities/health';
 
 // 최소한의 전역 상태만 관리
 interface HealthAssessmentState {
   // 핵심 폼 데이터 (전역 공유 필요)
-  formData: HealthAssessmentCreateRequest;
+  formData: CreateHealthAssessmentRequest;
   
   // 현재 단계 (전역 공유 필요)
   currentStep: number;
@@ -33,7 +33,7 @@ interface HealthAssessmentState {
 
 interface HealthAssessmentActions {
   // 폼 데이터 업데이트
-  updateFormData: (data: Partial<HealthAssessmentCreateRequest>) => void;
+  updateFormData: (data: Partial<CreateHealthAssessmentRequest>) => void;
   
   // 단계 관리
   setCurrentStep: (step: number) => void;
@@ -57,7 +57,7 @@ interface HealthAssessmentActions {
 type HealthAssessmentStore = HealthAssessmentState & HealthAssessmentActions;
 
 // 초기 폼 데이터
-const initialFormData: HealthAssessmentCreateRequest = {
+const initialFormData: CreateHealthAssessmentRequest = {
   memberId: '',
   gender: undefined,
   birthYear: undefined,
@@ -75,7 +75,7 @@ const initialFormData: HealthAssessmentCreateRequest = {
 };
 
 // 단계별 필수 필드 정의 (성능을 위해 상수로 분리)
-const STEP_REQUIRED_FIELDS: Record<number, (keyof HealthAssessmentCreateRequest)[]> = {
+const STEP_REQUIRED_FIELDS: Record<number, (keyof CreateHealthAssessmentRequest)[]> = {
   0: ['memberId', 'gender', 'birthYear'],
   1: ['mobilityLevel'],
   2: ['eatingLevel'],
@@ -269,7 +269,7 @@ export const selectAdditionalInfo = (state: HealthAssessmentStore) => ({
 });
 
 // 특정 필드만 구독하는 훅들
-export const useFormField = <K extends keyof HealthAssessmentCreateRequest>(
+export const useFormField = <K extends keyof CreateHealthAssessmentRequest>(
   field: K
 ) => {
   return useHealthAssessmentStore(

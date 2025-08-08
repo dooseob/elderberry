@@ -10,9 +10,9 @@ import {
   Info
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { ADL_OPTIONS } from '@/types/health';
-import type { AdlLevel } from '@/types/health';
+import { useHealthAssessmentStore } from '../../../stores/healthAssessmentStore';
+import { ADL_OPTIONS } from '../../../entities/health';
+import type { AdlLevel } from '../../../entities/health';
 import { RadioGroup, type RadioOption } from '@/shared/ui';
 
 const AdlToiletStep: React.FC = () => {

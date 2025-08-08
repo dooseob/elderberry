@@ -15,13 +15,13 @@ import {
   Shield,
   User,
   Utensils
-} from '../../../components/icons/LucideIcons';
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { HealthAssessmentApi } from '@/services/healthApi';
-import { ADL_OPTIONS, LTCI_GRADES, CARE_TARGET_STATUS, MEAL_TYPES } from '@/types/health';
-import { Button } from '@/shared/ui';
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { useHealthAssessmentStore } from '../../../stores/healthAssessmentStore';
+import { HealthAssessmentApi } from '../../../services/healthApi';
+import { ADL_OPTIONS, LTCI_GRADES, CARE_TARGET_STATUS, MEAL_TYPES } from '../../../entities/health';
+import { Button } from '../../../shared/ui';
+import { Card, CardHeader, CardTitle, CardContent } from '../../../shared/ui';
 
 interface ReviewStepProps {
   onComplete?: (assessmentId: number) => void;
@@ -30,11 +30,24 @@ interface ReviewStepProps {
 const ReviewStep: React.FC<ReviewStepProps> = ({ onComplete }) => {
   const {
     formData,
-    calculateCompletionPercentage,
-    setSubmitting,
     isSubmitting,
+    updateFormData,
     resetForm
   } = useHealthAssessmentStore();
+  
+  // 완성도 계산 로직
+  const calculateCompletionPercentage = () => {
+    let completedFields = 0;
+    const requiredFields = ['eatingLevel', 'toiletLevel', 'communicationLevel'];
+    
+    requiredFields.forEach(field => {
+      if (formData[field as keyof typeof formData]) {
+        completedFields++;
+      }
+    });
+    
+    return Math.round((completedFields / requiredFields.length) * 100);
+  };
 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -70,7 +83,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ onComplete }) => {
       return;
     }
 
-    setSubmitting(true);
+    // setSubmitting(true); // TODO: Store에서 제공하는 setSubmitting 사용
     setSubmitError(null);
 
     try {
@@ -90,7 +103,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ onComplete }) => {
         '평가 제출에 실패했습니다. 다시 시도해주세요.'
       );
     } finally {
-      setSubmitting(false);
+      // setSubmitting(false); // TODO: Store에서 제공하는 setSubmitting 사용
     }
   };
 

@@ -4,25 +4,26 @@
  */
 import React, { useEffect } from 'react';
 import { useSEO } from '../../hooks/useSEO';
+import { SEOPresets, addStructuredData } from '../../shared/lib/seo';
 import {
   AlertCircle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight
-} from '../../components/icons/LucideIcons';
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { Button } from '@/shared/ui';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/shared/ui';
-import ProgressBar from '@/shared/ui/ProgressBar';
+import { useHealthAssessmentStore } from '../../stores/healthAssessmentStore';
+import { Button } from '../../shared/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../shared/ui';
+import ProgressBar from '../../shared/ui/ProgressBar';
 
 // 단계별 컴포넌트들
 import BasicInfoStep from './steps/BasicInfoStep';
+import LtciGradeStep from './steps/LtciGradeStep';
 import AdlMobilityStep from './steps/AdlMobilityStep';
 import AdlEatingStep from './steps/AdlEatingStep';
 import AdlToiletStep from './steps/AdlToiletStep';
 import AdlCommunicationStep from './steps/AdlCommunicationStep';
-import LtciGradeStep from './steps/LtciGradeStep';
 import AdditionalInfoStep from './steps/AdditionalInfoStep';
 import ReviewStep from './steps/ReviewStep';
 
@@ -46,7 +47,7 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "건강 평가 시스템",
-      "description": "청장기요양보험 및 ADL 평가를 통한 전문적인 건강 상태 질단 서비스",
+      "description": "장기요양보험 및 ADL 평가를 통한 전문적인 건강 상태 진단 서비스",
       "applicationCategory": "HealthApplication",
       "operatingSystem": "Any",
       "offers": {
@@ -85,49 +86,51 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
   
   const {
     currentStep,
-    totalSteps,
-    steps,
     formData,
     isSubmitting,
     errors,
+    updateFormData,
+    setCurrentStep,
     nextStep,
     previousStep,
-    validateCurrentStep,
-    calculateCompletionPercentage,
-    setBasicInfo,
-    loadFromLocalStorage,
+    isStepValid,
+    clearAllErrors,
     resetForm,
   } = useHealthAssessmentStore();
+  
+  // 단계 정의
+  const steps = [
+    { id: 'basic-info', title: '기본 정보', description: '성별과 출생년도를 입력해주세요', isRequired: false },
+    { id: 'ltci-grade', title: '장기요양등급', description: '장기요양보험 등급을 선택해주세요', isRequired: false },
+    { id: 'adl-mobility', title: '이동능력', description: '걷기나 이동에 대한 능력을 평가합니다', isRequired: true },
+    { id: 'adl-eating', title: '식사능력', description: '혼자서 식사하는 능력을 평가합니다', isRequired: true },
+    { id: 'adl-toilet', title: '배변능력', description: '화장실 이용 능력을 평가합니다', isRequired: true },
+    { id: 'adl-communication', title: '의사소통', description: '의사표현 및 소통 능력을 평가합니다', isRequired: true },
+    { id: 'additional-info', title: '추가 정보', description: '돌봄 상태, 식사형태, 질병 등 추가 정보를 입력합니다', isRequired: false },
+    { id: 'review', title: '검토 및 완료', description: '입력한 정보를 검토하고 평가를 완료합니다', isRequired: true }
+  ];
+  
+  const totalSteps = steps.length;
+  
+  // 완성도 계산
+  const calculateCompletionPercentage = () => {
+    let completedSteps = 0;
+    const requiredSteps = steps.filter(step => step.isRequired);
+    
+    if (formData.mobilityLevel) completedSteps++;
+    if (formData.eatingLevel) completedSteps++;
+    if (formData.toiletLevel) completedSteps++;
+    if (formData.communicationLevel) completedSteps++;
+    
+    return Math.round((completedSteps / requiredSteps.length) * 100);
+  };
 
-  // SEO 설정
-  useSEO(SEOPresets.healthAssessment);
-
-  // 구조화 데이터 추가
+  // 초기화 시 회원 ID 설정
   useEffect(() => {
-    const healthAssessmentData = {
-      "@context": "https://schema.org",
-      "@type": "MedicalWebPage",
-      "name": "건강 평가 서비스",
-      "description": "재외동포를 위한 전문 건강 평가 및 ADL 측정 서비스",
-      "publisher": {
-        "@type": "Organization",
-        "name": "엘더베리"
-      },
-      "mainEntity": {
-        "@type": "MedicalProcedure",
-        "name": "건강 상태 평가",
-        "description": "일상생활 수행능력(ADL) 평가 및 장기요양등급 진단",
-        "procedureType": "건강평가"
-      }
-    };
-    addStructuredData(healthAssessmentData, 'health-assessment-data');
-  }, []);
-
-  // 초기화 시 로컬 스토리지에서 데이터 복원
-  useEffect(() => {
-    setBasicInfo(memberId);
-    loadFromLocalStorage();
-  }, [memberId, setBasicInfo, loadFromLocalStorage]);
+    if (memberId && !formData.memberId) {
+      updateFormData({ memberId });
+    }
+  }, [memberId, formData.memberId, updateFormData]);
 
   // 현재 단계 컴포넌트 렌더링
   const renderCurrentStep = () => {
@@ -136,6 +139,8 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
     switch (step.id) {
       case 'basic-info':
         return <BasicInfoStep />;
+      case 'ltci-grade':
+        return <LtciGradeStep />;
       case 'adl-mobility':
         return <AdlMobilityStep />;
       case 'adl-eating':
@@ -144,8 +149,6 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
         return <AdlToiletStep />;
       case 'adl-communication':
         return <AdlCommunicationStep />;
-      case 'ltci-grade':
-        return <LtciGradeStep />;
       case 'additional-info':
         return <AdditionalInfoStep />;
       case 'review':
@@ -162,15 +165,13 @@ const HealthAssessmentWizard: React.FC<HealthAssessmentWizardProps> = ({
 
   // 다음 단계 진행 핸들러
   const handleNext = () => {
-    if (validateCurrentStep()) {
+    if (isStepValid(currentStep)) {
       nextStep();
     }
   };
 
   // 에러가 있는지 확인
-  const hasCurrentStepErrors = Object.keys(errors).some(key => 
-    errors[key] && steps[currentStep]?.id.includes(key.split('.')[0])
-  );
+  const hasCurrentStepErrors = Object.keys(errors).length > 0;
 
   return (
     <div className="min-h-screen bg-elderberry-25 py-8">

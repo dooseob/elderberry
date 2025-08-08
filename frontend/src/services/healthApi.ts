@@ -4,9 +4,9 @@
 import axios from 'axios';
 import type { 
   HealthAssessment, 
-  HealthAssessmentCreateRequest, 
+  CreateHealthAssessmentRequest, 
   CareGradeResult 
-} from '@/types/health';
+} from '../entities/health';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -41,7 +41,7 @@ export class HealthAssessmentApi {
   /**
    * 새로운 건강 평가 생성
    */
-  static async createAssessment(request: HealthAssessmentCreateRequest): Promise<HealthAssessment> {
+  static async createAssessment(request: CreateHealthAssessmentRequest): Promise<HealthAssessment> {
     const response = await api.post<HealthAssessment>('/health-assessments', request);
     return response.data;
   }
@@ -74,7 +74,7 @@ export class HealthAssessmentApi {
    */
   static async updateAssessment(
     assessmentId: number, 
-    request: Partial<HealthAssessmentCreateRequest>
+    request: Partial<CreateHealthAssessmentRequest>
   ): Promise<HealthAssessment> {
     const response = await api.put<HealthAssessment>(`/health-assessments/${assessmentId}`, request);
     return response.data;

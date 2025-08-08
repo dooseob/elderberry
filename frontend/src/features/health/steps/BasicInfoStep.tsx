@@ -7,11 +7,11 @@ import {
   Calendar,
   User,
   UserCheck
-} from '../../../components/icons/LucideIcons';
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import type { Gender } from '@/types/health';
-import { RadioGroup } from '@/shared/ui';
+import { useHealthAssessmentStore } from '../../../stores/healthAssessmentStore';
+import type { HealthGender } from '../../../entities/health';
+import { RadioGroup } from '../../../shared/ui';
 
 const BasicInfoStep: React.FC = () => {
   const {
@@ -74,7 +74,7 @@ const BasicInfoStep: React.FC = () => {
           value={formData.gender}
           options={genderOptions}
           onChange={(value) => {
-            updateFormData({ gender: value as Gender });
+            updateFormData({ gender: value as HealthGender });
             clearError('gender');
           }}
           error={errors.gender}

@@ -11,7 +11,7 @@ import {
 } from '../../../components/icons/LucideIcons';
 import { motion } from 'framer-motion';
 import AdlStepBase from '@/components/health/AdlStepBase';
-import type { AdlLevel } from '@/types/health';
+import type { AdlLevel } from '../../../entities/health';
 
 const AdlMobilityStep: React.FC = () => {
   // 평가 레벨별 상세 설명

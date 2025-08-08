@@ -12,9 +12,9 @@ import {
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 
-import { useHealthAssessmentStore } from '@/stores/healthAssessmentStore';
-import { ADL_OPTIONS } from '@/types/health';
-import type { AdlLevel } from '@/types/health';
+import { useHealthAssessmentStore } from '../../stores/healthAssessmentStore';
+import { ADL_OPTIONS } from '../../entities/health';
+import type { AdlLevel } from '../../entities/health';
 import { RadioGroup, type RadioOption } from '../../shared/ui/RadioGroup';
 
 interface AdlStepBaseProps {
