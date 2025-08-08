@@ -1,58 +1,56 @@
 /**
- * 로딩 스피너 컴포넌트
- * 다양한 크기와 색상 지원
+ * LoadingSpinner - 로딩 상태 표시 컴포넌트
+ * 다양한 크기와 스타일 지원
  */
 
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  color?: 'blue' | 'gray' | 'white';
-  text?: string;
+const spinnerVariants = cva(
+  'animate-spin rounded-full border-solid',
+  {
+    variants: {
+      size: {
+        sm: 'h-4 w-4 border-2',
+        md: 'h-6 w-6 border-2',
+        lg: 'h-8 w-8 border-2',
+        xl: 'h-12 w-12 border-3',
+        '2xl': 'h-16 w-16 border-4',
+      },
+      variant: {
+        default: 'border-gray-300 border-t-gray-600',
+        primary: 'border-blue-200 border-t-blue-600',
+        secondary: 'border-gray-200 border-t-gray-500',
+        white: 'border-white/20 border-t-white',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+      variant: 'default',
+    },
+  }
+);
+
+export interface LoadingSpinnerProps extends VariantProps<typeof spinnerVariants> {
   className?: string;
+  label?: string;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'md',
-  color = 'blue',
-  text,
-  className = ''
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  size,
+  variant,
+  className = '',
+  label = '로딩 중...'
 }) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-6 h-6', 
-    lg: 'w-8 h-8',
-    xl: 'w-12 h-12'
-  };
-
-  const colorClasses = {
-    blue: 'text-blue-600',
-    gray: 'text-gray-600',
-    white: 'text-white'
-  };
-
-  const textSizeClasses = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
-  };
-
   return (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <Loader2 
-        className={`animate-spin ${sizeClasses[size]} ${colorClasses[color]}`}
-        aria-label="로딩 중"
-      />
-      {text && (
-        <p className={`mt-2 ${textSizeClasses[size]} ${colorClasses[color]} animate-pulse`}>
-          {text}
-        </p>
-      )}
+    <div 
+      className={spinnerVariants({ size, variant, className })}
+      role="status"
+      aria-label={label}
+    >
+      <span className="sr-only">{label}</span>
     </div>
   );
 };
 
 export default LoadingSpinner;
-export { LoadingSpinner };

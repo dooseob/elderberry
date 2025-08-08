@@ -1,5 +1,5 @@
 /**
- * PostCreatePage - 게시글 작성 페이지
+ * PostEditPage - 게시글 수정 페이지
  */
 
 import React, { useState, useEffect } from 'react';
@@ -11,72 +11,79 @@ import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
 import { ErrorMessage } from '../../shared/ui/ErrorMessage';
 import { PostEditor } from './components/PostEditor';
 import { boardApi } from '../../entities/board';
-import type { Board, PostCreateRequest } from '../../entities/board';
+import type { Board, Post, PostUpdateRequest } from '../../entities/board';
 import { BOARD_METADATA } from '../../entities/board';
 import { useAuthStore } from '../../shared/stores/authStore';
 
-export const PostCreatePage: React.FC = () => {
-  const { boardId } = useParams<{ boardId: string }>();
+export const PostEditPage: React.FC = () => {
+  const { boardId, postId } = useParams<{ boardId: string; postId: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   
   const [board, setBoard] = useState<Board | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // URL 파라미터 검증
   const boardIdNumber = boardId ? parseInt(boardId, 10) : null;
+  const postIdNumber = postId ? parseInt(postId, 10) : null;
   
-  if (!boardIdNumber || isNaN(boardIdNumber)) {
+  if (!boardIdNumber || isNaN(boardIdNumber) || !postIdNumber || isNaN(postIdNumber)) {
     navigate('/boards');
     return null;
   }
 
-  // 게시판 정보 로드
+  // 게시판과 게시글 정보 로드
   useEffect(() => {
-    const loadBoard = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        const boardData = await boardApi.getBoardById(boardIdNumber);
-        setBoard(boardData);
+        const [boardData, postData] = await Promise.all([
+          boardApi.getBoardById(boardIdNumber),
+          boardApi.getPostDetail(boardIdNumber, postIdNumber)
+        ]);
         
-        // 권한 체크
-        if (boardData.adminOnly && (!user || (user.role !== 'ADMIN' && user.role !== 'FACILITY'))) {
-          setError('이 게시판에 글을 작성할 권한이 없습니다.');
+        setBoard(boardData);
+        setPost(postData);
+        
+        // 권한 체크 - 작성자만 수정 가능
+        if (!user || user.id !== postData.author.id) {
+          setError('이 게시글을 수정할 권한이 없습니다.');
           return;
         }
         
       } catch (err) {
-        console.error('게시판 정보 로드 실패:', err);
-        setError('게시판 정보를 불러오는데 실패했습니다.');
+        console.error('데이터 로드 실패:', err);
+        setError('게시글 정보를 불러오는데 실패했습니다.');
       } finally {
         setLoading(false);
       }
     };
 
     if (isAuthenticated) {
-      loadBoard();
+      loadData();
     } else {
       navigate('/auth/signin');
     }
-  }, [boardIdNumber, isAuthenticated, navigate, user]);
+  }, [boardIdNumber, postIdNumber, isAuthenticated, navigate, user]);
 
-  // 게시글 작성 제출
-  const handleSubmit = async (data: PostCreateRequest) => {
+  // 게시글 수정 제출
+  const handleSubmit = async (data: PostUpdateRequest) => {
     try {
       setIsSubmitting(true);
       
-      const createdPost = await boardApi.createPost(boardIdNumber, data);
+      const updatedPost = await boardApi.updatePost(boardIdNumber, postIdNumber, data);
       
-      // 작성 완료 후 게시글 상세 페이지로 이동
-      navigate(`/boards/${boardIdNumber}/posts/${createdPost.id}`);
+      // 수정 완료 후 게시글 상세 페이지로 이동
+      navigate(`/boards/${boardIdNumber}/posts/${postIdNumber}`);
       
     } catch (err) {
-      console.error('게시글 작성 실패:', err);
-      throw new Error('게시글 작성에 실패했습니다.');
+      console.error('게시글 수정 실패:', err);
+      throw new Error('게시글 수정에 실패했습니다.');
     } finally {
       setIsSubmitting(false);
     }
@@ -84,7 +91,7 @@ export const PostCreatePage: React.FC = () => {
 
   // 취소 핸들러
   const handleCancel = () => {
-    navigate(`/boards/${boardIdNumber}`);
+    navigate(`/boards/${boardIdNumber}/posts/${postIdNumber}`);
   };
 
   // 인증 확인
@@ -102,11 +109,11 @@ export const PostCreatePage: React.FC = () => {
   }
 
   // 에러 상태
-  if (error || !board) {
+  if (error || !board || !post) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <ErrorMessage 
-          message={error || '게시판을 찾을 수 없습니다.'}
+          message={error || '게시글을 찾을 수 없습니다.'}
           onRetry={() => window.location.reload()}
         />
       </div>
@@ -142,10 +149,10 @@ export const PostCreatePage: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-                    글쓰기
+                    게시글 수정
                   </h1>
                   <p className="text-gray-600">
-                    {board.name}에 새로운 글을 작성하세요
+                    {board.name} - {post.title}
                   </p>
                 </div>
               </div>
@@ -155,10 +162,15 @@ export const PostCreatePage: React.FC = () => {
           {/* 에디터 */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <PostEditor
+              initialData={{
+                title: post.title,
+                content: post.content,
+                tags: post.tags
+              }}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
               isLoading={isSubmitting}
-              submitLabel="게시글 작성"
+              submitLabel="게시글 수정"
             />
           </div>
         </div>
@@ -167,4 +179,4 @@ export const PostCreatePage: React.FC = () => {
   );
 };
 
-export default PostCreatePage;
+export default PostEditPage;

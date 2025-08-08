@@ -1,259 +1,175 @@
-import { BaseEntity } from 'shared/types';
-import type { Member } from 'entities/auth';
-
 /**
- * 게시판 타입
+ * Board Entity - Domain Types
+ * FSD 아키텍처: 게시판 도메인 모델 타입 정의
  */
-export enum BoardType {
-  NOTICE = 'NOTICE',
-  QNA = 'QNA',
-  FREE = 'FREE',
-  JOB = 'JOB'
-}
 
-/**
- * 게시글 상태
- */
-export enum PostStatus {
-  ACTIVE = 'ACTIVE',
-  HIDDEN = 'HIDDEN',
-  REPORTED = 'REPORTED'
-}
+// 게시판 타입 열거형
+export type BoardType = 
+  | 'GENERAL'      // 일반 게시판
+  | 'NOTICE'       // 공지사항  
+  | 'FAQ'          // 자주묻는질문
+  | 'QNA'          // Q&A
+  | 'JOB'          // 구인구직
+  | 'COMMUNITY'    // 커뮤니티
+  | 'ANNOUNCEMENT' // 공고
+  | 'REVIEW';      // 후기
 
-/**
- * 댓글 상태
- */
-export enum CommentStatus {
-  ACTIVE = 'ACTIVE',
-  HIDDEN = 'HIDDEN',
-  DELETED = 'DELETED'
-}
+// 게시글 상태
+export type PostStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED';
 
-/**
- * 게시판 엔티티
- */
-export interface Board extends BaseEntity {
+// 댓글 상태
+export type CommentStatus = 'ACTIVE' | 'DELETED';
+
+// 게시판 기본 정보
+export interface Board {
   id: number;
   name: string;
   description?: string;
   type: BoardType;
-  isActive: boolean;
-  sortOrder: number;
   adminOnly: boolean;
-  posts: Post[];
-  postCount: number;
-}
-
-/**
- * 게시글 엔티티
- */
-export interface Post extends BaseEntity {
-  id: number;
-  title: string;
-  content: string;
-  author: Member;
-  board: Board;
-  viewCount: number;
-  isPinned: boolean;
-  isDeleted: boolean;
+  sortOrder: number;
   active: boolean;
-  status: PostStatus;
-  comments: Comment[];
-  commentCount: number;
-  likeCount: number;
-  dislikeCount: number;
-  
-  // Computed properties
-  authorName: string;
-  boardName: string;
-  isEditable: boolean;
-  canDelete: boolean;
+  createdDate: string;
+  lastModifiedDate?: string;
+  postCount?: number; // 게시글 수 (optional)
 }
 
-/**
- * 댓글 엔티티
- */
-export interface Comment extends BaseEntity {
+// 게시글 정보
+export interface Post {
   id: number;
-  content: string;
-  author: Member;
-  post: Post;
-  parentComment?: Comment;
-  status: CommentStatus;
-  likeCount: number;
-  dislikeCount: number;
-  replies: Comment[];
-  
-  // Computed properties
-  authorName: string;
-  isReply: boolean;
-  isEditable: boolean;
-  canDelete: boolean;
-}
-
-/**
- * 게시판 생성 요청
- */
-export interface BoardCreateRequest {
-  name: string;
-  description?: string;
-  type: BoardType;
-  isActive?: boolean;
-  sortOrder?: number;
-  adminOnly?: boolean;
-}
-
-/**
- * 게시판 수정 요청
- */
-export interface BoardUpdateRequest {
-  name?: string;
-  description?: string;
-  isActive?: boolean;
-  sortOrder?: number;
-  adminOnly?: boolean;
-}
-
-/**
- * 게시글 생성 요청
- */
-export interface PostCreateRequest {
-  boardId: number;
   title: string;
   content: string;
-  isPinned?: boolean;
+  author: {
+    id: number;
+    username: string;
+    name: string;
+  };
+  board: {
+    id: number;
+    name: string;
+    type: BoardType;
+  };
+  status: PostStatus;
+  viewCount: number;
+  likeCount?: number;
+  commentCount: number;
+  createdDate: string;
+  lastModifiedDate?: string;
+  pinned?: boolean; // 상단 고정
+  tags?: string[];  // 태그
 }
 
-/**
- * 게시글 수정 요청
- */
-export interface PostUpdateRequest {
-  title?: string;
-  content?: string;
-  isPinned?: boolean;
-  status?: PostStatus;
-}
-
-/**
- * 댓글 생성 요청
- */
-export interface CommentCreateRequest {
-  postId: number;
+// 댓글 정보  
+export interface Comment {
+  id: number;
   content: string;
-  parentCommentId?: number;
+  author: {
+    id: number;
+    username: string;
+    name: string;
+  };
+  post: {
+    id: number;
+    title: string;
+  };
+  status: CommentStatus;
+  createdDate: string;
+  lastModifiedDate?: string;
+  parentId?: number; // 대댓글용
+  replies?: Comment[]; // 대댓글 목록
 }
 
-/**
- * 댓글 수정 요청
- */
+// API 요청/응답 타입들
+export interface PostCreateRequest {
+  title: string;
+  content: string;
+  tags?: string[];
+}
+
+export interface PostUpdateRequest {
+  title: string;
+  content: string;
+  tags?: string[];
+}
+
+export interface CommentCreateRequest {
+  content: string;
+  parentId?: number;
+}
+
 export interface CommentUpdateRequest {
   content: string;
 }
 
-/**
- * 게시글 검색 필터
- */
-export interface PostSearchFilters {
-  boardId?: number;
-  boardType?: BoardType;
-  keyword?: string;
-  authorId?: number;
-  status?: PostStatus;
-  isPinned?: boolean;
-  sortBy?: 'createdAt' | 'viewCount' | 'commentCount' | 'likeCount';
-  sortDirection?: 'asc' | 'desc';
+export interface BoardCreateRequest {
+  name: string;
+  description?: string;
+  type: BoardType;
+  adminOnly: boolean;
+  sortOrder: number;
+}
+
+export interface BoardUpdateRequest {
+  name: string;
+  description?: string;
+  adminOnly: boolean;
+  sortOrder: number;
+}
+
+// 페이지네이션 응답
+export interface Page<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      property: string;
+      direction: 'ASC' | 'DESC';
+    };
+  };
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+// 게시글 검색 파라미터
+export interface PostSearchParams {
+  keyword: string;
+  searchType: 'title' | 'content' | 'author' | 'all';
   page?: number;
   size?: number;
 }
 
-/**
- * 게시글 목록 응답
- */
-export interface PostResponse {
-  content: Post[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
+// 게시판 메타데이터
+export interface BoardMetadata {
+  [key in BoardType]: {
+    label: string;
+    description: string;
+    icon: string;
+    color: string;
+    allowAnonymous?: boolean;
+    requireAuth?: boolean;
+  };
 }
 
-/**
- * 댓글 목록 응답
- */
-export interface CommentResponse {
-  content: Comment[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
+// 게시판 통계
+export interface BoardStats {
+  boardId: number;
+  totalPosts: number;
+  todayPosts: number;
+  totalViews: number;
+  popularPosts: Post[];
+  recentPosts: Post[];
 }
 
-/**
- * 게시판 통계
- */
-export interface BoardStatistics {
+// 사용자 게시 활동
+export interface UserBoardActivity {
+  userId: number;
   totalPosts: number;
   totalComments: number;
-  totalViews: number;
-  activeUsers: number;
-  popularPosts: Post[];
-  recentActivity: Array<{
-    type: 'post' | 'comment';
-    id: number;
-    title: string;
-    author: string;
-    createdAt: string;
-  }>;
+  recentPosts: Post[];
+  recentComments: Comment[];
 }
-
-/**
- * 게시판 타입별 디스플레이 명
- */
-export const BOARD_TYPE_LABELS: Record<BoardType, string> = {
-  [BoardType.NOTICE]: '공지사항',
-  [BoardType.QNA]: '질문답변',
-  [BoardType.FREE]: '자유게시판',
-  [BoardType.JOB]: '취업정보'
-};
-
-/**
- * 게시글 상태별 디스플레이 명
- */
-export const POST_STATUS_LABELS: Record<PostStatus, string> = {
-  [PostStatus.ACTIVE]: '정상',
-  [PostStatus.HIDDEN]: '숨김',
-  [PostStatus.REPORTED]: '신고됨'
-};
-
-/**
- * 댓글 상태별 디스플레이 명
- */
-export const COMMENT_STATUS_LABELS: Record<CommentStatus, string> = {
-  [CommentStatus.ACTIVE]: '정상',
-  [CommentStatus.HIDDEN]: '숨김',
-  [CommentStatus.DELETED]: '삭제됨'
-};
-
-/**
- * 게시판 아이콘 매핑
- */
-export const BOARD_TYPE_ICONS: Record<BoardType, string> = {
-  [BoardType.NOTICE]: 'megaphone',
-  [BoardType.QNA]: 'help-circle',
-  [BoardType.FREE]: 'message-square',
-  [BoardType.JOB]: 'briefcase'
-};
-
-/**
- * 게시판 색상 매핑
- */
-export const BOARD_TYPE_COLORS: Record<BoardType, string> = {
-  [BoardType.NOTICE]: 'blue',
-  [BoardType.QNA]: 'green',
-  [BoardType.FREE]: 'purple',
-  [BoardType.JOB]: 'orange'
-};

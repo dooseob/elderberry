@@ -155,6 +155,12 @@ export {
   MetricIcons 
 } from './Dashboard';
 
+// === Feedback Components ===
+export { LoadingSpinner } from './LoadingSpinner';
+export { ErrorMessage } from './ErrorMessage';
+export { ConfirmDialog } from './ConfirmDialog';
+export { Pagination } from './Pagination';
+
 // === Style Utilities ===
 export { 
   commonStyles, 

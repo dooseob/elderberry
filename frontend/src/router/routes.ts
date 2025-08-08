@@ -42,6 +42,13 @@ const HealthAssessmentWizard = lazy(() => import('../features/health/HealthAsses
 const ChatRoomListPage = lazy(() => import('../features/chat-rooms/ChatRoomListPage'));
 const ChatRoomDetailPage = lazy(() => import('../features/chat-rooms/ChatRoomDetailPage'));
 
+// Board Components
+const BoardListPage = lazy(() => import('../features/boards/BoardListPage'));
+const BoardDetailPage = lazy(() => import('../features/boards/BoardDetailPage'));
+const PostDetailPage = lazy(() => import('../features/boards/PostDetailPage'));
+const PostCreatePage = lazy(() => import('../features/boards/PostCreatePage'));
+const PostEditPage = lazy(() => import('../features/boards/PostEditPage'));
+
 // Route Type Definitions
 export interface AppRoute {
   path: string;
@@ -177,6 +184,56 @@ const protectedRoutes: AppRoute[] = [
         <ChatRoomDetailPage />
       </ProtectedRoute>
     )
+  },
+  {
+    path: '/boards',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <BoardListPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/boards/:boardId',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <BoardDetailPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/boards/:boardId/posts/:postId',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <PostDetailPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/boards/:boardId/posts/create',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <PostCreatePage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/boards/:boardId/posts/:postId/edit',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <PostEditPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
   }
 ];
 
@@ -278,6 +335,31 @@ export const routeMetadata = {
     title: '채팅방 - 엘더베리',
     description: '실시간 대화를 통해 전문가와 소통하세요',
     keywords: ['채팅', '실시간상담', '메시지'],
+  },
+  '/boards': {
+    title: '커뮤니티 - 엘더베리',
+    description: '다양한 정보를 공유하고 소통하세요. 공지사항, Q&A, 구인구직 등 다양한 게시판이 있습니다.',
+    keywords: ['커뮤니티', '게시판', '공지사항', 'QNA', '구인구직', '정보공유'],
+  },
+  '/boards/:boardId': {
+    title: '게시판 - 엘더베리',
+    description: '게시판의 글들을 확인하고 새로운 정보를 공유하세요',
+    keywords: ['게시판', '글목록', '커뮤니티'],
+  },
+  '/boards/:boardId/posts/:postId': {
+    title: '게시글 - 엘더베리',
+    description: '게시글의 상세 내용과 댓글을 확인하세요',
+    keywords: ['게시글', '댓글', '커뮤니티', '정보'],
+  },
+  '/boards/:boardId/posts/create': {
+    title: '글쓰기 - 엘더베리',
+    description: '새로운 글을 작성하여 정보를 공유하세요',
+    keywords: ['글쓰기', '게시글작성', '정보공유'],
+  },
+  '/boards/:boardId/posts/:postId/edit': {
+    title: '게시글 수정 - 엘더베리',
+    description: '작성한 게시글을 수정하세요',
+    keywords: ['게시글수정', '편집'],
   }
 };
 

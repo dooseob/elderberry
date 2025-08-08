@@ -1,672 +1,327 @@
 /**
- * 게시판 목록 페이지
+ * BoardListPage - 게시판 목록 페이지
+ * 모든 활성 게시판을 카테고리별로 표시
  */
+
 import React, { useState, useEffect } from 'react';
-import {
-  AlertCircle,
-  ArrowRight,
-  Calendar,
+import { useNavigate } from 'react-router-dom';
+import { 
+  MessageSquare, 
+  TrendingUp, 
+  Users, 
   Clock,
-  Eye,
-  Filter,
-  MessageSquare,
-  Pin,
-  Plus,
-  Search,
-  Star,
-  Tag,
-  ThumbsUp,
-  TrendingUp,
-  Users
-} from '../../components/icons/LucideIcons';
-import { Link, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useBoardStore } from '../../stores/boardStore';
-import { useAuthStore } from '../../stores/authStore';
-import { Board, Post, BoardType, PostSearchParams } from '../../types/board';
-import { MemberRole } from '../../types/auth';
-import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
-import { Button } from '../../shared/ui';
-import { useSEO } from '../../hooks/useSEO';
+  ArrowRight,
+  Settings,
+  Plus
+} from 'lucide-react';
+import { Button } from '../../shared/ui/Button';
+import { Badge } from '../../shared/ui/Badge';
+import { LoadingSpinner } from '../../shared/ui/LoadingSpinner';
+import { ErrorMessage } from '../../shared/ui/ErrorMessage';
+import { boardApi } from '../../entities/board';
+import type { Board } from '../../entities/board';
+import { BOARD_METADATA, BOARD_COLORS } from '../../entities/board';
+import { useAuthStore } from '../../shared/stores/authStore';
 
-// 게시판 타입 한글 매핑
-const boardTypeLabels = {
-  [BoardType.GENERAL]: '일반',
-  [BoardType.NOTICE]: '공지사항',
-  [BoardType.FAQ]: 'FAQ',
-  [BoardType.QNA]: 'Q&A',
-  [BoardType.REVIEW]: '후기',
-  [BoardType.FREE]: '자유',
-  [BoardType.JOB_DISCUSSION]: '구인구직 토론',
-  [BoardType.TIPS]: '팁과 노하우',
-  [BoardType.NEWS]: '업계 소식'
-};
-
-// 날짜 포맷팅 함수
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffHours < 1) return '방금 전';
-  if (diffHours < 24) return `${diffHours}시간 전`;
-  if (diffDays < 7) return `${diffDays}일 전`;
+export const BoardListPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuthStore();
   
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
+  const [boards, setBoards] = useState<Board[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-// 게시판 카드 컴포넌트
-interface BoardCardProps {
-  board: Board;
-}
+  // 게시판 목록 로드
+  useEffect(() => {
+    const loadBoards = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const boardList = await boardApi.getAllBoards();
+        setBoards(boardList.sort((a, b) => a.sortOrder - b.sortOrder));
+      } catch (err) {
+        console.error('게시판 목록 로드 실패:', err);
+        setError('게시판 목록을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-const BoardCard: React.FC<BoardCardProps> = ({ board }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Link to={`/boards/${board.id}`}>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{board.name}</h3>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-elderberry-100 text-elderberry-700">
-                    {boardTypeLabels[board.type]}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                  {board.description}
+    loadBoards();
+  }, []);
+
+  // 게시판 카드 렌더링
+  const renderBoardCard = (board: Board) => {
+    const metadata = BOARD_METADATA[board.type];
+    const color = BOARD_COLORS[board.type];
+    
+    // 관리자 전용 게시판 접근 권한 체크
+    if (board.adminOnly && (!user || (user.role !== 'ADMIN' && user.role !== 'FACILITY'))) {
+      return null;
+    }
+
+    return (
+      <div
+        key={board.id}
+        className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer group"
+        onClick={() => navigate(`/boards/${board.id}`)}
+      >
+        <div className="p-6">
+          {/* 게시판 헤더 */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 bg-${color}-100 rounded-xl flex items-center justify-center text-2xl`}>
+                {metadata.icon}
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                  {board.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {board.description || metadata.description}
                 </p>
               </div>
             </div>
-
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <div className="flex items-center space-x-4">
-                <span className="flex items-center">
-                  <MessageSquare className="w-4 h-4 mr-1" />
-                  {board.postCount}개 글
-                </span>
-                {board.lastPostDate && (
-                  <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {formatDate(board.lastPostDate)}
-                  </span>
-                )}
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-400" />
+            
+            <div className="flex items-center gap-2">
+              {board.adminOnly && (
+                <Badge variant="secondary" className="text-xs">
+                  관리자
+                </Badge>
+              )}
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
             </div>
-          </CardContent>
-        </Card>
-      </Link>
-    </motion.div>
-  );
-};
+          </div>
 
-// 게시글 카드 컴포넌트
-interface PostCardProps {
-  post: Post;
-}
-
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Link to={`/boards/${post.boardId}/posts/${post.id}`}>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  {post.isPinned && (
-                    <Pin className="w-4 h-4 text-elderberry-600" />
-                  )}
-                  {post.isNotice && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      공지
-                    </span>
-                  )}
-                  <span className="text-xs text-gray-500">{post.boardName}</span>
-                </div>
-                
-                <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-1">
-                  {post.title}
-                </h3>
-                
-                {post.summary && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {post.summary}
-                  </p>
-                )}
+          {/* 게시판 통계 */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
+                <MessageSquare className="w-4 h-4" />
+                <span className="text-xs">게시글</span>
               </div>
+              <p className="text-lg font-semibold text-gray-900">
+                {board.postCount || 0}
+              </p>
             </div>
-
-            {/* 태그 */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {post.tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600"
-                  >
-                    <Tag className="w-3 h-3 mr-1" />
-                    {tag}
-                  </span>
-                ))}
-                {post.tags.length > 3 && (
-                  <span className="text-xs text-gray-500">+{post.tags.length - 3}</span>
-                )}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
+                <TrendingUp className="w-4 h-4" />
+                <span className="text-xs">인기</span>
               </div>
+              <p className="text-lg font-semibold text-gray-900">-</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
+                <Clock className="w-4 h-4" />
+                <span className="text-xs">최근</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                {new Date(board.lastModifiedDate || board.createdDate).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 카테고리별 게시판 그룹화
+  const groupedBoards = {
+    official: boards.filter(board => 
+      ['NOTICE', 'ANNOUNCEMENT', 'FAQ'].includes(board.type)
+    ),
+    community: boards.filter(board => 
+      ['GENERAL', 'COMMUNITY', 'QNA', 'REVIEW'].includes(board.type)
+    ),
+    business: boards.filter(board => 
+      board.type === 'JOB'
+    )
+  };
+
+  const renderBoardGroup = (title: string, icon: React.ReactNode, boards: Board[], description?: string) => {
+    if (boards.length === 0) return null;
+
+    return (
+      <div className="mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            {icon}
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            {description && (
+              <p className="text-sm text-gray-500">{description}</p>
             )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {boards.map(renderBoardCard)}
+        </div>
+      </div>
+    );
+  };
 
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <div className="flex items-center space-x-3">
-                <span>{post.isAnonymous ? '익명' : post.authorName}</span>
-                <span className="flex items-center">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  {formatDate(post.createdAt)}
-                </span>
+  // 로딩 상태
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <ErrorMessage 
+          message={error}
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
+
+  // Set document title
+  React.useEffect(() => {
+    document.title = '커뮤니티 - 엘더베리';
+    return () => {
+      document.title = '엘더베리';
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* 페이지 헤더 */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  커뮤니티
+                </h1>
+                <p className="text-gray-600">
+                  다양한 정보를 공유하고 같은 관심사를 가진 사람들과 소통해보세요
+                </p>
               </div>
               
-              <div className="flex items-center space-x-3">
-                <span className="flex items-center">
-                  <Eye className="w-3 h-3 mr-1" />
-                  {post.viewCount}
-                </span>
-                <span className="flex items-center">
-                  <ThumbsUp className="w-3 h-3 mr-1" />
-                  {post.likeCount}
-                </span>
-                <span className="flex items-center">
-                  <MessageSquare className="w-3 h-3 mr-1" />
-                  {post.commentCount}
-                </span>
+              {/* 관리자 메뉴 */}
+              {isAuthenticated && user && (user.role === 'ADMIN' || user.role === 'FACILITY') && (
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/admin/boards')}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    게시판 관리
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate('/admin/boards/create')}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    게시판 추가
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 통계 요약 */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">전체 게시판</p>
+                  <p className="text-xl font-semibold text-gray-900">{boards.length}개</p>
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </Link>
-    </motion.div>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">총 게시글</p>
+                  <p className="text-xl font-semibold text-gray-900">
+                    {boards.reduce((sum, board) => sum + (board.postCount || 0), 0)}개
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">활성 사용자</p>
+                  <p className="text-xl font-semibold text-gray-900">-</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">오늘 게시글</p>
+                  <p className="text-xl font-semibold text-gray-900">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 게시판 그룹별 표시 */}
+          {renderBoardGroup(
+            "공식 안내", 
+            <MessageSquare className="w-4 h-4 text-blue-600" />,
+            groupedBoards.official,
+            "공지사항과 중요한 안내사항을 확인하세요"
+          )}
+          
+          {renderBoardGroup(
+            "커뮤니티", 
+            <Users className="w-4 h-4 text-green-600" />,
+            groupedBoards.community,
+            "자유로운 소통과 정보 공유 공간입니다"
+          )}
+          
+          {renderBoardGroup(
+            "구인구직", 
+            <TrendingUp className="w-4 h-4 text-purple-600" />,
+            groupedBoards.business,
+            "채용 정보와 구직 정보를 확인하세요"
+          )}
+
+          {/* 게시판이 없을 때 */}
+          {boards.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                아직 게시판이 없습니다
+              </h3>
+              <p className="text-gray-500 mb-6">
+                관리자가 게시판을 생성하면 여기에 표시됩니다.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default function BoardListPage() {
-  // SEO 최적화
-  useSEO({
-    title: '게시판',
-    description: '요양원 관련 정보 공유, Q&A, 후기, 팁과 노하우를 나누는 커뮤니티 게시판',
-    keywords: '게시판, 커뮤니티, 요양원정보, Q&A, 후기, 팁과노하우',
-    ogTitle: '게시판 - 엘더베리',
-    canonicalUrl: 'https://elderberry.co.kr/boards'
-  });
-  
-  // 구조화된 데이터 추가
-  useEffect(() => {
-    const forumData = {
-      "@context": "https://schema.org",
-      "@type": "DiscussionForumPosting",
-      "name": "엘더베리 커뮤니티 게시판",
-      "description": "요양원 관련 정보 공유, Q&A, 후기, 팁과 노하우를 나누는 커뮤니티 포럼",
-      "about": {
-        "@type": "Thing",
-        "name": "요양원 서비스"
-      },
-      "audience": {
-        "@type": "Audience",
-        "audienceType": "재외동포, 요양원 관련자"
-      },
-      "provider": {
-        "@type": "Organization",
-        "name": "엘더베리"
-      }
-    };
-    
-    const breadcrumbData = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "홈",
-          "item": "https://elderberry.co.kr"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "게시판",
-          "item": "https://elderberry.co.kr/boards"
-        }
-      ]
-    };
-    
-    addStructuredData(forumData, 'forum-data');
-    addStructuredData(breadcrumbData, 'board-breadcrumb');
-  }, []);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuthStore();
-  const {
-    boards,
-    posts,
-    popularPosts,
-    boardsLoading,
-    postsLoading,
-    boardsError,
-    postsError,
-    postsTotalPages,
-    postsCurrentPage,
-    postsTotalElements,
-    searchParams: storeSearchParams,
-    loadBoards,
-    loadPosts,
-    loadPopularPosts,
-    setSearchParams: setStoreSearchParams,
-    clearBoardsError,
-    clearPostsError
-  } = useBoardStore();
-
-  const [searchKeyword, setSearchKeyword] = useState(searchParams.get('keyword') || '');
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedBoardType, setSelectedBoardType] = useState<BoardType | ''>('');
-  const [activeTab, setActiveTab] = useState<'boards' | 'posts' | 'popular'>('boards');
-
-  const canCreatePost = user && [MemberRole.CAREGIVER, MemberRole.EMPLOYER, MemberRole.COORDINATOR, MemberRole.ADMIN].includes(user.role);
-
-  // 초기 데이터 로드
-  useEffect(() => {
-    loadBoards();
-    loadPopularPosts();
-    
-    const params: PostSearchParams = {};
-    if (searchParams.get('keyword')) params.keyword = searchParams.get('keyword')!;
-    if (searchParams.get('boardType')) params.boardType = searchParams.get('boardType') as BoardType;
-    if (searchParams.get('page')) params.page = parseInt(searchParams.get('page')!) || 0;
-
-    loadPosts(params);
-  }, [searchParams]);
-
-  // 검색 실행
-  const handleSearch = () => {
-    const params: PostSearchParams = {
-      page: 0,
-      keyword: searchKeyword || undefined,
-      boardType: selectedBoardType || undefined
-    };
-
-    setStoreSearchParams(params);
-    loadPosts(params);
-
-    // URL 업데이트
-    const newSearchParams = new URLSearchParams();
-    if (searchKeyword) newSearchParams.set('keyword', searchKeyword);
-    if (selectedBoardType) newSearchParams.set('boardType', selectedBoardType);
-    setSearchParams(newSearchParams);
-  };
-
-  // 페이지 변경
-  const handlePageChange = (page: number) => {
-    const params = { ...storeSearchParams, page };
-    setStoreSearchParams(params);
-    loadPosts(params);
-    
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('page', page.toString());
-    setSearchParams(newSearchParams);
-  };
-
-  // 필터 초기화
-  const handleResetFilters = () => {
-    setSearchKeyword('');
-    setSelectedBoardType('');
-    setStoreSearchParams({ page: 0 });
-    loadPosts({ page: 0 });
-    setSearchParams({});
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* 헤더 */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">커뮤니티</h1>
-          <p className="text-gray-600 mt-1">
-            다양한 정보를 공유하고 소통해보세요
-          </p>
-        </div>
-        {canCreatePost && (
-          <div className="mt-4 sm:mt-0">
-            <Link to="/boards/create-post">
-              <Button variant="primary">
-                <Plus className="w-4 h-4 mr-2" />
-                글 작성하기
-              </Button>
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* 탭 메뉴 */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {[
-            { key: 'boards', label: '게시판', icon: MessageSquare },
-            { key: 'posts', label: '최신 글', icon: Clock },
-            { key: 'popular', label: '인기 글', icon: TrendingUp }
-          ].map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key as any)}
-              className={`
-                flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                ${activeTab === key
-                  ? 'border-elderberry-500 text-elderberry-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }
-              `}
-            >
-              <Icon className="w-4 h-4 mr-2" />
-              {label}
-            </button>
-          ))}
-        </nav>
-      </div>
-
-      {/* 검색 및 필터 (게시글 탭에서만 표시) */}
-      {(activeTab === 'posts' || activeTab === 'popular') && (
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {/* 검색바 */}
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      placeholder="제목, 내용, 작성자 검색..."
-                      value={searchKeyword}
-                      onChange={(e) => setSearchKeyword(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-elderberry-500 focus:border-elderberry-500"
-                    />
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center"
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  필터
-                </Button>
-                <Button variant="primary" onClick={handleSearch}>
-                  검색
-                </Button>
-              </div>
-
-              {/* 필터 옵션 */}
-              {showFilters && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="border-t border-gray-200 pt-4"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* 게시판 타입 */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        게시판 타입
-                      </label>
-                      <select
-                        value={selectedBoardType}
-                        onChange={(e) => setSelectedBoardType(e.target.value as BoardType)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-elderberry-500 focus:border-elderberry-500"
-                      >
-                        <option value="">전체 게시판</option>
-                        {Object.entries(boardTypeLabels).map(([type, label]) => (
-                          <option key={type} value={type}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end space-x-3 mt-4">
-                    <Button variant="outline" onClick={handleResetFilters}>
-                      초기화
-                    </Button>
-                    <Button variant="primary" onClick={handleSearch}>
-                      필터 적용
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* 에러 메시지 */}
-      {(boardsError || postsError) && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center space-x-2"
-        >
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
-          <span className="text-sm">{boardsError || postsError}</span>
-          <button
-            onClick={() => {
-              clearBoardsError();
-              clearPostsError();
-            }}
-            className="ml-auto text-red-600 hover:text-red-800"
-          >
-            ✕
-          </button>
-        </motion.div>
-      )}
-
-      {/* 컨텐츠 */}
-      {activeTab === 'boards' && (
-        <div>
-          {boardsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, index) => (
-                <div key={index} className="animate-pulse">
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                      <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3 mb-4"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          ) : boards.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {boards.map((board) => (
-                <BoardCard key={board.id} board={board} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">게시판이 없습니다</h3>
-              <p className="text-gray-600">아직 생성된 게시판이 없습니다.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'posts' && (
-        <div className="space-y-4">
-          {/* 검색 결과 정보 */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              총 <span className="font-semibold text-elderberry-600">{postsTotalElements}</span>개의 게시글이 있습니다
-              {searchKeyword && (
-                <span> ('{searchKeyword}' 검색 결과)</span>
-              )}
-            </p>
-          </div>
-
-          {postsLoading ? (
-            <div className="space-y-4">
-              {[...Array(5)].map((_, index) => (
-                <div key={index} className="animate-pulse">
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-                      <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3 mb-3"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          ) : posts.length > 0 ? (
-            <div className="space-y-4">
-              {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">게시글이 없습니다</h3>
-              <p className="text-gray-600 mb-4">
-                검색 조건에 맞는 게시글이 없습니다
-              </p>
-              <Button variant="outline" onClick={handleResetFilters}>
-                검색 조건 초기화
-              </Button>
-            </div>
-          )}
-
-          {/* 페이지네이션 */}
-          {postsTotalPages > 1 && (
-            <div className="flex justify-center">
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  disabled={postsCurrentPage === 0}
-                  onClick={() => handlePageChange(postsCurrentPage - 1)}
-                >
-                  이전
-                </Button>
-                
-                {[...Array(Math.min(5, postsTotalPages))].map((_, index) => {
-                  const pageIndex = Math.max(0, Math.min(postsCurrentPage - 2, postsTotalPages - 5)) + index;
-                  if (pageIndex >= postsTotalPages) return null;
-                  
-                  return (
-                    <Button
-                      key={pageIndex}
-                      variant={pageIndex === postsCurrentPage ? 'primary' : 'outline'}
-                      onClick={() => handlePageChange(pageIndex)}
-                    >
-                      {pageIndex + 1}
-                    </Button>
-                  );
-                })}
-                
-                <Button
-                  variant="outline"
-                  disabled={postsCurrentPage >= postsTotalPages - 1}
-                  onClick={() => handlePageChange(postsCurrentPage + 1)}
-                >
-                  다음
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'popular' && (
-        <div className="space-y-4">
-          {popularPosts.length > 0 ? (
-            <div className="space-y-4">
-              {popularPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link to={`/boards/posts/${post.id}`}>
-                    <Card className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-4">
-                          <div className="flex-shrink-0">
-                            <div className="w-8 h-8 bg-elderberry-100 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-bold text-elderberry-600">
-                                {index + 1}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <h3 className="font-semibold text-gray-900 truncate">
-                                {post.title}
-                              </h3>
-                              {post.trend === 'up' && (
-                                <TrendingUp className="w-4 h-4 text-green-500" />
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <span>{post.boardName}</span>
-                              <span>{post.authorName}</span>
-                              <span className="flex items-center">
-                                <Eye className="w-3 h-3 mr-1" />
-                                {post.viewCount}
-                              </span>
-                              <span className="flex items-center">
-                                <ThumbsUp className="w-3 h-3 mr-1" />
-                                {post.likeCount}
-                              </span>
-                              <span className="flex items-center">
-                                <MessageSquare className="w-3 h-3 mr-1" />
-                                {post.commentCount}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">인기 게시글이 없습니다</h3>
-              <p className="text-gray-600">아직 인기 게시글이 없습니다.</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+export default BoardListPage;
