@@ -1,11 +1,12 @@
 /**
- * 웹 테스팅 마스터 에이전트 (DEPRECATED)
- * Playwright MCP 제거로 비활성화됨
+ * 웹 테스팅 마스터 에이전트 - 완전 비활성화됨
+ * Playwright MCP 완전 제거로 인한 에이전트 비활성화
  * 
- * @version 2.0.1
- * @deprecated Playwright MCP 제거로 비활성화 (2025-08-07)
- * @status INACTIVE
- * @alternative 수동 테스트 또는 curl/Postman API 테스트 귑장
+ * @version DISABLED
+ * @deprecated 완전 제거됨 (2025-08-08)
+ * @status COMPLETELY_INACTIVE
+ * @reason Playwright MCP 오류 및 작업 방해 문제로 완전 제거
+ * @alternative 기본 분석 에이전트 (DEBUG) 사용 권장
  */
 
 class WebTestingMasterAgent {

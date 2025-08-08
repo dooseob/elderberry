@@ -12,8 +12,9 @@ import {
   HealthAssessmentWizardWrapper
 } from './router/RouteWrappers';
 
-// 개발용 로거
+// 개발용 로거 및 성능 모니터링
 import { devLogger } from './utils/devLogger';
+import { performanceMonitor } from './utils/performanceMonitor';
 
 // 인증 관련 컴포넌트 (즉시 로딩 - 보안상 중요)
 import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/ProtectedRoute';
@@ -73,10 +74,26 @@ import JobSearchPage from './pages/JobSearchPage';
 import ConsultationPage from './pages/ConsultationPage';
 
 import './App.css';
+import { useEffect } from 'react';
 
 // 루트 리다이렉트 컴포넌트 제거 - 랜딩페이지를 직접 표시
 
 function App() {
+  // 프로덕션에서 성능 모니터링 시작
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      performanceMonitor.collectMetrics();
+      
+      // 10초 후 첫 번째 성능 리포트 생성
+      setTimeout(() => {
+        const report = performanceMonitor.generateReport();
+        if (report && report.warnings.length > 0) {
+          console.warn('성능 경고:', report.warnings);
+        }
+      }, 10000);
+    }
+  }, []);
+
   return (
     <LazyLoadErrorBoundary>
       <ToastProvider>

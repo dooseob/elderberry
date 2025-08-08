@@ -1,286 +1,341 @@
 /**
  * 성능 모니터링 유틸리티
- * 지연 로딩 성능 측정 및 최적화 지표 수집
+ * 메모리 사용량, 렌더링 성능, Core Web Vitals 추적
  */
-import { devLogger, errorLogger } from './devLogger';
 
 interface PerformanceMetrics {
-  pageLoadTime: number;
-  chunkLoadTime: number;
-  timeToInteractive: number;
-  firstContentfulPaint: number;
-  largestContentfulPaint: number;
-  cumulativeLayoutShift: number;
-}
-
-interface ChunkLoadMetrics {
-  chunkName: string;
-  loadTime: number;
-  size?: number;
-  cached: boolean;
+  // 메모리 사용량
+  memory: {
+    heapUsed: number;
+    heapTotal: number;
+    heapLimit: number;
+  };
+  // 렌더링 성능
+  renderTime: number;
+  // Core Web Vitals
+  vitals: {
+    LCP?: number;
+    FID?: number;
+    CLS?: number;
+  };
+  // 네트워크
+  network: {
+    connectionType: string;
+    effectiveType: string;
+  };
+  // 타임스탬프
+  timestamp: number;
 }
 
 class PerformanceMonitor {
-  private metrics: Partial<PerformanceMetrics> = {};
-  private chunkMetrics: ChunkLoadMetrics[] = [];
+  private metrics: PerformanceMetrics[] = [];
   private observers: PerformanceObserver[] = [];
 
   constructor() {
-    this.initializeObservers();
+    this.initWebVitals();
+    this.initMemoryMonitoring();
   }
 
   /**
-   * Performance Observer 초기화
+   * Core Web Vitals 모니터링 초기화
    */
-  private initializeObservers() {
-    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
-      return;
-    }
-
+  private initWebVitals() {
     try {
-      // Largest Contentful Paint 측정
-      const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1] as any;
-        this.metrics.largestContentfulPaint = lastEntry.startTime;
-      });
-      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-      this.observers.push(lcpObserver);
-
-      // First Contentful Paint 측정
-      const fcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        for (const entry of entries) {
-          if (entry.name === 'first-contentful-paint') {
-            this.metrics.firstContentfulPaint = entry.startTime;
+      // Largest Contentful Paint (LCP)
+      if ('PerformanceObserver' in window) {
+        const lcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          if (lastEntry) {
+            this.updateVitals({ LCP: lastEntry.startTime });
           }
-        }
-      });
-      fcpObserver.observe({ entryTypes: ['paint'] });
-      this.observers.push(fcpObserver);
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        this.observers.push(lcpObserver);
 
-      // Cumulative Layout Shift 측정
-      const clsObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
+        // First Input Delay (FID)
+        const fidObserver = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            if (entry.name === 'first-input') {
+              this.updateVitals({ FID: entry.processingStart - entry.startTime });
+            }
+          }
+        });
+        fidObserver.observe({ type: 'first-input', buffered: true });
+        this.observers.push(fidObserver);
+
+        // Cumulative Layout Shift (CLS)
         let clsValue = 0;
-        for (const entry of entries) {
-          if (!(entry as any).hadRecentInput) {
-            clsValue += (entry as any).value;
+        const clsObserver = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            if (!entry.hadRecentInput) {
+              clsValue += (entry as any).value;
+            }
           }
-        }
-        this.metrics.cumulativeLayoutShift = clsValue;
-      });
-      clsObserver.observe({ entryTypes: ['layout-shift'] });
-      this.observers.push(clsObserver);
-
-      // 리소스 로딩 측정 (청크 파일 포함)
-      const resourceObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        for (const entry of entries) {
-          if (entry.name.includes('.js') && entry.name.includes('assets')) {
-            this.trackChunkLoad(entry as PerformanceResourceTiming);
-          }
-        }
-      });
-      resourceObserver.observe({ entryTypes: ['resource'] });
-      this.observers.push(resourceObserver);
-
-    } catch (error) {
-      errorLogger.warn('PerformanceMonitor Observer 초기화 실패', error);
-    }
-  }
-
-  /**
-   * 청크 로딩 성능 추적
-   */
-  private trackChunkLoad(entry: PerformanceResourceTiming) {
-    const chunkName = this.extractChunkName(entry.name);
-    const loadTime = entry.responseEnd - entry.requestStart;
-    const cached = entry.transferSize === 0 && entry.decodedBodySize > 0;
-
-    const chunkMetric: ChunkLoadMetrics = {
-      chunkName,
-      loadTime,
-      size: entry.decodedBodySize,
-      cached
-    };
-
-    this.chunkMetrics.push(chunkMetric);
-
-    devLogger.performance(`Chunk loaded: ${chunkName}${cached ? ' [CACHED]' : ''}`, loadTime);
-  }
-
-  /**
-   * 청크 이름 추출
-   */
-  private extractChunkName(url: string): string {
-    const match = url.match(/assets\/([^-]+)/);
-    return match ? match[1] : 'unknown';
-  }
-
-  /**
-   * 페이지 로딩 시간 측정 시작
-   */
-  startPageLoad(pageName: string): () => void {
-    const startTime = performance.now();
-    
-    return () => {
-      const loadTime = performance.now() - startTime;
-      this.metrics.pageLoadTime = loadTime;
-      
-      if (__DEV__) {
-        devLogger.performance(`${pageName} page loaded`, loadTime);
+          this.updateVitals({ CLS: clsValue });
+        });
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+        this.observers.push(clsObserver);
       }
+    } catch (error) {
+      console.warn('Web Vitals 모니터링을 초기화할 수 없습니다:', error);
+    }
+  }
+
+  /**
+   * 메모리 모니터링 초기화
+   */
+  private initMemoryMonitoring() {
+    if (typeof window !== 'undefined') {
+      // 5분마다 메모리 사용량 체크
+      setInterval(() => {
+        this.collectMetrics();
+      }, 5 * 60 * 1000);
+
+      // 페이지 언로드 시 메트릭 정리
+      window.addEventListener('beforeunload', () => {
+        this.cleanup();
+      });
+    }
+  }
+
+  /**
+   * 현재 성능 메트릭 수집
+   */
+  collectMetrics(): PerformanceMetrics {
+    const now = performance.now();
+    
+    const metric: PerformanceMetrics = {
+      memory: this.getMemoryInfo(),
+      renderTime: this.getRenderTime(),
+      vitals: this.getCurrentVitals(),
+      network: this.getNetworkInfo(),
+      timestamp: Date.now()
     };
+
+    this.metrics.push(metric);
+    
+    // 최근 100개 메트릭만 유지 (메모리 절약)
+    if (this.metrics.length > 100) {
+      this.metrics = this.metrics.slice(-100);
+    }
+
+    return metric;
   }
 
   /**
-   * 상호작용 가능 시점 측정
+   * 메모리 사용량 정보 수집
    */
-  markTimeToInteractive() {
-    this.metrics.timeToInteractive = performance.now();
-  }
-
-  /**
-   * 성능 메트릭스 수집
-   */
-  getMetrics(): Partial<PerformanceMetrics> & { chunks: ChunkLoadMetrics[] } {
+  private getMemoryInfo() {
+    const memory = (performance as any).memory;
+    if (memory) {
+      return {
+        heapUsed: memory.usedJSHeapSize / 1024 / 1024, // MB
+        heapTotal: memory.totalJSHeapSize / 1024 / 1024, // MB
+        heapLimit: memory.jsHeapSizeLimit / 1024 / 1024 // MB
+      };
+    }
+    
     return {
-      ...this.metrics,
-      chunks: this.chunkMetrics
+      heapUsed: 0,
+      heapTotal: 0,
+      heapLimit: 0
     };
   }
 
   /**
-   * 성능 보고서 생성
+   * 렌더링 시간 측정
    */
-  generateReport(): string {
-    const metrics = this.getMetrics();
-    const report = [
-      '📊 성능 보고서',
-      '================',
-      '',
-      '🏃 로딩 성능:',
-      `  페이지 로딩: ${metrics.pageLoadTime?.toFixed(2) || 'N/A'}ms`,
-      `  첫 콘텐츠 표시: ${metrics.firstContentfulPaint?.toFixed(2) || 'N/A'}ms`,
-      `  최대 콘텐츠 표시: ${metrics.largestContentfulPaint?.toFixed(2) || 'N/A'}ms`,
-      `  상호작용 가능: ${metrics.timeToInteractive?.toFixed(2) || 'N/A'}ms`,
-      '',
-      '📦 청크 로딩:',
-      ...metrics.chunks.map(chunk => 
-        `  ${chunk.chunkName}: ${chunk.loadTime.toFixed(2)}ms (${(chunk.size! / 1024).toFixed(1)}KB)${chunk.cached ? ' [캐시됨]' : ''}`
-      ),
-      '',
-      '⚡ Core Web Vitals:',
-      `  LCP: ${this.evaluateMetric(metrics.largestContentfulPaint, [2500, 4000])}`,
-      `  CLS: ${this.evaluateMetric(metrics.cumulativeLayoutShift, [0.1, 0.25], true)}`,
-      '',
-      '💡 최적화 제안:',
-      ...this.getOptimizationSuggestions(metrics)
-    ];
-
-    return report.join('\n');
+  private getRenderTime(): number {
+    const paintEntries = performance.getEntriesByType('paint');
+    const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+    return fcp ? fcp.startTime : 0;
   }
 
   /**
-   * 메트릭 평가
+   * 현재 Web Vitals 상태
    */
-  private evaluateMetric(value?: number, thresholds: [number, number] = [0, 0], lowerIsBetter = false): string {
-    if (value === undefined) return 'N/A';
-
-    const [good, poor] = thresholds;
-    let status: string;
-    
-    if (lowerIsBetter) {
-      status = value <= good ? '✅ 좋음' : value <= poor ? '⚠️ 개선 필요' : '❌ 나쁨';
-    } else {
-      status = value <= good ? '✅ 좋음' : value <= poor ? '⚠️ 개선 필요' : '❌ 나쁨';
-    }
-    
-    return `${value.toFixed(2)}ms (${status})`;
+  private getCurrentVitals() {
+    return this.metrics.length > 0 
+      ? this.metrics[this.metrics.length - 1].vitals 
+      : {};
   }
 
   /**
-   * 최적화 제안 생성
+   * Web Vitals 업데이트
    */
-  private getOptimizationSuggestions(metrics: any): string[] {
-    const suggestions: string[] = [];
-
-    if (metrics.largestContentfulPaint > 2500) {
-      suggestions.push('  - LCP 개선: 이미지 최적화, 중요 리소스 프리로딩 고려');
-    }
-
-    if (metrics.cumulativeLayoutShift > 0.1) {
-      suggestions.push('  - CLS 개선: 이미지/비디오에 명시적 크기 지정');
-    }
-
-    const largeChunks = metrics.chunks.filter((chunk: ChunkLoadMetrics) => 
-      chunk.size && chunk.size > 250 * 1024 // 250KB 이상
-    );
-    
-    if (largeChunks.length > 0) {
-      suggestions.push('  - 큰 청크 분리: ' + largeChunks.map((c: ChunkLoadMetrics) => c.chunkName).join(', '));
-    }
-
-    const slowChunks = metrics.chunks.filter((chunk: ChunkLoadMetrics) => 
-      chunk.loadTime > 1000 // 1초 이상
-    );
-    
-    if (slowChunks.length > 0) {
-      suggestions.push('  - 느린 청크 최적화: ' + slowChunks.map((c: ChunkLoadMetrics) => c.chunkName).join(', '));
-    }
-
-    if (suggestions.length === 0) {
-      suggestions.push('  - 모든 지표가 양호합니다! 🎉');
-    }
-
-    return suggestions;
-  }
-
-  /**
-   * 콘솔에 성능 보고서 출력
-   */
-  logReport() {
-    if (__DEV__) {
-      devLogger.log(this.generateReport());
+  private updateVitals(vitals: Partial<PerformanceMetrics['vitals']>) {
+    const currentMetric = this.metrics[this.metrics.length - 1];
+    if (currentMetric) {
+      currentMetric.vitals = { ...currentMetric.vitals, ...vitals };
     }
   }
 
   /**
-   * 리소스 정리
+   * 네트워크 정보 수집
    */
-  destroy() {
-    this.observers.forEach(observer => observer.disconnect());
+  private getNetworkInfo() {
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    
+    if (connection) {
+      return {
+        connectionType: connection.type || 'unknown',
+        effectiveType: connection.effectiveType || 'unknown'
+      };
+    }
+    
+    return {
+      connectionType: 'unknown',
+      effectiveType: 'unknown'
+    };
+  }
+
+  /**
+   * 성능 경고 체크
+   */
+  checkPerformanceWarnings(): Array<{type: string, message: string, severity: 'low' | 'medium' | 'high'}> {
+    const warnings = [];
+    const latestMetric = this.metrics[this.metrics.length - 1];
+    
+    if (!latestMetric) return warnings;
+
+    // 메모리 사용량 경고
+    if (latestMetric.memory.heapUsed > 100) { // 100MB 이상
+      warnings.push({
+        type: 'memory',
+        message: `메모리 사용량이 ${latestMetric.memory.heapUsed.toFixed(1)}MB입니다. 최적화가 필요할 수 있습니다.`,
+        severity: latestMetric.memory.heapUsed > 200 ? 'high' : 'medium'
+      });
+    }
+
+    // LCP 경고 (2.5초 이상)
+    if (latestMetric.vitals.LCP && latestMetric.vitals.LCP > 2500) {
+      warnings.push({
+        type: 'lcp',
+        message: `Largest Contentful Paint가 ${(latestMetric.vitals.LCP / 1000).toFixed(1)}초입니다. 2.5초 이하로 개선하세요.`,
+        severity: latestMetric.vitals.LCP > 4000 ? 'high' : 'medium'
+      });
+    }
+
+    // FID 경고 (100ms 이상)
+    if (latestMetric.vitals.FID && latestMetric.vitals.FID > 100) {
+      warnings.push({
+        type: 'fid',
+        message: `First Input Delay가 ${latestMetric.vitals.FID.toFixed(1)}ms입니다. 100ms 이하로 개선하세요.`,
+        severity: latestMetric.vitals.FID > 300 ? 'high' : 'medium'
+      });
+    }
+
+    // CLS 경고 (0.1 이상)
+    if (latestMetric.vitals.CLS && latestMetric.vitals.CLS > 0.1) {
+      warnings.push({
+        type: 'cls',
+        message: `Cumulative Layout Shift가 ${latestMetric.vitals.CLS.toFixed(3)}입니다. 0.1 이하로 개선하세요.`,
+        severity: latestMetric.vitals.CLS > 0.25 ? 'high' : 'medium'
+      });
+    }
+
+    return warnings;
+  }
+
+  /**
+   * 성능 리포트 생성
+   */
+  generateReport() {
+    if (this.metrics.length === 0) {
+      return null;
+    }
+
+    const latestMetric = this.metrics[this.metrics.length - 1];
+    const warnings = this.checkPerformanceWarnings();
+
+    return {
+      timestamp: new Date().toISOString(),
+      summary: {
+        memoryUsage: latestMetric.memory.heapUsed.toFixed(1) + 'MB',
+        lcp: latestMetric.vitals.LCP ? (latestMetric.vitals.LCP / 1000).toFixed(1) + 's' : 'N/A',
+        fid: latestMetric.vitals.FID ? latestMetric.vitals.FID.toFixed(1) + 'ms' : 'N/A',
+        cls: latestMetric.vitals.CLS ? latestMetric.vitals.CLS.toFixed(3) : 'N/A'
+      },
+      warnings,
+      recommendations: this.getRecommendations(warnings)
+    };
+  }
+
+  /**
+   * 성능 개선 권장사항
+   */
+  private getRecommendations(warnings: Array<{type: string, severity: string}>) {
+    const recommendations = [];
+
+    const hasMemoryWarning = warnings.some(w => w.type === 'memory');
+    const hasLCPWarning = warnings.some(w => w.type === 'lcp');
+    const hasFIDWarning = warnings.some(w => w.type === 'fid');
+    const hasCLSWarning = warnings.some(w => w.type === 'cls');
+
+    if (hasMemoryWarning) {
+      recommendations.push('메모리 사용량 최적화: React.memo, useMemo, useCallback 활용');
+      recommendations.push('불필요한 리렌더링 방지: 상태 관리 최적화');
+    }
+
+    if (hasLCPWarning) {
+      recommendations.push('이미지 최적화: WebP 포맷, 지연 로딩 적용');
+      recommendations.push('번들 크기 최적화: 코드 스플리팅, Tree Shaking');
+    }
+
+    if (hasFIDWarning) {
+      recommendations.push('JavaScript 실행 최적화: 무거운 연산 Web Worker로 이동');
+      recommendations.push('이벤트 핸들러 최적화: debounce, throttle 적용');
+    }
+
+    if (hasCLSWarning) {
+      recommendations.push('레이아웃 안정성: 이미지, 광고 영역 크기 고정');
+      recommendations.push('폰트 로딩 최적화: font-display: swap 사용');
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * 정리 작업
+   */
+  cleanup() {
+    this.observers.forEach(observer => {
+      observer.disconnect();
+    });
     this.observers = [];
+    this.metrics = [];
+  }
+
+  /**
+   * 현재 메트릭 가져오기
+   */
+  getMetrics() {
+    return [...this.metrics];
+  }
+
+  /**
+   * 메트릭 초기화
+   */
+  clearMetrics() {
+    this.metrics = [];
   }
 }
 
 // 싱글톤 인스턴스
 export const performanceMonitor = new PerformanceMonitor();
 
-// 컴포넌트 성능 측정 훅
-export function usePagePerformance(pageName: string) {
-  React.useEffect(() => {
-    const endMeasurement = performanceMonitor.startPageLoad(pageName);
-    
-    // 컴포넌트가 마운트된 후 상호작용 가능 상태로 마킹
-    const timer = setTimeout(() => {
-      performanceMonitor.markTimeToInteractive();
-    }, 100);
+// React Hook으로 사용할 수 있는 래퍼
+export const usePerformanceMonitor = () => {
+  const collectMetrics = () => performanceMonitor.collectMetrics();
+  const generateReport = () => performanceMonitor.generateReport();
+  const getWarnings = () => performanceMonitor.checkPerformanceWarnings();
+  
+  return {
+    collectMetrics,
+    generateReport,
+    getWarnings
+  };
+};
 
-    return () => {
-      endMeasurement();
-      clearTimeout(timer);
-    };
-  }, [pageName]);
-}
-
-// 개발 환경에서 성능 보고서 출력 (5초 후)
-if (__DEV__) {
-  setTimeout(() => {
-    performanceMonitor.logReport();
-  }, 5000);
-}
-
-// React import 추가
-import React from 'react';
+export default performanceMonitor;

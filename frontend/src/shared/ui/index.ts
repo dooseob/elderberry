@@ -25,6 +25,11 @@ export {
 } from './Button';
 
 export {
+  default as OptimizedImage,
+  type OptimizedImageProps,
+} from './OptimizedImage';
+
+export {
   Input,
   Textarea,
   inputVariants,

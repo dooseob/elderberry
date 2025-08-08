@@ -14,7 +14,7 @@
  * - 접근성 고려 (ARIA, 키보드 네비게이션)
  */
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCurrentTheme } from '../../../hooks/useLinearTheme';
 import { useAuthStore } from '../../../stores/authStore';
@@ -223,9 +223,9 @@ const DEFAULT_AUTH_NAV_ITEMS: NavMenuItem[] = [
 ];
 
 /**
- * Header Component
+ * Header Component - React.memo로 최적화
  */
-const Header: React.FC<HeaderProps> = ({
+const Header: React.FC<HeaderProps> = memo(({
   sidebarState,
   onToggleSidebar,
   variant = 'default',
@@ -738,6 +738,6 @@ const Header: React.FC<HeaderProps> = ({
       )}
     </header>
   );
-};
+});
 
 export default Header;

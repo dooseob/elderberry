@@ -131,7 +131,10 @@
       "Bash(npx tsc:*)",
       "Bash(npm start)",
       "Bash(/mnt/c/Users/human-10/elderberry/fix-imports.sh:*)",
-      "Bash(../dev-status.sh)"
+      "Bash(../dev-status.sh)",
+      "mcp__filesystem__list_allowed_directories",
+      "mcp__filesystem__get_file_info",
+      "Bash(npm uninstall:*)"
     ],
     "deny": []
   }

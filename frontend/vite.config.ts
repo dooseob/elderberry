@@ -71,11 +71,25 @@ export default defineConfig({
             return 'icon-lib';
           }
           
-          // 유틸리티 라이브러리 (경량 라이브러리들 묶음)
-          if (id.includes('axios') || id.includes('zod') || id.includes('clsx') || 
-              id.includes('class-variance-authority') || id.includes('tailwind-merge') ||
-              id.includes('date-fns')) {
-            return 'utils';
+          // HTTP 클라이언트 (별도 분리 - API 호출 시에만 필요)
+          if (id.includes('axios')) {
+            return 'http-client';
+          }
+          
+          // 날짜 관련 라이브러리 (별도 분리 - 달력/시간 컴포넌트에서만 사용)
+          if (id.includes('date-fns')) {
+            return 'date-utils';
+          }
+          
+          // 스키마 검증 라이브러리 (별도 분리 - 폼 검증 시에만 필요)
+          if (id.includes('zod')) {
+            return 'schema-validation';
+          }
+          
+          // 스타일링 유틸리티 (가벼운 라이브러리들)
+          if (id.includes('clsx') || id.includes('class-variance-authority') || 
+              id.includes('tailwind-merge')) {
+            return 'style-utils';
           }
           
           // 폼 관련 라이브러리
@@ -116,6 +130,18 @@ export default defineConfig({
           // 채팅 관련 페이지
           if (id.includes('/features/chat/')) {
             return 'chat-pages';
+          }
+          
+          // 테마 및 레이아웃 컴포넌트 (동적 로딩 가능)
+          if (id.includes('/widgets/') || id.includes('/hooks/useLinearTheme') || 
+              id.includes('/lib/theme/') || id.includes('LINEAR_DESIGN_SYSTEM')) {
+            return 'theme-layout';
+          }
+          
+          // 공통 UI 컴포넌트 (사용 빈도 높음)
+          if (id.includes('/shared/ui/') && 
+              (id.includes('Button') || id.includes('Input') || id.includes('Modal'))) {
+            return 'core-ui';
           }
           
           // node_modules의 기타 라이브러리

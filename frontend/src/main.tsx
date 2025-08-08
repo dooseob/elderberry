@@ -11,6 +11,7 @@ import { ThemeProvider } from './components/theme/ThemeProvider.tsx'
 import './App.css'
 import './styles/animations.css'
 import './styles/linear-theme.css'
+import './styles/fonts.css'
 import './widgets/layout/ui/layout.css'
 
 // React DevTools 경고 숨기기 (개발 환경에서만)

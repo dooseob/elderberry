@@ -21,7 +21,7 @@ API 기본 URL: https://api.elderberry-ai.com/api
 ```yaml
 Backend: Java 21 + Spring Boot 3.x + H2 파일DB + Redis 캐시
 Frontend: React 18 + TypeScript + Zustand + Tailwind CSS + FSD 아키텍처  
-AI/Agent: 6개 MCP 도구 + 6개 서브에이전트 시스템 + FSD 지원
+AI/Agent: 5개 MCP 도구 + 6개 서브에이전트 시스템 + FSD 지원 (안정성 우선 구성)
 Infrastructure: Docker + WSL2 + 환경변수 관리
 
 # 데이터베이스 상세 (3-Tier 하이브리드 구성)
@@ -162,31 +162,31 @@ ls -la ./data/agent-logs.db
 
 ### **커스텀 명령어 (권장)**
 ```bash
-/max 전체 프로젝트 리팩토링     # 최대 성능 (10개 병렬) + Playwright 웹 자동화
-/auto UI 컴포넌트 최적화       # 자동 분석 (5개 병렬) + 웹 테스팅 자동화  
+/max 전체 프로젝트 리팩토링     # 최대 성능 (10개 병렬) + 안정성 최적화
+/auto UI 컴포넌트 최적화       # 자동 분석 (5개 병렬) + 코드 품질 분석  
 /smart API 문서화             # 효율적 처리 (3개 병렬) + GitHub 통합
 ```
 
-### **🎭 Playwright 웹 자동화 기능 (2025-07-30 추가)**
+### **🔧 코드 품질 및 분석 기능**
 ```bash
-# 브라우저 자동화 테스팅
-/max "프론트엔드 E2E 테스트 자동화"    # 브라우저 테스팅 + 리포트 생성
-/auto "로그인/회원가입 플로우 테스트"   # UI 자동화 테스팅
-/smart "반응형 디자인 검증"           # 다중 브라우저 테스팅
+# 코드 품질 분석
+/max "프론트엔드 코드 품질 분석"      # TypeScript + ESLint 검증
+/auto "API 연결 상태 검증"           # 백엔드 API 상태 체크
+/smart "컴포넌트 구조 최적화"        # React 컴포넌트 분석
 
-# 웹 성능 및 접근성 검증
-/max "웹 성능 자동 측정"              # Core Web Vitals 측정
-/auto "접근성 검증"                  # WCAG 가이드라인 자동 체크
+# 성능 및 최적화 검증
+/max "번들 크기 최적화"              # Webpack/Vite 번들 분석
+/auto "메모리 누수 검증"             # 메모리 사용량 분석
 /smart "SEO 최적화 검증"             # 메타태그, 구조화 데이터 검증
 ```
 
-### **6개 서브에이전트 + 6개 MCP 도구 통합 (2025-07-30 최적화)**
-- **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크 + **Playwright 웹 검증**
+### **6개 서브에이전트 + 5개 MCP 도구 통합 (2025-08-08 안정화)**
+- **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크 + **코드 품질 검증**
 - **DEBUG**: 에러 분석 + 성능 최적화 + **GitHub 이슈 자동 생성**
-- **API_DOCUMENTATION**: API 문서 자동 생성 + **웹 API 테스팅 자동화**
+- **API_DOCUMENTATION**: API 문서 자동 생성 + **문서 업데이트 자동화**
 - **TROUBLESHOOTING**: 이슈 진단 + 해결책 제공 + **Memory 패턴 학습**
-- **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업 + **웹 성능 자동 검증**
-- **보안 감사**: API 키 관리 + 취약점 검사 + **브라우저 보안 테스팅**
+- **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업 + **메타태그 최적화**
+- **보안 감사**: API 키 관리 + 취약점 검사 + **보안 스캔 자동화**
 - **🗄️ SQLite 로깅**: 모든 에이전트 실행 기록 자동 저장 + **MCP 도구 활동 추적**
 
 ### **🚀 MCP 도구 - 에이전트 매핑 (최적화된 조합)**
@@ -194,7 +194,7 @@ ls -la ./data/agent-logs.db
 에이전트별_최적_MCP_조합:
   CLAUDE_GUIDE: 
     - sequential-thinking  # 단계별 가이드라인 검증
-    - playwright          # 웹 UI 가이드라인 준수 확인
+    - filesystem          # 코드 구조 및 품질 확인
     - memory              # 가이드라인 학습 및 개선
     
   DEBUG:
@@ -205,7 +205,7 @@ ls -la ./data/agent-logs.db
   API_DOCUMENTATION:
     - context7            # 최신 API 문서 표준 조회
     - github              # API 문서 자동 커밋
-    - playwright          # API 엔드포인트 테스팅
+    - github              # 문서 업데이트 및 배포
     
   TROUBLESHOOTING:
     - memory              # 이슈 패턴 학습
@@ -213,7 +213,7 @@ ls -la ./data/agent-logs.db
     - sequential-thinking # 단계별 문제 진단
     
   GOOGLE_SEO:
-    - playwright          # SEO 성능 자동 검증
+    - filesystem          # 메타태그 및 구조 분석
     - context7            # 최신 SEO 가이드라인
     - filesystem          # 메타 태그 분석
 ```
@@ -395,8 +395,8 @@ GET /api/health/assessments/{id}    # 평가 조회
 - [프로젝트 구조](./docs/guides/project-structure.md) - 디렉토리 구조 및 파일 역할
 
 ### **에이전트 시스템** ⭐ **2025-07-30 완전 최적화**
-- [MCP 통합 가이드](./docs/guides/mcp-integration-guide.md) - **6개 MCP 도구** 상세 사용법 (Playwright 웹 자동화 신규 추가)
-- **새로운 자동화 기능**: 웹 테스팅 자동화, E2E 테스트, 웹 성능 측정
+- [MCP 통합 가이드](./docs/guides/mcp-integration-guide.md) - **5개 MCP 도구** 상세 사용법 (안정성 최적화)
+- **핵심 자동화 기능**: 코드 품질 분석, API 상태 검증, 문서 자동 생성
 - **에이전트-MCP 최적 조합**: 각 서브에이전트별 최적화된 MCP 도구 매핑
 - **실시간 성능 모니터링**: SQLite 로깅 + MCP 도구 활동 추적
 
@@ -422,7 +422,7 @@ GET /api/health/assessments/{id}    # 평가 조회
 ✅ Redis 연결: localhost 설정으로 로컬 Docker 최적화
 ✅ JWT 인증: 완전 작동 + 토큰 블랙리스트 Redis 저장
 ✅ API 통합 테스트: 로그인 200 OK, 전체 플로우 검증
-✅ 6개 MCP 도구: Sequential Thinking, Context7, Memory, Filesystem, GitHub, Playwright
+✅ 5개 MCP 도구: Sequential Thinking, Context7, Memory, Filesystem, GitHub (안정성 우선 구성)
 ✅ 6개 서브에이전트: CLAUDE_GUIDE, DEBUG, API_DOCUMENTATION, TROUBLESHOOTING, GOOGLE_SEO + 보안감사
 ✅ 커스텀 명령어: /max, /auto, /smart 완전 작동
 ✅ 개발환경 전략: DEV_ENVIRONMENT_STRATEGY.md 완성 (600줄)

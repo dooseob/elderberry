@@ -19,6 +19,7 @@
  * - 전체 너비 옵션
  */
 import * as React from "react"
+import { memo, forwardRef } from 'react'
 import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -192,7 +193,7 @@ export interface ButtonProps
  * Linear Button Component
  * React.forwardRef 및 완전한 접근성 지원
  */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = memo(React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ 
     className, 
     variant, 
@@ -406,7 +407,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       </>
     );
   }
-);
+));
 
 Button.displayName = "LinearButton";
 

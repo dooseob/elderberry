@@ -14,7 +14,7 @@
  * - 엘더베리 프로젝트 브랜딩
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, memo } from 'react';
 import { useCurrentTheme } from '../../../hooks/useLinearTheme';
 import { useBreadcrumb } from '../../../hooks/useBreadcrumb';
 import Header from '../../header/ui/Header';
@@ -73,9 +73,9 @@ const BREAKPOINTS = {
 } as const;
 
 /**
- * MainLayout Component
+ * MainLayout Component - React.memo로 최적화
  */
-const MainLayout: React.FC<MainLayoutProps> = ({
+const MainLayout: React.FC<MainLayoutProps> = memo(({
   children,
   variant = 'default',
   initialSidebarState = 'open',
@@ -258,6 +258,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default MainLayout;

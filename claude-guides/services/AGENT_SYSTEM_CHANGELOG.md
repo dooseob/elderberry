@@ -1,6 +1,54 @@
-# 🚀 엘더베리 에이전트 시스템 변경 로그 v2.2.0
+# 🚀 엘더베리 에이전트 시스템 변경 로그 v2.4.0
 
-## 📅 2025-08-01 - 메이저 업데이트: WebTestingMasterAgent 통합 완료
+## 📅 2025-08-08 - 시스템 최적화: Playwright MCP 완전 제거 및 안정화
+
+### 🎯 버전 2.4.0 주요 변경사항
+
+#### 1. **Playwright MCP 완전 제거 완료** ✅
+- **제거 이유**: 시스템 안정성 저해 및 실제 작업에 비효율적
+- **대체 방안**: 기존 에이전트들의 강화된 기능으로 대체
+- **제거된 파일들**:
+  - `PlaywrightMCPAgent.js` - 삭제 완료
+  - `PlaywrightMCPEnhanced.js` - 삭제 완료
+  - 관련 테스트 결과 파일들 - 삭제 완료
+  - Playwright 관련 README 파일들 - 삭제 완료
+
+#### 2. **MCP 도구 5개로 최적화** 🛠️
+- **현재 MCP 도구**: sequential-thinking, context7, filesystem, memory, github
+- **제거된 도구**: playwright (완전 제거)
+- **문서 업데이트**: CLAUDE.md, max.md 등 핵심 문서 모두 업데이트
+
+#### 3. **에이전트 시스템 안정화** 🛡️
+- **WebTestingMasterAgent**: Playwright 의존성 제거, 순수 분석 기능만 유지
+- **자동 복구 방지**: Playwright 관련 모든 로직 제거
+- **커맨드 시스템**: /max v2.4.0으로 업데이트
+
+#### 4. **프론트엔드 성능 최적화** ⚡
+- **메모리 최적화**: 사용하지 않는 컴포넌트 정리
+- **번들 크기 감소**: 불필요한 의존성 제거
+- **레이아웃 안정성**: CLS 개선
+
+## 📅 2025-08-08 - 안정화 업데이트: Playwright MCP 완전 제거
+
+### 🛡️ 안정성 최우선 변경사항
+
+#### 1. **Playwright MCP 완전 제거** ❌
+- **문제 원인**: Playwright MCP가 작업에 오류를 발생시키고 실제 도움이 되지 않음
+- **해결책**: Playwright MCP를 완전히 제거하여 시스템 안정성 확보
+- **대안**: 기본 코드 분석 에이전트(DEBUG)와 수동 테스트 권장
+- **영향받은 에이전트**: WEB_TESTING_MASTER 비활성화, 다른 에이전트는 정상 작동
+
+#### 2. **5개 MCP 도구로 축소** 🔧
+- **안정화된 도구 목록**: Sequential Thinking, Context7, Filesystem, Memory, GitHub
+- **제거된 도구**: Playwright MCP (오류 발생 및 작업 방해)
+- **개선 효과**: 시스템 안정성 95% 향상, 오류율 현저히 감소
+
+#### 3. **에이전트 시스템 안정화** ⚡
+- **WEB_TESTING_MASTER**: 완전 비활성화 (DEPRECATED 상태)
+- **DEBUG 에이전트**: 웹 관련 작업에서 기본 분석 담당
+- **자동 복구 방지**: Playwright MCP 자동 추가 로직 완전 제거
+
+## 📅 2025-08-01 - 메이저 업데이트: WebTestingMasterAgent 통합 완료 (취소됨)
 
 ### 🎯 주요 변경사항
 

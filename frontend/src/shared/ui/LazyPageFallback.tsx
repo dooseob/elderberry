@@ -2,7 +2,7 @@
  * 지연 로딩 페이지 폴백 컴포넌트
  * React.lazy()로 로딩되는 페이지의 Suspense fallback UI
  */
-import React from 'react';
+import React, { memo } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 import PageLoadingSkeleton from './PageLoadingSkeleton';
 
@@ -12,7 +12,7 @@ interface LazyPageFallbackProps {
   message?: string;
 }
 
-export default function LazyPageFallback({ 
+const LazyPageFallback = memo(function LazyPageFallback({ 
   type = 'skeleton',
   skeletonType = 'default',
   message = '페이지를 로딩 중입니다...'
@@ -47,4 +47,6 @@ export default function LazyPageFallback({
       <PageLoadingSkeleton type={skeletonType} />
     </div>
   );
-}
+});
+
+export default LazyPageFallback;
