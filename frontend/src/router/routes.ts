@@ -49,6 +49,10 @@ const PostDetailPage = lazy(() => import('../features/boards/PostDetailPage'));
 const PostCreatePage = lazy(() => import('../features/boards/PostCreatePage'));
 const PostEditPage = lazy(() => import('../features/boards/PostEditPage'));
 
+// Admin Pages Components
+const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'));
+const AdminMemberManagement = lazy(() => import('../features/admin/AdminMemberManagement'));
+
 // Route Type Definitions
 export interface AppRoute {
   path: string;
@@ -240,11 +244,31 @@ const protectedRoutes: AppRoute[] = [
 // Admin Routes
 const adminRoutes: AppRoute[] = [
   {
+    path: '/admin',
+    element: (
+      <AdminRoute>
+        <MainLayout>
+          <AdminDashboard />
+        </MainLayout>
+      </AdminRoute>
+    )
+  },
+  {
+    path: '/admin/dashboard',
+    element: (
+      <AdminRoute>
+        <MainLayout>
+          <AdminDashboard />
+        </MainLayout>
+      </AdminRoute>
+    )
+  },
+  {
     path: '/admin/members',
     element: (
       <AdminRoute>
         <MainLayout>
-          <AdminMembersPageWrapper />
+          <AdminMemberManagement />
         </MainLayout>
       </AdminRoute>
     )
