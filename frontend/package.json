@@ -24,7 +24,7 @@
     "test:setup": "npm run test:e2e:install && npm run test:e2e"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^5.2.1",
     "@tanstack/react-query": "^5.68.8",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
