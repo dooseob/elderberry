@@ -3,7 +3,7 @@
  * KB라이프생명 기반 단계별 돌봄지수 평가
  */
 import React, { useEffect } from 'react';
-import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
+import { useSEO } from '../../hooks/useSEO';
 import {
   AlertCircle,
   CheckCircle2,

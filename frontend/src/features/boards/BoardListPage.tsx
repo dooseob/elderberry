@@ -27,7 +27,7 @@ import { Board, Post, BoardType, PostSearchParams } from '../../types/board';
 import { MemberRole } from '../../types/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
 import { Button } from '../../shared/ui';
-import { useSEO, addStructuredData } from '../../hooks/useSEO';
+import { useSEO } from '../../hooks/useSEO';
 
 // 게시판 타입 한글 매핑
 const boardTypeLabels = {

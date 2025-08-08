@@ -27,7 +27,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { MemberRole } from '@/types/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
 import { Button } from '@/shared/ui';
-import { useSEO, addStructuredData } from '@/hooks/useSEO';
+import { useSEO } from '@/hooks/useSEO';
 
 // 통계 카드 컴포넌트
 interface StatCardProps {

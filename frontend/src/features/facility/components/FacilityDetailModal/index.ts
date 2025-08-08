@@ -1,0 +1,1 @@
+export { FacilityDetailModal } from './FacilityDetailModal';

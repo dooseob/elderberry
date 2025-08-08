@@ -23,8 +23,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
 import FacilityList from './components/FacilityList';
 import FacilitySearchFilters from './components/FacilitySearchFilters';
 import RecommendationResults from './components/RecommendationResults';
-import FacilityDetailModal from './components/FacilityDetailModal/index';
-import { useSEO, SEOPresets, addStructuredData } from '../../hooks/useSEO';
+import { FacilityDetailModal } from './components/FacilityDetailModal';
+import { useSEO } from '../../hooks/useSEO';
 
 interface FacilitySearchPageProps {
   memberId?: number;
@@ -38,25 +38,12 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
   showRecommendations = true,
 }) => {
   // SEO 설정
-  useSEO(SEOPresets.facilitySearch);
-
-  // 구조화 데이터 추가
-  useEffect(() => {
-    const facilitySearchData = {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "요양원 시설 검색",
-      "description": "재외동포를 위한 한국 요양원 검색 및 매칭 서비스",
-      "applicationCategory": "HealthApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "KRW"
-      }
-    };
-    addStructuredData(facilitySearchData, 'facility-search-data');
-  }, []);
+  useSEO({
+    title: '시설 검색 및 추천',
+    description: '맞춤형 요양 시설을 찾아보세요. AI 기반 추천으로 최적의 시설을 제안해드립니다.',
+    keywords: ['요양원', '시설검색', '노인돌봄', '재외동포'],
+    type: 'website'
+  });
 
   // Zustand 스토어 상태 및 액션들 (개별 구독으로 최적화)
   const searchResults = useFacilitySearchResults();
@@ -85,6 +72,8 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'search' | 'recommendations'>('search');
+  const [selectedFacilityId, setSelectedFacilityId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
@@ -150,6 +139,30 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  // 시설 상세 모달 열기
+  const handleFacilitySelect = (facility: any) => {
+    setSelectedFacilityId(facility.id);
+    setIsModalOpen(true);
+  };
+
+  // 시설 상세 모달 닫기
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedFacilityId(null);
+  };
+
+  // 시설 연락 추적
+  const handleFacilityContact = (facilityId: number) => {
+    console.log(`시설 ${facilityId} 연락 추적`);
+    // 분석 이벤트 전송 또는 추가 처리
+  };
+
+  // 시설 방문 추적
+  const handleFacilityVisit = (facilityId: number) => {
+    console.log(`시설 ${facilityId} 방문 추적`);
+    // 분석 이벤트 전송 또는 추가 처리
   };
 
   return (
@@ -341,6 +354,7 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
                 viewMode={viewMode}
                 isLoading={isSearching}
                 emptyMessage="검색 조건에 맞는 시설이 없습니다."
+                onFacilitySelect={handleFacilitySelect}
               />
             </motion.div>
           )}
@@ -375,6 +389,7 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
                 recommendations={recommendations}
                 isLoading={isLoadingRecommendations}
                 onRefresh={handleGetRecommendations}
+                onFacilitySelect={handleFacilitySelect}
                 memberId={memberId}
               />
             </motion.div>
@@ -382,7 +397,15 @@ const FacilitySearchPage: React.FC<FacilitySearchPageProps> = ({
         </AnimatePresence>
 
         {/* 시설 상세 모달 */}
-        <FacilityDetailModal />
+        {selectedFacilityId && (
+          <FacilityDetailModal
+            facilityId={selectedFacilityId}
+            isOpen={isModalOpen}
+            onClose={handleModalClose}
+            onContact={handleFacilityContact}
+            onVisit={handleFacilityVisit}
+          />
+        )}
       </div>
     </div>
   );
