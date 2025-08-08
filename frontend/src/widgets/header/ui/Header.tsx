@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useCurrentTheme } from '../../../hooks/useLinearTheme';
 import { useAuthStore } from '../../../stores/authStore';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../../../hooks/useLanguage';
+import { NotificationBell, NotificationPanel } from '../../notification';
 import type { LayoutVariant, SidebarState } from './MainLayout';
 import './header-styles.css';
 
@@ -488,8 +489,16 @@ const Header: React.FC<HeaderProps> = memo(({
           </nav>
         )}
         
-        {/* 오른쪽 영역: 테마 토글 + 사용자 메뉴 */}
+        {/* 오른쪽 영역: 알림 + 테마 토글 + 사용자 메뉴 */}
         <div className="header-end">
+          {/* 알림 벨 (로그인 상태에서만 표시) */}
+          {isAuthenticated && (
+            <div className="notification-wrapper">
+              <NotificationBell />
+              <NotificationPanel />
+            </div>
+          )}
+
           {/* 언어 선택 메뉴 */}
           <div className="language-menu" ref={languageMenuRef}>
             <button

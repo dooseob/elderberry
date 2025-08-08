@@ -263,6 +263,19 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+
+            <Route 
+              path="/notifications/settings" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                      <LazyNotificationSettingsPage />
+                    </Suspense>
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
           
             <Route 
               path="/health-assessment" 

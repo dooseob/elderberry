@@ -132,6 +132,12 @@ export const LazyNotificationsPage = lazyWithMinDelay(
   150
 );
 
+// 알림 설정 페이지
+export const LazyNotificationSettingsPage = lazyWithMinDelay(
+  () => import('../features/notifications/NotificationSettingsPage'),
+  150
+);
+
 // 청크 분석을 위한 컴포넌트 이름 매핑
 export const CHUNK_NAMES = {
   auth: ['LazyLoginPage', 'LazyRegisterPage', 'LazyForgotPasswordPage'],
@@ -143,6 +149,6 @@ export const CHUNK_NAMES = {
   facility: ['LazyFacilitySearchPage'],
   coordinator: ['LazyCoordinatorMatchingWizard'],
   chat: ['LazyChatHomePage', 'LazyChatPage'],
-  notifications: ['LazyNotificationsPage'],
+  notifications: ['LazyNotificationsPage', 'LazyNotificationSettingsPage'],
   misc: ['LazyUnauthorizedPage']
 } as const;

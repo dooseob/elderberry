@@ -29,3 +29,6 @@ export type {
   PageAction, 
   PageMeta 
 } from './layout';
+
+// Notification Widget
+export { NotificationBell, NotificationPanel } from './notification';
