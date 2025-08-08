@@ -38,6 +38,10 @@ const ProfileEditPage = lazy(() => import('../pages/profile/ProfileEditPage'));
 const FacilitySearchPage = lazy(() => import('../features/facility/FacilitySearchPage'));
 const HealthAssessmentWizard = lazy(() => import('../features/health/HealthAssessmentWizard'));
 
+// Chat Room Components
+const ChatRoomListPage = lazy(() => import('../features/chat-rooms/ChatRoomListPage'));
+const ChatRoomDetailPage = lazy(() => import('../features/chat-rooms/ChatRoomDetailPage'));
+
 // Route Type Definitions
 export interface AppRoute {
   path: string;
@@ -155,6 +159,24 @@ const protectedRoutes: AppRoute[] = [
         </MainLayout>
       </ProtectedRoute>
     )
+  },
+  {
+    path: '/chat-rooms',
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <ChatRoomListPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/chat-rooms/:roomId',
+    element: (
+      <ProtectedRoute>
+        <ChatRoomDetailPage />
+      </ProtectedRoute>
+    )
   }
 ];
 
@@ -246,6 +268,16 @@ export const routeMetadata = {
     title: '프로필 수정 - 엘더베리',
     description: '개인정보와 구직자 상태를 관리하세요',
     keywords: ['프로필', '수정', '개인정보', '구직자'],
+  },
+  '/chat-rooms': {
+    title: '채팅방 목록 - 엘더베리',
+    description: '실시간 채팅으로 전문가와 상담하고 정보를 공유하세요',
+    keywords: ['채팅', '상담', '코디네이터', '시설문의', '건강상담'],
+  },
+  '/chat-rooms/:roomId': {
+    title: '채팅방 - 엘더베리',
+    description: '실시간 대화를 통해 전문가와 소통하세요',
+    keywords: ['채팅', '실시간상담', '메시지'],
   }
 };
 

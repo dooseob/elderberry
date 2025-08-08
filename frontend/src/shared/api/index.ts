@@ -34,6 +34,9 @@ export type {
   MemberApiError,
 } from './memberApi';
 
+// Chat API
+export { chatApi } from './chatApi';
+
 // 향후 추가 예정
 // export * from './authApi';
 // export * from './facilityApi';
