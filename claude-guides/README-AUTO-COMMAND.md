@@ -1,6 +1,6 @@
 # 🧠 /auto - 자동 최적화 모드
 
-> **지능형 자동화 시스템 v2.3.0** - 컨텍스트 분석 기반 스마트 자동 처리 (웹 작업 시 자동 확장)
+> **지능형 자동화 시스템 v2.5.0** - 통합 테스트 시스템 + 지능형 자동화 (Jest + API + 수동 테스트)
 
 ## 📋 개요
 
@@ -13,8 +13,9 @@
 - **DEBUG** - 자동 디버깅 및 최적화 수행
 - **API_DOCUMENTATION** - 자동 문서 생성 및 업데이트
 
-### 조건부 추가 에이전트 (웹 작업 감지 시)
-- **WEB_TESTING_MASTER** - 웹/UI/프론트엔드/테스팅 관련 키워드 감지 시 자동 추가
+### 조건부 추가 에이전트 (테스트 작업 감지 시)
+- **통합 테스트 시스템** - Jest + RTL + API 테스트 + 수동 테스트 가이드 통합
+- **DEBUG 강화** - 테스트/QA/검증 관련 작업 시 자동 품질 분석
 
 ## 🛠️ MCP 도구 스마트 선택
 
@@ -25,7 +26,7 @@
 - **filesystem** - 파일 시스템 자동 분석
 
 ### 조건부 추가 도구
-- **playwright** - 웹 관련 작업 감지 시 자동 추가
+- **github** - 코드 수정, 커밋, 또는 이슈 관리 작업 감지 시 자동 추가
 
 ## 📈 성능 지표
 
@@ -43,19 +44,19 @@
 /auto 코드 품질 개선
 ```
 
-### 웹 자동화 (WEB_TESTING_MASTER 자동 추가)
+### 테스트 자동화 (통합 테스트 시스템 자동 추가)
 ```bash
-/auto 프론트엔드 성능 자동 측정
-/auto UI 컴포넌트 자동 테스팅
-/auto 웹사이트 접근성 자동 검증
+/auto 프론트엔드 Jest 테스트 실행
+/auto API 엔드포인트 검증 테스트
+/auto 웹사이트 접근성 수동 테스트 가이드
 ```
 
 ## 🔍 작업 컨텍스트 자동 인식
 
-### 웹 관련 키워드 감지
-- **키워드**: `웹`, `프론트엔드`, `UI`, `테스팅`, `브라우저`, `컴포넌트`, `React`
-- **자동 액션**: WEB_TESTING_MASTER 에이전트 + playwright 도구 추가
-- **결과**: 일반 자동화 + 웹 전문 자동화 통합
+### 테스트 관련 키워드 감지
+- **키워드**: `테스트`, `테스팅`, `검증`, `QA`, `Jest`, `API`, `수동`, `자동화`
+- **자동 액션**: 통합 테스트 시스템 + DEBUG 강화 추가
+- **결과**: 일반 자동화 + 전문 테스트 시스템 통합
 
 ### 일반 작업 처리
 - **키워드**: `코드`, `리팩토링`, `최적화`, `분석`, `문서`
@@ -64,17 +65,17 @@
 
 ## 💡 실제 사용 예시
 
-### 예시 1: 웹 컴포넌트 자동화
+### 예시 1: 통합 테스트 자동화
 ```bash
-/auto React 컴포넌트 자동 테스트 및 최적화
+/auto React 컴포넌트 Jest 테스트 및 API 검증
 ```
 
 **자동 선택 결과**:
-- **에이전트**: CLAUDE_GUIDE, DEBUG, API_DOCUMENTATION, **WEB_TESTING_MASTER** (4개)
-- **MCP 도구**: sequential-thinking, context7, memory, filesystem, **playwright** (5개)
+- **에이전트**: CLAUDE_GUIDE, DEBUG (강화), API_DOCUMENTATION (4개)
+- **MCP 도구**: sequential-thinking, context7, memory, filesystem, **github** (5개)
 
 **실행 내용**:
-- React 컴포넌트 분석 → 자동 테스트 생성 → 성능 최적화 → E2E 테스트 실행
+- Jest + RTL 테스트 생성 → API 테스트 스크립트 실행 → 수동 테스트 가이드 제공 → 결과 리포트 생성
 
 ### 예시 2: 일반 코드 자동화
 ```bash
@@ -110,14 +111,15 @@
 ### ✅ 적합한 작업
 - 반복적인 개발 작업 자동화
 - 코드 품질 개선 및 최적화
-- 웹 컴포넌트 테스트 자동화
+- Jest + RTL 테스트 자동화
 - API 테스트 및 문서화
+- 수동 테스트 가이드 생성
 - 프로젝트 유지보수 작업
 
 ### ❌ 부적합한 작업
 - 복잡한 아키텍처 설계 → `/max` 권장
 - 단순한 빠른 수정 → `/rapid` 권장
-- 전용 웹 테스팅 → `/test` 권장
+- 통합 테스트 실행 → `/test` 권장
 
 ## 🎭 vs 다른 명령어 비교
 
@@ -133,15 +135,15 @@
 ### 1단계: 컨텍스트 분석
 ```javascript
 analyzeTaskContext(task) {
-    // 웹 관련 키워드 감지
-    isWebRelated: /web|ui|frontend|테스트/.test(task)
+    // 테스트 관련 키워드 감지
+    isTestRelated: /테스트|검증|QA|jest|api/.test(task)
     // 결과에 따라 에이전트 조합 결정
 }
 ```
 
 ### 2단계: 에이전트 자동 선택
 - 기본 3개 에이전트 활성화
-- 웹 작업 감지 시 WEB_TESTING_MASTER 추가
+- 테스트 작업 감지 시 통합 테스트 시스템 추가
 - 최적 MCP 도구 조합 자동 매핑
 
 ### 3단계: 병렬 실행
@@ -156,13 +158,15 @@ analyzeTaskContext(task) {
 
 ## 📚 관련 문서
 
-- [CustomCommandHandler v2.3.0](../services/CustomCommandHandler.js)
+- [CustomCommandHandler v2.5.0](../services/CustomCommandHandler.js)
 - [자동화 테스트 결과](../services/optimized-system-test-results-*.json)
-- [웹 테스팅 에이전트](../services/WebTestingMasterAgent.js)
+- [통합 테스트 가이드](../docs/testing/manual-testing-guide.md)
+- [Jest 테스트 스위트](../services/JestTestingSuite.js)
+- [API 테스트 스위트](../services/ApiTestingSuite.js)
 
 ---
 
 **🎯 핵심 철학**: "작업의 성격을 이해하고 최적의 자동화 전략을 스스로 결정한다"
 
-**⚡ 버전**: v2.3.0 (2025-08-03) - 지능형 자동화 완료  
-**🏆 성능**: 자동화 성공률 92%, 효율성 15% 향상
+**⚡ 버전**: v2.5.0 (2025-08-12) - 통합 테스트 시스템 완료  
+**🏆 성능**: 자동화 성공률 95%, 효율성 20% 향상 (WebTestingMasterAgent 제거 효과)

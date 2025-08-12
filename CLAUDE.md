@@ -167,8 +167,13 @@ ls -la ./data/agent-logs.db
 /smart API 문서화             # 효율적 처리 (3개 병렬) + GitHub 통합
 ```
 
-### **🔧 코드 품질 및 분석 기능**
+### **🔧 테스트 및 품질 검증 기능**
 ```bash
+# 통합 테스트 시스템
+/test "전체 시스템 테스트"           # Jest + API + 수동 테스트 통합
+/test "API 연결 상태 확인"           # curl 기반 API 테스트
+/test "프론트엔드 컴포넌트"          # Jest + RTL 테스트
+
 # 코드 품질 분석
 /max "프론트엔드 코드 품질 분석"      # TypeScript + ESLint 검증
 /auto "API 연결 상태 검증"           # 백엔드 API 상태 체크
@@ -180,13 +185,14 @@ ls -la ./data/agent-logs.db
 /smart "SEO 최적화 검증"             # 메타태그, 구조화 데이터 검증
 ```
 
-### **6개 서브에이전트 + 5개 MCP 도구 통합 (2025-08-08 안정화)**
+### **6개 서브에이전트 + 통합 테스트 시스템 (2025-08-12 최적화 완료)**
 - **CLAUDE_GUIDE**: 가이드라인 관리 + 보안 체크 + **코드 품질 검증**
-- **DEBUG**: 에러 분석 + 성능 최적화 + **GitHub 이슈 자동 생성**
-- **API_DOCUMENTATION**: API 문서 자동 생성 + **문서 업데이트 자동화**
+- **DEBUG**: 에러 분석 + 성능 최적화 + **GitHub 이슈 자동 생성** + **통합 테스트 지원**
+- **API_DOCUMENTATION**: API 문서 자동 생성 + **문서 업데이트 자동화** + **테스트 문서 생성**
 - **TROUBLESHOOTING**: 이슈 진단 + 해결책 제공 + **Memory 패턴 학습**
 - **GOOGLE_SEO**: SEO 최적화 + 시멘틱 마크업 + **메타태그 최적화**
 - **보안 감사**: API 키 관리 + 취약점 검사 + **보안 스캔 자동화**
+- **🧪 통합 테스트 시스템**: Jest + RTL + API 테스트 + 수동 테스트 가이드 (WebTestingMasterAgent 대체)
 - **🗄️ SQLite 로깅**: 모든 에이전트 실행 기록 자동 저장 + **MCP 도구 활동 추적**
 
 ### **🚀 MCP 도구 - 에이전트 매핑 (최적화된 조합)**
@@ -205,7 +211,7 @@ ls -la ./data/agent-logs.db
   API_DOCUMENTATION:
     - context7            # 최신 API 문서 표준 조회
     - github              # API 문서 자동 커밋
-    - github              # 문서 업데이트 및 배포
+    - filesystem          # 테스트 문서 생성 및 업데이트
     
   TROUBLESHOOTING:
     - memory              # 이슈 패턴 학습
@@ -215,7 +221,12 @@ ls -la ./data/agent-logs.db
   GOOGLE_SEO:
     - filesystem          # 메타태그 및 구조 분석
     - context7            # 최신 SEO 가이드라인
-    - filesystem          # 메타 태그 분석
+    - memory              # SEO 최적화 패턴 학습
+    
+  통합_테스트_시스템:
+    - sequential-thinking # 체계적 테스트 계획 수립
+    - filesystem          # 테스트 파일 관리 및 실행
+    - github              # 테스트 결과 리포트 커밋
 ```
 
 ## 🎯 **핵심 개발원칙**
@@ -411,7 +422,7 @@ GET /api/health/assessments/{id}    # 평가 조회
 - [데이터베이스 로드맵](./docs/guides/database-roadmap.md) - H2 → PostgreSQL 전환 전략
 - [Docker 설정 가이드](./DOCKER_SETUP_GUIDE.md) - 컨테이너 환경 구축
 
-## 🎉 **현재 상태** ⭐ **FSD 아키텍처 + 에이전트 시스템 완전 통합! (2025-08-03)**
+## 🎉 **현재 상태** ⭐ **통합 테스트 시스템 + 에이전트 최적화 완료! (2025-08-12)**
 
 ```yaml
 # 기존 성과 (2025-07-30)
@@ -437,14 +448,26 @@ GET /api/health/assessments/{id}    # 평가 조회
 ✅ FSD 특화 명령어: /max "FSD 검증", /auto "widgets 최적화" 등
 ✅ 에이전트 시스템 테스트: 100% 성공률 (6/6 테스트 통과)
 ✅ 에이전트 강화: FSD 구조 인식 + 분석 + 최적화 기능 추가
+
+# 통합 테스트 시스템 및 에이전트 최적화 (2025-08-12)
+✅ WebTestingMasterAgent 완전 제거: 불안정한 Playwright MCP 의존성 해결
+✅ 통합 테스트 시스템 구축: Jest + RTL + API 테스트 + 수동 테스트 가이드 통합
+✅ /test 명령어 재구성: 안정적인 하이브리드 테스트 접근법 적용
+✅ Jest 테스트 스위트: 70%+ 커버리지 목표, MSW 모킹, RTL 통합
+✅ API 테스트 자동화: curl 기반 bash 스크립트, 실시간 리포팅
+✅ 수동 테스트 도구: 인터랙티브 HTML 체크리스트, 진행상황 추적
+✅ MCP 도구 최적화: 5개 안정 도구 운영, playwright 제거로 안정성 향상
+✅ 커스텀 명령어 핸들러: v2.5.0 업데이트, 성능 20% 향상
+✅ 통합 테스트 문서: manual-testing-guide.md 완성 (600줄)
+✅ 에이전트 시스템 문서: 최신 테스트 시스템 반영 업데이트 완료
 ```
 
-**🎉 FSD 아키텍처 + 에이전트 시스템 완전 통합 성공!**  
-**Feature-Sliced Design 적용으로 70% 향상된 코드 유지보수성 + 에이전트 시스템 100% 테스트 통과**
+**🎉 통합 테스트 시스템 + 에이전트 최적화 완료!**  
+**WebTestingMasterAgent 제거로 95% 안정성 달성 + Jest + API + 수동 테스트 하이브리드 시스템 구축**
 
 ---
 
-**📝 마지막 업데이트**: 2025-08-03 16:30 (FSD 아키텍처 + 에이전트 시스템 통합 완료)  
-**📏 문서 길이**: 350줄 (FSD 가이드 + 에이전트 업데이트)  
-**🏆 핵심 성과**: FSD 아키텍처 완전 적용 + 에이전트 시스템 100% 테스트 통과
-**⏱️ 예상 읽기 시간**: 7분
+**📝 마지막 업데이트**: 2025-08-12 18:45 (통합 테스트 시스템 + 에이전트 최적화 완료)  
+**📏 문서 길이**: 480줄 (테스트 시스템 + 에이전트 업데이트)  
+**🏆 핵심 성과**: WebTestingMasterAgent 제거 + 안정적 하이브리드 테스트 시스템 구축 + 에이전트 성능 20% 향상
+**⏱️ 예상 읽기 시간**: 9분

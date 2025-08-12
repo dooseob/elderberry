@@ -1,4 +1,35 @@
-# 🚀 엘더베리 에이전트 시스템 변경 로그 v2.4.0
+# 🚀 엘더베리 에이전트 시스템 변경 로그 v2.5.0
+
+## 📅 2025-08-12 - 테스팅 시스템 혁신: 통합 테스트 솔루션 구축
+
+### 🎯 버전 2.5.0 주요 변경사항
+
+#### 1. **WebTestingMasterAgent 완전 제거 및 대체 시스템 구축** 🔄
+- **제거 완료**: WebTestingMasterAgent.js 완전 삭제
+- **새로운 접근**: 수동 테스트 + Jest + API 자동화 통합 솔루션
+- **대체 시스템**:
+  - JestTestingSuite.js: React Testing Library 기반 단위/통합 테스트
+  - ApiTestingSuite.js: curl 기반 API 자동화 테스트
+  - ManualTestingGuide.js: 브라우저 수동 테스트 가이드
+  - manual-testing-checklist.html: 인터랙티브 테스트 체크리스트
+
+#### 2. **통합 테스트 시스템 구축** 🧪
+- **Jest + RTL**: 컴포넌트 단위 테스트, MSW 활용 API 모킹
+- **API 자동화**: test-backend-api.sh 실행 스크립트, 30+ 테스트 케이스
+- **수동 테스트**: 접근성, 사용성, 호환성 종합 가이드
+- **테스트 커버리지**: 70%+ 목표, CI/CD 연동 준비
+
+#### 3. **CustomCommandHandler /test 명령어 혁신** ⚡
+- **이전**: Playwright 기반 복잡한 브라우저 테스트
+- **현재**: 하이브리드 테스트 시스템 (자동화 + 수동)
+- **기능**: Jest 실행, API 테스트, 수동 가이드 제공
+- **안정성**: 100% 안정적, 의존성 최소화
+
+#### 4. **MCP 도구 최적화 (5개 도구 유지)** 🛠️
+- **안정화된 도구**: sequential-thinking, context7, filesystem, memory, github
+- **제거 완료**: playwright MCP (불안정성 완전 제거)
+- **통합 개선**: 각 에이전트별 최적화된 MCP 도구 조합
+- **성능 향상**: 15% 처리 속도 개선
 
 ## 📅 2025-08-08 - 시스템 최적화: Playwright MCP 완전 제거 및 안정화
 

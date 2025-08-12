@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엘더베리 프로젝트 수동 테스트 체크리스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .test-section {
+            background: white;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+
+        .test-section:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header h2 {
+            font-size: 1.4rem;
+            color: #495057;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header .icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+        }
+
+        .section-progress {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .section-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .test-category {
+            margin-bottom: 30px;
+        }
+
+        .test-category h3 {
+            color: #343a40;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-left: 4px solid #007bff;
+            padding-left: 12px;
+        }
+
+        .test-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .test-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .test-item input[type="checkbox"] {
+            margin-right: 12px;
+            margin-top: 3px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .test-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .test-item.completed {
+            background-color: #d4edda;
+            border-left: 3px solid #28a745;
+        }
+
+        .test-item.completed label {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .priority-high { border-left-color: #dc3545 !important; }
+        .priority-medium { border-left-color: #fd7e14 !important; }
+        .priority-low { border-left-color: #6c757d !important; }
+
+        .actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #545b62);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .environment-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .test-urls {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff9800;
+        }
+
+        .test-urls ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .test-urls li {
+            margin-bottom: 8px;
+        }
+
+        .test-urls a {
+            color: #e65100;
+            text-decoration: none;
+            font-family: monospace;
+            background: rgba(0,0,0,0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .test-urls a:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .notes-section {
+            background: #fff9c4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .actions {
+                bottom: 20px;
+                right: 20px;
+                flex-direction: column;
+            }
+
+            .progress-stats {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1001;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🏥 엘더베리 프로젝트</h1>
+            <p>수동 테스트 체크리스트 v1.0.0</p>
+        </div>
+
+        <!-- 진행률 표시 -->
+        <div class="progress-section">
+            <h3>📊 전체 진행률</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress"></div>
+            </div>
+            <div class="progress-stats">
+                <span>완료: <span id="completedCount">0</span>개</span>
+                <span>전체: <span id="totalCount">0</span>개</span>
+                <span>진행률: <span id="progressPercent">0</span>%</span>
+            </div>
+        </div>
+
+        <!-- 환경 정보 -->
+        <div class="environment-info">
+            <h4>🔍 테스트 환경 정보</h4>
+            <p><strong>테스터:</strong> <input type="text" id="testerName" placeholder="테스터 이름 입력" style="border: none; background: transparent; border-bottom: 1px solid #666; padding: 4px;"></p>
+            <p><strong>테스트 일시:</strong> <span id="testDate"></span></p>
+            <p><strong>브라우저:</strong> <span id="browserInfo"></span></p>
+            <p><strong>화면 해상도:</strong> <span id="screenInfo"></span></p>
+        </div>
+
+        <!-- 테스트 URL -->
+        <div class="test-urls">
+            <h4>🔗 테스트 URL 목록</h4>
+            <ul>
+                <li>홈페이지: <a href="http://localhost:5173" target="_blank">http://localhost:5173</a></li>
+                <li>로그인: <a href="http://localhost:5173/login" target="_blank">http://localhost:5173/login</a></li>
+                <li>회원가입: <a href="http://localhost:5173/register" target="_blank">http://localhost:5173/register</a></li>
+                <li>대시보드: <a href="http://localhost:5173/dashboard" target="_blank">http://localhost:5173/dashboard</a></li>
+                <li>시설검색: <a href="http://localhost:5173/facilities" target="_blank">http://localhost:5173/facilities</a></li>
+                <li>건강평가: <a href="http://localhost:5173/health" target="_blank">http://localhost:5173/health</a></li>
+                <li>마이페이지: <a href="http://localhost:5173/profile" target="_blank">http://localhost:5173/profile</a></li>
+            </ul>
+        </div>
+
+        <!-- 테스트 섹션들 -->
+        
+        <!-- 기능 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('functional')">
+                <h2><span class="icon">⚙️</span>기능 테스트</h2>
+                <div>
+                    <span class="section-progress" id="functional-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="functional-content">
+                <div class="test-category">
+                    <h3>🔐 인증 시스템</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="auth-1" onchange="updateProgress()">
+                        <label for="auth-1">유효한 정보로 회원가입 성공</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="auth-2" onchange="updateProgress()">
+                        <label for="auth-2">올바른 계정 정보로 로그인 성공</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="auth-3" onchange="updateProgress()">
+                        <label for="auth-3">잘못된 계정 정보 시 오류 메시지 표시</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="auth-4" onchange="updateProgress()">
+                        <label for="auth-4">비밀번호 재설정 기능 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="auth-5" onchange="updateProgress()">
+                        <label for="auth-5">로그인 상태 유지 기능</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="auth-6" onchange="updateProgress()">
+                        <label for="auth-6">소셜 로그인 연동 (Google, Kakao)</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>🏢 시설 관리</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="facility-1" onchange="updateProgress()">
+                        <label for="facility-1">키워드 검색 정확성 확인</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="facility-2" onchange="updateProgress()">
+                        <label for="facility-2">지역별 필터링 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="facility-3" onchange="updateProgress()">
+                        <label for="facility-3">시설 상세 정보 정확히 표시</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="facility-4" onchange="updateProgress()">
+                        <label for="facility-4">시설 유형별 필터링</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="facility-5" onchange="updateProgress()">
+                        <label for="facility-5">평점별 정렬 기능</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="facility-6" onchange="updateProgress()">
+                        <label for="facility-6">즐겨찾기 추가/제거 기능</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="facility-7" onchange="updateProgress()">
+                        <label for="facility-7">시설 비교 기능 (최대 3개)</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>💊 건강평가 시스템</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="health-1" onchange="updateProgress()">
+                        <label for="health-1">건강평가 생성 및 단계별 진행</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="health-2" onchange="updateProgress()">
+                        <label for="health-2">평가 결과 정확히 표시</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="health-3" onchange="updateProgress()">
+                        <label for="health-3">중간 저장 기능</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="health-4" onchange="updateProgress()">
+                        <label for="health-4">평가 이력 조회</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="health-5" onchange="updateProgress()">
+                        <label for="health-5">결과 PDF 다운로드</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사용성 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('usability')">
+                <h2><span class="icon">🎨</span>사용성 테스트</h2>
+                <div>
+                    <span class="section-progress" id="usability-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="usability-content">
+                <div class="test-category">
+                    <h3>🧭 네비게이션</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="nav-1" onchange="updateProgress()">
+                        <label for="nav-1">메인 네비게이션이 모든 페이지에서 일관됨</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="nav-2" onchange="updateProgress()">
+                        <label for="nav-2">현재 위치를 명확히 표시 (breadcrumb)</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="nav-3" onchange="updateProgress()">
+                        <label for="nav-3">로고 클릭 시 홈으로 이동</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="nav-4" onchange="updateProgress()">
+                        <label for="nav-4">모바일에서 햄버거 메뉴 정상 작동</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>📝 폼 사용성</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="form-1" onchange="updateProgress()">
+                        <label for="form-1">폼 필드가 명확히 라벨링됨</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="form-2" onchange="updateProgress()">
+                        <label for="form-2">필수 필드가 시각적으로 구분됨</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="form-3" onchange="updateProgress()">
+                        <label for="form-3">실시간 유효성 검사</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="form-4" onchange="updateProgress()">
+                        <label for="form-4">오류 메시지가 구체적이고 도움됨</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="form-5" onchange="updateProgress()">
+                        <label for="form-5">자동 완성 기능 지원</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>💬 피드백</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="feedback-1" onchange="updateProgress()">
+                        <label for="feedback-1">로딩 상태가 명확히 표시됨</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="feedback-2" onchange="updateProgress()">
+                        <label for="feedback-2">성공/실패 메시지가 적절히 표시됨</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="feedback-3" onchange="updateProgress()">
+                        <label for="feedback-3">사용자 행동에 즉각적인 피드백</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 접근성 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('accessibility')">
+                <h2><span class="icon">♿</span>접근성 테스트</h2>
+                <div>
+                    <span class="section-progress" id="accessibility-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="accessibility-content">
+                <div class="test-category">
+                    <h3>⌨️ 키보드 접근성</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="keyboard-1" onchange="updateProgress()">
+                        <label for="keyboard-1">모든 기능을 키보드로만 사용 가능</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="keyboard-2" onchange="updateProgress()">
+                        <label for="keyboard-2">Tab 순서가 논리적</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="keyboard-3" onchange="updateProgress()">
+                        <label for="keyboard-3">포커스 표시가 명확함</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="keyboard-4" onchange="updateProgress()">
+                        <label for="keyboard-4">건너뛰기 링크 제공 (메인 콘텐츠로)</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>👁️ 시각적 접근성</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="visual-1" onchange="updateProgress()">
+                        <label for="visual-1">색상 대비비가 4.5:1 이상</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="visual-2" onchange="updateProgress()">
+                        <label for="visual-2">텍스트 크기 조정 가능 (200%까지)</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="visual-3" onchange="updateProgress()">
+                        <label for="visual-3">색상에만 의존하지 않는 정보 전달</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="visual-4" onchange="updateProgress()">
+                        <label for="visual-4">충분한 터치 타겟 크기 (44px 이상)</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>📱 스크린 리더</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="screen-1" onchange="updateProgress()">
+                        <label for="screen-1">모든 이미지에 적절한 alt 속성</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="screen-2" onchange="updateProgress()">
+                        <label for="screen-2">헤딩 구조가 논리적 (h1 > h2 > h3)</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="screen-3" onchange="updateProgress()">
+                        <label for="screen-3">폼 요소에 라벨이 연결됨</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="screen-4" onchange="updateProgress()">
+                        <label for="screen-4">ARIA 속성이 올바르게 사용됨</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 호환성 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('compatibility')">
+                <h2><span class="icon">🌐</span>호환성 테스트</h2>
+                <div>
+                    <span class="section-progress" id="compatibility-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="compatibility-content">
+                <div class="test-category">
+                    <h3>💻 데스크톱 브라우저</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="browser-chrome" onchange="updateProgress()">
+                        <label for="browser-chrome">Chrome 최신버전 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="browser-firefox" onchange="updateProgress()">
+                        <label for="browser-firefox">Firefox 최신버전 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="browser-safari" onchange="updateProgress()">
+                        <label for="browser-safari">Safari 최신버전 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="browser-edge" onchange="updateProgress()">
+                        <label for="browser-edge">Edge 최신버전 정상 작동</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>📱 모바일 브라우저</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="mobile-chrome" onchange="updateProgress()">
+                        <label for="mobile-chrome">Mobile Chrome 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="mobile-safari" onchange="updateProgress()">
+                        <label for="mobile-safari">Mobile Safari 정상 작동</label>
+                    </div>
+                    <div class="test-item priority-low">
+                        <input type="checkbox" id="mobile-samsung" onchange="updateProgress()">
+                        <label for="mobile-samsung">Samsung Internet 정상 작동</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>📐 반응형 디자인</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="responsive-mobile" onchange="updateProgress()">
+                        <label for="responsive-mobile">모바일 (320px-767px) 레이아웃 정상</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="responsive-tablet" onchange="updateProgress()">
+                        <label for="responsive-tablet">태블릿 (768px-1023px) 레이아웃 정상</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="responsive-desktop" onchange="updateProgress()">
+                        <label for="responsive-desktop">데스크톱 (1024px+) 레이아웃 정상</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 성능 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('performance')">
+                <h2><span class="icon">⚡</span>성능 테스트</h2>
+                <div>
+                    <span class="section-progress" id="performance-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="performance-content">
+                <div class="test-category">
+                    <h3>🚀 페이지 로딩</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="perf-loading" onchange="updateProgress()">
+                        <label for="perf-loading">홈페이지 로딩 시간 < 3초</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="perf-search" onchange="updateProgress()">
+                        <label for="perf-search">시설 검색 결과 < 2초</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="perf-images" onchange="updateProgress()">
+                        <label for="perf-images">이미지 지연 로딩 작동</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>🎯 상호작용</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="interact-click" onchange="updateProgress()">
+                        <label for="interact-click">버튼 클릭 응답 < 100ms</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="interact-form" onchange="updateProgress()">
+                        <label for="interact-form">폼 입력 지연 없음</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="interact-scroll" onchange="updateProgress()">
+                        <label for="interact-scroll">스크롤 부드러움 (60fps)</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>📊 Core Web Vitals</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="vitals-lcp" onchange="updateProgress()">
+                        <label for="vitals-lcp">LCP (Largest Contentful Paint) < 2.5초</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="vitals-fid" onchange="updateProgress()">
+                        <label for="vitals-fid">FID (First Input Delay) < 100ms</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="vitals-cls" onchange="updateProgress()">
+                        <label for="vitals-cls">CLS (Cumulative Layout Shift) < 0.1</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 보안 테스트 -->
+        <div class="test-section">
+            <div class="section-header" onclick="toggleSection('security')">
+                <h2><span class="icon">🔒</span>보안 테스트</h2>
+                <div>
+                    <span class="section-progress" id="security-progress">0/0</span>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-content" id="security-content">
+                <div class="test-category">
+                    <h3>🔐 인증 보안</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="sec-password" onchange="updateProgress()">
+                        <label for="sec-password">강력한 비밀번호 정책 적용</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="sec-session" onchange="updateProgress()">
+                        <label for="sec-session">세션 타임아웃 적절</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="sec-logout" onchange="updateProgress()">
+                        <label for="sec-logout">로그아웃 시 세션 완전 삭제</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>🛡️ 데이터 보호</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="sec-https" onchange="updateProgress()">
+                        <label for="sec-https">HTTPS 강제 적용</label>
+                    </div>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="sec-sensitive" onchange="updateProgress()">
+                        <label for="sec-sensitive">민감한 정보 마스킹</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="sec-xss" onchange="updateProgress()">
+                        <label for="sec-xss">XSS 방어 확인</label>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h3>🔐 개인정보 보호</h3>
+                    <div class="test-item priority-high">
+                        <input type="checkbox" id="privacy-consent" onchange="updateProgress()">
+                        <label for="privacy-consent">개인정보 수집 동의</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="privacy-download" onchange="updateProgress()">
+                        <label for="privacy-download">개인정보 다운로드 기능</label>
+                    </div>
+                    <div class="test-item priority-medium">
+                        <input type="checkbox" id="privacy-delete" onchange="updateProgress()">
+                        <label for="privacy-delete">개인정보 삭제 기능</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 테스트 노트 -->
+        <div class="notes-section">
+            <h4>📝 테스트 노트 및 발견사항</h4>
+            <textarea id="testNotes" placeholder="테스트 중 발견한 문제점, 개선사항, 추가 의견 등을 기록하세요..."></textarea>
+        </div>
+
+        <!-- 액션 버튼들 -->
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="exportProgress()" title="진행률을 JSON 파일로 내보내기">
+                📊 진행률 저장
+            </button>
+            <button class="btn btn-primary" onclick="generateReport()" title="테스트 리포트 생성">
+                📄 리포트 생성
+            </button>
+            <button class="btn btn-success" onclick="resetAll()" title="모든 체크 해제">
+                🔄 초기화
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEnvironmentInfo();
+            updateProgress();
+            loadSavedProgress();
+        });
+
+        // 환경 정보 초기화
+        function initializeEnvironmentInfo() {
+            document.getElementById('testDate').textContent = new Date().toLocaleString('ko-KR');
+            document.getElementById('browserInfo').textContent = navigator.userAgent.split(')')[0] + ')';
+            document.getElementById('screenInfo').textContent = `${screen.width}x${screen.height}`;
+        }
+
+        // 섹션 토글
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const header = content.previousElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                header.classList.remove('expanded');
+            } else {
+                content.classList.add('active');
+                header.classList.add('expanded');
+            }
+        }
+
+        // 진행률 업데이트
+        function updateProgress() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            const totalCount = allCheckboxes.length;
+            const completedCount = checkedBoxes.length;
+            const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+            // 전체 진행률 업데이트
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('progressPercent').textContent = progressPercent;
+            document.getElementById('overallProgress').style.width = progressPercent + '%';
+
+            // 섹션별 진행률 업데이트
+            updateSectionProgress('functional');
+            updateSectionProgress('usability');
+            updateSectionProgress('accessibility');
+            updateSectionProgress('compatibility');
+            updateSectionProgress('performance');
+            updateSectionProgress('security');
+
+            // 체크된 항목에 완료 스타일 적용
+            allCheckboxes.forEach(checkbox => {
+                const testItem = checkbox.closest('.test-item');
+                if (checkbox.checked) {
+                    testItem.classList.add('completed');
+                } else {
+                    testItem.classList.remove('completed');
+                }
+            });
+
+            // 로컬 스토리지에 저장
+            saveProgress();
+        }
+
+        // 섹션별 진행률 업데이트
+        function updateSectionProgress(sectionId) {
+            const sectionContent = document.getElementById(sectionId + '-content');
+            const sectionCheckboxes = sectionContent.querySelectorAll('input[type="checkbox"]');
+            const sectionChecked = sectionContent.querySelectorAll('input[type="checkbox"]:checked');
+            
+            const sectionTotal = sectionCheckboxes.length;
+            const sectionCompleted = sectionChecked.length;
+            
+            document.getElementById(sectionId + '-progress').textContent = `${sectionCompleted}/${sectionTotal}`;
+        }
+
+        // 진행률 저장
+        function saveProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const progress = {};
+            
+            checkboxes.forEach(checkbox => {
+                progress[checkbox.id] = checkbox.checked;
+            });
+            
+            // 테스트 노트도 저장
+            progress['testNotes'] = document.getElementById('testNotes').value;
+            progress['testerName'] = document.getElementById('testerName').value;
+            
+            localStorage.setItem('elderberry-test-progress', JSON.stringify(progress));
+        }
+
+        // 진행률 불러오기
+        function loadSavedProgress() {
+            const saved = localStorage.getItem('elderberry-test-progress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                
+                Object.keys(progress).forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && element.type === 'checkbox') {
+                        element.checked = progress[id];
+                    } else if (element && (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT')) {
+                        element.value = progress[id] || '';
+                    }
+                });
+                
+                updateProgress();
+            }
+        }
+
+        // 진행률 내보내기
+        function exportProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const progress = {
+                timestamp: new Date().toISOString(),
+                tester: document.getElementById('testerName').value || '익명',
+                browser: navigator.userAgent,
+                screen: `${screen.width}x${screen.height}`,
+                progress: {}
+            };
+            
+            checkboxes.forEach(checkbox => {
+                const label = checkbox.nextElementSibling.textContent;
+                progress.progress[checkbox.id] = {
+                    completed: checkbox.checked,
+                    label: label
+                };
+            });
+            
+            progress.notes = document.getElementById('testNotes').value;
+            
+            const blob = new Blob([JSON.stringify(progress, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `elderberry-test-progress-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 리포트 생성
+        function generateReport() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const totalCount = checkboxes.length;
+            const completedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const progressPercent = Math.round((completedCount / totalCount) * 100);
+            
+            const report = `# 엘더베리 프로젝트 수동 테스트 결과 리포트
+
+**테스트 실행자**: ${document.getElementById('testerName').value || '익명'}
+**테스트 일시**: ${new Date().toLocaleString('ko-KR')}
+**테스트 환경**: ${navigator.userAgent}
+**화면 해상도**: ${screen.width}x${screen.height}
+
+## 📊 테스트 결과 요약
+
+- **전체 테스트**: ${totalCount}개
+- **완료**: ${completedCount}개
+- **성공률**: ${progressPercent}%
+
+## 📋 세부 결과
+
+### ⚙️ 기능 테스트
+${generateSectionReport('functional-content')}
+
+### 🎨 사용성 테스트
+${generateSectionReport('usability-content')}
+
+### ♿ 접근성 테스트
+${generateSectionReport('accessibility-content')}
+
+### 🌐 호환성 테스트
+${generateSectionReport('compatibility-content')}
+
+### ⚡ 성능 테스트
+${generateSectionReport('performance-content')}
+
+### 🔒 보안 테스트
+${generateSectionReport('security-content')}
+
+## 📝 테스트 노트
+${document.getElementById('testNotes').value || '(노트 없음)'}
+
+---
+*이 리포트는 ${new Date().toLocaleString('ko-KR')}에 자동 생성되었습니다.*`;
+
+            const blob = new Blob([report], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `elderberry-test-report-${new Date().toISOString().split('T')[0]}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateSectionReport(sectionId) {
+            const section = document.getElementById(sectionId);
+            const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+            let report = '';
+            
+            checkboxes.forEach(checkbox => {
+                const label = checkbox.nextElementSibling.textContent;
+                const status = checkbox.checked ? '✅' : '❌';
+                report += `- ${status} ${label}\n`;
+            });
+            
+            return report;
+        }
+
+        // 초기화
+        function resetAll() {
+            if (confirm('모든 테스트 진행률을 초기화하시겠습니까?')) {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                document.getElementById('testNotes').value = '';
+                localStorage.removeItem('elderberry-test-progress');
+                updateProgress();
+            }
+        }
+
+        // 키보드 단축키
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        exportProgress();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        generateReport();
+                        break;
+                }
+            }
+        });
+
+        // 정기적으로 진행률 저장 (30초마다)
+        setInterval(saveProgress, 30000);
+    </script>
+</body>
+</html>
