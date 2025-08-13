@@ -1,8 +1,8 @@
 /**
- * MCP 통합 에이전트 시스템 v2.3.3 - 5개 MCP 도구 안정성 최적화
+ * MCP 통합 에이전트 시스템 v2.5.0 - 5개 MCP 도구 안정성 최적화
  * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 (Playwright 완전 제거)
- * @version 2.3.3
- * @date 2025-08-07
+ * @version 2.5.0
+ * @date 2025-08-12
  * @features 6개 서브에이전트 + 5개 MCP 도구, 안정성 우선 최적화
  */
 
