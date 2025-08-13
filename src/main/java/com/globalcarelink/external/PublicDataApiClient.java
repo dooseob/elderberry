@@ -28,7 +28,7 @@ public class PublicDataApiClient {
 
     private final WebClient webClient;
 
-    @Value("${external.api.public-data.api-key}")
+    @Value("${PUBLIC_DATA_API_KEY:development-default-key}")
     private String apiKey;
 
     @Value("${app.public-data.base-url:https://apis.data.go.kr}")

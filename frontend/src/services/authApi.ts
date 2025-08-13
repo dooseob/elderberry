@@ -55,7 +55,8 @@ authApi.interceptors.request.use((config) => {
   
   // 공개 엔드포인트에는 절대 Authorization 헤더를 추가하지 않음
   if (!isPublicEndpoint) {
-    const token = localStorage.getItem('accessToken');
+    // authStore와 일관성을 위해 sessionStorage 사용
+    const token = sessionStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -73,7 +74,8 @@ authApi.interceptors.request.use((config) => {
 });
 
 memberApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  // authStore와 일관성을 위해 sessionStorage 사용
+  const token = sessionStorage.getItem('accessToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -94,10 +96,16 @@ const handleApiError = (error: unknown): Promise<never> => {
     const isLoginRequest = url.includes('/login') || url.includes('/register');
     
     if (!isLoginRequest) {
-      // 만료된 토큰 정리
+      // 만료된 토큰 정리 - authStore와 일관성을 위해 sessionStorage 사용
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('user');
+      
+      // 기존 localStorage도 정리 (마이그레이션 호환성)
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
+      
       console.warn('토큰이 만료되어 자동 로그아웃되었습니다.');
       
       // 토큰 만료는 정상적인 상황이므로 warn 레벨로 로깅

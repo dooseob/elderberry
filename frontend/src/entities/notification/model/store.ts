@@ -404,13 +404,19 @@ export const useNotificationFilter = () => {
 };
 
 /**
- * 실시간 알림 관리 훅
+ * 실시간 알림 관리 훅 (무한 루프 완전 해결)
  */
 export const useRealtimeNotifications = () => {
-  return useNotificationStore(state => ({
-    isPolling: state.isPolling,
-    startPolling: state.startPolling,
-    stopPolling: state.stopPolling,
-    lastFetchTime: state.lastFetchTime
-  }));
+  // Zustand store의 메서드를 직접 사용 (메모이제이션 자동 처리)
+  const isPolling = useNotificationStore(state => state.isPolling);
+  const lastFetchTime = useNotificationStore(state => state.lastFetchTime);
+  const startPolling = useNotificationStore(state => state.startPolling);
+  const stopPolling = useNotificationStore(state => state.stopPolling);
+  
+  return {
+    isPolling,
+    startPolling,
+    stopPolling,
+    lastFetchTime
+  };
 };

@@ -29,6 +29,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative; /* 올바른 레이어링을 위해 추가 */
   transition: margin-left var(--linear-transition-normal);
 }
 
@@ -37,6 +38,8 @@
   padding: var(--linear-content-padding);
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: var(--linear-color-background); /* 배경 확실히 설정 */
+  z-index: 1; /* 사이드바 애니메이션 중 겹침 방지 */
 }
 
 /* Layout Variants */
@@ -100,7 +103,7 @@
 
 .linear-header {
   position: relative;
-  z-index: calc(var(--linear-z-dropdown) + 10);
+  z-index: calc(var(--linear-z-dropdown) + 100); /* 헤더는 사이드바보다 높은 우선순위 */
   height: 64px;
   border-bottom: 1px solid var(--linear-color-border-subtle);
 }

@@ -2,6 +2,7 @@ package com.globalcarelink.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,13 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class RedisJwtBlacklistService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    
+    public RedisJwtBlacklistService(@Qualifier("jwtStringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
     
     private static final String BLACKLIST_KEY_PREFIX = "jwt:blacklist:";
     private static final String TOKEN_METADATA_PREFIX = "jwt:metadata:";

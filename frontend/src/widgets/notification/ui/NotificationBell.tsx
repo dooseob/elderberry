@@ -31,7 +31,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
   const { isOpen, toggle } = useNotificationDropdown();
   const { isPolling, startPolling, stopPolling } = useRealtimeNotifications();
 
-  // 컴포넌트 마운트 시 실시간 폴링 시작
+  // 컴포넌트 마운트 시 실시간 폴링 시작 (무한 루프 방지)
   useEffect(() => {
     if (autoStartPolling && !isPolling) {
       startPolling();
@@ -43,7 +43,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
         stopPolling();
       }
     };
-  }, [autoStartPolling, isPolling, startPolling, stopPolling]);
+  }, [autoStartPolling]); // autoStartPolling만 의존성으로 사용하여 무한 루프 방지
 
   const handleClick = () => {
     if (onBellClick) {

@@ -93,7 +93,12 @@ const updateMetaTags = (seoData: SEOData, defaultSite: UseSEOOptions['defaultSit
   
   // Keywords
   if (seoData.keywords?.length) {
-    updateOrCreateMeta('keywords', seoData.keywords.join(', '));
+    const keywordsStr = Array.isArray(seoData.keywords) 
+      ? seoData.keywords.join(', ') 
+      : typeof seoData.keywords === 'string' 
+        ? seoData.keywords 
+        : String(seoData.keywords);
+    updateOrCreateMeta('keywords', keywordsStr);
   }
   
   // Author

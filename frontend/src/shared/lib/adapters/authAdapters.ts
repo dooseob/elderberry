@@ -35,17 +35,18 @@ interface BackendTokenResponseDto {
 
 // Role 매핑 함수
 const mapMemberRole = (backendRole: string): MemberRole => {
+  // TypeScript isolatedModules 호환성을 위해 문자열 리터럴 사용
   const roleMap: Record<string, MemberRole> = {
-    'ADMIN': MemberRole.ADMIN,
-    'FACILITY': MemberRole.FACILITY,
-    'COORDINATOR': MemberRole.COORDINATOR,
-    'USER_DOMESTIC': MemberRole.USER_DOMESTIC,
-    'USER_OVERSEAS': MemberRole.USER_OVERSEAS,
-    'JOB_SEEKER_DOMESTIC': MemberRole.JOB_SEEKER_DOMESTIC,
-    'JOB_SEEKER_OVERSEAS': MemberRole.JOB_SEEKER_OVERSEAS
+    'ADMIN': 'ADMIN' as MemberRole,
+    'FACILITY': 'FACILITY' as MemberRole,
+    'COORDINATOR': 'COORDINATOR' as MemberRole,
+    'USER_DOMESTIC': 'USER_DOMESTIC' as MemberRole,
+    'USER_OVERSEAS': 'USER_OVERSEAS' as MemberRole,
+    'JOB_SEEKER_DOMESTIC': 'JOB_SEEKER_DOMESTIC' as MemberRole,
+    'JOB_SEEKER_OVERSEAS': 'JOB_SEEKER_OVERSEAS' as MemberRole
   };
   
-  return roleMap[backendRole] || MemberRole.USER_DOMESTIC;
+  return roleMap[backendRole] || ('USER_DOMESTIC' as MemberRole);
 };
 
 /**
@@ -137,7 +138,7 @@ export const createEmptyAuthUser = (): AuthUser => ({
   id: 0,
   email: '',
   name: '',
-  role: MemberRole.USER_DOMESTIC,
+  role: 'USER_DOMESTIC' as MemberRole,
   profileCompletionRate: 0,
   isActive: false
 });
@@ -146,7 +147,7 @@ export const createEmptyMemberResponse = (): MemberResponse => ({
   id: 0,
   email: '',
   name: '',
-  role: MemberRole.USER_DOMESTIC,
+  role: 'USER_DOMESTIC' as MemberRole,
   profileCompletionRate: 0,
   isActive: false,
   createdAt: new Date().toISOString(),

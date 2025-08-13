@@ -162,7 +162,7 @@ external:
     
     # 공공데이터 API
     public-data:
-      api-key: ${PUBLIC_DATA_API_KEY}
+      api-key: ${PUBLIC_DATA_API_KEY:development-default-key}
       service-key: ${PUBLIC_DATA_API_KEY:default-key}
       service-key-encoded: ${PUBLIC_DATA_API_KEY_ENCODED:default-encoded-key}
       endpoints:

@@ -1,40 +1,40 @@
 /**
- * 메인 앱 컴포넌트
+ * 메인 앱 컴포넌트 - 단순화된 라우팅 시스템
  * Elderberry 글로벌 요양원 구인구직 서비스
- * React.lazy()를 활용한 페이지 레벨 지연 로딩 구현
+ * v2.0 - 라우팅 시스템 개선 및 중복 제거
  */
-import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
-// Route Wrappers
-import { 
-  FacilitySearchPageWrapper, 
-  HealthAssessmentWizardWrapper
-} from './router/RouteWrappers';
-
-// 개발용 로거 및 성능 모니터링
-import { devLogger } from './utils/devLogger';
-import { performanceMonitor } from './utils/performanceMonitor';
-
-// 인증 관련 컴포넌트 (즉시 로딩 - 보안상 중요)
+// 인증 관련 컴포넌트
 import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/ProtectedRoute';
 import { useAuthStore } from './stores/authStore';
 
-// 레이아웃 컴포넌트 (즉시 로딩 - 모든 페이지에서 사용)
+// 레이아웃 컴포넌트
 import { MainLayout } from './widgets/layout';
 
-// 로딩 폴백 컴포넌트
+// 로딩 및 에러 처리 컴포넌트
 import LazyPageFallback from './shared/ui/LazyPageFallback';
 import LazyLoadErrorBoundary from './shared/ui/LazyLoadErrorBoundary';
-
-// 토스트 컨텍스트 프로바이더
 import { ToastProvider } from './hooks/useToast';
 
-// Linear 테마 시스템 - main.tsx에서 이미 제공되므로 제거
+// 성능 모니터링
+import { performanceMonitor } from './utils/performanceMonitor';
 
-// 지연 로딩 페이지 컴포넌트들
+// 즉시 로딩 페이지 (중요한 페이지들)
+import LandingPage from './pages/LandingPage';
+import SignInPage from './pages/auth/SignInPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import NotFoundPage from './pages/NotFoundPage';
+import EmergencySearchPage from './pages/EmergencySearchPage';
+import PlannedSearchPage from './pages/PlannedSearchPage';
+import JobSearchPage from './pages/JobSearchPage';
+import ConsultationPage from './pages/ConsultationPage';
+import SettingsPage from './pages/SettingsPage';
+
+// 지연 로딩 페이지들 (성능 최적화)
 import {
-  LazyLoginPage,
   LazyRegisterPage,
   LazyForgotPasswordPage,
   LazyDashboardPage,
@@ -55,45 +55,70 @@ import {
   LazyProfileListPage,
   LazyProfileDetailPage,
   LazyNotificationsPage,
+  LazyNotificationSettingsPage,
   LazyMyReviewsPage,
   LazyFacilityReviewsPage,
   LazyReviewCreatePage,
   LazyMyApplicationsPage
 } from './utils/lazyImports';
 
-// 테마 시스템 테스트 컴포넌트
-import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
+// Route Wrappers
+import { 
+  FacilitySearchPageWrapper, 
+  HealthAssessmentWizardWrapper
+} from './router/RouteWrappers';
 
-// Linear Design System 데모
+// 테마 및 데모 컴포넌트
+import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
 import LinearShowcase from './pages/demo/LinearShowcase';
 
-// FSD 아키텍처에 따른 페이지 import
-import LandingPage from './pages/LandingPage';
-import SignInPage from './pages/auth/SignInPage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import SettingsPage from './pages/SettingsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import EmergencySearchPage from './pages/EmergencySearchPage';
-import PlannedSearchPage from './pages/PlannedSearchPage';
-import JobSearchPage from './pages/JobSearchPage';
-import ConsultationPage from './pages/ConsultationPage';
-
 import './App.css';
-import { useEffect } from 'react';
 
-// 루트 리다이렉트 컴포넌트 제거 - 랜딩페이지를 직접 표시
+/**
+ * 홈 리다이렉트 컴포넌트
+ * 인증 상태에 따라 적절한 페이지로 리다이렉션
+ */
+function HomeRedirect() {
+  const { isAuthenticated, user } = useAuthStore();
+  
+  if (!isAuthenticated || !user) {
+    return <LandingPage />;
+  }
+  
+  // 인증된 사용자는 대시보드로 리다이렉션
+  return <Navigate to="/dashboard" replace />;
+}
+
+/**
+ * 로그아웃 후 리다이렉트 컴포넌트
+ * 로그아웃 상태를 처리하고 적절한 페이지로 안내
+ */
+function LogoutRedirect() {
+  const location = useLocation();
+  
+  // 로그아웃 후에는 랜딩페이지로 리다이렉션하되, 
+  // 원래 시도했던 페이지 정보는 유지
+  return (
+    <Navigate 
+      to="/" 
+      state={{ 
+        from: location.pathname,
+        message: "로그아웃되었습니다. 다시 로그인해주세요." 
+      }} 
+      replace 
+    />
+  );
+}
 
 function App() {
-  // 프로덕션에서 성능 모니터링 시작
+  // 성능 모니터링 시작
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
       performanceMonitor.collectMetrics();
       
-      // 10초 후 첫 번째 성능 리포트 생성
       setTimeout(() => {
         const report = performanceMonitor.generateReport();
-        if (report && report.warnings.length > 0) {
+        if (report?.warnings.length > 0) {
           console.warn('성능 경고:', report.warnings);
         }
       }, 10000);
@@ -106,134 +131,88 @@ function App() {
         <Router>
           <main className="min-h-screen bg-gray-50" role="main">
             <Routes>
-            {/* 공개 라우트 - 개선된 인증 시스템 */}
-            <Route path="/auth/signin" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="로그인 페이지를 로딩 중..." />}>
-                <SignInPage />
-              </Suspense>
-            } />
-            
-            {/* 새로 추가된 공개 페이지들 */}
-            <Route path="/about" element={
-              <MainLayout>
-                <Suspense fallback={<LazyPageFallback type="spinner" message="소개 페이지를 로딩 중..." />}>
+              {/* ===== 공개 라우트 (인증 불필요) ===== */}
+              
+              {/* 홈페이지 - 스마트 리다이렉션 */}
+              <Route path="/" element={<HomeRedirect />} />
+              
+              {/* 인증 페이지들 */}
+              <Route path="/auth/signin" element={<SignInPage />} />
+              <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
+              <Route path="/auth/signup" element={
+                <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지 로딩 중..." />}>
+                  <LazyRegisterPage />
+                </Suspense>
+              } />
+              <Route path="/register" element={<Navigate to="/auth/signup" replace />} />
+              <Route path="/auth/forgot-password" element={
+                <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지 로딩 중..." />}>
+                  <LazyForgotPasswordPage />
+                </Suspense>
+              } />
+              <Route path="/forgot-password" element={<Navigate to="/auth/forgot-password" replace />} />
+              
+              {/* 정보 페이지들 */}
+              <Route path="/about" element={
+                <MainLayout>
                   <AboutPage />
-                </Suspense>
-              </MainLayout>
-            } />
-            <Route path="/contact" element={
-              <MainLayout>
-                <Suspense fallback={<LazyPageFallback type="spinner" message="문의 페이지를 로딩 중..." />}>
+                </MainLayout>
+              } />
+              <Route path="/contact" element={
+                <MainLayout>
                   <ContactPage />
-                </Suspense>
-              </MainLayout>
-            } />
-            <Route path="/login" element={<Navigate to="/auth/signin" replace />} /> {/* 기존 로그인 리다이렉트 */}
-            <Route path="/register" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지를 로딩 중..." />}>
-                <LazyRegisterPage />
-              </Suspense>
-            } />
-            <Route path="/auth/signup" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지를 로딩 중..." />}>
-                <LazyRegisterPage />
-              </Suspense>
-            } />
-            <Route path="/forgot-password" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지를 로딩 중..." />}>
-                <LazyForgotPasswordPage />
-              </Suspense>
-            } />
-            <Route path="/auth/forgot-password" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지를 로딩 중..." />}>
-                <LazyForgotPasswordPage />
-              </Suspense>
-            } />
-            <Route path="/unauthorized" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="페이지를 로딩 중..." />}>
-                <LazyUnauthorizedPage />
-              </Suspense>
-            } />
-            
-            {/* 챗봇 (인증 없이 사용 가능) */}
-            <Route path="/chat-home" element={<LazyChatHomePage />} />
-            <Route path="/chat" element={<LazyChatPage />} />
-            
-            {/* 긴급 검색 (비회원도 이용 가능) */}
-            <Route 
-              path="/emergency-search" 
-              element={
-                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                  <EmergencySearchPage />
-                </Suspense>
-              } 
-            />
-            
-            {/* 계획적 준비 (건강평가 연결) */}
-            <Route 
-              path="/planned-search" 
-              element={
-                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                  <PlannedSearchPage />
-                </Suspense>
-              } 
-            />
-            
-            {/* 구직자 전용 (비회원도 이용 가능) */}
-            <Route 
-              path="/job-search" 
-              element={
-                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                  <JobSearchPage />
-                </Suspense>
-              } 
-            />
-            
-            {/* 전문가 상담 (회원가입 유도) */}
-            <Route 
-              path="/consultation" 
-              element={
-                <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                  <ConsultationPage />
-                </Suspense>
-              } 
-            />
-            
-            {/* 시설찾기 (비로그인 상태에서도 접근 가능) */}
-            <Route 
-              path="/facility-search" 
-              element={
+                </MainLayout>
+              } />
+              
+              {/* 비회원도 접근 가능한 서비스 */}
+              <Route path="/emergency-search" element={<EmergencySearchPage />} />
+              <Route path="/planned-search" element={<PlannedSearchPage />} />
+              <Route path="/job-search" element={<JobSearchPage />} />
+              <Route path="/consultation" element={<ConsultationPage />} />
+              
+              {/* 시설 찾기 (비회원 접근 가능) */}
+              <Route path="/facility-search" element={
                 <MainLayout>
                   <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                    <FacilitySearchPageWrapper />
+                    <LazyFacilitySearchPage />
                   </Suspense>
                 </MainLayout>
-              } 
-            />
-            
-            {/* 테마 시스템 테스트 (개발용) */}
-            <Route path="/theme-test" element={<ThemeTestPlayground />} />
-            
-            {/* Linear Design System 데모 */}
-            <Route path="/linear-demo" element={<LinearShowcase />} />
-          
-            {/* 보호된 라우트 */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute>
+              } />
+              
+              {/* 챗봇 (비회원 접근 가능) */}
+              <Route path="/chat-home" element={<LazyChatHomePage />} />
+              <Route path="/chat" element={<LazyChatPage />} />
+              
+              {/* 권한 없음 페이지 */}
+              <Route path="/unauthorized" element={
+                <Suspense fallback={<LazyPageFallback type="spinner" />}>
+                  <LazyUnauthorizedPage />
+                </Suspense>
+              } />
+              
+              {/* 개발자 도구 (개발 환경에서만) */}
+              {process.env.NODE_ENV === 'development' && (
+                <>
+                  <Route path="/theme-test" element={<ThemeTestPlayground />} />
+                  <Route path="/linear-demo" element={<LinearShowcase />} />
+                </>
+              )}
+
+              {/* ===== 보호된 라우트 (인증 필요) ===== */}
+              
+              {/* 대시보드 */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute fallbackPath="/logout-redirect">
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
                       <LazyDashboardPage />
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
+              } />
 
-            <Route 
-              path="/mypage" 
-              element={
+              {/* 마이페이지 */}
+              <Route path="/mypage" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
@@ -241,12 +220,19 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
+              } />
 
-            <Route 
-              path="/notifications" 
-              element={
+              {/* 설정 */}
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <SettingsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+
+              {/* 알림 */}
+              <Route path="/notifications" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
@@ -254,25 +240,9 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
+              } />
 
-            <Route 
-              path="/settings" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <SettingsPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route 
-              path="/notifications/settings" 
-              element={
+              <Route path="/notifications/settings" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
@@ -280,12 +250,10 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
-          
-            <Route 
-              path="/health-assessment" 
-              element={
+              } />
+
+              {/* 건강 평가 */}
+              <Route path="/health-assessment" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
@@ -293,13 +261,10 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
-          
-            {/* 로그인 상태에서의 시설찾기 (고급 기능 사용 가능) - 다른 경로로 변경 */}
-            <Route 
-              path="/facility-search/advanced" 
-              element={
+              } />
+
+              {/* 고급 시설 검색 (로그인 전용) */}
+              <Route path="/facility-search/advanced" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
@@ -307,314 +272,208 @@ function App() {
                     </Suspense>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
+              } />
 
-            {/* 게시판 라우트 */}
-            <Route 
-              path="/boards" 
-              element={
+              {/* 게시판 */}
+              <Route path="/boards/*" element={
                 <ProtectedRoute>
                   <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyBoardListPage />
-                    </Suspense>
+                    <Routes>
+                      <Route index element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyBoardListPage />
+                        </Suspense>
+                      } />
+                      <Route path="create-post" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                          <LazyPostCreatePage />
+                        </Suspense>
+                      } />
+                      <Route path=":boardId" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyBoardListPage />
+                        </Suspense>
+                      } />
+                      <Route path=":boardId/posts/:postId" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
+                          <LazyPostDetailPage />
+                        </Suspense>
+                      } />
+                    </Routes>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
-          
-            <Route 
-              path="/boards/create-post" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <LazyPostCreatePage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-          
-            <Route 
-              path="/boards/:boardId" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyBoardListPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-          
-            <Route 
-              path="/boards/:boardId/posts/:postId" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                      <LazyPostDetailPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
+              } />
 
-            {/* 구인구직 라우트 */}
-            <Route 
-              path="/jobs" 
-              element={
+              {/* 구인구직 */}
+              <Route path="/jobs/*" element={
                 <ProtectedRoute>
                   <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyJobListPage />
-                    </Suspense>
+                    <Routes>
+                      <Route index element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyJobListPage />
+                        </Suspense>
+                      } />
+                      <Route path="my-applications" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyMyApplicationsPage />
+                        </Suspense>
+                      } />
+                      <Route path=":jobId" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
+                          <LazyJobDetailPage />
+                        </Suspense>
+                      } />
+                    </Routes>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/jobs/:jobId" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                      <LazyJobDetailPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
+              } />
 
-            <Route 
-              path="/jobs/my-applications" 
-              element={
+              {/* 프로필 관리 */}
+              <Route path="/profiles/*" element={
                 <ProtectedRoute>
                   <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyMyApplicationsPage />
-                    </Suspense>
+                    <Routes>
+                      <Route index element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyProfileListPage />
+                        </Suspense>
+                      } />
+                      <Route path=":profileType/:profileId" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
+                          <LazyProfileDetailPage />
+                        </Suspense>
+                      } />
+                    </Routes>
                   </MainLayout>
                 </ProtectedRoute>
-              } 
-            />
+              } />
 
-            {/* 프로필 관리 라우트 */}
-            <Route 
-              path="/profiles" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyProfileListPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-          
-            <Route 
-              path="/profiles/:profileType/:profileId" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                      <LazyProfileDetailPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-
-            {/* 리뷰 관리 라우트 */}
-            <Route 
-              path="/reviews/my" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyMyReviewsPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/reviews/facility/:facilityId" 
-              element={
+              {/* 리뷰 관리 */}
+              <Route path="/reviews/*" element={
                 <MainLayout>
-                  <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                    <LazyFacilityReviewsPage />
-                  </Suspense>
+                  <Routes>
+                    <Route path="my" element={
+                      <ProtectedRoute>
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyMyReviewsPage />
+                        </Suspense>
+                      </ProtectedRoute>
+                    } />
+                    <Route path="facility/:facilityId" element={
+                      <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                        <LazyFacilityReviewsPage />
+                      </Suspense>
+                    } />
+                    <Route path="create" element={
+                      <ProtectedRoute>
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                          <LazyReviewCreatePage />
+                        </Suspense>
+                      </ProtectedRoute>
+                    } />
+                  </Routes>
                 </MainLayout>
-              } 
-            />
-            
-            <Route 
-              path="/reviews/create" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <LazyReviewCreatePage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
+              } />
 
-            {/* 관리자 전용 라우트 */}
-            <Route 
-              path="/admin/members" 
-              element={
+              {/* ===== 관리자 전용 라우트 ===== */}
+              <Route path="/admin/*" element={
                 <AdminRoute>
                   <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">회원 관리</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p></div>
-                    </Suspense>
+                    <Routes>
+                      <Route path="members" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">회원 관리</h1>
+                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                      <Route path="facilities" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">시설 관리</h1>
+                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                      <Route path="statistics" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">시스템 통계</h1>
+                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 통계 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                      <Route path="settings" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">시스템 설정</h1>
+                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 설정 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                    </Routes>
                   </MainLayout>
                 </AdminRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/facilities" 
-              element={
-                <AdminRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">시설 관리</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p></div>
-                    </Suspense>
-                  </MainLayout>
-                </AdminRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/statistics" 
-              element={
-                <AdminRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">시스템 통계</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 통계 페이지입니다.</p></div>
-                    </Suspense>
-                  </MainLayout>
-                </AdminRoute>
-              } 
-            />
-            
-            <Route 
-              path="/admin/settings" 
-              element={
-                <AdminRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">시스템 설정</h1><p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 설정 페이지입니다.</p></div>
-                    </Suspense>
-                  </MainLayout>
-                </AdminRoute>
-              } 
-            />
+              } />
 
-            {/* 코디네이터 전용 라우트 */}
-            <Route 
-              path="/coordinator/members" 
-              element={
+              {/* ===== 코디네이터 전용 라우트 ===== */}
+              <Route path="/coordinator/*" element={
                 <CoordinatorRoute>
                   <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">회원 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p></div>
-                    </Suspense>
+                    <Routes>
+                      <Route path="members" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">회원 관리</h1>
+                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                      <Route path="matching" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyCoordinatorMatchingWizard />
+                        </Suspense>
+                      } />
+                      <Route path="available" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <LazyAvailableCoordinatorsPage />
+                        </Suspense>
+                      } />
+                      <Route path="simulation" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                          <LazySimulationDashboard />
+                        </Suspense>
+                      } />
+                      <Route path="statistics" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">통계</h1>
+                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 통계 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                      <Route path="facilities" element={
+                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
+                          <div className="p-6">
+                            <h1 className="text-2xl font-bold">시설 관리</h1>
+                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 시설 관리 페이지입니다.</p>
+                          </div>
+                        </Suspense>
+                      } />
+                    </Routes>
                   </MainLayout>
                 </CoordinatorRoute>
-              } 
-            />
-            
-            <Route 
-              path="/coordinator/matching" 
-              element={
-                <CoordinatorRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyCoordinatorMatchingWizard />
-                    </Suspense>
-                  </MainLayout>
-                </CoordinatorRoute>
-              } 
-            />
-            
-            <Route 
-              path="/coordinator/available" 
-              element={
-                <CoordinatorRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyAvailableCoordinatorsPage />
-                    </Suspense>
-                  </MainLayout>
-                </CoordinatorRoute>
-              } 
-            />
-            
-            <Route 
-              path="/coordinator/simulation" 
-              element={
-                <AdminRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                      <LazySimulationDashboard />
-                    </Suspense>
-                  </MainLayout>
-                </AdminRoute>
-              } 
-            />
-            
-            <Route 
-              path="/coordinator/statistics" 
-              element={
-                <CoordinatorRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">통계</h1><p className="text-gray-600 mt-2">코디네이터만 접근 가능한 통계 페이지입니다.</p></div>
-                    </Suspense>
-                  </MainLayout>
-                </CoordinatorRoute>
-              } 
-            />
-            
-            <Route 
-              path="/coordinator/facilities" 
-              element={
-                <CoordinatorRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <div className="p-6"><h1 className="text-2xl font-bold">시설 관리</h1><p className="text-gray-600 mt-2">코디네이터만 접규 가능한 시설 관리 페이지입니다.</p></div>
-                    </Suspense>
-                  </MainLayout>
-                </CoordinatorRoute>
-              } 
-            />
+              } />
 
-            {/* 기본 경로 - 원래 랜딩페이지 (비회원도 접근 가능) */}
-            <Route path="/" element={
-              <MainLayout>
-                <Suspense fallback={<LazyPageFallback type="spinner" message="홈페이지를 로딩 중..." />}>
-                  <LandingPage />
-                </Suspense>
-              </MainLayout>
-            } />
-            
-            {/* 404 페이지 - 전용 NotFound 페이지 */}
-            <Route path="*" element={
-              <Suspense fallback={<LazyPageFallback type="spinner" message="페이지를 로딩 중..." />}>
-                <NotFoundPage />
-              </Suspense>
-            } />
+              {/* ===== 특별 처리 라우트 ===== */}
+              
+              {/* 로그아웃 후 리다이렉트 */}
+              <Route path="/logout-redirect" element={<LogoutRedirect />} />
+              
+              {/* 404 페이지 - 모든 미정의 라우트 */}
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
         </Router>

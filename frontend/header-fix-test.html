@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Overlay Fix Test</title>
+    <style>
+        /* CSS 수정사항 테스트용 스타일 */
+        :root {
+            --linear-z-dropdown: 1000;
+            --linear-color-surface-elevated: rgba(255, 255, 255, 0.95);
+            --linear-color-border-subtle: #e5e7eb;
+            --linear-transition-fast: 0.15s ease;
+            --linear-color-control-hover: #f3f4f6;
+            --linear-color-border-default: #d1d5db;
+            --linear-spacing-xs: 0.25rem;
+            --linear-spacing-sm: 0.5rem;
+            --linear-spacing-md: 1rem;
+            --linear-spacing-lg: 1.5rem;
+            --linear-radius-medium: 0.5rem;
+            --linear-color-text-primary: #111827;
+        }
+
+        /* 수정된 헤더 스타일 */
+        .linear-header {
+            position: sticky;
+            top: 0;
+            z-index: 100; /* 헤더 z-index 최적화 - 과도한 값 대신 적정한 값 사용 */
+            background-color: var(--linear-color-surface-elevated);
+            border-bottom: 1px solid var(--linear-color-border-subtle);
+            /* backdrop-filter: blur(12px); - 블러 효과 비활성화로 겹침 방지 */
+            /* -webkit-backdrop-filter: blur(12px); */
+            transition: all var(--linear-transition-fast);
+            
+            /* 렌더링 아티팩트 방지를 위한 완전 불투명 배경 */
+            background: rgba(255, 255, 255, 1);
+            
+            /* GPU 가속 비활성화로 겹침 방지 */
+            will-change: auto;
+            transform: translateZ(0); /* 새로운 스태킹 컨텍스트 생성 방지 */
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 var(--linear-spacing-lg);
+            height: 64px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--linear-spacing-sm);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--linear-transition-fast);
+            border-radius: var(--linear-radius-medium);
+            padding: var(--linear-spacing-xs);
+            border: 1px solid transparent;
+        }
+
+        .header-logo:hover {
+            background-color: var(--linear-color-control-hover);
+            /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+            border-color: var(--linear-color-border-subtle);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--linear-color-text-primary);
+        }
+
+        .nav-items {
+            display: flex;
+            gap: var(--linear-spacing-sm);
+        }
+
+        .nav-item {
+            padding: var(--linear-spacing-sm) var(--linear-spacing-md);
+            border-radius: var(--linear-radius-medium);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--linear-transition-fast);
+            color: var(--linear-color-text-primary);
+        }
+
+        .nav-item:hover {
+            background-color: var(--linear-color-control-hover);
+            /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+        }
+
+        .content {
+            height: 200vh;
+            padding: 2rem;
+            background: linear-gradient(180deg, #f9fafb 0%, #e5e7eb 100%);
+        }
+
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .overlay-test {
+            position: relative;
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .overlay-test::before {
+            content: "이 영역에서 헤더 겹침 현상이 있었는지 확인";
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            background: #ffc107;
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header class="linear-header">
+        <div class="header-container">
+            <button class="header-logo">
+                <span class="logo-text">엘더베리</span>
+            </button>
+            
+            <nav class="nav-items">
+                <button class="nav-item">홈</button>
+                <button class="nav-item">시설 찾기</button>
+                <button class="nav-item">건강 평가</button>
+                <button class="nav-item">커뮤니티</button>
+            </nav>
+            
+            <div class="auth-buttons">
+                <button class="nav-item">로그인</button>
+                <button class="nav-item">회원가입</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="test-section">
+            <h1>상단 네비게이션 겹침 현상 수정 테스트</h1>
+            <p>다음 수정사항이 적용되었습니다:</p>
+            <ul>
+                <li>✅ backdrop-filter blur 효과 비활성화</li>
+                <li>✅ background-color를 완전 불투명(rgba(255, 255, 255, 1))으로 설정</li>
+                <li>✅ z-index를 1100에서 100으로 최적화</li>
+                <li>✅ 모든 hover transform 효과 비활성화</li>
+                <li>✅ will-change 속성 비활성화</li>
+                <li>✅ transform: translateZ(0)로 스태킹 컨텍스트 제어</li>
+            </ul>
+        </div>
+
+        <div class="overlay-test">
+            <h2>겹침 테스트 영역</h2>
+            <p>이 영역을 스크롤하면서 헤더 아래쪽에 희미한 요소들이 보이는지 확인하세요.</p>
+            <p>수정 후에는 헤더가 완전히 불투명하게 표시되어야 합니다.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>문제 원인 분석</h2>
+            <h3>1. 블러 효과 (backdrop-filter)</h3>
+            <p>• 기존: backdrop-filter: blur(12px) - 뒤의 요소들이 흐릿하게 비춰짐</p>
+            <p>• 수정: 블러 효과 완전 제거</p>
+            
+            <h3>2. 배경 투명도</h3>
+            <p>• 기존: CSS 변수로 인한 반투명 배경</p>
+            <p>• 수정: rgba(255, 255, 255, 1)로 완전 불투명 배경</p>
+            
+            <h3>3. Transform 속성</h3>
+            <p>• 기존: hover 시 translateY(-1px)로 새로운 스태킹 컨텍스트 생성</p>
+            <p>• 수정: 모든 transform 속성 제거</p>
+            
+            <h3>4. Z-index 최적화</h3>
+            <p>• 기존: calc(var(--linear-z-dropdown) + 100) = 1100</p>
+            <p>• 수정: 100 (적정한 값)</p>
+        </div>
+
+        <div class="test-section">
+            <h2>테스트 방법</h2>
+            <ol>
+                <li>이 페이지를 스크롤하면서 헤더 영역을 주의 깊게 관찰</li>
+                <li>헤더 아래쪽에 희미한 텍스트나 요소가 비치는지 확인</li>
+                <li>헤더의 로고나 버튼에 마우스를 올렸을 때 겹침 현상 확인</li>
+                <li>브라우저 개발자 도구에서 z-index 및 렌더링 레이어 확인</li>
+            </ol>
+        </div>
+
+        <div class="overlay-test">
+            <h2>추가 테스트 콘텐츠</h2>
+            <p>더 많은 콘텐츠로 스크롤 테스트를 진행합니다.</p>
+            <p>헤더가 완전히 고정되고 투명하지 않은지 확인하세요.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>성공 기준</h2>
+            <p>✅ 헤더 아래로 어떤 요소도 비치지 않음</p>
+            <p>✅ 헤더 배경이 완전히 불투명함</p>
+            <p>✅ 스크롤 시 부드러운 고정 헤더 동작</p>
+            <p>✅ 호버 효과가 겹침을 유발하지 않음</p>
+        </div>
+    </main>
+</body>
+</html>

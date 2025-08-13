@@ -26,11 +26,14 @@ export default function UnauthorizedPage() {
   const requiredRoles = state?.requiredRoles || [];
 
   // 역할 이름 매핑
-  const roleNames = {
-    [MemberRole.CAREGIVER]: '간병인',
-    [MemberRole.EMPLOYER]: '고용주',
-    [MemberRole.COORDINATOR]: '코디네이터',
-    [MemberRole.ADMIN]: '관리자'
+  const roleNames: Record<MemberRole, string> = {
+    ['ADMIN' as MemberRole]: '관리자',
+    ['FACILITY' as MemberRole]: '시설',
+    ['COORDINATOR' as MemberRole]: '코디네이터',
+    ['USER_DOMESTIC' as MemberRole]: '국내 이용자',
+    ['USER_OVERSEAS' as MemberRole]: '해외 이용자',
+    ['JOB_SEEKER_DOMESTIC' as MemberRole]: '국내 구직자',
+    ['JOB_SEEKER_OVERSEAS' as MemberRole]: '해외 구직자'
   };
 
   const currentRoleName = user ? roleNames[user.role] : '알 수 없음';

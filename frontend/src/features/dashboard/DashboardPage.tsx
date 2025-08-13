@@ -20,14 +20,14 @@ import {
   TrendingUp,
   Users,
   Settings
-} from '@/components/icons/LucideIcons';
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '@/stores/authStore';
-import { MemberRole } from '@/types/auth';
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
-import { Button } from '@/shared/ui';
-import { useSEO } from '@/hooks/useSEO';
+import { useAuthStore } from '../../stores/authStore';
+import { MemberRole } from '../../types/auth';
+import { Card, CardHeader, CardTitle, CardContent } from '../../shared/ui';
+import { Button } from '../../shared/ui';
+import { useSEO } from '../../hooks/useSEO';
 
 // 통계 카드 컴포넌트
 interface StatCardProps {
@@ -131,7 +131,27 @@ export default function DashboardPage() {
           }
         ]
       };
-      addStructuredData(breadcrumbData, 'dashboard-breadcrumb');
+      
+      // 구조화된 데이터를 문서에 추가
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'dashboard-breadcrumb';
+      script.text = JSON.stringify(breadcrumbData);
+      
+      // 기존 스크립트가 있으면 제거 후 새로 추가
+      const existingScript = document.getElementById('dashboard-breadcrumb');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      document.head.appendChild(script);
+      
+      // 컴포넌트 언마운트 시 정리
+      return () => {
+        const scriptToRemove = document.getElementById('dashboard-breadcrumb');
+        if (scriptToRemove) {
+          scriptToRemove.remove();
+        }
+      };
     }
   }, [user]);
   const [activities] = useState<Activity[]>([
@@ -163,8 +183,8 @@ export default function DashboardPage() {
   // 역할별 대시보드 설정 - 실제 백엔드 역할에 맞춤
   const getDashboardConfig = () => {
     switch (user?.role) {
-      case MemberRole.USER_DOMESTIC:
-      case MemberRole.USER_OVERSEAS:
+      case 'USER_DOMESTIC' as MemberRole:
+      case 'USER_OVERSEAS' as MemberRole:
         return {
           stats: [
             { title: '건강평가', value: '1', icon: Heart, change: '최근 완료', changeType: 'neutral' as const, color: 'green' as const },
@@ -179,8 +199,8 @@ export default function DashboardPage() {
           ]
         };
 
-      case MemberRole.JOB_SEEKER_DOMESTIC:
-      case MemberRole.JOB_SEEKER_OVERSEAS:
+      case 'JOB_SEEKER_DOMESTIC' as MemberRole:
+      case 'JOB_SEEKER_OVERSEAS' as MemberRole:
         return {
           stats: [
             { title: '지원한 공고', value: '12', icon: Briefcase, change: '+2 이번 주', changeType: 'increase' as const, color: 'blue' as const },
@@ -195,7 +215,7 @@ export default function DashboardPage() {
           ]
         };
 
-      case MemberRole.FACILITY:
+      case 'FACILITY' as MemberRole:
         return {
           stats: [
             { title: '등록한 공고', value: '5', icon: Briefcase, change: '+1 이번 주', changeType: 'increase' as const, color: 'blue' as const },
@@ -210,7 +230,7 @@ export default function DashboardPage() {
           ]
         };
 
-      case MemberRole.COORDINATOR:
+      case 'COORDINATOR' as MemberRole:
         return {
           stats: [
             { title: '담당 회원', value: '156', icon: Users, change: '+12 이번 달', changeType: 'increase' as const, color: 'blue' as const },
@@ -225,7 +245,7 @@ export default function DashboardPage() {
           ]
         };
 
-      case MemberRole.ADMIN:
+      case 'ADMIN' as MemberRole:
         return {
           stats: [
             { title: '전체 회원', value: '1,234', icon: Users, change: '+45 이번 달', changeType: 'increase' as const, color: 'blue' as const },

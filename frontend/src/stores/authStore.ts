@@ -5,7 +5,7 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AuthState, AuthUser, LoginRequest, RegisterRequest, MemberUpdateRequest } from '../types/auth';
+import { AuthState, AuthUser, LoginRequest, RegisterRequest, MemberUpdateRequest, MemberRole } from '../types/auth';
 import { authService, memberService } from '../services/authApi';
 import { normalizeError, errorLogger, ErrorContext } from '../utils/errorHandler';
 import type { AppError } from '../types/errors';
@@ -404,7 +404,11 @@ export const useAuthStore = create<AuthStore>()(
             action: 'validateToken'
           };
           
+          // 401 에러는 토큰 만료를 의미하므로 warn 레벨로 로깅
+          // authApi 인터셉터에서 이미 토큰 정리가 완료됨
           errorLogger.warn(error, context);
+          
+          // 401 에러 시 토큰이 만료된 것이므로 추가 로그아웃 처리 없이 false 반환
           return false;
         }
       },

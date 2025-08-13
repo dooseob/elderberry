@@ -135,7 +135,14 @@
       "mcp__filesystem__list_allowed_directories",
       "mcp__filesystem__get_file_info",
       "Bash(npm uninstall:*)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(npm init:*)",
+      "Bash(npx playwright install:*)",
+      "mcp__github__create_or_update_file",
+      "Bash(./start-backend-only.sh:*)",
+      "Bash(./test-backend-api.sh:*)",
+      "Bash(./start-frontend-dev.sh:*)",
+      "mcp__github__create_issue"
     ],
     "deny": []
   }

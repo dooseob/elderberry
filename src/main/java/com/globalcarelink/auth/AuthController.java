@@ -193,27 +193,33 @@ public class AuthController {
 
     @Operation(
         summary = "토큰 유효성 검증",
-        description = "토큰의 유효성을 검증합니다."
+        description = "토큰의 유효성을 검증합니다. 유효하지 않은 토큰에 대해서는 401 응답을 반환합니다."
     )
     @PostMapping("/validate")
     public ResponseEntity<TokenValidationResponse> validateToken(@Valid @RequestBody TokenValidationRequest request) {
         try {
             boolean isValid = jwtTokenProvider.validateToken(request.getToken());
+            
+            if (!isValid) {
+                // 유효하지 않은 토큰에 대해 401 응답 반환
+                log.warn("토큰 검증 실패 - 유효하지 않은 토큰: {}", request.getToken().substring(0, Math.min(20, request.getToken().length())) + "...");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
             String email = jwtTokenProvider.getEmailFromToken(request.getToken());
             
             TokenValidationResponse response = TokenValidationResponse.builder()
-                    .valid(isValid)
+                    .valid(true)
                     .email(email)
                     .build();
             
+            log.debug("토큰 검증 성공: {}", email);
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            TokenValidationResponse response = TokenValidationResponse.builder()
-                    .valid(false)
-                    .error(e.getMessage())
-                    .build();
             
-            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 토큰 파싱 오류 등 예외 발생 시에도 401 응답
+            log.warn("토큰 검증 중 예외 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
     

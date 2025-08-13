@@ -5,9 +5,11 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -38,6 +40,19 @@ public class PublicDataApiConfig {
 
     @Value("${app.public-data.max-memory-size:1048576}")
     private int maxMemorySize; // 1MB
+
+    /**
+     * 공공데이터 API 전용 RestTemplate 빈 생성 (레거시 지원)
+     * 
+     * @return 타임아웃 설정이 적용된 RestTemplate 인스턴스
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplateBuilder()
+                .setConnectTimeout(Duration.ofMillis(connectTimeout))
+                .setReadTimeout(Duration.ofMillis(readTimeout))
+                .build();
+    }
 
     /**
      * 공공데이터 API 전용 WebClient 빈 생성

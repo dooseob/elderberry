@@ -110,81 +110,8 @@ const PLATFORM_STATS = {
 
 // 더 이상 가짜 챗봇을 사용하지 않으므로 제거
 
-/**
- * 사용자 여정 중심 헤더
- */
-const UserJourneyHeader: React.FC = () => {
-  const { isAuthenticated, user } = useAuthStore();
-  const navigate = useNavigate();
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* 왼쪽: Elderberry 로고 */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900">Elderberry</span>
-          </div>
-
-          {/* 중앙: 빠른 액션 버튼들 (인증된 사용자에게만) */}
-          {isAuthenticated && (
-            <nav className="hidden md:flex items-center space-x-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/emergency-search')}>
-                <AlertTriangle className="w-4 h-4 mr-1" />
-                긴급 검색
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
-                <Target className="w-4 h-4 mr-1" />
-                내 진행상황
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/consultation')}>
-                <Phone className="w-4 h-4 mr-1" />
-                상담 예약
-              </Button>
-            </nav>
-          )}
-
-          {/* 오른쪽: 사용자 상태별 버튼 */}
-          <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <span className="hidden sm:inline text-sm text-gray-600">
-                  안녕하세요, {user?.name || '사용자'}님
-                </span>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/dashboard')}
-                >
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                  대시보드
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/auth/signin')}
-                  className="hidden sm:inline-flex"
-                >
-                  로그인
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/auth/signup')}
-                >
-                  회원가입
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-};
+// UserJourneyHeader 제거 - MainLayout의 Header 사용으로 통일
+// 중복 헤더 렌더링 문제 해결
 
 /**
  * 사용자 여정 중심 히어로 섹션
@@ -212,7 +139,7 @@ const UserJourneyHeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* 배경 그라디언트 */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-emerald-50" />
       
@@ -711,7 +638,7 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* 사용자 여정 중심 헤더 */}
-      <UserJourneyHeader />
+      {/* UserJourneyHeader 제거 - MainLayout의 Header 사용으로 중복 문제 해결 */}
       
       {/* 사용자 여정 선택 히어로 섹션 */}
       <UserJourneyHeroSection />

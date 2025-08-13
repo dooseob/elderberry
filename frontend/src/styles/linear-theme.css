@@ -610,7 +610,11 @@ body {
 .linear-navbar {
   background-color: var(--linear-color-surface-elevated);
   border-bottom: 1px solid var(--linear-color-border-subtle);
-  backdrop-filter: blur(8px);
+  /* backdrop-filter 제거 - 헤더 투명도 문제 해결 */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* 완전 불투명 배경 보장 */
+  opacity: 1;
 }
 
 /* Responsive Utilities */

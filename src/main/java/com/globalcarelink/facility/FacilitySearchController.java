@@ -167,7 +167,7 @@ public class FacilitySearchController {
         summary = "추천 시설 목록",
         description = "사용자의 건강 평가 결과를 기반으로 최적의 시설을 추천합니다."
     )
-    @GetMapping("/recommendations")
+    @GetMapping("/search-recommendations")
     @PreAuthorize("hasAnyRole('USER_DOMESTIC', 'USER_OVERSEAS', 'COORDINATOR', 'ADMIN')")
     public ResponseEntity<List<Map<String, Object>>> getRecommendedFacilities(
             @Parameter(description = "건강 평가 ID")

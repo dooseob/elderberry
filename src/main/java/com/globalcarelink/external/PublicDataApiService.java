@@ -33,7 +33,7 @@ public class PublicDataApiService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${public.data.api.key}")
+    @Value("${PUBLIC_DATA_API_KEY:development-default-key}")
     private String publicDataApiKey;
 
     @Value("${public.data.base.url:https://api.data.go.kr}")

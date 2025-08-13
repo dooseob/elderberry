@@ -74,26 +74,35 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user, profile }) => {
   // 역할별 통계 데이터 (실제로는 API에서 가져옴)
   const getStatsForRole = (role: MemberRole) => {
     switch (role) {
-      case MemberRole.CAREGIVER:
+      case 'JOB_SEEKER_DOMESTIC' as MemberRole:
+      case 'JOB_SEEKER_OVERSEAS' as MemberRole:
         return [
-          { label: '매칭 성공', value: '12건', icon: Target, color: 'text-green-600' },
-          { label: '평균 평점', value: '4.8점', icon: Star, color: 'text-yellow-500' },
-          { label: '활동 기간', value: '8개월', icon: Clock, color: 'text-blue-600' },
-          { label: '완료 케어', value: '5건', icon: Award, color: 'text-purple-600' }
+          { label: '지원 완료', value: '12건', icon: Target, color: 'text-green-600' },
+          { label: '면접 진행', value: '4건', icon: Star, color: 'text-yellow-500' },
+          { label: '활동 기간', value: '3개월', icon: Clock, color: 'text-blue-600' },
+          { label: '프로필 조회', value: '156회', icon: Award, color: 'text-purple-600' }
         ];
-      case MemberRole.COORDINATOR:
+      case 'COORDINATOR' as MemberRole:
         return [
           { label: '매칭 성공', value: '45건', icon: Target, color: 'text-green-600' },
           { label: '고객 만족도', value: '96%', icon: Star, color: 'text-yellow-500' },
           { label: '활동 기간', value: '2년', icon: Clock, color: 'text-blue-600' },
           { label: '관리 회원', value: '23명', icon: Users, color: 'text-purple-600' }
         ];
-      case MemberRole.EMPLOYER:
+      case 'FACILITY' as MemberRole:
         return [
           { label: '등록 구인', value: '8건', icon: Target, color: 'text-green-600' },
           { label: '채용 성공', value: '6건', icon: Star, color: 'text-yellow-500' },
           { label: '활동 기간', value: '1년', icon: Clock, color: 'text-blue-600' },
           { label: '평균 평점', value: '4.7점', icon: Award, color: 'text-purple-600' }
+        ];
+      case 'USER_DOMESTIC' as MemberRole:
+      case 'USER_OVERSEAS' as MemberRole:
+        return [
+          { label: '시설 검색', value: '25회', icon: Target, color: 'text-green-600' },
+          { label: '상담 신청', value: '5건', icon: Star, color: 'text-yellow-500' },
+          { label: '가입 기간', value: '6개월', icon: Clock, color: 'text-blue-600' },
+          { label: '리뷰 작성', value: '3건', icon: Award, color: 'text-purple-600' }
         ];
       default:
         return [];

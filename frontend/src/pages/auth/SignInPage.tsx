@@ -40,7 +40,7 @@ import { useAuthStore } from '../../stores/authStore';
 // import { useLinearTheme } from '../../hooks/useLinearTheme';
 import { useLinearTheme } from '../../hooks/useLinearTheme.simple';
 import { useRenderingMonitor, useDependencyTracker } from '../../hooks/useRenderingMonitor';
-import { ErrorBoundary } from '../../components/ErrorBoundary';
+import { ErrorBoundary } from '../../shared/ui/ErrorBoundary';
 import { cn } from '../../lib/utils';
 
 // 개선된 폼 스키마 (더 관대한 검증)

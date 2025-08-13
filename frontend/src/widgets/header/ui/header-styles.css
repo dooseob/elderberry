@@ -14,12 +14,27 @@
 .linear-header {
   position: sticky;
   top: 0;
-  z-index: var(--linear-z-dropdown);
-  background-color: var(--linear-color-surface-elevated);
+  z-index: 100; /* 헤더 z-index 최적화 - 과도한 값 대신 적정한 값 사용 */
+  /* 완전 불투명 배경 - CSS 변수 사용으로 다크/라이트 모드 모두 지원 */
+  background-color: var(--linear-color-surface-elevated) !important;
+  background: var(--linear-color-surface-elevated) !important; /* 중복 정의로 확실한 적용 */
   border-bottom: 1px solid var(--linear-color-border-subtle);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   transition: all var(--linear-transition-fast);
+  
+  /* 투명도 완전 제거 - !important로 강제 적용 */
+  opacity: 1 !important;
+  
+  /* backdrop-filter 완전 제거 - !important로 강제 적용 */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  /* 렌더링 최적화 및 겹침 방지 */
+  isolation: isolate; /* 새로운 스태킹 컨텍스트 생성 */
+  backface-visibility: hidden; /* 렌더링 최적화 */
+  
+  /* 추가 보장 - 모든 가능한 투명도 속성 제거 */
+  filter: none !important;
+  mix-blend-mode: normal !important;
 }
 
 .header-container {
@@ -66,31 +81,41 @@
   transition: all var(--linear-transition-fast);
   border-radius: var(--linear-radius-medium);
   padding: var(--linear-spacing-xs);
+  border: 1px solid transparent;
 }
 
 .header-logo:hover {
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+  border-color: var(--linear-color-border-subtle);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header-logo:focus-visible {
+  outline: 2px solid var(--linear-color-accent);
+  outline-offset: 2px;
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--linear-radius-small);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: var(--linear-font-weight-bold);
-  font-size: 18px;
+  font-size: 20px;
   color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo-brand {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: var(--linear-font-weight-semibold);
   color: var(--linear-color-text-primary);
   letter-spacing: -0.02em;
+  text-shadow: none; /* Remove any text shadow */
 }
 
 /* === Navigation Styles === */
@@ -125,7 +150,7 @@
 .nav-item:hover {
   color: var(--linear-color-text-primary);
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
 }
 
 .nav-item-active {
@@ -177,7 +202,7 @@
 .language-toggle:hover {
   background-color: var(--linear-color-control-hover);
   border-color: var(--linear-color-border-default);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
 }
 
 .language-flag {
@@ -284,17 +309,31 @@
   transition: all var(--linear-transition-fast);
   white-space: nowrap;
   letter-spacing: -0.01em;
+  min-height: 40px; /* Ensure minimum tap target */
+  border: 1px solid transparent;
+}
+
+.auth-signin-btn {
+  border-color: var(--linear-color-border-subtle);
 }
 
 .auth-signin-btn:hover {
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+  border-color: var(--linear-color-border-default);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .auth-signup-btn:hover {
   background-color: var(--linear-color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--linear-shadow-card);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-signin-btn:focus-visible,
+.auth-signup-btn:focus-visible {
+  outline: 2px solid var(--linear-color-accent);
+  outline-offset: 2px;
 }
 
 /* === Theme Menu Enhancements === */
@@ -306,7 +345,7 @@
 
 .theme-toggle:hover {
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
 }
 
 .theme-dropdown {
@@ -377,7 +416,7 @@
 
 .user-avatar:hover {
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
 }
 
 .avatar-image {
@@ -506,16 +545,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border-radius: var(--linear-radius-medium);
   transition: all var(--linear-transition-fast);
+  min-width: 48px; /* Ensure minimum tap target size */
+  border: 1px solid transparent;
 }
 
 .sidebar-toggle:hover {
   background-color: var(--linear-color-control-hover);
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); - 겹침 방지를 위해 transform 비활성화 */
+  border-color: var(--linear-color-border-default);
+  box-shadow: var(--linear-shadow-card);
+}
+
+.sidebar-toggle:focus-visible {
+  outline: 2px solid var(--linear-color-accent);
+  outline-offset: 2px;
+}
+
+/* Make hamburger icon larger and more visible */
+.sidebar-toggle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
 }
 
 /* === Responsive Design === */
@@ -578,7 +633,7 @@
 
 @media (max-width: 480px) {
   .header-container {
-    height: 52px;
+    height: 56px;
     padding: 0 var(--linear-spacing-sm);
   }
   
@@ -586,14 +641,26 @@
     gap: var(--linear-spacing-sm);
   }
   
+  /* Keep sidebar toggle accessible on mobile */
+  .sidebar-toggle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+  
+  .sidebar-toggle svg {
+    width: 22px;
+    height: 22px;
+  }
+  
   .logo-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
   
   .logo-brand {
-    font-size: 16px;
+    font-size: 18px;
   }
   
   .language-toggle {
@@ -610,12 +677,15 @@
   }
   
   .auth-signin-btn {
-    padding: var(--linear-spacing-xs);
+    padding: var(--linear-spacing-xs) var(--linear-spacing-sm);
+    font-size: 13px;
+    min-height: 36px;
   }
   
   .auth-signup-btn {
     padding: var(--linear-spacing-xs) var(--linear-spacing-sm);
-    font-size: 12px;
+    font-size: 13px;
+    min-height: 36px;
   }
 }
 
@@ -631,7 +701,7 @@
 
 /* === Performance Optimizations === */
 .linear-header {
-  will-change: background-color, border-color;
+  /* will-change: background-color, border-color; - 겹침 방지를 위해 비활성화 */
 }
 
 .nav-item,
@@ -639,7 +709,7 @@
 .theme-toggle,
 .auth-signin-btn,
 .auth-signup-btn {
-  will-change: transform, background-color;
+  /* will-change: transform, background-color; - 겹침 방지를 위해 비활성화 */
 }
 
 /* === Accessibility Improvements === */

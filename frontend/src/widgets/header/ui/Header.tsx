@@ -256,8 +256,8 @@ const Header: React.FC<HeaderProps> = memo(({
   // 사용자 정보는 props 우선, 없으면 store에서 가져오기
   const user = propUser || storeUser;
   
-  // 네비게이션 메뉴는 인증 상태에 따라 결정
-  const effectiveNavItems = navItems || (isAuthenticated ? DEFAULT_AUTH_NAV_ITEMS : DEFAULT_PUBLIC_NAV_ITEMS);
+  // 헤더는 글로벌 액션에 집중 - 메인 네비게이션은 사이드바에서 담당
+  const effectiveNavItems = navItems || [];
   
   // 현재 경로에 따른 active 상태 설정
   const navItemsWithActive = effectiveNavItems.map(item => ({
@@ -452,7 +452,17 @@ const Header: React.FC<HeaderProps> = memo(({
   ].filter(Boolean).join(' ');
   
   return (
-    <header className={headerClasses}>
+    <header className={headerClasses} style={{
+      backgroundColor: 'var(--linear-color-surface-elevated)',
+      background: 'var(--linear-color-surface-elevated)',
+      backdropFilter: 'none',
+      WebkitBackdropFilter: 'none',
+      opacity: 1,
+      isolation: 'isolate',
+      filter: 'none',
+      mixBlendMode: 'normal',
+      zIndex: 100
+    }}>
       <div className="header-container">
         {/* 왼쪽 영역: 사이드바 토글 + 로고 */}
         <div className="header-start">
@@ -464,12 +474,12 @@ const Header: React.FC<HeaderProps> = memo(({
             title="사이드바 토글 (Alt+S)"
           >
             <svg
-              width="20"
-              height="20"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -501,8 +511,8 @@ const Header: React.FC<HeaderProps> = memo(({
         
         {/* 오른쪽 영역: 알림 + 테마 토글 + 사용자 메뉴 */}
         <div className="header-end">
-          {/* 알림 벨 (로그인 상태에서만 표시) */}
-          {isAuthenticated && (
+          {/* 알림 벨 임시 비활성화 - 무한 루프 문제 해결 중 */}
+          {isAuthenticated && false && (
             <div className="notification-wrapper">
               <NotificationBell />
               <NotificationPanel />
