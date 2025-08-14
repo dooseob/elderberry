@@ -4,6 +4,7 @@ import { BlurredText } from "./components/BlurredText";
 import { CTAButtons } from "./components/CTAButtons";
 import { ArrowRight } from "lucide-react";
 import FacilitiesPage from "./pages/FacilitiesPage";
+import FacilityDetailPage from "./pages/FacilityDetailPage";
 import JobsPage from "./pages/JobsPage";
 import CommunityPageSimple from "./pages/CommunityPageSimple";
 import HealthAssessmentPage from "./pages/HealthAssessmentPage";
@@ -456,6 +457,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/facilities" element={<FacilitiesPage />} />
+        <Route path="/facilities/:id" element={<FacilityDetailPage />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/community" element={<CommunityPageSimple />} />
         <Route path="/health-assessment" element={<HealthAssessmentPage />} />
