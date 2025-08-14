@@ -1,0 +1,48 @@
+{
+  "name": "elderberry-home-components",
+  "version": "1.0.0",
+  "description": "Elderberry 홈페이지 컴포넌트 패키지",
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.7.0",
+    "lucide-react": "^0.525.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "files": [
+    "components/",
+    "lib/",
+    "styles/",
+    "README.md"
+  ],
+  "main": "components/HomePage.jsx",
+  "keywords": [
+    "react",
+    "homepage",
+    "elderberry",
+    "components",
+    "ui",
+    "tailwindcss"
+  ],
+  "author": "Elderberry Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elderberry/home-components"
+  },
+  "bugs": {
+    "url": "https://github.com/elderberry/home-components/issues"
+  },
+  "homepage": "https://github.com/elderberry/home-components#readme"
+}
