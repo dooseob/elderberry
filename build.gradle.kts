@@ -49,9 +49,9 @@ dependencies {
     runtimeOnly("org.xerial:sqlite-jdbc:3.44.1.0")
     
     // JWT (Legacy - for migration safety)
-    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
     
     // Clerk JWT Verification (commented out - not needed for new frontend)
     // implementation("com.clerk:clerk-sdk-java:4.3.0")
