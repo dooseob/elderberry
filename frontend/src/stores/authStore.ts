@@ -1,114 +1,159 @@
 /**
- * 인증 상태 관리 스토어 (Zustand)
- * Phase 2: API 클라이언트 통합 및 TokenProvider 구현
- * 타입 안전한 에러 처리 적용
+ * 인증 스토어 - main 프로젝트용 간소화 버전
+ * frontend의 고급 기능을 기반으로 한 통합 인증 시스템
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AuthState, AuthUser, LoginRequest, RegisterRequest, MemberUpdateRequest, MemberRole } from '../types/auth';
-import { authService, memberService } from '../services/authApi';
-import { normalizeError, errorLogger, ErrorContext } from '../utils/errorHandler';
-import type { AppError } from '../types/errors';
 
-interface AuthActions {
-  // 로그인
+// 기본 타입 정의
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  phoneNumber?: string;
+}
+
+export interface AuthState {
+  // 사용자 상태
+  user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isAuthenticated: boolean;
+  
+  // UI 상태
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface AuthActions {
+  // 인증 액션
   login: (request: LoginRequest) => Promise<void>;
-  // 회원가입
   register: (request: RegisterRequest) => Promise<void>;
-  // 로그아웃
   logout: () => Promise<void>;
-  // 토큰 갱신
-  refreshToken: () => Promise<void>;
-  // 사용자 정보 새로고침
-  refreshUser: () => Promise<void>;
-  // 프로필 업데이트
-  updateProfile: (request: MemberUpdateRequest) => Promise<void>;
-  // 에러 클리어
-  clearError: () => void;
-  // 로딩 상태 설정
+  refreshTokens: () => Promise<void>;
+  
+  // 토큰 관리
+  setTokens: (accessToken: string, refreshToken: string) => void;
+  clearTokens: () => void;
+  
+  // 상태 관리
   setLoading: (loading: boolean) => void;
-  // 토큰 유효성 검사
-  validateToken: () => Promise<boolean>;
-  // 초기화
+  setError: (error: string | null) => void;
+  clearError: () => void;
   reset: () => void;
 }
 
 type AuthStore = AuthState & AuthActions;
 
-// 토큰 저장소 관리
-const TOKEN_KEYS = {
-  ACCESS_TOKEN: 'accessToken',
-  REFRESH_TOKEN: 'refreshToken',
-  USER: 'user'
-} as const;
-
-const getStoredToken = (key: keyof typeof TOKEN_KEYS): string | null => {
-  try {
-    return sessionStorage.getItem(TOKEN_KEYS[key]);
-  } catch {
-    return null;
-  }
-};
-
-const setStoredToken = (key: keyof typeof TOKEN_KEYS, value: string): void => {
-  try {
-    sessionStorage.setItem(TOKEN_KEYS[key], value);
-  } catch {
-    // SessionStorage 사용 불가 시 무시
-  }
-};
-
-const removeStoredToken = (key: keyof typeof TOKEN_KEYS): void => {
-  try {
-    sessionStorage.removeItem(TOKEN_KEYS[key]);
-  } catch {
-    // SessionStorage 사용 불가 시 무시
-  }
-};
-
-const getStoredUser = (): AuthUser | null => {
-  try {
-    const userStr = sessionStorage.getItem(TOKEN_KEYS.USER);
-    return userStr ? JSON.parse(userStr) : null;
-  } catch {
-    return null;
-  }
-};
-
-const setStoredUser = (user: AuthUser): void => {
-  try {
-    sessionStorage.setItem(TOKEN_KEYS.USER, JSON.stringify(user));
-  } catch {
-    // SessionStorage 사용 불가 시 무시
-  }
-};
-
-const removeStoredUser = (): void => {
-  try {
-    sessionStorage.removeItem(TOKEN_KEYS.USER);
-  } catch {
-    // SessionStorage 사용 불가 시 무시
-  }
-};
-
 // 초기 상태
 const initialState: AuthState = {
-  user: getStoredUser(),
-  accessToken: getStoredToken('ACCESS_TOKEN'),
-  refreshToken: getStoredToken('REFRESH_TOKEN'),
-  isAuthenticated: !!getStoredToken('ACCESS_TOKEN'),
+  user: null,
+  accessToken: null,
+  refreshToken: null,
+  isAuthenticated: false,
   isLoading: false,
-  error: null
+  error: null,
 };
 
-// TokenProvider 인터페이스 구현 (API 클라이언트용)
-export const createTokenProvider = (store: AuthStore) => ({
-  getAccessToken: () => store.accessToken,
-  getRefreshToken: () => store.refreshToken,
-  refreshToken: () => store.refreshToken(),
-  logout: () => store.logout(),
-});
+// 토큰 관리 유틸리티
+const TokenManager = {
+  getAccessToken: (): string | null => {
+    try {
+      return localStorage.getItem('accessToken');
+    } catch {
+      return null;
+    }
+  },
+  
+  getRefreshToken: (): string | null => {
+    try {
+      return localStorage.getItem('refreshToken');
+    } catch {
+      return null;
+    }
+  },
+  
+  setTokens: (accessToken: string, refreshToken: string): void => {
+    try {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+    } catch (error) {
+      console.warn('Failed to save tokens to localStorage:', error);
+    }
+  },
+  
+  clearTokens: (): void => {
+    try {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    } catch (error) {
+      console.warn('Failed to clear tokens from localStorage:', error);
+    }
+  },
+  
+  isTokenExpired: (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  }
+};
 
+// API 기본 URL (환경변수에서 가져옴)
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8080/api';
+
+// API 호출 유틸리티
+const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any> => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const config: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const response = await fetch(url, config);
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+  }
+  
+  return response.json();
+};
+
+// 인증된 API 호출 (토큰 자동 첨부)
+const authenticatedApiCall = async (endpoint: string, options: RequestInit = {}): Promise<any> => {
+  const token = TokenManager.getAccessToken();
+  
+  return apiCall(endpoint, {
+    ...options,
+    headers: {
+      ...options.headers,
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  });
+};
+
+// 스토어 생성
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
@@ -116,335 +161,226 @@ export const useAuthStore = create<AuthStore>()(
 
       // 로그인
       login: async (request: LoginRequest) => {
+        set({ isLoading: true, error: null });
+        
         try {
-          set({ isLoading: true, error: null });
+          const response = await apiCall('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(request),
+          });
 
-          // 로그인 전에 기존 토큰 정리
-          removeStoredToken('ACCESS_TOKEN');
-          removeStoredToken('REFRESH_TOKEN');
-          removeStoredUser();
-
-          const response = await authService.login(request);
+          const { user, accessToken, refreshToken } = response;
           
-          const user: AuthUser = {
-            id: response.member.id,
-            email: response.member.email,
-            name: response.member.name,
-            role: response.member.role,
-            profileCompletionRate: response.member.profileCompletionRate || 0,
-            isActive: response.member.isActive
-          };
-
-          // 토큰 및 사용자 정보 저장
-          setStoredToken('ACCESS_TOKEN', response.accessToken);
-          if (response.refreshToken) {
-            setStoredToken('REFRESH_TOKEN', response.refreshToken);
-          }
-          setStoredUser(user);
-
+          // 토큰 저장
+          TokenManager.setTokens(accessToken, refreshToken);
+          
           set({
             user,
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken || null,
+            accessToken,
+            refreshToken,
             isAuthenticated: true,
             isLoading: false,
-            error: null
+            error: null,
           });
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'login'
-          };
           
-          const normalizedError = normalizeError(error, context);
-          
-          // 로그인 실패는 사용자에게 더 친화적인 메시지로 표시하고, warn 레벨로 로깅
-          // (API 레벨에서 이미 에러 처리가 되었으므로 중복 로깅 방지)
-          const userFriendlyMessage = normalizedError.message?.includes('401') 
-            ? '이메일 또는 비밀번호가 올바르지 않습니다.' 
-            : normalizedError.message || '로그인에 실패했습니다.';
-          
-          errorLogger.warn(normalizedError, context);
-          
+          console.log('로그인 성공:', user.email);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
           set({
             isLoading: false,
-            error: userFriendlyMessage
+            error: errorMessage,
           });
-          throw normalizedError;
+          throw error;
         }
       },
 
       // 회원가입
       register: async (request: RegisterRequest) => {
+        set({ isLoading: true, error: null });
+        
         try {
-          set({ isLoading: true, error: null });
+          const response = await apiCall('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(request),
+          });
 
-          const response = await authService.register(request);
+          const { user, accessToken, refreshToken } = response;
           
-          const user: AuthUser = {
-            id: response.member.id,
-            email: response.member.email,
-            name: response.member.name,
-            role: response.member.role,
-            profileCompletionRate: response.member.profileCompletionRate || 0,
-            isActive: response.member.isActive
-          };
-
-          // 토큰 및 사용자 정보 저장
-          setStoredToken('ACCESS_TOKEN', response.accessToken);
-          setStoredToken('REFRESH_TOKEN', response.refreshToken);
-          setStoredUser(user);
-
+          // 토큰 저장
+          TokenManager.setTokens(accessToken, refreshToken);
+          
           set({
             user,
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
+            accessToken,
+            refreshToken,
             isAuthenticated: true,
             isLoading: false,
-            error: null
+            error: null,
           });
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'register'
-          };
           
-          const normalizedError = normalizeError(error, context);
-          
-          // 회원가입 실패도 사용자 친화적인 메시지로 표시
-          const userFriendlyMessage = normalizedError.message?.includes('409') 
-            ? '이미 사용중인 이메일입니다.' 
-            : normalizedError.message || '회원가입에 실패했습니다.';
-          
-          errorLogger.warn(normalizedError, context);
-          
+          console.log('회원가입 성공:', user.email);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
           set({
             isLoading: false,
-            error: userFriendlyMessage
+            error: errorMessage,
           });
-          throw normalizedError;
+          throw error;
         }
       },
 
       // 로그아웃
       logout: async () => {
+        set({ isLoading: true });
+        
         try {
-          set({ isLoading: true });
-
-          // 서버에 로그아웃 요청
-          await authService.logout();
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'logout'
-          };
-          
-          errorLogger.warn(error, context);
+          // 서버에 로그아웃 요청 (선택적)
+          const token = get().accessToken;
+          if (token) {
+            await apiCall('/auth/logout', {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }).catch(() => {
+              // 로그아웃 실패는 무시 (이미 만료된 토큰일 수 있음)
+            });
+          }
         } finally {
-          // 로컬 상태 및 저장소 정리
-          removeStoredToken('ACCESS_TOKEN');
-          removeStoredToken('REFRESH_TOKEN');
-          removeStoredUser();
-
+          // 로컬 상태 및 토큰 정리
+          TokenManager.clearTokens();
           set({
-            user: null,
-            accessToken: null,
-            refreshToken: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null
+            ...initialState,
           });
+          
+          console.log('로그아웃 완료');
         }
       },
 
       // 토큰 갱신
-      refreshToken: async () => {
+      refreshTokens: async () => {
+        const refreshToken = get().refreshToken;
+        
+        if (!refreshToken) {
+          throw new Error('리프레시 토큰이 없습니다.');
+        }
+        
         try {
-          const { refreshToken } = get();
-          if (!refreshToken) {
-            throw new Error('리프레시 토큰이 없습니다.');
-          }
+          const response = await apiCall('/auth/refresh', {
+            method: 'POST',
+            body: JSON.stringify({ refreshToken }),
+          });
 
-          const response = await authService.refreshToken({ refreshToken });
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response;
           
-          const user: AuthUser = {
-            id: response.member.id,
-            email: response.member.email,
-            name: response.member.name,
-            role: response.member.role,
-            profileCompletionRate: response.member.profileCompletionRate || 0,
-            isActive: response.member.isActive
-          };
-
           // 새 토큰 저장
-          setStoredToken('ACCESS_TOKEN', response.accessToken);
-          setStoredToken('REFRESH_TOKEN', response.refreshToken);
-          setStoredUser(user);
-
+          TokenManager.setTokens(newAccessToken, newRefreshToken);
+          
           set({
-            user,
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
-            isAuthenticated: true,
-            error: null
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
           });
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'refreshToken'
-          };
           
-          const normalizedError = normalizeError(error, context);
-          errorLogger.error(normalizedError, context);
-          
-          // 리프레시 실패 시 로그아웃
+          return newAccessToken;
+        } catch (error) {
+          // 토큰 갱신 실패 시 로그아웃
           get().logout();
-          throw normalizedError;
+          throw error;
         }
       },
 
-      // 사용자 정보 새로고침
-      refreshUser: async () => {
-        try {
-          set({ isLoading: true });
-
-          const memberInfo = await memberService.getProfile();
-          
-          const user: AuthUser = {
-            id: memberInfo.id,
-            email: memberInfo.email,
-            name: memberInfo.name,
-            role: memberInfo.role,
-            profileCompletionRate: memberInfo.profileCompletionRate,
-            isActive: memberInfo.isActive
-          };
-
-          setStoredUser(user);
-
-          set({
-            user,
-            isLoading: false,
-            error: null
-          });
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'refreshUser'
-          };
-          
-          const normalizedError = normalizeError(error, context);
-          errorLogger.error(normalizedError, context);
-          
-          set({
-            isLoading: false,
-            error: normalizedError.message || '사용자 정보 조회에 실패했습니다.'
-          });
-          throw normalizedError;
-        }
-      },
-
-      // 프로필 업데이트
-      updateProfile: async (request: MemberUpdateRequest) => {
-        try {
-          set({ isLoading: true, error: null });
-
-          const memberInfo = await memberService.updateProfile(request);
-          
-          const user: AuthUser = {
-            id: memberInfo.id,
-            email: memberInfo.email,
-            name: memberInfo.name,
-            role: memberInfo.role,
-            profileCompletionRate: memberInfo.profileCompletionRate,
-            isActive: memberInfo.isActive
-          };
-
-          setStoredUser(user);
-
-          set({
-            user,
-            isLoading: false,
-            error: null
-          });
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'updateProfile'
-          };
-          
-          const normalizedError = normalizeError(error, context);
-          errorLogger.error(normalizedError, context);
-          
-          set({
-            isLoading: false,
-            error: normalizedError.message || '프로필 업데이트에 실패했습니다.'
-          });
-          throw normalizedError;
-        }
-      },
-
-      // 토큰 유효성 검사
-      validateToken: async (): Promise<boolean> => {
-        try {
-          const { accessToken } = get();
-          if (!accessToken) return false;
-
-          const response = await authService.validateToken({ token: accessToken });
-          return response.valid;
-
-        } catch (error: unknown) {
-          const context: ErrorContext = {
-            component: 'authStore',
-            action: 'validateToken'
-          };
-          
-          // 401 에러는 토큰 만료를 의미하므로 warn 레벨로 로깅
-          // authApi 인터셉터에서 이미 토큰 정리가 완료됨
-          errorLogger.warn(error, context);
-          
-          // 401 에러 시 토큰이 만료된 것이므로 추가 로그아웃 처리 없이 false 반환
-          return false;
-        }
-      },
-
-      // 에러 클리어
-      clearError: () => {
-        set({ error: null });
-      },
-
-      // 로딩 상태 설정
-      setLoading: (loading: boolean) => {
-        set({ isLoading: loading });
-      },
-
-      // 초기화
-      reset: () => {
-        removeStoredToken('ACCESS_TOKEN');
-        removeStoredToken('REFRESH_TOKEN');
-        removeStoredUser();
-
+      // 토큰 설정
+      setTokens: (accessToken: string, refreshToken: string) => {
+        TokenManager.setTokens(accessToken, refreshToken);
         set({
-          user: null,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
+      },
+
+      // 토큰 정리
+      clearTokens: () => {
+        TokenManager.clearTokens();
+        set({
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-          isLoading: false,
-          error: null
         });
-      }
+      },
+
+      // 로딩 상태 설정
+      setLoading: (loading: boolean) => set({ isLoading: loading }),
+
+      // 에러 설정
+      setError: (error: string | null) => set({ error }),
+
+      // 에러 정리
+      clearError: () => set({ error: null }),
+
+      // 상태 초기화
+      reset: () => {
+        TokenManager.clearTokens();
+        set({ ...initialState });
+      },
     }),
     {
-      name: 'elderberry-auth',
+      name: 'elderberry-auth', // localStorage 키
       partialize: (state) => ({
-        // persist에서는 토큰만 저장하고, 사용자 정보는 sessionStorage에서 직접 관리
-        isAuthenticated: state.isAuthenticated
-      })
+        user: state.user,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );
+
+// 토큰 유효성 검증 및 자동 갱신
+export const initializeAuth = async () => {
+  const store = useAuthStore.getState();
+  const accessToken = TokenManager.getAccessToken();
+  const refreshToken = TokenManager.getRefreshToken();
+
+  if (!accessToken || !refreshToken) {
+    store.reset();
+    return false;
+  }
+
+  // 토큰이 만료되었는지 확인
+  if (TokenManager.isTokenExpired(accessToken)) {
+    try {
+      await store.refreshTokens();
+      return true;
+    } catch (error) {
+      console.warn('토큰 갱신 실패:', error);
+      store.reset();
+      return false;
+    }
+  }
+
+  // 사용자 정보가 없으면 토큰으로부터 복원
+  if (!store.user && accessToken) {
+    try {
+      const response = await authenticatedApiCall('/auth/me');
+      store.setTokens(accessToken, refreshToken);
+      useAuthStore.setState({
+        user: response.user,
+        isAuthenticated: true,
+      });
+      return true;
+    } catch (error) {
+      console.warn('사용자 정보 복원 실패:', error);
+      store.reset();
+      return false;
+    }
+  }
+
+  return store.isAuthenticated;
+};
+
+// 유용한 셀렉터들
+export const useIsAuthenticated = () => useAuthStore(state => state.isAuthenticated);
+export const useCurrentUser = () => useAuthStore(state => state.user);
+export const useAuthLoading = () => useAuthStore(state => state.isLoading);
+export const useAuthError = () => useAuthStore(state => state.error);

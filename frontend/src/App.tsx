@@ -1,484 +1,511 @@
-/**
- * 메인 앱 컴포넌트 - 단순화된 라우팅 시스템
- * Elderberry 글로벌 요양원 구인구직 서비스
- * v2.0 - 라우팅 시스템 개선 및 중복 제거
- */
-import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import { ElderberryClerkProvider } from "./providers/ClerkProvider";
+import { Header } from "./components/Header";
+import { BlurredText } from "./components/BlurredText";
+import { CTAButtons } from "./components/CTAButtons";
+import { ArrowRight } from "lucide-react";
+import FacilitiesPage from "./pages/FacilitiesPage";
+import FacilityDetailPage from "./pages/FacilityDetailPage";
+import JobsPage from "./pages/JobsPage";
+import CommunityPageSimple from "./pages/CommunityPageSimple";
+import HealthAssessmentPage from "./pages/HealthAssessmentPage";
+import ChatPage from "./pages/ChatPage";
+import StartPage from "./pages/StartPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ClerkLoginPage from "./components/auth/ClerkLoginPage";
 
-// 인증 관련 컴포넌트
-import { ProtectedRoute, AdminRoute, CoordinatorRoute } from './components/auth/ProtectedRoute';
-import { useAuthStore } from './stores/authStore';
+// 홈페이지 컴포넌트
+function HomePage() {
+  const navigate = useNavigate();
 
-// 레이아웃 컴포넌트
-import { MainLayout } from './widgets/layout';
+  const handleStartBuilding = () => {
+    navigate('/start');
+  };
 
-// 로딩 및 에러 처리 컴포넌트
-import LazyPageFallback from './shared/ui/LazyPageFallback';
-import LazyLoadErrorBoundary from './shared/ui/LazyLoadErrorBoundary';
-import { ToastProvider } from './hooks/useToast';
+  const handleLearnMore = () => {
+    console.log('Learn More clicked');
+  };
 
-// 성능 모니터링
-import { performanceMonitor } from './utils/performanceMonitor';
+  const handleContactSales = () => {
+    console.log('Contact Sales clicked');
+  };
 
-// 즉시 로딩 페이지 (중요한 페이지들)
-import LandingPage from './pages/LandingPage';
-import SignInPage from './pages/auth/SignInPage';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
-import NotFoundPage from './pages/NotFoundPage';
-import EmergencySearchPage from './pages/EmergencySearchPage';
-import PlannedSearchPage from './pages/PlannedSearchPage';
-import JobSearchPage from './pages/JobSearchPage';
-import ConsultationPage from './pages/ConsultationPage';
-import SettingsPage from './pages/SettingsPage';
+  const handleGetStarted = () => {
+    navigate('/chat');
+  };
 
-// 지연 로딩 페이지들 (성능 최적화)
-import {
-  LazyRegisterPage,
-  LazyForgotPasswordPage,
-  LazyDashboardPage,
-  LazyMyPage,
-  LazyUnauthorizedPage,
-  LazyHealthAssessmentWizard,
-  LazyFacilitySearchPage,
-  LazyChatHomePage,
-  LazyChatPage,
-  LazyBoardListPage,
-  LazyPostDetailPage,
-  LazyPostCreatePage,
-  LazyJobListPage,
-  LazyJobDetailPage,
-  LazyCoordinatorMatchingWizard,
-  LazyAvailableCoordinatorsPage,
-  LazySimulationDashboard,
-  LazyProfileListPage,
-  LazyProfileDetailPage,
-  LazyNotificationsPage,
-  LazyNotificationSettingsPage,
-  LazyMyReviewsPage,
-  LazyFacilityReviewsPage,
-  LazyReviewCreatePage,
-  LazyMyApplicationsPage
-} from './utils/lazyImports';
+  const words = [
+    "Elderberry", "Is", "An", "AI-Powered", "Platform", "For", "Matching", "Care", "Services", "Perfectly"
+  ];
 
-// Route Wrappers
-import { 
-  FacilitySearchPageWrapper, 
-  HealthAssessmentWizardWrapper
-} from './router/RouteWrappers';
+  return (
+    <div className="min-h-screen w-full bg-white">
+      {/* Header는 AppContent에서 전역으로 관리되므로 제거 */}
 
-// 테마 및 데모 컴포넌트
-import ThemeTestPlayground from './components/theme/ThemeTestPlayground';
-import LinearShowcase from './pages/demo/LinearShowcase';
+      {/* Hero Section */}
+      <section 
+        className="relative w-full min-h-screen flex flex-col items-center justify-center px-6 lg:px-0 pt-24"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=800')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Main Heading */}
+        <div className="flex flex-col items-center max-w-4xl mx-auto mb-16 relative z-10">
+          {/* Main heading with blur effects */}
+          <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-4 mb-12">
+            {words.map((word, index) => (
+              <BlurredText key={index} text={word} />
+            ))}
+          </div>
 
-import './App.css';
+          {/* Sub Heading */}
+          <div className="relative mb-12">
+            <div className="absolute inset-0 blur-sm opacity-50 pointer-events-none">
+              <p className="hero-subheading text-text-secondary text-center max-w-md">
+                AI 기반 요양보호사 매칭 시스템으로 최적의 돌봄 서비스를 찾아드립니다.
+              </p>
+            </div>
+            <p className="relative hero-subheading text-text-secondary text-center max-w-md">
+              AI 기반 요양보호사 매칭 시스템으로 최적의 돌봄 서비스를 찾아드립니다.
+            </p>
+          </div>
 
-/**
- * 홈 리다이렉트 컴포넌트
- * 인증 상태에 따라 적절한 페이지로 리다이렉션
- */
-function HomeRedirect() {
-  const { isAuthenticated, user } = useAuthStore();
-  
-  if (!isAuthenticated || !user) {
-    return <LandingPage />;
-  }
-  
-  // 인증된 사용자는 대시보드로 리다이렉션
-  return <Navigate to="/dashboard" replace />;
+          {/* CTA Buttons */}
+          <CTAButtons
+            onStartBuilding={handleStartBuilding}
+            onLearnMore={handleLearnMore}
+          />
+        </div>
+      </section>
+
+      {/* 시설찾기 Section */}
+      <section className="relative w-full py-32 bg-gradient-to-b from-white/5 to-transparent">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <h2 className="text-text-main text-5xl font-semibold leading-tight tracking-tight">
+                믿을 수 있는 요양시설 찾기
+              </h2>
+
+              <p className="text-text-muted text-lg leading-relaxed max-w-sm">
+                우리 지역의 검증된 요양시설을 쉽게 비교하고 선택하세요. 평점, 리뷰, 시설 정보를 한눈에 확인할 수 있습니다.
+              </p>
+
+              <div 
+                onClick={() => navigate('/facilities')}
+                className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors cursor-pointer"
+              >
+                <span className="font-semibold">시설 둘러보기</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                alt="요양시설 내부 모습" 
+                className="w-full h-auto rounded-xl border border-border-light shadow-2xl" 
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 구인구직 Section */}
+      <section className="relative w-full py-32 bg-gradient-to-b from-white/5 to-transparent">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative order-2 lg:order-1">
+              <img 
+                src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                alt="요양보호사 근무 모습" 
+                className="w-full h-auto rounded-xl border border-border-light shadow-2xl" 
+              />
+            </div>
+
+            <div className="space-y-8 order-1 lg:order-2">
+              <h2 className="text-text-main text-5xl font-semibold leading-tight tracking-tight">
+                전문 요양보호사 채용
+              </h2>
+
+              <p className="text-text-muted text-lg leading-relaxed max-w-sm">
+                경험 많은 요양보호사를 찾거나 최적의 일자리를 발견하세요. 전문적인 매칭 시스템으로 완벽한 연결을 도와드립니다.
+              </p>
+
+              <div 
+                onClick={() => navigate('/jobs')}
+                className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors cursor-pointer"
+              >
+                <span className="font-semibold">채용정보 보기</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 커뮤니티 Section */}
+      <section className="relative w-full py-32 bg-gradient-to-b from-white/5 to-transparent">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <h2 className="text-text-main text-5xl font-semibold leading-tight tracking-tight">
+                따뜻한 소통 커뮤니티
+              </h2>
+
+              <p className="text-text-muted text-lg leading-relaxed max-w-sm">
+                요양보호사와 가족들이 함께 모여 경험을 나누고 서로 도움을 주는 따뜻한 공간입니다. 실무 노하우부터 마음의 위로까지.
+              </p>
+
+              <div 
+                onClick={() => navigate('/community')}
+                className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors cursor-pointer"
+              >
+                <span className="font-semibold">커뮤니티 참여하기</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                alt="사람들이 함께 대화하는 모습" 
+                className="w-full h-auto rounded-xl border border-border-light shadow-2xl" 
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 건강평가 Section */}
+      <section className="relative w-full py-32 bg-gradient-to-b from-white/5 to-transparent">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative order-2 lg:order-1">
+              <img 
+                src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                alt="건강 검진을 받는 어르신" 
+                className="w-full h-auto rounded-xl border border-border-light shadow-2xl" 
+              />
+            </div>
+
+            <div className="space-y-8 order-1 lg:order-2">
+              <h2 className="text-text-main text-5xl font-semibold leading-tight tracking-tight">
+                종합 건강평가 시스템
+              </h2>
+
+              <p className="text-text-muted text-lg leading-relaxed max-w-sm">
+                체계적인 건강 상태 평가를 통해 개인 맞춤형 케어 계획을 제공합니다. 전문적인 분석과 권장사항으로 건강한 노후를 준비하세요.
+              </p>
+
+              <div 
+                onClick={() => navigate('/health-assessment')}
+                className="flex items-center gap-2 text-primary hover:text-primary-dark transition-colors cursor-pointer"
+              >
+                <span className="font-semibold">건강평가 시작하기</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="relative w-full py-32">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0 text-center">
+          <h2 className="text-text-main text-4xl font-semibold mb-8 tracking-tight">
+            지금 바로 시작해보세요
+          </h2>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <button
+              onClick={handleContactSales}
+              className="border border-primary text-primary px-6 py-3 rounded-xl font-semibold hover:bg-primary hover:text-white transition-all duration-200"
+            >
+              문의하기
+            </button>
+            <button
+              onClick={handleGetStarted}
+              className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-200"
+            >
+              채팅 시작하기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative w-full bg-gray-50 border-t border-border-light">
+        <div className="max-w-6xl mx-auto px-6 lg:px-0">
+          {/* Main Footer Content */}
+          <div className="py-16 grid md:grid-cols-4 gap-8">
+            {/* Company Info */}
+            <div className="md:col-span-1">
+              <div className="mb-4">
+                <span className="text-text-main font-bold text-lg">Elderberry</span>
+              </div>
+              <p className="text-text-muted text-sm leading-relaxed">
+                AI 기반 요양보호사 매칭 플랫폼으로 최적의 돌봄 서비스를 제공합니다.
+              </p>
+            </div>
+
+            {/* Services */}
+            <div>
+              <h3 className="text-text-main font-semibold mb-4">서비스</h3>
+              <ul className="space-y-2">
+                <li>
+                  <button 
+                    onClick={() => navigate('/facilities')}
+                    className="text-text-muted hover:text-primary transition-colors text-sm"
+                  >
+                    시설찾기
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => navigate('/jobs')}
+                    className="text-text-muted hover:text-primary transition-colors text-sm"
+                  >
+                    구인구직
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => navigate('/community')}
+                    className="text-text-muted hover:text-primary transition-colors text-sm"
+                  >
+                    커뮤니티
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => navigate('/health-assessment')}
+                    className="text-text-muted hover:text-primary transition-colors text-sm"
+                  >
+                    건강평가
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Support */}
+            <div>
+              <h3 className="text-text-main font-semibold mb-4">고객지원</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    자주 묻는 질문
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    이용가이드
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    고객센터
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    1:1 문의
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h3 className="text-text-main font-semibold mb-4">회사소개</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    회사소개
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    채용정보
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    파트너십
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">
+                    언론보도
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Footer */}
+          <div className="py-6 border-t border-border-light">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex flex-col md:flex-row items-center gap-4 text-sm text-text-muted">
+                <span>© 2024 Elderberry. All rights reserved.</span>
+                <div className="flex gap-4">
+                  <a href="#" className="hover:text-primary transition-colors">개인정보처리방침</a>
+                  <a href="#" className="hover:text-primary transition-colors">이용약관</a>
+                  <a href="#" className="hover:text-primary transition-colors">쿠키정책</a>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-text-muted">
+                <span>고객센터</span>
+                <span className="text-primary font-semibold">1588-0000</span>
+                <span>|</span>
+                <span>평일 09:00-18:00</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className="py-4 border-t border-border-light">
+            <div className="text-xs text-text-muted leading-relaxed">
+              <p className="mb-2">
+                <strong>Elderberry</strong>는 요양보호사와 이용자를 연결하는 중개 플랫폼입니다. 
+                실제 서비스는 등록된 요양보호사 및 요양기관에서 제공됩니다.
+              </p>
+              <p>
+                사업자등록번호: 123-45-67890 | 통신판매업신고: 2024-서울강남-0000 | 
+                대표: [대표자명] | 주소: 서울특별시 강남구 테헤란로 123, 4층
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
 
-/**
- * 로그아웃 후 리다이렉트 컴포넌트
- * 로그아웃 상태를 처리하고 적절한 페이지로 안내
- */
-function LogoutRedirect() {
-  const location = useLocation();
+// 각 페이지 컴포넌트들을 Router와 연결하는 래퍼 컴포넌트들
+function StartPageWrapper() {
+  const navigate = useNavigate();
   
-  // 로그아웃 후에는 랜딩페이지로 리다이렉션하되, 
-  // 원래 시도했던 페이지 정보는 유지
+  const handleStartChat = (prompt?: string) => {
+    navigate('/chat', { state: { initialPrompt: prompt } });
+  };
+
   return (
-    <Navigate 
-      to="/" 
-      state={{ 
-        from: location.pathname,
-        message: "로그아웃되었습니다. 다시 로그인해주세요." 
-      }} 
-      replace 
+    <StartPage 
+      onStartChat={handleStartChat} 
+      onGoHome={() => navigate('/')} 
+      onGoLogin={() => navigate('/login')}
+      onGoSignup={() => navigate('/signup')}
     />
   );
 }
 
-function App() {
-  // 성능 모니터링 시작
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      performanceMonitor.collectMetrics();
-      
-      setTimeout(() => {
-        const report = performanceMonitor.generateReport();
-        if (report?.warnings.length > 0) {
-          console.warn('성능 경고:', report.warnings);
-        }
-      }, 10000);
-    }
-  }, []);
+function ChatPageWrapper() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const initialPrompt = location.state?.initialPrompt;
 
   return (
-    <LazyLoadErrorBoundary>
-      <ToastProvider>
-        <Router>
-          <main className="min-h-screen bg-gray-50" role="main">
-            <Routes>
-              {/* ===== 공개 라우트 (인증 불필요) ===== */}
-              
-              {/* 홈페이지 - 스마트 리다이렉션 */}
-              <Route path="/" element={<HomeRedirect />} />
-              
-              {/* 인증 페이지들 */}
-              <Route path="/auth/signin" element={<SignInPage />} />
-              <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
-              <Route path="/auth/signup" element={
-                <Suspense fallback={<LazyPageFallback type="spinner" message="회원가입 페이지 로딩 중..." />}>
-                  <LazyRegisterPage />
-                </Suspense>
-              } />
-              <Route path="/register" element={<Navigate to="/auth/signup" replace />} />
-              <Route path="/auth/forgot-password" element={
-                <Suspense fallback={<LazyPageFallback type="spinner" message="비밀번호 재설정 페이지 로딩 중..." />}>
-                  <LazyForgotPasswordPage />
-                </Suspense>
-              } />
-              <Route path="/forgot-password" element={<Navigate to="/auth/forgot-password" replace />} />
-              
-              {/* 정보 페이지들 */}
-              <Route path="/about" element={
-                <MainLayout>
-                  <AboutPage />
-                </MainLayout>
-              } />
-              <Route path="/contact" element={
-                <MainLayout>
-                  <ContactPage />
-                </MainLayout>
-              } />
-              
-              {/* 비회원도 접근 가능한 서비스 */}
-              <Route path="/emergency-search" element={<EmergencySearchPage />} />
-              <Route path="/planned-search" element={<PlannedSearchPage />} />
-              <Route path="/job-search" element={<JobSearchPage />} />
-              <Route path="/consultation" element={<ConsultationPage />} />
-              
-              {/* 시설 찾기 (비회원 접근 가능) */}
-              <Route path="/facility-search" element={
-                <MainLayout>
-                  <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                    <LazyFacilitySearchPage />
-                  </Suspense>
-                </MainLayout>
-              } />
-              
-              {/* 챗봇 (비회원 접근 가능) */}
-              <Route path="/chat-home" element={<LazyChatHomePage />} />
-              <Route path="/chat" element={<LazyChatPage />} />
-              
-              {/* 권한 없음 페이지 */}
-              <Route path="/unauthorized" element={
-                <Suspense fallback={<LazyPageFallback type="spinner" />}>
-                  <LazyUnauthorizedPage />
-                </Suspense>
-              } />
-              
-              {/* 개발자 도구 (개발 환경에서만) */}
-              {process.env.NODE_ENV === 'development' && (
-                <>
-                  <Route path="/theme-test" element={<ThemeTestPlayground />} />
-                  <Route path="/linear-demo" element={<LinearShowcase />} />
-                </>
-              )}
+    <ChatPage 
+      onGoHome={() => navigate('/start')} 
+      onGoMainPage={() => navigate('/')}
+      onGoLogin={() => navigate('/login')}
+      initialPrompt={initialPrompt} 
+    />
+  );
+}
 
-              {/* ===== 보호된 라우트 (인증 필요) ===== */}
-              
-              {/* 대시보드 */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute fallbackPath="/logout-redirect">
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                      <LazyDashboardPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+// Legacy login components (kept for migration safety)
+function LoginPageWrapper() {
+  const navigate = useNavigate();
 
-              {/* 마이페이지 */}
-              <Route path="/mypage" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                      <LazyMyPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+  return (
+    <LoginPage 
+      onGoHome={() => navigate('/')} 
+      onGoSignup={() => navigate('/signup')} 
+    />
+  );
+}
 
-              {/* 설정 */}
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <SettingsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+function SignupPageWrapper() {
+  const navigate = useNavigate();
 
-              {/* 알림 */}
-              <Route path="/notifications" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <LazyNotificationsPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+  return (
+    <SignupPage 
+      onGoHome={() => navigate('/')} 
+      onGoLogin={() => navigate('/login')} 
+    />
+  );
+}
 
-              <Route path="/notifications/settings" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <LazyNotificationSettingsPage />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+// New Clerk-based authentication components
+function ClerkLoginPageWrapper() {
+  const navigate = useNavigate();
 
-              {/* 건강 평가 */}
-              <Route path="/health-assessment" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                      <HealthAssessmentWizardWrapper />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+  return (
+    <ClerkLoginPage 
+      onGoHome={() => navigate('/')} 
+      mode="signin"
+    />
+  );
+}
 
-              {/* 고급 시설 검색 (로그인 전용) */}
-              <Route path="/facility-search/advanced" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                      <FacilitySearchPageWrapper />
-                    </Suspense>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+function ClerkSignupPageWrapper() {
+  const navigate = useNavigate();
 
-              {/* 게시판 */}
-              <Route path="/boards/*" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route index element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyBoardListPage />
-                        </Suspense>
-                      } />
-                      <Route path="create-post" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                          <LazyPostCreatePage />
-                        </Suspense>
-                      } />
-                      <Route path=":boardId" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyBoardListPage />
-                        </Suspense>
-                      } />
-                      <Route path=":boardId/posts/:postId" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                          <LazyPostDetailPage />
-                        </Suspense>
-                      } />
-                    </Routes>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+  return (
+    <ClerkLoginPage 
+      onGoHome={() => navigate('/')} 
+      mode="signup"
+    />
+  );
+}
 
-              {/* 구인구직 */}
-              <Route path="/jobs/*" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route index element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyJobListPage />
-                        </Suspense>
-                      } />
-                      <Route path="my-applications" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyMyApplicationsPage />
-                        </Suspense>
-                      } />
-                      <Route path=":jobId" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                          <LazyJobDetailPage />
-                        </Suspense>
-                      } />
-                    </Routes>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+// 메인 App 컴포넌트
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Header를 표시하지 않을 페이지들
+  const hideHeaderPages = ['/chat', '/start', '/login', '/signup'];
+  const shouldShowHeader = !hideHeaderPages.includes(location.pathname);
 
-              {/* 프로필 관리 */}
-              <Route path="/profiles/*" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route index element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyProfileListPage />
-                        </Suspense>
-                      } />
-                      <Route path=":profileType/:profileId" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="detail" />}>
-                          <LazyProfileDetailPage />
-                        </Suspense>
-                      } />
-                    </Routes>
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
+  return (
+    <div className="min-h-screen w-full bg-white">
+      {shouldShowHeader && (
+        <Header onNavigate={(page) => navigate(page === 'home' ? '/' : `/${page}`)} currentPage={location.pathname.slice(1) || 'home'} />
+      )}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/facilities" element={<FacilitiesPage />} />
+        <Route path="/facilities/:id" element={<FacilityDetailPage />} />
+        <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/community" element={<CommunityPageSimple />} />
+        <Route path="/health-assessment" element={<HealthAssessmentPage />} />
+        <Route path="/start" element={<StartPageWrapper />} />
+        <Route path="/chat" element={<ChatPageWrapper />} />
+        <Route path="/login" element={<ClerkLoginPageWrapper />} />
+        <Route path="/signup" element={<ClerkSignupPageWrapper />} />
+        {/* Legacy routes for fallback - can be removed after successful migration */}
+        <Route path="/login-legacy" element={<LoginPageWrapper />} />
+        <Route path="/signup-legacy" element={<SignupPageWrapper />} />
+      </Routes>
+    </div>
+  );
+}
 
-              {/* 리뷰 관리 */}
-              <Route path="/reviews/*" element={
-                <MainLayout>
-                  <Routes>
-                    <Route path="my" element={
-                      <ProtectedRoute>
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyMyReviewsPage />
-                        </Suspense>
-                      </ProtectedRoute>
-                    } />
-                    <Route path="facility/:facilityId" element={
-                      <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                        <LazyFacilityReviewsPage />
-                      </Suspense>
-                    } />
-                    <Route path="create" element={
-                      <ProtectedRoute>
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                          <LazyReviewCreatePage />
-                        </Suspense>
-                      </ProtectedRoute>
-                    } />
-                  </Routes>
-                </MainLayout>
-              } />
-
-              {/* ===== 관리자 전용 라우트 ===== */}
-              <Route path="/admin/*" element={
-                <AdminRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route path="members" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">회원 관리</h1>
-                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 회원 관리 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                      <Route path="facilities" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">시설 관리</h1>
-                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시설 관리 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                      <Route path="statistics" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">시스템 통계</h1>
-                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 통계 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                      <Route path="settings" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="form" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">시스템 설정</h1>
-                            <p className="text-gray-600 mt-2">관리자만 접근 가능한 시스템 설정 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                    </Routes>
-                  </MainLayout>
-                </AdminRoute>
-              } />
-
-              {/* ===== 코디네이터 전용 라우트 ===== */}
-              <Route path="/coordinator/*" element={
-                <CoordinatorRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route path="members" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">회원 관리</h1>
-                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 회원 관리 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                      <Route path="matching" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyCoordinatorMatchingWizard />
-                        </Suspense>
-                      } />
-                      <Route path="available" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <LazyAvailableCoordinatorsPage />
-                        </Suspense>
-                      } />
-                      <Route path="simulation" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                          <LazySimulationDashboard />
-                        </Suspense>
-                      } />
-                      <Route path="statistics" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="dashboard" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">통계</h1>
-                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 통계 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                      <Route path="facilities" element={
-                        <Suspense fallback={<LazyPageFallback type="skeleton" skeletonType="list" />}>
-                          <div className="p-6">
-                            <h1 className="text-2xl font-bold">시설 관리</h1>
-                            <p className="text-gray-600 mt-2">코디네이터만 접근 가능한 시설 관리 페이지입니다.</p>
-                          </div>
-                        </Suspense>
-                      } />
-                    </Routes>
-                  </MainLayout>
-                </CoordinatorRoute>
-              } />
-
-              {/* ===== 특별 처리 라우트 ===== */}
-              
-              {/* 로그아웃 후 리다이렉트 */}
-              <Route path="/logout-redirect" element={<LogoutRedirect />} />
-              
-              {/* 404 페이지 - 모든 미정의 라우트 */}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-        </Router>
-      </ToastProvider>
-    </LazyLoadErrorBoundary>
+function App() {
+  return (
+    <ElderberryClerkProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ElderberryClerkProvider>
   );
 }
 
