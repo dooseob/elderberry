@@ -41,7 +41,7 @@ dependencies {
     implementation("org.springframework:spring-aspects")
     
     // OpenAPI/Swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10")
     
     // Database
     runtimeOnly("com.h2database:h2")
