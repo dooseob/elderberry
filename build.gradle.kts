@@ -48,10 +48,13 @@ dependencies {
     // SQLite for logging and statistics
     runtimeOnly("org.xerial:sqlite-jdbc:3.44.1.0")
     
-    // JWT
+    // JWT (Legacy - for migration safety)
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    
+    // Clerk JWT Verification (commented out - not needed for new frontend)
+    // implementation("com.clerk:clerk-sdk-java:4.3.0")
     
     // Caffeine Cache
     implementation("com.github.ben-manes.caffeine:caffeine")
@@ -138,9 +141,27 @@ tasks.register<Delete>("cleanStatic") {
     delete(staticDir)
 }
 
+// 프론트엔드 빌드 파일 복사 태스크
+tasks.register<Copy>("copyFrontendAssets") {
+    description = "프론트엔드 빌드 파일을 Spring Boot static 디렉토리로 복사"
+    dependsOn("buildFrontend")
+    from("$frontendDir/dist")
+    into(staticDir)
+    
+    doFirst {
+        println("📁 정적 파일 복사 중...")
+        println("   소스: $frontendDir/dist")
+        println("   대상: $staticDir")
+    }
+    
+    doLast {
+        println("✅ 정적 파일 복사 완료")
+    }
+}
+
 // Spring Boot JAR 빌드시 프론트엔드도 함께 빌드
 tasks.named("processResources") {
-    dependsOn("buildFrontend")
+    dependsOn("copyFrontendAssets")
 }
 
 // clean 시 정적 파일도 정리

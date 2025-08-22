@@ -143,7 +143,9 @@
       "Bash(./test-backend-api.sh:*)",
       "Bash(./start-frontend-dev.sh:*)",
       "mcp__github__create_issue",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(./test-clerk-migration.sh:*)",
+      "Bash(../test-clerk-migration.sh)"
     ],
     "deny": []
   }

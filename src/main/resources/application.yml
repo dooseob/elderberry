@@ -92,12 +92,29 @@ spring:
           cache-public: true
       static-locations: classpath:/static/
 
-# JWT 설정 (환경변수 사용 필수)
+# JWT 설정 (환경변수 사용 필수) - Legacy for migration safety
 jwt:
   secret: ${JWT_SECRET:CHANGE-THIS-SECRET-KEY-IMMEDIATELY-FOR-SECURITY}
   expiration: ${JWT_ACCESS_EXPIRATION:86400000}  # 24시간 (밀리초)
   refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7일 (밀리초)
   issuer: ${JWT_ISSUER:elderberry-ai.com}
+
+# Clerk Authentication Configuration
+clerk:
+  secret-key: ${CLERK_SECRET_KEY:sk_test_placeholder}
+  publishable-key: ${CLERK_PUBLISHABLE_KEY:pk_test_placeholder}
+  jwt:
+    issuer: "https://clerk.com"
+    audience: "elderberry"
+    algorithm: "RS256"
+    clock-skew-seconds: 300
+  organizations:
+    domestic-users: ${CLERK_ORG_DOMESTIC_USERS:org_placeholder_domestic}
+    overseas-users: ${CLERK_ORG_OVERSEAS_USERS:org_placeholder_overseas}
+    job-seekers: ${CLERK_ORG_JOB_SEEKERS:org_placeholder_jobseekers}
+    facilities: ${CLERK_ORG_FACILITIES:org_placeholder_facilities}
+    coordinators: ${CLERK_ORG_COORDINATORS:org_placeholder_coordinators}
+    admins: ${CLERK_ORG_ADMINS:org_placeholder_admins}
 
 # 서버 설정
 server:

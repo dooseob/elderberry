@@ -18,6 +18,16 @@ React TypeScript 프론트엔드 관련 문제들
 
 ## 🚨 최신 해결 사례 (우선 표시)
 
+### 🌟 8월 대규모 시스템 업데이트 (2025-08-01 ~ 2025-08-17) ⭐
+- **[CLEANUP-001](#cleanup-001)**: 테스트 파일 대대적 정리 - 49개 파일 정리 및 구조화 (2025-08-17) 🧹
+- **[INTEGRATION-006](#integration-006)**: 시설찾기 백엔드-프론트엔드 완전 통합 - Mock 데이터 시스템 구현 (2025-08-16) 🏥
+- **[BUILD-003](#build-003)**: 프로젝트 전체 빌드 완료 및 문서화 업데이트 (2025-08-15) 📦
+- **[FRONTEND-007](#frontend-007)**: 팀원 프론트엔드 코드 통합 및 시설찾기 기능 구현 (2025-08-14) 💻
+- **[AGENT-006](#agent-006)**: Agent System v2.5.0 업그레이드 - 테스트 인프라 전면 개편 (2025-08-12) 🤖
+- **[DEVOPS-004](#devops-004)**: 백엔드/프론트엔드 개발 스크립트 개선 (2025-08-11) ⚙️
+- **[PRODUCTION-002](#production-002)**: 엘더베리 프로젝트 최종 프로덕션 빌드 완료 (2025-08-10) 🚀
+- **[ADMIN-003](#admin-003)**: Admin 시스템 구현 완료 - 99% 프로젝트 완성 달성 (2025-08-09) 👑
+
 ### 🟢 COMPLETED 시스템 완성 (2025-07-29)
 - **[AGENT-005](./backend/AGENT-005-five-agent-system-completion.md)**: 5개 에이전트 시스템 완성 - GoogleSeoOptimizationAgent 추가 및 MCP 도구 완전 통합 (2025-07-29) ⭐
 
@@ -28,11 +38,12 @@ React TypeScript 프론트엔드 관련 문제들
 - **[RECOVERY-001](./deployment/RECOVERY-001-git-system-recovery.md)**: Git 복구 작업, 32개 파일 복구 (2025-07-28)
 
 ## 📊 통계
-- **총 처리된 이슈**: 81개
-- **문서화된 문제**: 43개+
-- **해결 완료**: 5개 주요 이슈 (프론트엔드 로그인 연동 완료 포함)
-- **시스템 완성도**: 97% (5개 에이전트 + MCP 통합 + 로그인 시스템 완료)
-- **마지막 업데이트**: 2025-07-29
+- **총 처리된 이슈**: 89개 (8월 8개 추가)
+- **문서화된 문제**: 51개+ (8월 대규모 업데이트 8개 포함)
+- **해결 완료**: 13개 주요 이슈 (8월 시스템 업데이트 완료)
+- **시스템 완성도**: 99.5% (Agent System v2.5.0 + 시설찾기 통합 + 테스트 시스템 정리 완료)
+- **8월 업데이트**: Agent System v2.5.0, 시설찾기 통합, 테스트 정리, 프로덕션 빌드
+- **마지막 업데이트**: 2025-08-17
 
 ## 🔍 빠른 검색
 
@@ -46,6 +57,12 @@ React TypeScript 프론트엔드 관련 문제들
 - `database-optimization` - H2→PostgreSQL 전환 및 데이터베이스 최적화 ⭐
 - `h2-jcache-errors` - H2 JCache 관련 에러 해결
 - `database-migration` - 데이터베이스 마이그레이션 전략
+- `agent-system-v25` - Agent System v2.5.0 업그레이드 🤖
+- `test-infrastructure` - 테스트 시스템 및 파일 정리 🧪
+- `facility-search-integration` - 시설찾기 시스템 통합 🏥
+- `production-build` - 프로덕션 빌드 및 배포 🚀
+- `admin-system` - 어드민 시스템 구현 👑
+- `mock-data-system` - Mock 데이터 시스템 구축 📊
 
 ## 📋 이전 데이터 아카이브
 
@@ -60,6 +77,58 @@ React TypeScript 프론트엔드 관련 문제들
 ---
 
 **💡 팁**: 특정 문제를 찾으려면 위의 카테고리별 링크를 사용하거나, 각 카테고리의 README.md에서 태그별 검색을 활용하세요.
+
+---
+
+## 🌟 8월 대규모 시스템 업데이트 세부 사항
+
+### CLEANUP-001: 테스트 파일 대대적 정리 {#cleanup-001}
+**날짜**: 2025-08-17 | **심각도**: MEDIUM | **상태**: ✅ 해결완료
+- **문제**: 49개의 오래된/중복된 테스트 파일이 프로젝트 구조를 복잡하게 만듦
+- **해결**: `cleanup-backup/old-tests/`로 이동, `tests/integration/` 구조화
+- **태그**: `test-infrastructure`, `project-cleanup`
+
+### INTEGRATION-006: 시설찾기 시스템 통합 {#integration-006}
+**날짜**: 2025-08-16 | **심각도**: HIGH | **상태**: ✅ 해결완료
+- **문제**: 시설찾기 백엔드-프론트엔드 분리, Mock 데이터 필요
+- **해결**: 완전한 Mock 데이터 시스템 구현, 환경변수 기반 API 스위칭
+- **태그**: `facility-search-integration`, `mock-data-system`
+
+### BUILD-003: 프로젝트 빌드 완료 {#build-003}
+**날짜**: 2025-08-15 | **심각도**: MEDIUM | **상태**: ✅ 해결완료
+- **문제**: 전체 프로젝트 빌드 및 문서화 동기화 필요
+- **해결**: Gradle + npm 통합 빌드 완료, 문서 업데이트
+- **태그**: `production-build`, `documentation-update`
+
+### FRONTEND-007: 팀원 코드 통합 {#frontend-007}
+**날짜**: 2025-08-14 | **심각도**: HIGH | **상태**: ✅ 해결완료
+- **문제**: 팀원으로부터 받은 새 프론트엔드 코드 통합 필요
+- **해결**: 기존 시스템과 충돌 없이 통합, 시설찾기 기능 구현
+- **태그**: `team-collaboration`, `frontend-integration`
+
+### AGENT-006: Agent System v2.5.0 {#agent-006}
+**날짜**: 2025-08-12 | **심각도**: CRITICAL | **상태**: ✅ 해결완료
+- **문제**: 테스트 인프라 전면 개편 필요, 기존 WebTestingMasterAgent 불안정
+- **해결**: Playwright 제거, Jest + API + 수동 테스트 하이브리드 시스템 구축
+- **태그**: `agent-system-v25`, `test-infrastructure`
+
+### DEVOPS-004: 개발 스크립트 개선 {#devops-004}
+**날짜**: 2025-08-11 | **심각도**: MEDIUM | **상태**: ✅ 해결완료
+- **문제**: 백엔드/프론트엔드 개별 실행 스크립트 필요
+- **해결**: `start-backend-only.sh`, `start-frontend-dev.sh` 스크립트 추가
+- **태그**: `devops-improvement`, `development-scripts`
+
+### PRODUCTION-002: 프로덕션 빌드 {#production-002}
+**날짜**: 2025-08-10 | **심각도**: HIGH | **상태**: ✅ 해결완료
+- **문제**: 최종 프로덕션 빌드 완료 및 배포 준비
+- **해결**: 완전한 프로덕션 빌드, 정적 파일 생성 완료
+- **태그**: `production-build`, `deployment-ready`
+
+### ADMIN-003: Admin 시스템 완성 {#admin-003}
+**날짜**: 2025-08-09 | **심각도**: HIGH | **상태**: ✅ 해결완료
+- **문제**: 어드민 시스템 구현으로 99% 프로젝트 완성 달성
+- **해결**: 완전한 Admin 기능 구현, 전체 시스템 완성도 99% 달성
+- **태그**: `admin-system`, `project-completion`
 
 
 ================================================================================

@@ -62,8 +62,31 @@ public class SecurityConfig {
                 )
                 
                 .authorizeHttpRequests(auth -> {
-                    // 기본 허용 경로
-                    auth.requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/signup", "/api/auth/login-test", "/api/auth/login-dto-test", "/api/auth/login-simple-test", "/api/auth/login-map-test", "/api/auth/password-hash-test").permitAll()
+                    // 정적 리소스 허용 (프론트엔드 파일) - 최우선 적용
+                    auth.requestMatchers(
+                            "/", 
+                            "/index.html", 
+                            "/robots.txt", 
+                            "/sitemap.xml", 
+                            "/favicon.ico", 
+                            "/vite.svg",
+                            "/assets/**", 
+                            "/static/**",
+                            "/**/*.js", 
+                            "/**/*.css", 
+                            "/**/*.png", 
+                            "/**/*.jpg", 
+                            "/**/*.jpeg", 
+                            "/**/*.gif", 
+                            "/**/*.svg", 
+                            "/**/*.ico", 
+                            "/**/*.woff", 
+                            "/**/*.woff2", 
+                            "/**/*.ttf", 
+                            "/**/*.eot"
+                        ).permitAll()
+                        // 기본 허용 경로
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/signup", "/api/auth/login-test", "/api/auth/login-dto-test", "/api/auth/login-simple-test", "/api/auth/login-map-test", "/api/auth/password-hash-test").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/error").permitAll();

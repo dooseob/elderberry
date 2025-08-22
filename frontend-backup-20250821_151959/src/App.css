@@ -1,0 +1,197 @@
+/**
+ * 메인 앱 스타일
+ * 'elderberry' 테마 기반 글로벌 스타일
+ */
+
+/* Linear Theme System CSS 임포트 */
+@import './styles/linear-theme.css';
+
+/* Tailwind CSS 임포트 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 전역 스타일 */
+@layer base {
+  html {
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+
+  body {
+    @apply bg-elderberry-25 text-elderberry-900;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  /* 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-elderberry-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-elderberry-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-elderberry-400;
+  }
+}
+
+/* 컴포넌트 스타일 */
+@layer components {
+  /* 폼 요소 기본 스타일 */
+  .form-input {
+    @apply w-full px-4 py-3 border-2 border-elderberry-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-0 focus:border-elderberry-500;
+  }
+
+  .form-input:focus {
+    @apply shadow-lg shadow-elderberry-100;
+  }
+
+  /* 카드 그림자 효과 */
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(166, 116, 101, 0.1), 0 2px 4px -1px rgba(166, 116, 101, 0.06);
+  }
+
+  .card-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(166, 116, 101, 0.1), 0 4px 6px -2px rgba(166, 116, 101, 0.05);
+  }
+
+  /* 버튼 호버 효과 */
+  .btn-elderberry {
+    @apply bg-elderberry-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200;
+  }
+
+  .btn-elderberry:hover {
+    @apply bg-elderberry-700 shadow-lg transform -translate-y-0.5;
+  }
+
+  /* 그라데이션 배경 */
+  .gradient-elderberry {
+    background: linear-gradient(135deg, rgb(248, 245, 243) 0%, rgb(240, 232, 227) 100%);
+  }
+
+  /* 애니메이션 클래스 */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .bounce-gentle {
+    animation: bounceGentle 2s infinite;
+  }
+}
+
+/* 유틸리티 스타일 */
+@layer utilities {
+  /* 텍스트 그라데이션 */
+  .text-gradient-elderberry {
+    background: linear-gradient(135deg, rgb(139, 92, 246) 0%, rgb(166, 116, 101) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 반응형 그리드 */
+  .grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* 중앙 정렬 컨테이너 */
+  .container-center {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* 섹션 패딩 */
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+}
+
+/* 애니메이션 정의 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* 인쇄 스타일 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    @apply bg-white text-black;
+  }
+
+  .card-shadow,
+  .card-shadow-lg {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb;
+  }
+}
+
+/* 다크모드 대응 (나중에 추가할 때를 위해) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 다크모드 색상 변수들 (필요시 추가) */
+  }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 포커스 스타일 개선 */
+:focus-visible {
+  outline: 2px solid rgb(139, 92, 246);
+  outline-offset: 2px;
+}
+
+/* 선택 영역 스타일 */
+::selection {
+  background-color: rgba(166, 116, 101, 0.2);
+  color: rgb(74, 47, 42);
+}
