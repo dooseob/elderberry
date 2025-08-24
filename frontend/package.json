@@ -9,7 +9,7 @@
     "start": "vite"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.43.0",
+    "@clerk/clerk-react": "^5.43.1",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/react-router-dom": "^5.3.3",
     "class-variance-authority": "^0.7.1",
