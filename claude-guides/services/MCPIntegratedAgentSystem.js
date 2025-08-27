@@ -1,9 +1,9 @@
 /**
- * MCP 통합 에이전트 시스템 v2.5.0 - 5개 MCP 도구 안정성 최적화
- * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 (Playwright 완전 제거)
+ * MCP 통합 에이전트 시스템 v2.5.0 - .claude 디렉토리 시스템 완성
+ * Sequential Thinking, Context7, Filesystem, Memory, GitHub MCP 활용 + 구조화된 문서 시스템
  * @version 2.5.0
- * @date 2025-08-12
- * @features 6개 서브에이전트 + 5개 MCP 도구, 안정성 우선 최적화
+ * @date 2025-08-27
+ * @features 6개 서브에이전트 + 5개 MCP 도구, .claude 디렉토리 구조, 완전한 문서화
  */
 
 const { CustomCommandHandler } = require('./CustomCommandHandler');

@@ -1,9 +1,9 @@
 /**
- * 엘더베리 프로젝트 커스텀 명령어 핸들러 v2.3.3
- * MCP 도구 5개 + 서브에이전트 통합 (Playwright MCP 완전 제거)
- * @date 2025-08-07
- * @version 2.3.3
- * @features 5개 MCP 도구, 6개 서브에이전트 통합, 안정성 최적화
+ * 엘더베리 프로젝트 커스텀 명령어 핸들러 v2.5.0
+ * MCP 도구 5개 + 서브에이전트 통합 + .claude 디렉토리 시스템 완성
+ * @date 2025-08-27
+ * @version 2.5.0
+ * @features 5개 MCP 도구, 6개 서브에이전트 통합, .claude 디렉토리 구조화, 안정성 최적화
  */
 
 class CustomCommandHandler {
