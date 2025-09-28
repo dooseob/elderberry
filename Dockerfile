@@ -4,7 +4,7 @@
 # ==========================================
 
 # Build Stage - Gradle Build (Ubuntu 기반으로 변경)
-FROM eclipse-temurin:21-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 
 # Node.js 설치 (Ubuntu 기반) - 안정적인 방법
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
@@ -52,7 +52,7 @@ WORKDIR /app
 RUN ./gradlew clean buildForDeploy --no-daemon
 
 # Runtime Stage - 최종 실행 이미지
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 
 # 시스템 패키지 업데이트 및 필수 도구 설치 (Alpine)
 RUN apk update && apk add --no-cache \
