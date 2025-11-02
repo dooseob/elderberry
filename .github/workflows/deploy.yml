@@ -34,7 +34,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Deploy to staging server
-      uses: appleboy/ssh-action@v1.0.3
+      uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.STAGING_HOST }}
         username: ${{ secrets.STAGING_USER }}
@@ -72,7 +72,7 @@ jobs:
         environment: production
         
     - name: Deploy to production server
-      uses: appleboy/ssh-action@v1.0.3
+      uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.PROD_USER }}
@@ -109,7 +109,7 @@ jobs:
         
     - name: Rollback on failure
       if: failure()
-      uses: appleboy/ssh-action@v1.0.3
+      uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.PROD_USER }}
